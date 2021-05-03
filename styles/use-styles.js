@@ -12,17 +12,7 @@ const useCommonStyles = makeStyles(theme => ({
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2)
     }
-  },
-  segmentWidth: {
-    width: '100%',
-    maxWidth: theme.custom.layout.maxDesktopWidth,
-    padding: theme.spacing(10, 4),
-    borderBottom: `3px solid ${theme.palette.primary.main}`,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-      padding: theme.spacing(5, 2),
-    }
-  },
+  }
 }));
 
 export {
