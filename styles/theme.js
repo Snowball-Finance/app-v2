@@ -16,17 +16,45 @@ const fontFamily = [
   '"Segoe UI Symbol"',
 ]
 
-const theme = responsiveFontSizes(createMuiTheme({
+const lightTheme = responsiveFontSizes(createMuiTheme({
+  typography: {
+    fontFamily: fontFamily.join(',')
+  },
+  palette: {
+    primary: {
+      main: '#232323'
+    },
+    secondary: {
+      main: '#337ab7',
+    },
+    background: {
+      default: '#FFF9FF',
+    },
+    text: {
+      primary: '#232323',
+      secondary: '#337ab7',
+    },
+  },
+  custom: {
+    palette: {
+      white: '#FFFFFF'
+    },
+    layout: {
+      maxDesktopWidth: 1550,
+    },
+  }
+}));
+
+const darkTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
   },
   palette: {
     primary: {
       main: '#FFFFFF',
-      contrastText: '#ffffff'
     },
     secondary: {
-      main: '#19857b',
+      main: '#337ab7',
     },
     background: {
       default: '#1c2132',
@@ -46,4 +74,7 @@ const theme = responsiveFontSizes(createMuiTheme({
   }
 }));
 
-export default theme;
+export {
+  lightTheme,
+  darkTheme
+};

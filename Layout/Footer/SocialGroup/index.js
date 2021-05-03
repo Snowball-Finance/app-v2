@@ -8,10 +8,10 @@ import GithubIcon from 'components/Icons/GithubIcon'
 
 const useStyles = makeStyles((theme) => ({
   socialContainer: {
-    margin: theme.spacing(2.5, 0)
+    margin: theme.spacing(2, 0)
   },
   socialIcon: {
-    margin: theme.spacing(2)
+    margin: theme.spacing(1.5)
   }
 }));
 

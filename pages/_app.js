@@ -1,12 +1,12 @@
 
 import Head from 'next/head'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { ThemeProvider } from '@material-ui/core/styles'
 
 import Layout from 'Layout'
+import { DarkModeProvider } from 'contexts/ui-context'
+import ThemeProvider from 'utils/hocs/ThemeProvider'
 import * as COMMON_CONSTANTS from 'utils/constants/common'
 import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
-import theme from 'styles/theme'
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -40,12 +40,14 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
+      <DarkModeProvider>
+        <ThemeProvider>
+          <CssBaseline />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ThemeProvider>
+      </DarkModeProvider>
     </>
   )
 }
