@@ -40,7 +40,8 @@ const Footer = () => {
         <SocialGroup />
         <div>
           <Typography
-            variant='h6'
+            variant='body2'
+            align='center'
             color='textSecondary'
           >
             Snowball on Avalanche © 2021

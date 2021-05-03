@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
 import Logo from 'components/Logo'
+import ThemeButton from './ThemeButton'
 import { useCommonStyles } from 'styles/use-styles'
 
 const useStyles = makeStyles((theme) => ({
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
   toolBar: {
     display: 'flex',
     justifyContent: 'space-between',
+    padding: 0
   },
 }));
 
@@ -33,6 +35,7 @@ const TopAppBar = () => {
     >
       <Toolbar className={clsx(classes.toolBar, commonClasses.containerWidth)}>
         <Logo isLabel />
+        <ThemeButton />
       </Toolbar>
     </AppBar>
   );
