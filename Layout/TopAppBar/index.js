@@ -5,6 +5,7 @@ import clsx from 'clsx'
 
 import Logo from 'components/Logo'
 import ThemeButton from './ThemeButton'
+import ConnectWallet from './ConnectWallet'
 import { useCommonStyles } from 'styles/use-styles'
 
 const useStyles = makeStyles((theme) => ({
@@ -22,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     padding: 0
   },
+  connect: {
+    margin: theme.spacing(1)
+  }
 }));
 
 const TopAppBar = () => {
@@ -35,7 +39,10 @@ const TopAppBar = () => {
     >
       <Toolbar className={clsx(classes.toolBar, commonClasses.containerWidth)}>
         <Logo isLabel />
-        <ThemeButton />
+        <div>
+          <ConnectWallet className={classes.connect} />
+          <ThemeButton />
+        </div>
       </Toolbar>
     </AppBar>
   );
