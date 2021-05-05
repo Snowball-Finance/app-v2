@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Identicon from 'react-identicons'
 import clsx from 'clsx'
 
-import COLORS from 'utils/constants/COLORS'
+import COLORS from 'utils/constants/colors'
 
 const useStyles = makeStyles(() => ({
   root: {
