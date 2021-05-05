@@ -8,7 +8,9 @@ import LightThemeIcon from 'components/Icons/LightThemeIcon'
 
 const useStyles = makeStyles((theme) => ({
   theme: {
-    backgroundColor: theme.palette.text.secondary
+    width: 35,
+    height: 35,
+    backgroundColor: theme.palette.secondary.main
   },
 }));
 

@@ -1336,6 +1336,13 @@
     react-is "^16.8.0 || ^17.0.0"
     react-transition-group "^4.4.0"
 
+"@material-ui/icons@^4.11.2":
+  version "4.11.2"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.11.2.tgz#b3a7353266519cd743b6461ae9fdfcb1b25eb4c5"
+  integrity sha512-fQNsKX2TxBmqIGJCSi3tGTO/gZ+eJgWmMJkgDiOfyNaunNaxcklJQFaFogYcFl0qFuaEz1qaXYXboa/bUXVSOQ==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+
 "@material-ui/styles@^4.11.2":
   version "4.11.2"
   resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.11.2.tgz#e70558be3f41719e8c0d63c7a3c9ae163fdc84cb"
@@ -6047,6 +6054,11 @@ react-dom@17.0.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.1"
+
+react-identicons@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/react-identicons/-/react-identicons-1.2.5.tgz#3502249e49d88f4e3500092694410a984bb102fa"
+  integrity sha512-x7prkDoc2pD7wSl2C1pGxS+XAoSdq1ABWJWTBUimVTDVJArKOLd0B4wRUJpDm4r+9y7pgf8ylyPGsmlWSV5n2g==
 
 react-is@16.13.1, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"

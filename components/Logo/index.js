@@ -1,14 +1,13 @@
 
 import { memo } from 'react'
 import Link from 'next/link'
-import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import LINKS from 'utils/constants/links'
-import { LOGO_IMAGE_PATH } from 'utils/constants/image-paths'
+import { LOGO_IMAGE_PATH, LOGO_LABEL_IMAGE_PATH } from 'utils/constants/image-paths'
 import clsx from 'clsx'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   picture: {
     display: 'flex',
   },
@@ -18,17 +17,8 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'unset'
   },
   img: {
-    width: 50,
-    height: 50,
+    height: 40,
     objectFit: 'contain',
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    marginLeft: theme.spacing(1),
-    [theme.breakpoints.down('xs')]: {
-      fontSize: 26,
-    },
   },
 }));
 
@@ -39,26 +29,19 @@ const Logo = ({
 }) => {
   const classes = useStyles();
 
+  const imagePath = isLabel ? LOGO_LABEL_IMAGE_PATH : LOGO_IMAGE_PATH
+
   return (
     <Link href={LINKS.HOME.HREF}>
       <a className={clsx(classes.container, className)}>
         <picture className={classes.picture} {...rest}>
-          <source srcSet={LOGO_IMAGE_PATH} />
+          <source srcSet={imagePath} />
           <img
             className={classes.img}
-            src={LOGO_IMAGE_PATH}
+            src={imagePath}
             alt='logo'
           />
         </picture>
-        {isLabel &&
-          <Typography
-            variant='h1'
-            color='primary'
-            className={classes.title}
-          >
-            Snowball
-          </Typography>
-        }
       </a>
     </Link>
   )

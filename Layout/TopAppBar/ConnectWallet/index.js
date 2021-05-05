@@ -1,16 +1,29 @@
 import { memo, useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core';
 import { Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 
 import { injected } from 'libs/web3-connectors'
+import SnowIdenticon from 'components/SnowIdenticon'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import useEagerConnect from 'utils/hooks/useEagerConnect'
 import useInactiveListener from 'utils/hooks/useInactiveListener'
 import getEllipsis from 'utils/helpers/getEllipsis'
 
-const ConnectWallet = ({
-  className
-}) => {
+const useStyles = makeStyles((theme) => ({
+  account: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    padding: theme.spacing(0, 1)
+  },
+  connect: {
+    margin: theme.spacing(0, 1)
+  }
+}));
+
+const ConnectWallet = () => {
+  const classes = useStyles()
   const [activatingConnector, setActivatingConnector] = useState();
 
   const {
@@ -41,22 +54,28 @@ const ConnectWallet = ({
   }
 
   return (
-    <>
-      {account &&
-        <Typography
-          variant='caption'
-          color='textPrimary'
+    (active || error)
+      ? (
+        <div
+          className={classes.account}
+          onClick={walletHandler}
         >
-          {getEllipsis(account)}
-        </Typography>
-      }
-      <ContainedButton
-        className={className}
-        onClick={walletHandler}
-      >
-        {(active || error) ? 'Disconnect' : 'Connect'}
-      </ContainedButton>
-    </>
+          <SnowIdenticon value={account} />
+          <Typography
+            variant='caption'
+            color='textPrimary'
+          >
+            {getEllipsis(account)}
+          </Typography>
+        </div>
+      ) : (
+        <ContainedButton
+          className={classes.connect}
+          onClick={walletHandler}
+        >
+          Connect
+        </ContainedButton>
+      )
   );
 };
 
