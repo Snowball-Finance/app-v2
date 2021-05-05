@@ -22,25 +22,29 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
   },
   palette: {
     primary: {
-      main: '#232323'
+      main: '#5e5873'
     },
     secondary: {
       main: '#337ab7',
     },
     background: {
-      default: '#FFF9FF',
+      default: '#E5E5E5',
+      primary: '#FFFFFF',
     },
     text: {
-      primary: '#232323',
-      secondary: '#337ab7',
+      primary: '#5e5873',
+      secondary: '#B9B9C3',
     },
   },
   custom: {
     palette: {
-      white: '#FFFFFF'
+      white: '#FFFFFF',
+      green: '#28C76F'
     },
     layout: {
       maxDesktopWidth: 1550,
+      openDrawerWidth: 240,
+      closedDrawerWidth: 57
     },
   }
 }));
@@ -51,13 +55,14 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   },
   palette: {
     primary: {
-      main: '#FFFFFF',
+      main: '#337ab7',
     },
     secondary: {
       main: '#337ab7',
     },
     background: {
-      default: '#1c2132',
+      default: '#1e2644',
+      primary: '#1c2132',
     },
     text: {
       primary: '#FFFFFF',
@@ -66,10 +71,13 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   },
   custom: {
     palette: {
-      white: '#FFFFFF'
+      white: '#FFFFFF',
+      green: '#28C76F'
     },
     layout: {
       maxDesktopWidth: 1550,
+      openDrawerWidth: 240,
+      closedDrawerWidth: 57
     },
   }
 }));
