@@ -1,50 +1,85 @@
 import { memo } from 'react'
-import { AppBar, Toolbar } from '@material-ui/core'
+import {
+  Paper,
+  IconButton,
+  Typography
+} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import clsx from 'clsx'
+import MenuIcon from '@material-ui/icons/Menu'
+import MenuOpenIcon from '@material-ui/icons/MenuOpen'
 
-import Logo from 'components/Logo'
+import DollarIcon from 'components/Icons/DollarIcon'
 import ThemeButton from './ThemeButton'
 import ConnectWallet from './ConnectWallet'
-import { useCommonStyles } from 'styles/use-styles'
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-    padding: theme.spacing(1),
-    backgroundColor: theme.palette.background.default,
-    boxShadow: 'none',
-  },
-  toolBar: {
-    display: 'flex',
     justifyContent: 'space-between',
-    padding: 0
+    padding: theme.spacing(1),
+    backgroundColor: theme.palette.background.primary
   },
-  connect: {
-    margin: theme.spacing(1)
+  rowContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  balanceContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    }
+  },
+  menuIcon: {
+    width: 40,
+    height: 40,
+  },
+  balance: {
+    fontWeight: 'bold',
+    marginLeft: theme.spacing(1),
+    '& small': {
+      fontWeight: 'normal',
+    }
   }
 }));
 
-const TopAppBar = () => {
+const TopAppBar = ({
+  openDrawer,
+  onDraw
+}) => {
   const classes = useStyles();
-  const commonClasses = useCommonStyles();
 
   return (
-    <AppBar
-      position='relative'
-      className={classes.appBar}
-    >
-      <Toolbar className={clsx(classes.toolBar, commonClasses.containerWidth)}>
-        <Logo isLabel />
-        <div>
-          <ConnectWallet className={classes.connect} />
-          <ThemeButton />
+    <Paper className={classes.appBar}>
+      <div className={classes.rowContainer}>
+        <IconButton
+          color='inherit'
+          aria-label='open drawer'
+          onClick={onDraw}
+          className={classes.menuIcon}
+        >
+          {openDrawer
+            ? <MenuOpenIcon color='primary' />
+            : <MenuIcon color='primary' />
+          }
+        </IconButton>
+
+        <div className={classes.balanceContainer}>
+          <DollarIcon />
+          <Typography
+            variant='body2'
+            className={classes.balance}
+          >
+            252,002 SNOB <small>($150,00)</small>
+          </Typography>
         </div>
-      </Toolbar>
-    </AppBar>
+      </div>
+
+      <div className={classes.rowContainer}>
+        <ConnectWallet />
+        <ThemeButton />
+      </div>
+    </Paper>
   );
 };
 
