@@ -76,8 +76,8 @@ const TopAppBar = ({
       </div>
 
       <div className={classes.rowContainer}>
-        <ConnectWallet />
         <ThemeButton />
+        <ConnectWallet />
       </div>
     </Paper>
   );
