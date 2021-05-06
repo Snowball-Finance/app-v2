@@ -1,24 +1,23 @@
 
 import { memo } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor: theme.palette.background.default
-  }
-}));
+import { Grid } from '@material-ui/core'
 
 const Home = () => {
-  const classes = useStyles();
-
   return (
-    <main className={classes.root}>
-      Home Page
-    </main>
+    <Grid container spacing={3}>
+      <Grid item xs={12} lg={6}>
+        Compound & Earn
+      </Grid>
+      <Grid item xs={12} lg={6}>
+        Total Value Locked
+      </Grid>
+      <Grid item xs={12} lg={8}>
+        PAIRS
+      </Grid>
+      <Grid item xs={12} lg={4}>
+        Last transactions
+      </Grid>
+    </Grid>
   )
 }
 
