@@ -65,7 +65,7 @@ const ConnectWallet = () => {
             variant='caption'
             color='textPrimary'
           >
-            {getEllipsis(account)}
+            {getEllipsis(account || '')}
           </Typography>
         </div>
       ) : (

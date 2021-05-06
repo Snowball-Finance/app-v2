@@ -5,6 +5,7 @@ import {
 } from '@material-ui/core/styles'
 
 const fontFamily = [
+  'Montserrat',
   'Rubik',
   '-apple-system',
   'BlinkMacSystemFont',
@@ -19,6 +20,19 @@ const fontFamily = [
 const lightTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
+  },
+  MuiCssBaseline: {
+    '@global': {
+      '@font-face': [{
+        fontFamily: 'Montserrat',
+        fontStyle: 'normal',
+        fontDisplay: 'swap',
+        fontWeight: 400,
+        src: `
+          local('Montserrat'),
+          url('/assets/fonts/Montserrat.woff') format('woff')`
+      }],
+    }
   },
   palette: {
     primary: {
@@ -52,6 +66,19 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
 const darkTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
+  },
+  MuiCssBaseline: {
+    '@global': {
+      '@font-face': [{
+        fontFamily: 'Montserrat',
+        fontStyle: 'normal',
+        fontDisplay: 'swap',
+        fontWeight: 400,
+        src: `
+          local('Montserrat'),
+          url('/assets/fonts/Montserrat.woff') format('woff')`
+      }],
+    }
   },
   palette: {
     primary: {
