@@ -21,17 +21,19 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
   },
-  MuiCssBaseline: {
-    '@global': {
-      '@font-face': [{
-        fontFamily: 'Montserrat',
-        fontStyle: 'normal',
-        fontDisplay: 'swap',
-        fontWeight: 400,
-        src: `
-          local('Montserrat'),
-          url('/assets/fonts/Montserrat.woff') format('woff')`
-      }],
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '@font-face': [{
+          fontFamily: 'Montserrat',
+          fontStyle: 'normal',
+          fontDisplay: 'swap',
+          fontWeight: 400,
+          src: `
+            local('Montserrat'),
+            url('/assets/fonts/Montserrat.woff') format('woff')`
+        }],
+      }
     }
   },
   palette: {
@@ -67,17 +69,19 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
   },
-  MuiCssBaseline: {
-    '@global': {
-      '@font-face': [{
-        fontFamily: 'Montserrat',
-        fontStyle: 'normal',
-        fontDisplay: 'swap',
-        fontWeight: 400,
-        src: `
-          local('Montserrat'),
-          url('/assets/fonts/Montserrat.woff') format('woff')`
-      }],
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '@font-face': [{
+          fontFamily: 'Montserrat',
+          fontStyle: 'normal',
+          fontDisplay: 'swap',
+          fontWeight: 400,
+          src: `
+            local('Montserrat'),
+            url('/assets/fonts/Montserrat.woff') format('woff')`
+        }],
+      }
     }
   },
   palette: {
