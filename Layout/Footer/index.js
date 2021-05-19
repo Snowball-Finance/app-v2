@@ -50,14 +50,14 @@ const Footer = () => {
       <div className={classes.rowContainer}>
         <Typography
           variant='caption'
-          color='textSecondary'
+          color='textPrimary'
         >
           With
         </Typography>
         <HeartIcon className={classes.heart} />
         <Typography
           variant='caption'
-          color='textSecondary'
+          color='textPrimary'
         >
           from The South Pole
         </Typography>

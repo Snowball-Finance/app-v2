@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     fontSize: 16,
     fontWeight: 600,
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     '&:hover': {
       textDecoration: 'underline',
     }
