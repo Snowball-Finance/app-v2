@@ -2,14 +2,17 @@
 import { memo } from 'react'
 import { Grid } from '@material-ui/core'
 
+import CompoundAndEarn from './CompoundAndEarn'
+import TotalLockedValue from './TotalLockedValue'
+
 const Home = () => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} lg={6}>
-        Compound & Earn
+        <CompoundAndEarn />
       </Grid>
       <Grid item xs={12} lg={6}>
-        Total Value Locked
+        <TotalLockedValue />
       </Grid>
       <Grid item xs={12} lg={8}>
         PAIRS

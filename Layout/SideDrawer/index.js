@@ -113,7 +113,7 @@ const SideDrawer = ({
               <React.Fragment key={sidebar.TITLE}>
                 {sidebar.TITLE === LINKS.FAQ.TITLE && openDrawer &&
                   <Typography
-                    color='textSecondary'
+                    color='textPrimary'
                     className={classes.subtitle}>
                     HELP
                   </Typography>

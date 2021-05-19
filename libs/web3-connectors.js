@@ -5,10 +5,11 @@ import {
 } from '@web3-react/injected-connector'
 import { UnsupportedChainIdError } from '@web3-react/core'
 
+import { C_CHAIN_ID } from 'config'
 import MESSAGES from 'utils/constants/messages'
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1]
+  supportedChainIds: [C_CHAIN_ID]
 });
 
 const getErrorMessage = (error) => {

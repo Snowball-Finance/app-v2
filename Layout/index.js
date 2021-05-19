@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     marginLeft: theme.custom.layout.closedDrawerWidth,
     [theme.breakpoints.down('xs')]: {
-      minWidth: `calc(100vw - ${theme.custom.layout.closedDrawerWidth}px)`,
+      minWidth: `calc(100vw - ${theme.custom.layout.closedDrawerWidth + 16}px)`,
     },
   },
   openContainer: {
