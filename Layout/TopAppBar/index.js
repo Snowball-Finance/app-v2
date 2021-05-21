@@ -14,6 +14,8 @@ import ConnectWallet from './ConnectWallet'
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
+    zIndex: 2,
+    position: 'relative',
     display: 'flex',
     justifyContent: 'space-between',
     padding: theme.spacing(1),

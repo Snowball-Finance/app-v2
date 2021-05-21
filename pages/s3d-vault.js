@@ -1,8 +1,8 @@
 
-import S3fVault from 'containers/S3fVault'
+import S3dVault from 'containers/S3dVault'
 
 export default function S3fVaultPage() {
   return (
-    <S3fVault />
+    <S3dVault />
   )
 }
