@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.custom.layout.openDrawerWidth,
   },
   content: {
-    flex: '1 0 auto'
+    flex: '1 0 auto',
+    marginBottom: theme.spacing(2)
   },
 }));
 

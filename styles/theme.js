@@ -51,7 +51,7 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
     },
     background: {
       default: '#E5E5E5',
-      primary: '#FFFFFF',
+      primary: '#FFFFFF'
     },
     text: {
       primary: '#5e5873',
@@ -61,6 +61,7 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
   custom: {
     palette: {
       white: '#FFFFFF',
+      lightBlue: '#F1F0FD',
       green: '#28C76F'
     },
     layout: {
@@ -115,6 +116,7 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   custom: {
     palette: {
       white: '#FFFFFF',
+      lightBlue: '#F1F0FD',
       green: '#28C76F'
     },
     layout: {
