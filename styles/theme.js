@@ -21,25 +21,33 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
   },
-  MuiCssBaseline: {
-    '@global': {
-      '@font-face': [{
-        fontFamily: 'Montserrat',
-        fontStyle: 'normal',
-        fontDisplay: 'swap',
-        fontWeight: 400,
-        src: `
-          local('Montserrat'),
-          url('/assets/fonts/Montserrat.woff') format('woff')`
-      }],
-    }
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '@font-face': [{
+          fontFamily: 'Montserrat',
+          fontStyle: 'normal',
+          fontDisplay: 'swap',
+          fontWeight: 400,
+          src: `
+            local('Montserrat'),
+            url('/assets/fonts/Montserrat.woff') format('woff')`
+        }],
+      }
+    },
+    MuiCard: {
+      root: {
+        borderRadius: 6,
+      }
+    },
   },
   palette: {
     primary: {
-      main: '#5e5873'
+      main: '#0085EB'
     },
     secondary: {
-      main: '#337ab7',
+      main: '#B9B9C3',
+      contrastText: '#ffffff'
     },
     background: {
       default: '#E5E5E5',
@@ -47,7 +55,7 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
     },
     text: {
       primary: '#5e5873',
-      secondary: '#B9B9C3',
+      secondary: '#28C76F',
     },
   },
   custom: {
@@ -67,25 +75,33 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   typography: {
     fontFamily: fontFamily.join(',')
   },
-  MuiCssBaseline: {
-    '@global': {
-      '@font-face': [{
-        fontFamily: 'Montserrat',
-        fontStyle: 'normal',
-        fontDisplay: 'swap',
-        fontWeight: 400,
-        src: `
-          local('Montserrat'),
-          url('/assets/fonts/Montserrat.woff') format('woff')`
-      }],
-    }
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '@font-face': [{
+          fontFamily: 'Montserrat',
+          fontStyle: 'normal',
+          fontDisplay: 'swap',
+          fontWeight: 400,
+          src: `
+            local('Montserrat'),
+            url('/assets/fonts/Montserrat.woff') format('woff')`
+        }],
+      }
+    },
+    MuiCard: {
+      root: {
+        borderRadius: 6,
+      }
+    },
   },
   palette: {
     primary: {
       main: '#337ab7',
     },
     secondary: {
-      main: '#337ab7',
+      main: '#B9B9C3',
+      contrastText: '#ffffff'
     },
     background: {
       default: '#1e2644',

@@ -1,6 +1,6 @@
 
-const ETH_CHAIN_ID = 1
+const C_CHAIN_ID = 43113
 
 export {
-  ETH_CHAIN_ID
+  C_CHAIN_ID
 }
