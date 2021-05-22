@@ -14,6 +14,8 @@ const LP_ICONS = Object.freeze({
   frax: '/assets/images/lp-icons/FRAX.png',
   tusd: '/assets/images/lp-icons/TUSD.png',
   busd: '/assets/images/lp-icons/BUSD.png',
+  s3d: '/assets/images/lp-icons/S3D.png',
+  s3f: '/assets/images/lp-icons/S3F.png',
 })
 
 export default LP_ICONS;

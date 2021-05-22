@@ -37,7 +37,8 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
     },
     MuiCard: {
       root: {
-        borderRadius: 6,
+        boxShadow: '1px 2px 5px rgba(117, 115, 115, 0.2)',
+        borderRadius: 10,
       }
     },
   },
@@ -61,10 +62,14 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
   custom: {
     palette: {
       white: '#FFFFFF',
-      lightBlue: '#F1F0FD',
-      green: '#28C76F'
+      lightBlue: '#DBEDFF',
+      blue: '#1A93F2',
+      darkBlue: '#1E2848',
+      green: '#28C76F',
+      darkGreen: '#2A4428',
     },
     layout: {
+      maxCardWidth: 513,
       maxDesktopWidth: 1550,
       openDrawerWidth: 240,
       closedDrawerWidth: 57
@@ -92,7 +97,8 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
     },
     MuiCard: {
       root: {
-        borderRadius: 6,
+        boxShadow: '1px 2px 5px rgba(117, 115, 115, 0.2)',
+        borderRadius: 10,
       }
     },
   },
@@ -116,10 +122,14 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   custom: {
     palette: {
       white: '#FFFFFF',
-      lightBlue: '#F1F0FD',
-      green: '#28C76F'
+      lightBlue: '#DBEDFF',
+      blue: '#1A93F2',
+      darkBlue: '#1E2848',
+      green: '#28C76F',
+      darkGreen: '#2A4428',
     },
     layout: {
+      maxCardWidth: 513,
       maxDesktopWidth: 1550,
       openDrawerWidth: 240,
       closedDrawerWidth: 57
