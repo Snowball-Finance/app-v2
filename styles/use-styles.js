@@ -15,6 +15,23 @@ const useCommonStyles = makeStyles(theme => ({
   }
 }));
 
+const useFormStyles = makeStyles((theme) => ({
+  button: {
+    fontSize: 24,
+    textTransform: 'capitalize'
+  },
+  iconContainer: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  icon: {
+    position: 'absolute',
+    bottom: -theme.spacing(4.5),
+  }
+}));
+
 export {
-  useCommonStyles
+  useCommonStyles,
+  useFormStyles
 };

@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CardWrapper = ({
+const CardFormWrapper = ({
   title,
   className,
   children
@@ -34,4 +34,4 @@ const CardWrapper = ({
   )
 }
 
-export default memo(CardWrapper)
+export default memo(CardFormWrapper)
