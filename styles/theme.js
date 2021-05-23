@@ -50,12 +50,15 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
       main: '#B9B9C3',
       contrastText: '#ffffff'
     },
+    danger: {
+      main: '#eb196e',
+    },
     background: {
       default: '#E5E5E5',
       primary: '#FFFFFF'
     },
     text: {
-      primary: '#5e5873',
+      primary: '#6E6B7B',
       secondary: '#28C76F',
     },
   },
@@ -67,6 +70,7 @@ const lightTheme = responsiveFontSizes(createMuiTheme({
       darkBlue: '#1E2848',
       green: '#28C76F',
       darkGreen: '#2A4428',
+      border: '#D8D6DE'
     },
     layout: {
       maxCardWidth: 513,
@@ -110,6 +114,9 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
       main: '#B9B9C3',
       contrastText: '#ffffff'
     },
+    danger: {
+      main: '#eb196e',
+    },
     background: {
       default: '#1e2644',
       primary: '#1c2132',
@@ -127,6 +134,7 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
       darkBlue: '#1E2848',
       green: '#28C76F',
       darkGreen: '#2A4428',
+      border: '#D8D6DE'
     },
     layout: {
       maxCardWidth: 513,

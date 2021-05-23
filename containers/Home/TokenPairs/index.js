@@ -11,8 +11,8 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import ChartUpIcon from 'components/Icons/ChartUpIcon'
 import ChartDownIcon from 'components/Icons/ChartDownIcon'
+import SnowTokenIcon from 'components/SnowTokenIcon'
 import TableContainer from './TableContainer'
-import LP_ICONS from 'utils/constants/lp-icons'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -27,13 +27,6 @@ const useStyles = makeStyles((theme) => ({
   tokenContainer: {
     display: 'flex',
     alignItems: 'center'
-  },
-  tokenImage: {
-    width: 34,
-    height: 34,
-    borderRadius: '50%',
-    objectFit: 'container',
-    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
   token: {
     fontSize: 12,
@@ -70,10 +63,9 @@ const TokenPairs = () => {
               <Grid container spacing={2}>
                 {pair.tokens.map((token, index) => (
                   <Grid item xs={4} key={index} className={classes.tokenContainer}>
-                    <img
-                      alt='token-icon'
-                      src={LP_ICONS[token.priceId]}
-                      className={classes.tokenImage}
+                    <SnowTokenIcon
+                      size={34}
+                      token={token.priceId}
                     />
                     <Typography
                       color='textPrimary'
