@@ -100,7 +100,7 @@ const LiquidityForm = () => {
               type='submit'
               className={classes.button}
             >
-              Swap
+              Add liquidity
             </GradientButton>
           </Grid>
         </Grid>
