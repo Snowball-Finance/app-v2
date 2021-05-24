@@ -44,6 +44,7 @@ const SwapForm = () => {
           <Grid item xs={12}>
             <Controller
               as={<TokenTextField />}
+              isTokenSelect
               name='fromSwap'
               label='Swap from:'
               token={fromToken}
@@ -61,6 +62,7 @@ const SwapForm = () => {
           <Grid item xs={12}>
             <Controller
               as={<TokenTextField />}
+              isTokenSelect
               name='toSwap'
               label='Swap to:'
               token={toToken}
