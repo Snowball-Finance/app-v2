@@ -26,9 +26,11 @@ const CardFormWrapper = ({
 
   return (
     <Card className={clsx(classes.root, className)}>
-      <Typography className={classes.title}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography className={classes.title}>
+          {title}
+        </Typography>
+      )}
       {children}
     </Card>
   )

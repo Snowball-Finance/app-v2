@@ -73,6 +73,7 @@ const useStyles = makeStyles(theme => {
 
 const TokenTextField = React.forwardRef(({
   label,
+  isTokenSelect = false,
   token,
   setToken,
   tokens,
@@ -99,24 +100,32 @@ const TokenTextField = React.forwardRef(({
           <Typography variant='caption'>
             {label}
           </Typography>
-          <Select
-            displayEmpty
-            inputProps={{ 'aria-label': 'available tokens' }}
-            value={token}
-            onChange={selectHandler}
-            className={classes.select}
-            classes={{
-              select: classes.selectInput
-            }}
-          >
-            {tokens.map((token, index) => {
-              return (
-                <MenuItem key={index} value={token}>
-                  {token.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
+          {isTokenSelect
+            ? (
+              <Select
+                displayEmpty
+                inputProps={{ 'aria-label': 'available tokens' }}
+                value={token}
+                onChange={selectHandler}
+                className={classes.select}
+                classes={{
+                  select: classes.selectInput
+                }}
+              >
+                {tokens.map((token, index) => {
+                  return (
+                    <MenuItem key={index} value={token}>
+                      {token.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            ) : (
+              <Typography className={classes.select}>
+                {token.name}
+              </Typography>
+            )
+          }
         </div>
         {!!balance &&
           <Button className={classes.maxButton} onClick={maxHandler} >
