@@ -2,23 +2,14 @@
 import { memo, useCallback, useState } from 'react'
 import { Grid } from '@material-ui/core'
 import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
 
 import AddIcon from 'components/Icons/AddIcon'
 import GradientButton from 'components/UI/Buttons/GradientButton'
 import TokenTextField from 'components/UI/TextFields/TokenTextField'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
-import { BALANCE_VALID } from 'utils/constants/validations'
 import TOKENS from 'utils/temp/tokens'
 import { useFormStyles } from 'styles/use-styles'
-
-const schema = yup.object().shape({
-  firstInput: BALANCE_VALID,
-  secondInput: BALANCE_VALID,
-  thirdInput: BALANCE_VALID,
-});
 
 const LiquidityForm = () => {
   const classes = useFormStyles();
@@ -27,9 +18,7 @@ const LiquidityForm = () => {
   const [secondToken, setSecondToken] = useState(TOKENS[1]);
   const [thirdToken, setThirdToken] = useState(TOKENS[2]);
 
-  const { control, handleSubmit, errors } = useForm({
-    resolver: yupResolver(schema)
-  });
+  const { control, handleSubmit, errors } = useForm();
 
   const onSubmit = useCallback(async (data) => {
     try {
