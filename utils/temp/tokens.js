@@ -1,7 +1,7 @@
 
 const TOKENS = [
   {
-    name: 'Tether USD',
+    name: 'USDT',
     priceId: 'usdt',
     price: '1.000',
     balance: 1900938

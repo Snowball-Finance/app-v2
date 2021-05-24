@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
-import SwapIcon from 'components/Icons/SwapIcon'
+import AddIcon from 'components/Icons/AddIcon'
 import GradientButton from 'components/UI/Buttons/GradientButton'
 import TokenTextField from 'components/UI/TextFields/TokenTextField'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
@@ -15,15 +15,17 @@ import TOKENS from 'utils/temp/tokens'
 import { useFormStyles } from 'styles/use-styles'
 
 const schema = yup.object().shape({
-  fromSwap: BALANCE_VALID,
-  toSwap: BALANCE_VALID,
+  firstInput: BALANCE_VALID,
+  secondInput: BALANCE_VALID,
+  thirdInput: BALANCE_VALID,
 });
 
-const SwapForm = () => {
+const LiquidityForm = () => {
   const classes = useFormStyles();
 
-  const [fromToken, setFromToken] = useState(TOKENS[0]);
-  const [toToken, setToToken] = useState(TOKENS[1]);
+  const [firstToken, setFirstToken] = useState(TOKENS[0]);
+  const [secondToken, setSecondToken] = useState(TOKENS[1]);
+  const [thirdToken, setThirdToken] = useState(TOKENS[2]);
 
   const { control, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema)
@@ -38,36 +40,53 @@ const SwapForm = () => {
   }, []);
 
   return (
-    <CardFormWrapper title='Swap'>
+    <CardFormWrapper title='Add liquidity'>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Controller
               as={<TokenTextField />}
-              name='fromSwap'
-              label='Swap from:'
-              token={fromToken}
-              setToken={setFromToken}
+              name='firstInput'
+              label='Input:'
+              token={firstToken}
+              setToken={setFirstToken}
               tokens={TOKENS}
-              balance={fromToken.balance}
-              error={errors.fromSwap?.message}
+              balance={firstToken.balance}
+              error={errors.firstInput?.message}
               control={control}
               defaultValue={0}
             />
             <div className={classes.iconContainer}>
-              <SwapIcon className={classes.icon} />
+              <AddIcon className={classes.icon} />
             </div>
           </Grid>
           <Grid item xs={12}>
             <Controller
               as={<TokenTextField />}
-              name='toSwap'
-              label='Swap to:'
-              token={toToken}
-              setToken={setToToken}
+              name='secondInput'
+              label='Input:'
+              token={secondToken}
+              setToken={setSecondToken}
               tokens={TOKENS}
-              balance={toToken.balance}
-              error={errors.toSwap?.message}
+              balance={secondToken.balance}
+              error={errors.secondInput?.message}
+              control={control}
+              defaultValue={0}
+            />
+            <div className={classes.iconContainer}>
+              <AddIcon className={classes.icon} />
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              as={<TokenTextField />}
+              name='thirdInput'
+              label='Input:'
+              token={thirdToken}
+              setToken={setThirdToken}
+              tokens={TOKENS}
+              balance={thirdToken.balance}
+              error={errors.thirdInput?.message}
               control={control}
               defaultValue={0}
             />
@@ -81,8 +100,8 @@ const SwapForm = () => {
               type='submit'
               className={classes.button}
             >
-              Swap
-          </GradientButton>
+              Add liquidity
+            </GradientButton>
           </Grid>
         </Grid>
       </form>
@@ -90,4 +109,4 @@ const SwapForm = () => {
   )
 }
 
-export default memo(SwapForm)
+export default memo(LiquidityForm)
