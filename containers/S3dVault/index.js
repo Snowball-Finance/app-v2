@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import VaultHeader from 'parts/Vault/VaultHeader'
 import VaultTabs from 'parts/Vault/VaultTabs'
 import SwapForm from './SwapForm'
+import LiquidityForm from './LiquidityForm'
+import TransactionsCard from './TransactionsCard'
 import { VAULT_S3D_IMAGE_PATH } from 'utils/constants/image-paths'
 import { VAULT_TABS } from 'utils/constants/vault-tabs'
 
@@ -39,7 +41,9 @@ const S3dVault = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />
-      <SwapForm />
+      {selectedTab === VAULT_TABS.swap.VALUE && <SwapForm />}
+      {selectedTab === VAULT_TABS.liquidity.VALUE && <LiquidityForm />}
+      {selectedTab === VAULT_TABS.transactions.VALUE && <TransactionsCard />}
     </main>
   )
 }

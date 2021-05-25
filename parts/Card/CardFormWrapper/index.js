@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CardWrapper = ({
+const CardFormWrapper = ({
   title,
   className,
   children
@@ -26,12 +26,14 @@ const CardWrapper = ({
 
   return (
     <Card className={clsx(classes.root, className)}>
-      <Typography className={classes.title}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography className={classes.title}>
+          {title}
+        </Typography>
+      )}
       {children}
     </Card>
   )
 }
 
-export default memo(CardWrapper)
+export default memo(CardFormWrapper)
