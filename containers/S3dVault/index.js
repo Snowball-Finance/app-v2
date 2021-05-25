@@ -7,6 +7,7 @@ import VaultTabs from 'parts/Vault/VaultTabs'
 import SwapForm from './SwapForm'
 import LiquidityForm from './LiquidityForm'
 import TransactionsCard from './TransactionsCard'
+import MyShare from './MyShare'
 import { VAULT_S3D_IMAGE_PATH } from 'utils/constants/image-paths'
 import { VAULT_TABS } from 'utils/constants/vault-tabs'
 
@@ -44,6 +45,7 @@ const S3dVault = () => {
       {selectedTab === VAULT_TABS.swap.VALUE && <SwapForm />}
       {selectedTab === VAULT_TABS.liquidity.VALUE && <LiquidityForm />}
       {selectedTab === VAULT_TABS.transactions.VALUE && <TransactionsCard />}
+      {selectedTab === VAULT_TABS.share.VALUE && <MyShare />}
     </main>
   )
 }
