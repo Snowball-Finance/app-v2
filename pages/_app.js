@@ -1,8 +1,10 @@
 
 import Head from 'next/head'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { ApolloProvider } from '@apollo/client'
 
 import Layout from 'Layout'
+import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
 import SnowWeb3Provider from 'utils/hocs/SnowWeb3Provider'
 import ThemeProvider from 'utils/hocs/ThemeProvider'
@@ -10,6 +12,8 @@ import * as COMMON_CONSTANTS from 'utils/constants/common'
 import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
 
 function MyApp({ Component, pageProps }) {
+  const apolloClient = useApollo(pageProps.initialApolloState);
+
   return (
     <>
       <Head>
@@ -42,14 +46,16 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
       <SnowWeb3Provider>
-        <DarkModeProvider>
-          <ThemeProvider>
-            <CssBaseline />
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ThemeProvider>
-        </DarkModeProvider>
+        <ApolloProvider client={apolloClient}>
+          <DarkModeProvider>
+            <ThemeProvider>
+              <CssBaseline />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
+          </DarkModeProvider>
+        </ApolloProvider>
       </SnowWeb3Provider>
     </>
   )
