@@ -17,6 +17,12 @@ const TOKENS = [
     priceId: 'busd',
     price: '1.311',
     balance: 24100
+  },
+  {
+    name: 'Frax',
+    priceId: 'frax',
+    price: '1.311',
+    balance: 214766.67
   }
 ]
 
