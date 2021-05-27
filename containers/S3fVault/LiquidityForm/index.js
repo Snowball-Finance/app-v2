@@ -87,6 +87,7 @@ const LiquidityForm = () => {
             <GradientButton
               fullWidth
               type='submit'
+              color='secondary'
               className={classes.button}
             >
               Add liquidity

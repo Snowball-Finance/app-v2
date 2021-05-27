@@ -3,6 +3,7 @@ import { memo } from 'react'
 import { Card, Typography, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { CONTRACTS } from 'config'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import {
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
@@ -71,6 +72,28 @@ const useStyles = makeStyles((theme) => ({
 const CompoundAndEarn = () => {
   const classes = useStyles();
 
+  const addMetamask = async () => {
+    const provider = window.ethereum
+    if (provider) {
+      try {
+        await provider.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: CONTRACTS.SNOWBALL,
+              symbol: 'SNOB',
+              decimals: '18',
+              image: '',
+            },
+          },
+        })
+      } catch (error) {
+        console.log('Error => addMetamask')
+      }
+    }
+  }
+
   return (
     <Card className={classes.card}>
       <Typography
@@ -127,7 +150,11 @@ const CompoundAndEarn = () => {
           </Typography>
         </div>
 
-        <ContainedButton color='secondary' className={classes.addMetamask}>
+        <ContainedButton
+          color='secondary'
+          className={classes.addMetamask}
+          onClick={addMetamask}
+        >
           <img
             alt='metamask'
             src={METAMASK_IMAGE_PATH}
