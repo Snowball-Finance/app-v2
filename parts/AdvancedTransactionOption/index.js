@@ -1,10 +1,9 @@
 
 import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 
 import SnowTextField from 'components/UI/TextFields/SnowTextField'
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -28,18 +27,22 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center'
   },
   button: {
-    margin: theme.spacing(0, 1)
+    marginRight: theme.spacing(1)
   },
-  firstInput: {
-    maxWidth: 80
-  },
-  secondInput: {
+  input: {
     maxWidth: 120
   }
 }));
 
-const AdvancedTransactionOption = () => {
+const AdvancedTransactionOption = ({
+  value,
+  setValue
+}) => {
   const classes = useStyles();
+
+  const inputHandler = (event) => {
+    setValue(event.target.value)
+  }
 
   return (
     <>
@@ -55,20 +58,29 @@ const AdvancedTransactionOption = () => {
           Max Slippage:
         </Typography>
         <div className={classes.inputContainer}>
-          <SnowTextField
-            type='number'
-            name='percent'
-            endAdornment={'%'}
-            className={classes.firstInput}
-          />
-          <ContainedButton className={classes.button}>
+          <Button
+            className={classes.button}
+            variant={value === 0.1 ? 'contained' : 'outlined'}
+            color='primary'
+            onClick={() => setValue(0.1)}
+          >
+            0.1%
+          </Button>
+          <Button
+            className={classes.button}
+            variant={value === 1 ? 'contained' : 'outlined'}
+            color='primary'
+            onClick={() => setValue(1)}
+          >
             1%
-          </ContainedButton>
+          </Button>
           <SnowTextField
             type='number'
             name='percent'
             endAdornment={'%'}
-            className={classes.secondInput}
+            className={classes.input}
+            value={value}
+            onChange={inputHandler}
           />
         </div>
       </div>

@@ -45,9 +45,11 @@ const CurrencyItem = ({
         <Typography className={classes.token}>
           {token.name}
         </Typography>
-        <Typography className={classes.percent}>
-          {`${percent}%`}
-        </Typography>
+        {percent &&
+          <Typography className={classes.percent}>
+            {`${percent}%`}
+          </Typography>
+        }
       </div>
       <Typography className={classes.token}>
         {value}

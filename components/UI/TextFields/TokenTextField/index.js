@@ -67,6 +67,9 @@ const useStyles = makeStyles(theme => {
     },
     balance: {
       fontSize: 12
+    },
+    error: {
+      fontSize: 12
     }
   };
 });
@@ -74,6 +77,7 @@ const useStyles = makeStyles(theme => {
 const TokenTextField = React.forwardRef(({
   label,
   isTokenSelect = false,
+  disabledMax = false,
   token,
   setToken,
   tokens,
@@ -127,7 +131,7 @@ const TokenTextField = React.forwardRef(({
             )
           }
         </div>
-        {!!balance &&
+        {!disabledMax &&
           <Button className={classes.maxButton} onClick={maxHandler} >
             MAX
           </Button>
@@ -156,8 +160,8 @@ const TokenTextField = React.forwardRef(({
         {!!error &&
           <Typography
             align='right'
-            variant='subtitle2'
             color='error'
+            className={classes.error}
           >
             {error}
           </Typography>
