@@ -23,6 +23,29 @@ const GET_PAIRS_INFOS = gql`
   }
 `;
 
+const GET_LATEST_PAIRS_INFO = gql`
+  query getLatestPairsInfo{
+    getLatestPairsInfo{
+      totalTVL, 
+      marketcap, 
+      circulatingSupply, 
+      snobPerBlockDay, 
+      blockPast24hrs, 
+      pairsInfo{
+        name, 
+        totalStakedUsd, 
+        dailyAPR, 
+        yearlyAPR, 
+        weeklyAPR,
+        poolInfo{
+          p0, p1, q0, q1, tvl
+        }
+      }
+    } 
+  }
+`;
+
 export {
-  GET_PAIRS_INFOS
+  GET_PAIRS_INFOS,
+  GET_LATEST_PAIRS_INFO
 };

@@ -1,5 +1,5 @@
 
-const IS_MAINNET = true;
+const IS_MAINNET = process.env.NETWORK === 'mainnet'
 
 const C_CHAIN_ID = IS_MAINNET ? 43114 : 43113
 const PROXY_URL = 'https://snob-backend-api.herokuapp.com/graphql'
@@ -33,6 +33,7 @@ const CONTRACTS = IS_MAINNET
   }
 
 export {
+  IS_MAINNET,
   C_CHAIN_ID,
   CONTRACTS,
   PROXY_URL

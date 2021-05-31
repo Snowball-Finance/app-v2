@@ -6,6 +6,8 @@ import { ApolloProvider } from '@apollo/client'
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
+import { PopupProvider } from 'contexts/popup-context'
+import { ContractProvider } from 'contexts/contract-context'
 import SnowWeb3Provider from 'utils/hocs/SnowWeb3Provider'
 import ThemeProvider from 'utils/hocs/ThemeProvider'
 import * as COMMON_CONSTANTS from 'utils/constants/common'
@@ -49,10 +51,14 @@ function MyApp({ Component, pageProps }) {
         <ApolloProvider client={apolloClient}>
           <DarkModeProvider>
             <ThemeProvider>
-              <CssBaseline />
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
+              <PopupProvider>
+                <ContractProvider>
+                  <CssBaseline />
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </ContractProvider>
+              </PopupProvider>
             </ThemeProvider>
           </DarkModeProvider>
         </ApolloProvider>
