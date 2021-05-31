@@ -55,14 +55,13 @@ export function S3dVaultContractProvider({ children }) {
     }
   }
 
-  console.log('s3dToken => ', s3dToken)
-  console.log('usdtToken => ', usdtToken)
-  console.log('busdToken => ', busdToken)
-  console.log('daiToken => ', daiToken)
-
   return (
     <ContractContext.Provider
       value={{
+        s3dToken,
+        usdtToken,
+        busdContract,
+        daiContract,
         tokenArray
       }}
     >
@@ -78,10 +77,18 @@ export function useS3dVaultContracts() {
   }
 
   const {
+    s3dToken,
+    usdtToken,
+    busdContract,
+    daiContract,
     tokenArray
   } = context
 
   return {
+    s3dToken,
+    usdtToken,
+    busdContract,
+    daiContract,
     tokenArray
   }
 }
