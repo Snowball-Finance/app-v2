@@ -2,12 +2,15 @@
 import { memo } from 'react'
 import { Grid } from '@material-ui/core'
 
+import { useS3dVaultContracts } from 'contexts/s3d-vault-context'
 import TokenSwapIcon from 'components/Icons/TokenSwapIcon'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import RemoveLiquidity from 'parts/Vault/RemoveLiquidity'
 import StakeInformation from 'parts/Vault/StakeInformation'
 
 const ShareCard = () => {
+  const { s3dToken, staked } = useS3dVaultContracts()
+
   return (
     <CardFormWrapper
       icon={<TokenSwapIcon />}
@@ -18,7 +21,7 @@ const ShareCard = () => {
         <Grid item xs={12}>
           <RemoveLiquidity
             type='s3d'
-            value='150,234.293'
+            value={s3dToken.balance.toLocaleString()}
             onRemove={() => { }}
           />
         </Grid>
@@ -26,7 +29,7 @@ const ShareCard = () => {
           <StakeInformation
             type='s3d'
             availableStake='150,234.293'
-            staked='1,293'
+            staked={staked.toLocaleString()}
             onWithdraw={() => { }}
             onStake={() => { }}
           />

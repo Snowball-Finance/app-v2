@@ -41,7 +41,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TotalLockedValue = () => {
+const TotalLockedValue = ({
+  latestInfo
+}) => {
   const classes = useStyles();
 
   return (
@@ -57,7 +59,7 @@ const TotalLockedValue = () => {
         color='textPrimary'
         className={classes.snob}
       >
-        $19,493,486
+        ${(latestInfo.totalTVL || 0).toLocaleString()}
       </Typography>
 
       <div>
@@ -67,16 +69,16 @@ const TotalLockedValue = () => {
               Marketcap
           </Typography>
             <Typography variant='h6' color='textPrimary'>
-              $8,004,805.281
-          </Typography>
+              ${(latestInfo.marketcap || 0).toLocaleString()}
+            </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant='h6' color='secondary'>
               Circulating Supply
           </Typography>
             <Typography variant='h6' color='textPrimary'>
-              14,610,721.63 - Max: 18,000,000
-          </Typography>
+              {`${(latestInfo.circulatingSupply || 0).toLocaleString()} - Max: 18,000,000`}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider
@@ -90,16 +92,16 @@ const TotalLockedValue = () => {
               SNOB per Block / Day
           </Typography>
             <Typography variant='h6' color='textPrimary'>
-              0.5  /  7500
-          </Typography>
+              {`${latestInfo.snobPerBlockDay}  /  7500`}
+            </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant='h6' color='secondary'>
               Blocks Past 24hrs
           </Typography>
             <Typography variant='h6' color='textPrimary'>
-              ~37, 145
-          </Typography>
+              {`~${(latestInfo.blockPast24hrs || 0).toLocaleString()}`}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant='h6' color='secondary'>
