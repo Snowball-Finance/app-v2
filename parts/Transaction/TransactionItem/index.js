@@ -73,7 +73,7 @@ const TransactionItem = ({
             className={classes.balance}
             style={{ color: typeInfo.color }}
           >
-            {`$ ${transaction.balance.toLocaleString()}`}
+            {`$${transaction.balance.toLocaleString()}`}
           </Typography>
         </Grid>
       </Grid>

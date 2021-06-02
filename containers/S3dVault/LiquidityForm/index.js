@@ -3,62 +3,68 @@ import { memo, useState } from 'react'
 import { Grid } from '@material-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 
+import { usePopup } from 'contexts/popup-context'
+import { useS3dVaultContracts } from 'contexts/s3d-vault-context'
 import AddIcon from 'components/Icons/AddIcon'
 import GradientButton from 'components/UI/Buttons/GradientButton'
 import TokenTextField from 'components/UI/TextFields/TokenTextField'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import VaultLiquidityDialog from 'parts/Vault/VaultLiquidityDialog'
-import TOKENS from 'utils/temp/tokens'
 import { useFormStyles } from 'styles/use-styles'
 
 const LiquidityForm = () => {
-  const classes = useFormStyles();
+  const classes = useFormStyles()
+  const { setPopUp } = usePopup()
+  const { usdtToken, busdToken, daiToken, getDepositReview, addLiquidity } = useS3dVaultContracts()
 
-  const [firstToken, setFirstToken] = useState(TOKENS[0]);
-  const [secondToken, setSecondToken] = useState(TOKENS[1]);
-  const [thirdToken, setThirdToken] = useState(TOKENS[2]);
   const [maxSlippage, setMaxSlippage] = useState(0.1)
   const [liquidityData, setLiquidityData] = useState([])
   const [receivingValue, setReceivingValue] = useState({})
   const [discount, setDiscount] = useState(0)
   const [liquidityDialog, setLiquidityDialog] = useState(false);
 
-  const { control, handleSubmit, errors } = useForm();
+  const { control, handleSubmit } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    if (!data.firstInput && !data.secondInput && !data.thirdInput) {
+      setPopUp({
+        title: 'Input Error',
+        text: `Please enter at least one input`
+      })
+      return;
+    }
+
     const liquidityData = [
       {
-        token: TOKENS[0],
+        token: usdtToken,
         value: data.firstInput
       },
       {
-        token: TOKENS[1],
+        token: busdToken,
         value: data.secondInput
       },
       {
-        token: TOKENS[2],
+        token: daiToken,
         value: data.thirdInput
       }
     ]
 
+    const { minToMintValue, discount } = await getDepositReview(liquidityData)
     const receivingValue = {
       token: 's3D',
-      value: 30.95
+      value: minToMintValue
     }
+
     setLiquidityData(liquidityData)
     setReceivingValue(receivingValue)
-    setDiscount(0.94)
+    setDiscount(discount)
     setLiquidityDialog(true)
   }
 
-  const addLiquidity = () => {
+  const addLiquidityHandler = () => {
     setLiquidityDialog(false)
-    try {
-      console.log('confirm logic');
-    } catch (error) {
-      console.log(error)
-    }
+    addLiquidity(liquidityData, maxSlippage, receivingValue)
   }
 
   return (
@@ -70,11 +76,8 @@ const LiquidityForm = () => {
               as={<TokenTextField />}
               name='firstInput'
               label='Input:'
-              token={firstToken}
-              setToken={setFirstToken}
-              tokens={TOKENS}
-              balance={firstToken.balance}
-              error={errors.firstInput?.message}
+              token={usdtToken}
+              balance={usdtToken.balance}
               control={control}
               defaultValue={0}
             />
@@ -87,11 +90,8 @@ const LiquidityForm = () => {
               as={<TokenTextField />}
               name='secondInput'
               label='Input:'
-              token={secondToken}
-              setToken={setSecondToken}
-              tokens={TOKENS}
-              balance={secondToken.balance}
-              error={errors.secondInput?.message}
+              token={busdToken}
+              balance={busdToken.balance}
               control={control}
               defaultValue={0}
             />
@@ -104,11 +104,8 @@ const LiquidityForm = () => {
               as={<TokenTextField />}
               name='thirdInput'
               label='Input:'
-              token={thirdToken}
-              setToken={setThirdToken}
-              tokens={TOKENS}
-              balance={thirdToken.balance}
-              error={errors.thirdInput?.message}
+              token={daiToken}
+              balance={daiToken.balance}
               control={control}
               defaultValue={0}
             />
@@ -138,7 +135,7 @@ const LiquidityForm = () => {
           maxSlippage={maxSlippage}
           open={liquidityDialog}
           setOpen={setLiquidityDialog}
-          onConfirm={addLiquidity}
+          onConfirm={addLiquidityHandler}
         />
       }
     </CardFormWrapper>

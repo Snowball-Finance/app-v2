@@ -2,6 +2,8 @@
 import { memo, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { useS3dVaultContracts } from 'contexts/s3d-vault-context'
+import SnowLoading from 'components/SnowLoading'
 import VaultHeader from 'parts/Vault/VaultHeader'
 import VaultTabs from 'parts/Vault/VaultTabs'
 import SwapForm from './SwapForm'
@@ -27,10 +29,13 @@ const useStyles = makeStyles((theme) => ({
 
 const S3dVault = () => {
   const classes = useStyles();
+  const { loading } = useS3dVaultContracts()
+
   const [selectedTab, setSelectedTab] = useState(VAULT_TABS.swap.VALUE)
 
   return (
     <main className={classes.root}>
+      {loading && <SnowLoading loading={loading} />}
       <VaultHeader
         title='s3D Vault'
         subHeader1='USDT + BUSD + DAI'
