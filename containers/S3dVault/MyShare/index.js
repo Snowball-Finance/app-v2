@@ -7,6 +7,10 @@ import ShareCard from './ShareCard'
 import CurrencyReserves from './CurrencyReserves'
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    margin: 0,
+    width: '100%'
+  },
   leftCard: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -27,7 +31,7 @@ const MyShare = () => {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={6} className={classes.container}>
       <Grid item sm={12} md={6} className={classes.leftCard}>
         <ShareCard />
       </Grid>

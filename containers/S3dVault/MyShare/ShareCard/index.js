@@ -28,7 +28,7 @@ const ShareCard = () => {
         <Grid item xs={12}>
           <StakeInformation
             type='s3d'
-            availableStake='150,234.293'
+            availableStake={s3dToken.balance.toLocaleString()}
             staked={staked.toLocaleString()}
             onWithdraw={() => { }}
             onStake={() => { }}

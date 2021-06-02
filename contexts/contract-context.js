@@ -13,7 +13,7 @@ export function ContractProvider({ children }) {
   const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
 
   useEffect(() => {
-    if (chainId !== C_CHAIN_ID) {
+    if (chainId && chainId !== C_CHAIN_ID) {
       setPopUp({
         title: 'Network Error',
         text: `Switch to Avalanche Chain`

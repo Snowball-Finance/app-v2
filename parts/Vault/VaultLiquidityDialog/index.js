@@ -45,7 +45,7 @@ const VaultLiquidityDialog = ({
   const totalValue = useMemo(() => {
     let total = 0;
     for (const item of liquidityData) {
-      total += item.value
+      total += parseFloat(item.value)
     }
     return total
   }, [liquidityData])
@@ -103,7 +103,7 @@ const VaultLiquidityDialog = ({
             {receivingValue.token}:
           </Typography>
           <Typography>
-            {receivingValue.value}
+            {receivingValue.value.toLocaleString()}
           </Typography>
         </Grid>
         <Grid item xs={12} className={classes.rowContainer}>
@@ -111,7 +111,7 @@ const VaultLiquidityDialog = ({
             Discount:
           </Typography>
           <Typography>
-            {discount}
+            {discount.toFixed(6)}%
           </Typography>
         </Grid>
         <Grid item xs={12}>
