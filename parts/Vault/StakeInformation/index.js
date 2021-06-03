@@ -72,7 +72,7 @@ const StakeInformation = ({
               Available to stake:
             </Typography>
             <Typography variant='body2' className={classes.value}>
-              {`${availableStake} ${type}`}
+              {`${availableStake.toLocaleString()} ${type}`}
             </Typography>
           </div>
           <div className={classes.infoContainer}>
@@ -80,12 +80,13 @@ const StakeInformation = ({
               Staked:
             </Typography>
             <Typography variant='body2' className={classes.value}>
-              {`${staked} ${type}`}
+              {`${staked.toLocaleString()} ${type}`}
             </Typography>
           </div>
         </Grid>
         <Grid item xs={12} className={classes.buttonContainer}>
           <ContainedButton
+            disabled={!staked}
             className={classes.withdrawButton}
             onClick={onWithdraw}
           >

@@ -9,7 +9,7 @@ import RemoveLiquidity from 'parts/Vault/RemoveLiquidity'
 import StakeInformation from 'parts/Vault/StakeInformation'
 
 const ShareCard = () => {
-  const { s3dToken, staked } = useS3dVaultContracts()
+  const { s3dToken, staked, onStake, onWithdraw } = useS3dVaultContracts()
 
   return (
     <CardFormWrapper
@@ -28,10 +28,10 @@ const ShareCard = () => {
         <Grid item xs={12}>
           <StakeInformation
             type='s3d'
-            availableStake={s3dToken.balance.toLocaleString()}
-            staked={staked.toLocaleString()}
-            onWithdraw={() => { }}
-            onStake={() => { }}
+            availableStake={s3dToken.balance}
+            staked={staked}
+            onWithdraw={onWithdraw}
+            onStake={onStake}
           />
         </Grid>
       </Grid>

@@ -8,7 +8,7 @@ import { IS_MAINNET, CONTRACTS } from 'config'
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S3D_VAULT_ABI from 'libs/abis/s3d-vault.json'
-import ICE_QUEEN_ABI from 'libs/abis/ice-queen.json'
+import GAUGE_ABI from 'libs/abis/gauge.json'
 import { isEmpty, delay } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 
@@ -32,7 +32,7 @@ export function S3dVaultContractProvider({ children }) {
   const busdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, library.getSigner()) : null, [library])
   const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, library.getSigner()) : null, [library])
   const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, library.getSigner()) : null, [library])
-  const iceQueenContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.ICE_QUEEN, ICE_QUEEN_ABI, library.getSigner()) : null, [library])
+  const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
   const tokenArray = useMemo(() => [usdtToken, busdToken, daiToken], [usdtToken, busdToken, daiToken]);
 
   const getTokenContract = (token) => {
@@ -54,11 +54,11 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   useEffect(() => {
-    if (s3dContract && usdtContract && busdContract && daiContract && vaultContract && iceQueenContract) {
+    if (s3dContract && usdtContract && busdContract && daiContract && vaultContract && gaugeContract) {
       getInit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s3dContract, usdtContract, busdContract, daiContract, vaultContract, iceQueenContract]);
+  }, [s3dContract, usdtContract, busdContract, daiContract, vaultContract, gaugeContract]);
 
   const getInit = async () => {
     try {
@@ -71,7 +71,7 @@ export function S3dVaultContractProvider({ children }) {
         usdtSupply,
         busdSupply,
         daiSupply,
-        stakedPool
+        stakedBalance
       ] = await Promise.all([
         s3dContract.balanceOf(account, { gasLimit: 1000000 }),
         usdtContract.balanceOf(account, { gasLimit: 1000000 }),
@@ -81,7 +81,7 @@ export function S3dVaultContractProvider({ children }) {
         usdtContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
         busdContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
         daiContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        iceQueenContract.userInfo(7, account, { gasLimit: 1000000 })
+        gaugeContract.balanceOf(account, { gasLimit: 1000000 })
       ]);
 
       const s3dBalanceValue = parseFloat(ethers.utils.formatUnits(s3dBalance, 18))
@@ -92,7 +92,7 @@ export function S3dVaultContractProvider({ children }) {
       const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, 6))
       const busdSupplyValue = parseFloat(ethers.utils.formatUnits(busdSupply, 18))
       const daiSupplyValue = parseFloat(ethers.utils.formatUnits(daiSupply, 18))
-      const stakedValue = parseFloat(ethers.utils.formatUnits(stakedPool.amount, 18))
+      const stakedValue = parseFloat(ethers.utils.formatUnits(stakedBalance, 18))
       const totalSupply = usdtSupplyValue + busdSupplyValue + daiSupplyValue
       const s3dPercentage = s3dSupplyValue ? s3dBalanceValue / s3dSupplyValue : 0
       const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
@@ -139,7 +139,7 @@ export function S3dVaultContractProvider({ children }) {
                 type: 'swap',
                 token: `${soldToken.name} - ${boughtToken.name}`,
                 time: item.timestamp,
-                balance: ethers.utils.formatUnits(item.args.tokensBought, boughtToken.decimal)
+                balance: ethers.utils.formatUnits(item.args.tokensSold, soldToken.decimal)
               }
             ]
             break;
@@ -389,6 +389,84 @@ export function S3dVaultContractProvider({ children }) {
     setLoading(false)
   }
 
+  const onStake = async () => {
+    setLoading(true)
+    try {
+      let loop = true
+      let tx = null
+      const ethereumProvider = await detectEthereumProvider();
+      const web3 = new Web3(ethereumProvider);
+
+      const amount = ethers.utils.parseUnits((s3dToken.balance).toString(), s3dToken.decimal);
+      const { hash: approveHash } = await s3dContract.approve(CONTRACTS.S3D.GAUGE, amount);
+
+      while (loop) {
+        tx = await web3.eth.getTransactionReceipt(approveHash);
+        if (isEmpty(tx)) {
+          await delay(300)
+        } else {
+          loop = false
+        }
+      }
+
+      if (!tx.status) {
+        setLoading(false)
+        return;
+      }
+
+      const { hash: stakeHash } = await gaugeContract.deposit(amount);
+
+      loop = true;
+      tx = null;
+      while (loop) {
+        tx = await web3.eth.getTransactionReceipt(stakeHash);
+        if (isEmpty(tx)) {
+          await delay(300)
+        } else {
+          loop = false
+        }
+      }
+
+      if (tx.status) {
+        await getInit();
+      }
+    } catch (error) {
+      console.log('[Error] onSwap => ', error)
+    }
+    setLoading(false)
+  }
+
+  const onWithdraw = async () => {
+    setLoading(true)
+    try {
+      let loop = true
+      let tx = null
+      const ethereumProvider = await detectEthereumProvider();
+      const web3 = new Web3(ethereumProvider);
+
+      const amount = ethers.utils.parseUnits((staked).toString(), s3dToken.decimal);
+      const { hash: withdrawHash } = await gaugeContract.withdraw(amount);
+
+      loop = true;
+      tx = null;
+      while (loop) {
+        tx = await web3.eth.getTransactionReceipt(withdrawHash);
+        if (isEmpty(tx)) {
+          await delay(300)
+        } else {
+          loop = false
+        }
+      }
+
+      if (tx.status) {
+        await getInit();
+      }
+    } catch (error) {
+      console.log('[Error] onSwap => ', error)
+    }
+    setLoading(false)
+  }
+
   return (
     <ContractContext.Provider
       value={{
@@ -405,7 +483,9 @@ export function S3dVaultContractProvider({ children }) {
         getToSwapAmount,
         getDepositReview,
         onSwap,
-        addLiquidity
+        addLiquidity,
+        onStake,
+        onWithdraw
       }}
     >
       {children}
@@ -433,7 +513,9 @@ export function useS3dVaultContracts() {
     getToSwapAmount,
     getDepositReview,
     onSwap,
-    addLiquidity
+    addLiquidity,
+    onStake,
+    onWithdraw
   } = context
 
   return {
@@ -450,6 +532,8 @@ export function useS3dVaultContracts() {
     getToSwapAmount,
     getDepositReview,
     onSwap,
-    addLiquidity
+    addLiquidity,
+    onStake,
+    onWithdraw
   }
 }
