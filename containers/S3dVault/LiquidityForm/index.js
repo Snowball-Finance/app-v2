@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MyShare = () => {
+const LiquidityForm = () => {
   const classes = useStyles();
 
   return (
@@ -42,4 +42,4 @@ const MyShare = () => {
   )
 }
 
-export default memo(MyShare)
+export default memo(LiquidityForm)
