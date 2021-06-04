@@ -93,6 +93,7 @@ const StakeInformation = ({
             Withdraw
           </ContainedButton>
           <ContainedButton
+            disabled={!availableStake}
             className={classes.stakeButton}
             onClick={onStake}
           >

@@ -251,6 +251,33 @@ export function S3dVaultContractProvider({ children }) {
     }
   }
 
+  const getWithdrawAmount = async (withdrawPercentage, checkedValue) => {
+    try {
+      let withdrawAmount = [0, 0, 0]
+      if (!withdrawPercentage) { return withdrawAmount }
+      if (!vaultContract) { return withdrawAmount }
+
+      const calculatedWithdraw = s3dToken.balance * withdrawPercentage / 100;
+      const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
+
+      if (checkedValue === -1) {
+        const removeAmounts = await vaultContract.calculateRemoveLiquidity(account, calculatedWithdrawValue);
+        for (let i = 0; i < 3; i++) {
+          const token = getTokenById(i);
+          withdrawAmount[i] = parseFloat(ethers.utils.formatUnits(removeAmounts[i], token.decimal))
+        }
+      } else {
+        const removeAmount = await vaultContract.calculateRemoveLiquidityOneToken(account, calculatedWithdrawValue, checkedValue);
+        const token = getTokenById(checkedValue);
+        withdrawAmount[checkedValue] = parseFloat(ethers.utils.formatUnits(removeAmount, token.decimal));
+      }
+      return withdrawAmount;
+    } catch (error) {
+      console.log('[Error] getWithdrawAmount => ', error)
+      return 0
+    }
+  }
+
   const getDepositReview = async (data) => {
     const usdtAmount = ethers.utils.parseUnits(data[0].value.toString(), data[0].token.decimal)
     const busdAmount = ethers.utils.parseUnits(data[1].value.toString(), data[1].token.decimal)
@@ -389,6 +416,77 @@ export function S3dVaultContractProvider({ children }) {
     setLoading(false)
   }
 
+  const removeLiquidity = async (liquidityData, withdrawPercentage, maxSlippage, selectedToken) => {
+    setLoading(true)
+    try {
+      let loop = true
+      let tx = null
+      const ethereumProvider = await detectEthereumProvider();
+      const web3 = new Web3(ethereumProvider);
+
+      const allowedTokens = await s3dContract.allowance(account, CONTRACTS.S3D.VAULT)
+      if (allowedTokens !== ethers.constants.MaxUint256) {
+        const { hash: approveHash } = await s3dContract.approve(CONTRACTS.S3D.VAULT, ethers.constants.MaxUint256)
+
+        while (loop) {
+          tx = await web3.eth.getTransactionReceipt(approveHash);
+          if (isEmpty(tx)) {
+            await delay(300)
+          } else {
+            loop = false
+          }
+        }
+
+        if (!tx.status) {
+          setLoading(false)
+          return;
+        }
+      }
+
+      const calculatedWithdraw = s3dToken.balance * withdrawPercentage / 100;
+      const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
+      const deadline = Date.now() + 180;
+      if (selectedToken === -1) {
+        const minToRemoveAmount = [];
+        for (let i = 0; i < 3; i++) {
+          const { token, value } = liquidityData[i];
+          minToRemoveAmount[i] = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
+        }
+
+        const { hash: removeHash } = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
+        while (loop) {
+          tx = await web3.eth.getTransactionReceipt(removeHash);
+          if (isEmpty(tx)) {
+            await delay(300)
+          } else {
+            loop = false
+          }
+        }
+      } else {
+        const { token, value } = liquidityData[selectedToken];
+        const minToRemoveAmount = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
+
+        const { hash: removeHash } = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
+
+        while (loop) {
+          tx = await web3.eth.getTransactionReceipt(removeHash);
+          if (isEmpty(tx)) {
+            await delay(300)
+          } else {
+            loop = false
+          }
+        }
+      }
+
+      if (tx.status) {
+        await getInit();
+      }
+    } catch (error) {
+      console.log('[Error] removeLiquidity => ', error)
+    }
+    setLoading(false)
+  }
+
   const onStake = async () => {
     setLoading(true)
     try {
@@ -482,8 +580,10 @@ export function S3dVaultContractProvider({ children }) {
         getTransactions,
         getToSwapAmount,
         getDepositReview,
+        getWithdrawAmount,
         onSwap,
         addLiquidity,
+        removeLiquidity,
         onStake,
         onWithdraw
       }}
@@ -512,8 +612,10 @@ export function useS3dVaultContracts() {
     getTransactions,
     getToSwapAmount,
     getDepositReview,
+    getWithdrawAmount,
     onSwap,
     addLiquidity,
+    removeLiquidity,
     onStake,
     onWithdraw
   } = context
@@ -531,8 +633,10 @@ export function useS3dVaultContracts() {
     getTransactions,
     getToSwapAmount,
     getDepositReview,
+    getWithdrawAmount,
     onSwap,
     addLiquidity,
+    removeLiquidity,
     onStake,
     onWithdraw
   }
