@@ -4,7 +4,6 @@ import { Grid } from '@material-ui/core'
 
 import TokenSwapIcon from 'components/Icons/TokenSwapIcon'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
-import RemoveLiquidity from 'parts/Vault/RemoveLiquidity'
 import StakeInformation from 'parts/Vault/StakeInformation'
 
 const ShareCard = () => {
@@ -15,13 +14,6 @@ const ShareCard = () => {
       subTitle='Stable vault stake information'
     >
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <RemoveLiquidity
-            type='s3f'
-            value='150,234.293'
-            onRemove={() => { }}
-          />
-        </Grid>
         <Grid item xs={12}>
           <StakeInformation
             type='s3f'

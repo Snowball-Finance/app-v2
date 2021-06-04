@@ -16,22 +16,22 @@ const CurrencyReserves = () => {
         <Grid item xs={12}>
           <CurrencyItem
             token={usdtToken}
-            value={usdtToken.supply.toLocaleString()}
-            percent={(usdtToken.percentage * 100).toLocaleString()}
+            value={usdtToken.supply}
+            percent={usdtToken.percentage * 100}
           />
         </Grid>
         <Grid item xs={12}>
           <CurrencyItem
             token={busdToken}
-            value={busdToken.supply.toLocaleString()}
-            percent={(busdToken.percentage * 100).toLocaleString()}
+            value={busdToken.supply}
+            percent={busdToken.percentage * 100}
           />
         </Grid>
         <Grid item xs={12}>
           <CurrencyItem
             token={daiToken}
-            value={daiToken.supply.toLocaleString()}
-            percent={(daiToken.percentage * 100).toLocaleString()}
+            value={daiToken.supply}
+            percent={daiToken.percentage * 100}
           />
         </Grid>
         <Grid item xs={12}>

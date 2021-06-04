@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const VaultLiquidityDialog = ({
+const VaultAddLiquidityDialog = ({
   discount,
   liquidityData,
   receivingValue,
@@ -147,4 +147,4 @@ const VaultLiquidityDialog = ({
   );
 }
 
-export default memo(VaultLiquidityDialog)
+export default memo(VaultAddLiquidityDialog)
