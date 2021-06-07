@@ -11,12 +11,14 @@ import S3D_VAULT_ABI from 'libs/abis/s3d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
 import { isEmpty, delay } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
+import { usePopup } from 'contexts/popup-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
 
 export function S3dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
+  const { setPopUp } = usePopup();
 
   const [loading, setLoading] = useState(false)
   const [s3dToken, setS3dToken] = useState({ name: 'S3D', priceId: 's3d', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
@@ -252,11 +254,19 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const getWithdrawAmount = async (withdrawPercentage, checkedValue) => {
-    try {
-      let withdrawAmount = [0, 0, 0]
-      if (!withdrawPercentage) { return withdrawAmount }
-      if (!vaultContract) { return withdrawAmount }
+    let withdrawAmount = [0, 0, 0]
+    if (!withdrawPercentage) { return withdrawAmount }
+    if (!vaultContract) { return withdrawAmount }
 
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return withdrawAmount;
+    }
+
+    try {
       const calculatedWithdraw = s3dToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
 
@@ -279,6 +289,14 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const getDepositReview = async (data) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return { minToMintValue: 0, discount: 0 };
+    }
+
     const usdtAmount = ethers.utils.parseUnits(data[0].value.toString(), data[0].token.decimal)
     const busdAmount = ethers.utils.parseUnits(data[1].value.toString(), data[1].token.decimal)
     const daiAmount = ethers.utils.parseUnits(data[2].value.toString(), data[2].token.decimal)
@@ -296,6 +314,14 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const onSwap = async ({ fromToken, toToken, fromAmount, toAmount, maxSlippage }) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+
     setLoading(true)
     try {
       let loop = true
@@ -356,6 +382,14 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const addLiquidity = async (liquidityData, maxSlippage, receivingValue) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+
     setLoading(true)
     try {
       let loop = true
@@ -417,6 +451,14 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const removeLiquidity = async (liquidityData, withdrawPercentage, maxSlippage, selectedToken) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+
     setLoading(true)
     try {
       let loop = true
@@ -488,6 +530,14 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const onStake = async () => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+
     setLoading(true)
     try {
       let loop = true
@@ -535,6 +585,14 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const onWithdraw = async () => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+
     setLoading(true)
     try {
       let loop = true
