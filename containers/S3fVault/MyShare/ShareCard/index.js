@@ -2,11 +2,14 @@
 import { memo } from 'react'
 import { Grid } from '@material-ui/core'
 
+import { useS3fVaultContracts } from 'contexts/s3f-vault-context'
 import TokenSwapIcon from 'components/Icons/TokenSwapIcon'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import StakeInformation from 'parts/Vault/StakeInformation'
 
 const ShareCard = () => {
+  const { s3fToken, staked, onStake, onWithdraw } = useS3fVaultContracts()
+
   return (
     <CardFormWrapper
       icon={<TokenSwapIcon />}
@@ -17,10 +20,10 @@ const ShareCard = () => {
         <Grid item xs={12}>
           <StakeInformation
             type='s3f'
-            availableStake='150,234.293'
-            staked='1,293'
-            onWithdraw={() => { }}
-            onStake={() => { }}
+            availableStake={s3fToken.balance}
+            staked={staked}
+            onWithdraw={onWithdraw}
+            onStake={onStake}
           />
         </Grid>
       </Grid>

@@ -4,7 +4,7 @@ import { Grid } from '@material-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 
 import { usePopup } from 'contexts/popup-context'
-import { useS3dVaultContracts } from 'contexts/s3d-vault-context'
+import { useS3fVaultContracts } from 'contexts/s3f-vault-context'
 import AddIcon from 'components/Icons/AddIcon'
 import GradientButton from 'components/UI/Buttons/GradientButton'
 import TokenTextField from 'components/UI/TextFields/TokenTextField'
@@ -16,7 +16,7 @@ import { useFormStyles } from 'styles/use-styles'
 const AddLiquidity = () => {
   const classes = useFormStyles()
   const { setPopUp } = usePopup()
-  const { usdtToken, busdToken, daiToken, getDepositReview, addLiquidity } = useS3dVaultContracts()
+  const { fraxToken, tusdToken, usdtToken, getDepositReview, addLiquidity } = useS3fVaultContracts()
 
   const [maxSlippage, setMaxSlippage] = useState(0.1)
   const [liquidityData, setLiquidityData] = useState([])
@@ -37,22 +37,22 @@ const AddLiquidity = () => {
 
     const liquidityData = [
       {
-        token: usdtToken,
+        token: fraxToken,
         value: data.firstInput
       },
       {
-        token: busdToken,
+        token: tusdToken,
         value: data.secondInput
       },
       {
-        token: daiToken,
+        token: usdtToken,
         value: data.thirdInput
       }
     ]
 
     const { minToMintValue, discount } = await getDepositReview(liquidityData)
     const receivingValue = {
-      token: 's3D',
+      token: 's3F',
       value: minToMintValue
     }
 
@@ -79,8 +79,8 @@ const AddLiquidity = () => {
               as={<TokenTextField />}
               name='firstInput'
               label='Input:'
-              token={usdtToken}
-              balance={usdtToken.balance}
+              token={fraxToken}
+              balance={fraxToken.balance}
               control={control}
               defaultValue={0}
             />
@@ -93,8 +93,8 @@ const AddLiquidity = () => {
               as={<TokenTextField />}
               name='secondInput'
               label='Input:'
-              token={busdToken}
-              balance={busdToken.balance}
+              token={tusdToken}
+              balance={tusdToken.balance}
               control={control}
               defaultValue={0}
             />
@@ -107,8 +107,8 @@ const AddLiquidity = () => {
               as={<TokenTextField />}
               name='thirdInput'
               label='Input:'
-              token={daiToken}
-              balance={daiToken.balance}
+              token={usdtToken}
+              balance={usdtToken.balance}
               control={control}
               defaultValue={0}
             />
@@ -123,6 +123,7 @@ const AddLiquidity = () => {
             <GradientButton
               fullWidth
               type='submit'
+              color='secondary'
               className={classes.button}
             >
               Add liquidity

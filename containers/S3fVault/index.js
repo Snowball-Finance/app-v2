@@ -32,7 +32,7 @@ const S3fVault = () => {
     <main className={classes.root}>
       <VaultHeader
         title='s3F Vault'
-        subHeader1='USDT + BUSD + DAI'
+        subHeader1='FRAX + TUSD + USDT'
         subHeader2='Staking APR: 36.09%'
         icon={VAULT_S3F_IMAGE_PATH}
         className={classes.header}

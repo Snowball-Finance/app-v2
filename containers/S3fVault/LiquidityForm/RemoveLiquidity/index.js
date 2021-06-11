@@ -3,7 +3,7 @@ import { memo, useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
 
 import { usePopup } from 'contexts/popup-context'
-import { useS3dVaultContracts } from 'contexts/s3d-vault-context'
+import { useS3fVaultContracts } from 'contexts/s3f-vault-context'
 import GradientButton from 'components/UI/Buttons/GradientButton'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
@@ -15,15 +15,15 @@ import { useFormStyles } from 'styles/use-styles'
 
 const TOKENS = [
   { label: 'All', value: -1 },
-  { label: 'USDT', value: 0 },
-  { label: 'BUSD', value: 1 },
-  { label: 'DAI', value: 2 }
+  { label: 'FRAX', value: 0 },
+  { label: 'TUSD', value: 1 },
+  { label: 'USDT', value: 2 }
 ]
 
 const RemoveLiquidity = () => {
   const classes = useFormStyles()
   const { setPopUp } = usePopup()
-  const { usdtToken, busdToken, daiToken, getWithdrawAmount, removeLiquidity } = useS3dVaultContracts()
+  const { fraxToken, tusdToken, usdtToken, getWithdrawAmount, removeLiquidity } = useS3fVaultContracts()
 
   const [withdrawPercentage, setWithdrawPercentage] = useState(0)
   const [selectedToken, setSelectedToken] = useState(-1)
@@ -52,15 +52,15 @@ const RemoveLiquidity = () => {
 
     const liquidityData = [
       {
-        token: usdtToken,
+        token: fraxToken,
         value: withdrawAmount[0]
       },
       {
-        token: busdToken,
+        token: tusdToken,
         value: withdrawAmount[1]
       },
       {
-        token: daiToken,
+        token: usdtToken,
         value: withdrawAmount[2]
       }
     ]
@@ -94,19 +94,19 @@ const RemoveLiquidity = () => {
         </Grid>
         <Grid item xs={12}>
           <CurrencyItem
-            token={usdtToken}
+            token={fraxToken}
             value={withdrawAmount[0] || 0}
           />
         </Grid>
         <Grid item xs={12}>
           <CurrencyItem
-            token={busdToken}
+            token={tusdToken}
             value={withdrawAmount[1] || 0}
           />
         </Grid>
         <Grid item xs={12}>
           <CurrencyItem
-            token={daiToken}
+            token={usdtToken}
             value={withdrawAmount[2] || 0}
           />
         </Grid>
@@ -119,6 +119,7 @@ const RemoveLiquidity = () => {
         <Grid item xs={12}>
           <GradientButton
             fullWidth
+            color='secondary'
             className={classes.button}
             onClick={onSubmit}
           >
