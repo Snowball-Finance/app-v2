@@ -401,8 +401,7 @@ export function S3fVaultContractProvider({ children }) {
         const { token, value } = item;
         if (value) {
           const tokenContract = getTokenContract(token);
-          const amount = ethers.utils.parseUnits((value).toString(), token.decimal);
-          const { hash: approveHash } = await tokenContract.approve(CONTRACTS.S3F.VAULT, amount);
+          const { hash: approveHash } = await tokenContract.approve(CONTRACTS.S3F.VAULT, ethers.constants.MaxUint256);
 
           while (loop) {
             tx = await web3.eth.getTransactionReceipt(approveHash);
