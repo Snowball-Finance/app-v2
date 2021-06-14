@@ -1,101 +1,44 @@
 
-import { memo, useCallback, useState } from 'react'
+import { memo } from 'react'
 import { Grid } from '@material-ui/core'
-import { useForm, Controller } from 'react-hook-form'
+import { makeStyles } from '@material-ui/core/styles'
 
-import AddIcon from 'components/Icons/AddIcon'
-import GradientButton from 'components/UI/Buttons/GradientButton'
-import TokenTextField from 'components/UI/TextFields/TokenTextField'
-import CardFormWrapper from 'parts/Card/CardFormWrapper'
-import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
-import TOKENS from 'utils/temp/tokens'
-import { useFormStyles } from 'styles/use-styles'
+import AddLiquidity from './AddLiquidity'
+import RemoveLiquidity from './RemoveLiquidity'
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    margin: 0,
+    width: '100%'
+  },
+  leftCard: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center'
+    }
+  },
+  rightCard: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center'
+    }
+  }
+}));
 
 const LiquidityForm = () => {
-  const classes = useFormStyles();
-
-  const [firstToken, setFirstToken] = useState(TOKENS[0]);
-  const [secondToken, setSecondToken] = useState(TOKENS[1]);
-  const [thirdToken, setThirdToken] = useState(TOKENS[2]);
-
-  const { control, handleSubmit, errors } = useForm();
-
-  const onSubmit = useCallback(async (data) => {
-    try {
-      console.log(data);
-    } catch (error) {
-      console.log(error)
-    }
-  }, []);
+  const classes = useStyles();
 
   return (
-    <CardFormWrapper title='Add liquidity'>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Controller
-              as={<TokenTextField />}
-              name='firstInput'
-              label='Input:'
-              token={firstToken}
-              setToken={setFirstToken}
-              tokens={TOKENS}
-              balance={firstToken.balance}
-              error={errors.firstInput?.message}
-              control={control}
-              defaultValue={0}
-            />
-            <div className={classes.iconContainer}>
-              <AddIcon className={classes.icon} />
-            </div>
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              as={<TokenTextField />}
-              name='secondInput'
-              label='Input:'
-              token={secondToken}
-              setToken={setSecondToken}
-              tokens={TOKENS}
-              balance={secondToken.balance}
-              error={errors.secondInput?.message}
-              control={control}
-              defaultValue={0}
-            />
-            <div className={classes.iconContainer}>
-              <AddIcon className={classes.icon} />
-            </div>
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              as={<TokenTextField />}
-              name='thirdInput'
-              label='Input:'
-              token={thirdToken}
-              setToken={setThirdToken}
-              tokens={TOKENS}
-              balance={thirdToken.balance}
-              error={errors.thirdInput?.message}
-              control={control}
-              defaultValue={0}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <AdvancedTransactionOption />
-          </Grid>
-          <Grid item xs={12}>
-            <GradientButton
-              fullWidth
-              type='submit'
-              color='secondary'
-              className={classes.button}
-            >
-              Add liquidity
-            </GradientButton>
-          </Grid>
-        </Grid>
-      </form>
-    </CardFormWrapper>
+    <Grid container spacing={6} className={classes.container}>
+      <Grid item sm={12} md={6} className={classes.leftCard}>
+        <AddLiquidity />
+      </Grid>
+      <Grid item sm={12} md={6} className={classes.rightCard}>
+        <RemoveLiquidity />
+      </Grid>
+    </Grid>
   )
 }
 

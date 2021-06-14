@@ -34,7 +34,7 @@ const SwapForm = () => {
     setToToken(tokenArray[1])
   }, [tokenArray]);
 
-  const { control, handleSubmit, errors, watch } = useForm({
+  const { control, handleSubmit, errors, watch, setValue } = useForm({
     resolver: yupResolver(schema)
   });
 
@@ -53,7 +53,7 @@ const SwapForm = () => {
     setSwapDialog(true)
   }
 
-  const onSwapHandler = () => {
+  const onSwapHandler = async () => {
     setSwapDialog(false)
     const params = {
       fromToken,
@@ -62,7 +62,8 @@ const SwapForm = () => {
       toAmount: toSwap,
       maxSlippage
     }
-    onSwap(params)
+    await onSwap(params)
+    setValue('fromSwap', 0)
   }
 
   return (
