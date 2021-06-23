@@ -5,10 +5,8 @@ import { Typography } from '@material-ui/core';
 import { COMPOUND_AND_EARN_IMAGE_PATH } from 'utils/constants/image-paths';
 import CompoundHeader from 'parts/Compound/CompoundHeader';
 import SearchInput from 'components/UI/SearchInput';
-import GridListView from 'components/GridListView';
 import Selects from 'components/UI/Selects';
 import ListView from './ListView';
-import GridView from './GridView';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,25 +30,18 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   search: {
-    flexGrow: 6,
-    marginRight: theme.spacing(2),
-  },
-  gridListView: {
-    flexGrow: 1,
-    marginRight: theme.spacing(2),
+    width: '60%'
   },
   selectBox: {
-    flexGrow: 3,
+    width: '15%'
   },
 }));
 
 const CompoundAndEarn = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
-  const [listView, setListView] = useState(true);
-  const [selectValue, setSelectValue] = useState('apy');
-
-  const renderView = () => (listView ? <ListView /> : <GridView />);
+  const [selectType, setType] = useState('apy');
+  const [selectPool, setPool] = useState('all');
 
   return (
     <main className={classes.root}>
@@ -71,17 +62,20 @@ const CompoundAndEarn = () => {
               console.log('searchData', search);
             }}
           />
-          <GridListView
-            className={classes.gridListView}
-            isListView={listView}
-            onChange={setListView}
+          <Selects
+            className={classes.selectBox}
+            value={selectType}
+            options={TYPES}
+            onChange={(e) => {
+              setType(e.target.value);
+            }}
           />
           <Selects
             className={classes.selectBox}
-            value={selectValue}
-            options={SELECT_OPTIONS}
+            value={selectPool}
+            options={POOLS}
             onChange={(e) => {
-              setSelectValue(e.target.value);
+              setPool(e.target.value);
             }}
           />
         </div>
@@ -90,7 +84,7 @@ const CompoundAndEarn = () => {
           PAIRS
         </Typography>
 
-        {renderView()}
+        <ListView />
       </div>
     </main>
   );
@@ -98,7 +92,7 @@ const CompoundAndEarn = () => {
 
 export default memo(CompoundAndEarn);
 
-const SELECT_OPTIONS = [
+const TYPES = [
   {
     value: 'apy',
     label: 'APY',
@@ -106,5 +100,16 @@ const SELECT_OPTIONS = [
   {
     value: 'tvl',
     label: 'TVL',
+  },
+];
+
+const POOLS = [
+  {
+    value: 'all',
+    label: 'All pools',
+  },
+  {
+    value: 'joined',
+    label: 'Only joined',
   },
 ];
