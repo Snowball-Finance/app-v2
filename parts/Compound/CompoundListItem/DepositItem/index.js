@@ -6,7 +6,9 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import SnowTokenIcon from 'components/SnowTokenIcon';
 import CustomPopover from 'components/CustomPopover';
+import { BOOST_INFO_IMAGE_PATH } from 'utils/constants/image-paths';
 import Tags from 'components/Tags';
+import Info from '../Info';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -16,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     marginTop: theme.spacing(2),
     padding: theme.spacing(1.5),
-    boxShadow: 'none'
+    boxShadow: 'none',
   },
   depositButton: {
     color: '#28C76F',
@@ -25,6 +27,12 @@ const useStyles = makeStyles((theme) => ({
   },
   secondTokenIcon: {
     marginLeft: theme.spacing(-2),
+  },
+  popover: {
+    backgroundColor: theme.custom.palette.lightBlue,
+    '&::before': {
+      backgroundColor: theme.custom.palette.lightBlue,
+    },
   },
 }));
 
@@ -66,7 +74,10 @@ const DepositItem = () => {
 
       <div>
         <Typography variant="body2">
-          Boost <CustomPopover />
+          Boost{' '}
+          <CustomPopover contentClassName={classes.popover}>
+            <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" />
+          </CustomPopover>
         </Typography>
         <Tags type="primary">2.5x</Tags>
       </div>

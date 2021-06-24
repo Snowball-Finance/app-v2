@@ -9,7 +9,21 @@ const useStyles = makeStyles((theme) => ({
     pointerEvents: 'none',
   },
   paper: {
-    padding: theme.spacing(1),
+    overflowX: 'unset',
+    overflowY: 'unset',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      marginRight: '-0.71em',
+      bottom: 0,
+      right: '50%',
+      width: 10,
+      height: 10,
+      backgroundColor: theme.palette.background.paper,
+      transform: 'translate(-50%, 50%) rotate(135deg)',
+      clipPath:
+        'polygon(-5px -5px, calc(100% + 5px) -5px, calc(100% + 5px) calc(100% + 5px))',
+    },
   },
   icon: {
     fontSize: 14,
@@ -18,7 +32,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomPopover = ({ style, className }) => {
+const CustomPopover = ({
+  style,
+  anchorClassName,
+  contentClassName,
+  children,
+}) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -36,7 +55,7 @@ const CustomPopover = ({ style, className }) => {
     <>
       <HelpOutlineIcon
         style={style}
-        className={clsx(classes.icon, className)}
+        className={clsx(classes.icon, anchorClassName)}
         aria-owns={open ? 'mouse-over-popover' : undefined}
         aria-haspopup="true"
         onMouseEnter={handlePopoverOpen}
@@ -46,22 +65,23 @@ const CustomPopover = ({ style, className }) => {
         id="mouse-over-popover"
         className={classes.popover}
         classes={{
-          paper: classes.paper,
+          paper: clsx(classes.paper, contentClassName),
         }}
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'left',
+          horizontal: 'center',
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+          vertical: 'bottom',
+          horizontal: 'center',
         }}
         onClose={handlePopoverClose}
         disableRestoreFocus
+        elevation={0}
       >
-        Hi this is an example
+        {children}
       </Popover>
     </>
   );
