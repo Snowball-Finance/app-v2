@@ -9,6 +9,7 @@ import {
   DialogActions
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
+import clsx from 'clsx'
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 
@@ -74,7 +75,11 @@ const SnowDialog = ({
   onCancel,
   onConfirm,
   onClose,
-  children
+  children,
+  dialogClass,
+  dialogTitleClass,
+  titleTextClass,
+  closeIconClass
 }) => {
   const classes = useStyles();
 
@@ -83,7 +88,7 @@ const SnowDialog = ({
       open={open}
       onClose={onClose}
       classes={{
-        paper: classes.paper
+        paper: clsx(classes.paper, dialogClass)
       }}
       aria-labelledby='customized-dialog-title'
     >
@@ -91,18 +96,18 @@ const SnowDialog = ({
         id='customized-dialog-title'
         disableTypography
         align='center'
-        className={classes.dialogTitle}
+        className={clsx(classes.dialogTitle, dialogTitleClass)}
       >
         <Typography
           variant='h6'
-          className={classes.title}
+          className={clsx(classes.title, titleTextClass)}
         >
           {title}
         </Typography>
         <IconButton
           edge='end'
           aria-label='close'
-          className={classes.closeIcon}
+          className={clsx(classes.closeIcon, closeIconClass)}
           onClick={onClose}
         >
           <CloseIcon />

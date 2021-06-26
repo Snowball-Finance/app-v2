@@ -7,8 +7,11 @@ const METAMASK_IMAGE_PATH = '/assets/images/icons/metamask.png'
 const VAULT_ELLIPSE_IMAGE_PATH = '/assets/images/icons/vault-ellipse.png'
 const VAULT_S3D_IMAGE_PATH = '/assets/images/icons/vault-s3d.png'
 const VAULT_S3F_IMAGE_PATH = '/assets/images/icons/vault-s3f.png'
+const COMPOUND_AND_EARN_IMAGE_PATH = '/assets/images/icons/compound-and-earn.png'
+const BOOST_INFO_IMAGE_PATH = '/assets/images/icons/boost-info.png'
 const DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/dashboard-compound.png'
 const DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/dashboard-total.png'
+const COMPOUND_AND_EARN_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/compound-and-earn.png'
 
 export {
   LOGO_IMAGE_PATH,
@@ -19,6 +22,9 @@ export {
   VAULT_ELLIPSE_IMAGE_PATH,
   VAULT_S3D_IMAGE_PATH,
   VAULT_S3F_IMAGE_PATH,
+  COMPOUND_AND_EARN_IMAGE_PATH,
+  BOOST_INFO_IMAGE_PATH,
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
-  DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH
+  DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH,
+  COMPOUND_AND_EARN_BACKGROUND_IMAGE_PATH
 };
