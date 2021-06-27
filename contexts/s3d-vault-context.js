@@ -22,7 +22,7 @@ export function S3dVaultContractProvider({ children }) {
 
   const [loading, setLoading] = useState(false)
   const [s3dToken, setS3dToken] = useState({ name: 'S3D', priceId: 's3d', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
-  const [usdtToken, setUsdtToken] = useState({ index: 0, name: 'USDT', priceId: 'usdt', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [usdtToken, setUsdtToken] = useState({ index: 0, name: 'USDT', priceId: 'usdt', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [busdToken, setBusdToken] = useState({ index: 1, name: 'BUSD', priceId: 'busd', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [daiToken, setDaiToken] = useState({ index: 2, name: 'DAI', priceId: 'dai', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [totalSupply, setTotalSupply] = useState(0);

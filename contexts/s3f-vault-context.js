@@ -22,9 +22,9 @@ export function S3fVaultContractProvider({ children }) {
 
   const [loading, setLoading] = useState(false)
   const [s3fToken, setS3fToken] = useState({ name: 'S3F', priceId: 's3f', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
-  const [fraxToken, setFraxToken] = useState({ index: 0, name: 'FRAX', priceId: 'frax', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [fraxToken, setFraxToken] = useState({ index: 0, name: 'FRAX', priceId: 'frax', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [tusdToken, setTusdToken] = useState({ index: 1, name: 'TUSD', priceId: 'tusd', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
-  const [usdtToken, setUsdtToken] = useState({ index: 2, name: 'USDT', priceId: 'usdt', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [usdtToken, setUsdtToken] = useState({ index: 2, name: 'USDT', priceId: 'usdt', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [totalSupply, setTotalSupply] = useState(0);
   const [staked, setStaked] = useState(0);
   const [transactions, setTransactions] = useState([])
