@@ -1,8 +1,10 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, CircularProgress } from '@material-ui/core';
+import { useQuery } from '@apollo/client';
 
 import { COMPOUND_AND_EARN_IMAGE_PATH } from 'utils/constants/image-paths';
+import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import CompoundHeader from 'parts/Compound/CompoundHeader';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
@@ -30,10 +32,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   search: {
-    width: '60%'
+    width: '60%',
   },
   selectBox: {
-    width: '15%'
+    width: '15%',
   },
 }));
 
@@ -42,6 +44,27 @@ const CompoundAndEarn = () => {
   const [search, setSearch] = useState('');
   const [selectType, setType] = useState('apy');
   const [selectPool, setPool] = useState('all');
+  const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
+
+  const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
+
+  useEffect(() => {
+    if (data && !loading) {
+      setLastSnowballInfo(data.LastSnowballInfo.poolsInfo);
+    }
+  }, [data, loading]);
+
+  if (error) {
+    return <div>Something went wrong!!</div>;
+  }
+
+  const handleSearch = (value) => {
+    const filterData = data?.LastSnowballInfo?.poolsInfo.filter(
+      (item) => item.name.search(value.toUpperCase()) != -1
+    );
+    setLastSnowballInfo(filterData);
+    setSearch(value);
+  };
 
   return (
     <main className={classes.root}>
@@ -56,11 +79,9 @@ const CompoundAndEarn = () => {
             className={classes.search}
             value={search}
             placeholder="Search your favorites pairs"
-            onChange={(newValue) => setSearch(newValue)}
+            onChange={(newValue) => handleSearch(newValue)}
             onCancelSearch={() => setSearch('')}
-            onRequestSearch={() => {
-              console.log('searchData', search);
-            }}
+            // onRequestSearch={handleSearch}
           />
           <Selects
             className={classes.selectBox}
@@ -84,7 +105,11 @@ const CompoundAndEarn = () => {
           PAIRS
         </Typography>
 
-        <ListView />
+        {loading ? (
+          <CircularProgress color="inherit" />
+        ) : (
+          <ListView poolsInfo={lastSnowballInfo} />
+        )}
       </div>
     </main>
   );

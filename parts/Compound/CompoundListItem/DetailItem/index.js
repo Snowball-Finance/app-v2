@@ -5,8 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import SnowTokenIcon from 'components/SnowTokenIcon';
 import CustomPopover from 'components/CustomPopover';
 import Tags from 'components/Tags';
+import SnowPairsIcon from 'components/SnowPairsIcon';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   card: {
     display: 'flex',
     flexDirection: 'row',
@@ -14,27 +15,20 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '92%',
   },
-  secondTokenIcon: {
-    marginLeft: theme.spacing(-2),
-  },
 }));
 
-const DetailItem = () => {
+const DetailItem = ({ item }) => {
   const classes = useStyles();
+  const pairsIcon = item?.name.split('/');
 
   return (
     <div className={classes.card}>
       <div>
-        <SnowTokenIcon size={50} token="png" />
-        <SnowTokenIcon
-          size={50}
-          token="wavax"
-          className={classes.secondTokenIcon}
-        />
+        <SnowPairsIcon pairsIcon={pairsIcon} />
       </div>
 
       <div>
-        <Typography variant="subtitle2">PNG-AVAX</Typography>
+        <Typography variant="subtitle2">{item?.name}</Typography>
         <Tags type="secondary">
           <SnowTokenIcon size={12} token="png" />
           Pangolin LP
@@ -45,14 +39,14 @@ const DetailItem = () => {
         <Typography variant="body2">
           APY <CustomPopover />
         </Typography>
-        <Typography variant="subtitle1">118.47%</Typography>
+        <Typography variant="subtitle1">{item.yearlyAPY?.toFixed(2)}%</Typography>
       </div>
 
       <div>
         <Typography variant="body2">
           TVL <CustomPopover />
         </Typography>
-        <Typography variant="subtitle1">$37,542,257.99</Typography>
+        <Typography variant="subtitle1">${item.tvlStaked}</Typography>
       </div>
 
       <div>

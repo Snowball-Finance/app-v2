@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ApyCalculation = () => {
+const ApyCalculation = ({ dailyAPY, weeklyAPY, yearlyAPY }) => {
   const classes = useStyles();
 
   return (
@@ -30,15 +30,15 @@ const ApyCalculation = () => {
       </Typography>
       <div className={classes.container}>
         <Typography variant="body2">Daily:</Typography>
-        <Typography variant="subtitle2">0.25%</Typography>
+        <Typography variant="subtitle2">{dailyAPY?.toFixed(2)}%</Typography>
       </div>
       <div className={classes.container}>
         <Typography variant="body2">Weekly:</Typography>
-        <Typography variant="subtitle2">1.76%</Typography>
+        <Typography variant="subtitle2">{weeklyAPY?.toFixed(2)}%</Typography>
       </div>
       <div className={classes.container}>
         <Typography variant="body2">Total APY:</Typography>
-        <Typography variant="subtitle2">191.60%</Typography>
+        <Typography variant="subtitle2">{yearlyAPY?.toFixed(2)}%</Typography>
       </div>
     </div>
   );
