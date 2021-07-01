@@ -44,6 +44,13 @@ const lightTheme = responsiveFontSizes(
                     borderRadius: 10,
                 },
             },
+            MuiListItem: {
+                root: {
+                    '&$selected': {
+                        backgroundColor: 'rgba(103, 166, 240, 0.12)',
+                    },
+                },
+            },
         },
         palette: {
             primary: {
