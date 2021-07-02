@@ -42,7 +42,7 @@ const SnobApyCalculation = ({
         <Typography variant="subtitle2">{weeklyAPY?.toFixed(2)}%</Typography>
       </div>
       <div className={classes.container}>
-        <Typography variant="body2">Total APY:</Typography>
+        <Typography variant="body2">Yearly:</Typography>
         <Typography variant="subtitle2">{yearlyAPY?.toFixed(2)}%</Typography>
       </div>
       <div className={classes.container}>

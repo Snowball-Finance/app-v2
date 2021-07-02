@@ -12,7 +12,15 @@ const useStyles = makeStyles((theme) => ({
 const SnowPairsIcon = ({ pairsIcon }) => {
   const classes = useStyles();
 
-  return pairsIcon.map((pair, index) => (
+  const tokenPairs = pairsIcon.map((pair) => {
+    if (pair.includes('S3D') || pair.includes('S3F')) {
+      return pair.includes('S3D') ? 's3d' : 's3f';
+    }
+
+    return pair;
+  });
+
+  return tokenPairs.map((pair, index) => (
     <SnowTokenIcon
       key={pair}
       size={50}

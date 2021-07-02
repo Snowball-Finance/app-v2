@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, CircularProgress } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 
 import { COMPOUND_AND_EARN_IMAGE_PATH } from 'utils/constants/image-paths';
@@ -8,6 +8,7 @@ import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import CompoundHeader from 'parts/Compound/CompoundHeader';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
+import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -54,10 +55,6 @@ const CompoundAndEarn = () => {
     }
   }, [data, loading]);
 
-  if (error) {
-    return <div>Something went wrong!!</div>;
-  }
-
   const handleSearch = (value) => {
     const filterData = data?.LastSnowballInfo?.poolsInfo.filter(
       (item) => item.name.search(value.toUpperCase()) != -1
@@ -65,6 +62,10 @@ const CompoundAndEarn = () => {
     setLastSnowballInfo(filterData);
     setSearch(value);
   };
+
+  if (error) {
+    return <div>Something went wrong!!</div>;
+  }
 
   return (
     <main className={classes.root}>
@@ -106,7 +107,7 @@ const CompoundAndEarn = () => {
         </Typography>
 
         {loading ? (
-          <CircularProgress color="inherit" />
+          <CompoundAndEarnSkeleton />
         ) : (
           <ListView poolsInfo={lastSnowballInfo} />
         )}

@@ -63,11 +63,12 @@ const CompoundListDetail = ({ item }) => {
           dailyAPY={item.dailyAPY}
           weeklyAPY={item.weeklyAPY}
           yearlyAPY={item.yearlyAPY}
+          totalAPY={item.gaugeInfo.fullYearlyAPY}
         />
         <SnobAbyCalculation
-          dailyAPY={item.gaugeInfo.dailyAPY}
-          weeklyAPY={item.gaugeInfo.weeklyAPY}
-          yearlyAPY={item.gaugeInfo.yearlyAPY}
+          dailyAPY={item.gaugeInfo.snobDailyAPR}
+          weeklyAPY={item.gaugeInfo.snobWeeklyAPR}
+          yearlyAPY={item.gaugeInfo.snobYearlyAPR}
           performanceFees={item.performanceFees}
         />
         <Total />

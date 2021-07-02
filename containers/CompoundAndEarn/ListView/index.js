@@ -30,14 +30,10 @@ const ListView = ({ poolsInfo }) => {
     </ContainedButton>
   );
 
-  if(!poolsInfo?.length) {
-    return <div>No result found...</div>
-  }
-
   return poolsInfo?.map((item) => {
     return (
       <CustomAccordion
-        key={item.address}
+        key={item.name}
         expandMoreIcon={detailButton()}
         summary={<DetailItem item={item}/>}
         details={<CompoundListDetail item={item}/>}

@@ -5,16 +5,17 @@ const LAST_SNOWBALL_INFO = gql`
     LastSnowballInfo {
       poolsInfo {
         name
-        kind
+        source
+        tvlStaked
         dailyAPY
         weeklyAPY
         yearlyAPY
-        tvlStaked
         performanceFees
         gaugeInfo {
-          dailyAPY
-          weeklyAPY
-          yearlyAPY
+          fullYearlyAPY
+          snobDailyAPR
+          snobWeeklyAPR
+          snobYearlyAPR
           tvlStaked
           snobAllocation
         }
