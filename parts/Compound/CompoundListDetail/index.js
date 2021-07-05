@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundListDetail = () => {
+const CompoundListDetail = ({ item }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
   const [successModal, setSuccessModal] = useState(false);
@@ -59,8 +59,18 @@ const CompoundListDetail = () => {
   return (
     <div className={classes.root}>
       <div className={classes.details}>
-        <ApyCalculation />
-        <SnobAbyCalculation />
+        <ApyCalculation
+          dailyAPY={item.dailyAPY}
+          weeklyAPY={item.weeklyAPY}
+          yearlyAPY={item.yearlyAPY}
+          totalAPY={item.gaugeInfo.fullYearlyAPY}
+        />
+        <SnobAbyCalculation
+          dailyAPY={item.gaugeInfo.snobDailyAPR}
+          weeklyAPY={item.gaugeInfo.snobWeeklyAPR}
+          yearlyAPY={item.gaugeInfo.snobYearlyAPR}
+          performanceFees={item.performanceFees}
+        />
         <Total />
       </div>
       <div className={classes.button}>
@@ -93,7 +103,7 @@ const CompoundListDetail = () => {
       {successModal && (
         <SuccessDialog
           open={successModal}
-          subHeader='Transaction submitted'
+          subHeader="Transaction submitted"
           handleClose={() => setSuccessModal(false)}
         />
       )}
