@@ -27,12 +27,14 @@ const useStyles = makeStyles((theme) => ({
 
 const DetailItem = ({ item }) => {
   const classes = useStyles();
-  const pairsIcon = item?.name.split('/');
+  const token0 = item.token0.address;
+  const token1 = item.token1.address;
+  const token2 = item.token2.address;
 
   return (
     <div className={classes.card}>
       <div>
-        <SnowPairsIcon pairsIcon={pairsIcon} />
+        <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50}/>
       </div>
 
       <div>

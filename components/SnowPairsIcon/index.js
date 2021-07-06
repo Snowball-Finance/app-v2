@@ -1,33 +1,45 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 
-import SnowTokenIcon from 'components/SnowTokenIcon';
+import { NO_IMAGE_PATH } from 'utils/constants/image-paths';
 
 const useStyles = makeStyles((theme) => ({
   secondTokenIcon: {
     marginLeft: theme.spacing(-2),
   },
+  tokenImage: (props) => ({
+    width: props.size,
+    height: props.size,
+    borderRadius: '50%',
+    objectFit: 'container',
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+  }),
 }));
 
-const SnowPairsIcon = ({ pairsIcon }) => {
-  const classes = useStyles();
+const SnowPairsIcon = ({ pairsIcon, size, className }) => {
+  const classes = useStyles({ size });
 
-  const tokenPairs = pairsIcon.map((pair) => {
-    if (pair.includes('S3D') || pair.includes('S3F')) {
-      return pair.includes('S3D') ? 's3d' : 's3f';
+  return pairsIcon.map((pair, index) => {
+    if (pair) {
+      const src = `https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/${pair}/logo.png`;
+      return (
+        <img
+          key={pair}
+          alt="token"
+          src={src}
+          className={clsx(classes.tokenImage, className, {
+            [classes.secondTokenIcon]: index > 0,
+          })}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = NO_IMAGE_PATH;
+          }}
+        />
+      );
     }
-
-    return pair;
+    return null;
   });
-
-  return tokenPairs.map((pair, index) => (
-    <SnowTokenIcon
-      key={pair}
-      size={50}
-      token={pair.toLowerCase()}
-      className={index > 0 ? classes.secondTokenIcon : null}
-    />
-  ));
 };
 
 export default memo(SnowPairsIcon);
