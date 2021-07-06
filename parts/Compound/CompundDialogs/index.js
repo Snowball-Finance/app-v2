@@ -51,38 +51,36 @@ const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setData(demoDataToDisplay[title.toLowerCase()]);
   }, [title]);
 
-  useEffect(() => {
-    if(data?.availableBalance) {
-      const usedBalance = calculatedBalance();
-      setAmount(usedBalance);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slider]);
-
   const calculatePercentage = (amount) => {
     return (amount / data?.availableBalance) * 100;
   };
 
-  const calculatedBalance = () => {
-    return (data?.availableBalance * slider) / 100;
+  const calculatedBalance = (value) => {
+    return (data?.availableBalance * value) / 100;
   };
 
   const inputHandler = (event) => {
     const percentage = calculatePercentage(event.target.value);
-    setAmount(event.target.value);
-    setSlider(percentage);
+    if(data?.availableBalance >= event.target.value) {
+      setAmount(event.target.value);
+      setSlider(percentage);
+      setError(null);
+    } else {
+      setError(`Can't exceed the max limit`)
+    }
   };
 
   const handleSliderChange = (value) => {
+    const usedBalance = calculatedBalance(value);
     setSlider(value);
-  }
-
-  const usedBalance = calculatedBalance();
+    setAmount(usedBalance);
+  };
 
   return (
     <SnowDialog
@@ -101,10 +99,11 @@ const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
           name="percent"
           endAdornment="PGL"
           value={amount}
+          error={error}
           onChange={inputHandler}
         />
         <CompoundSlider value={slider} onChange={handleSliderChange} />
-        <Details data={data} calculatedBalance={usedBalance} />
+        <Details data={data} calculatedBalance={amount} />
         <div className={classes.buttonContainer}>
           <ContainedButton
             className={clsx(classes.button, {
