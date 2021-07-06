@@ -33,7 +33,7 @@ const ListView = ({ poolsInfo }) => {
   return poolsInfo?.map((item) => {
     return (
       <CustomAccordion
-        key={item.name}
+        key={item.address}
         expandMoreIcon={detailButton()}
         summary={<DetailItem item={item}/>}
         details={<CompoundListDetail item={item}/>}
