@@ -91,7 +91,8 @@ const TotalLockedValue = () => {
               SNOB per Block / Day
             </Typography>
             <Typography variant="h6" color="textPrimary">
-              {data?.LastSnowballInfo?.blocksPast24hrs /
+              {data?.LastSnowballInfo?.snobPerBlock} / ~
+              {data?.LastSnowballInfo?.blocksPast24hrs *
                 data?.LastSnowballInfo?.snobPerBlock}
             </Typography>
           </Grid>
