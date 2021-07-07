@@ -19,7 +19,7 @@ const Home = () => {
         <CompoundAndEarn />
       </Grid>
       <Grid item xs={12} lg={6}>
-        <TotalLockedValue latestInfo={latestInfo} />
+        <TotalLockedValue />
       </Grid>
       <Grid item xs={12} md={8}>
         <TokenPairs />
