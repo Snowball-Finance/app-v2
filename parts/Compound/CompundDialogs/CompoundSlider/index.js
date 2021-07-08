@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Slider } from '@material-ui/core';
+import { Slider } from '@material-ui/core';
 import clsx from 'clsx';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
@@ -39,16 +39,11 @@ const marks = [
   },
 ];
 
-function valueText(value) {
-  return `${value}%`;
-}
-
 const CompoundSlider = ({ value, onChange }) => {
   const classes = useStyles();
 
   return (
     <div>
-      <Typography variant="h4">{valueText(value)}</Typography>
       <Slider
         aria-labelledby="discrete-slider-custom"
         valueLabelDisplay="auto"

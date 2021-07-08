@@ -5,6 +5,7 @@ import clsx from 'clsx';
 
 import SnowDialog from 'components/SnowDialog';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import SnowTextField from 'components/UI/TextFields/SnowTextField';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 
@@ -48,13 +49,38 @@ const useStyles = makeStyles((theme) => ({
 const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setData(demoDataToDisplay[title.toLowerCase()]);
   }, [title]);
 
-  const calculatedBalance = (data?.availableBalance * slider) / 100;
+  const calculatePercentage = (amount) => {
+    return (amount / data?.availableBalance) * 100;
+  };
+
+  const calculatedBalance = (value) => {
+    return (data?.availableBalance * value) / 100;
+  };
+
+  const inputHandler = (event) => {
+    const percentage = calculatePercentage(event.target.value);
+    if(data?.availableBalance >= event.target.value) {
+      setAmount(event.target.value);
+      setSlider(percentage);
+      setError(null);
+    } else {
+      setError(`Can't exceed the max limit`)
+    }
+  };
+
+  const handleSliderChange = (value) => {
+    const usedBalance = calculatedBalance(value);
+    setSlider(value);
+    setAmount(usedBalance);
+  };
 
   return (
     <SnowDialog
@@ -68,8 +94,16 @@ const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
     >
       <div className={classes.container}>
         <Typography variant="subtitle2">Amount</Typography>
-        <CompoundSlider value={slider} onChange={setSlider} />
-        <Details data={data} calculatedBalance={calculatedBalance} />
+        <SnowTextField
+          type="number"
+          name="percent"
+          endAdornment="PGL"
+          value={amount}
+          error={error}
+          onChange={inputHandler}
+        />
+        <CompoundSlider value={slider} onChange={handleSliderChange} />
+        <Details data={data} calculatedBalance={amount} />
         <div className={classes.buttonContainer}>
           <ContainedButton
             className={clsx(classes.button, {
