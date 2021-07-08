@@ -120,9 +120,9 @@ const TotalLockedValue = () => {
               SNOB per Block / Day
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {data?.LastSnowballInfo?.snobPerBlock} / ~
-              {data?.LastSnowballInfo?.blocksPast24hrs *
-                data?.LastSnowballInfo?.snobPerBlock}
+              {(data?.LastSnowballInfo?.snobPerBlock).toLocaleString()} / ~
+              {(data?.LastSnowballInfo?.blocksPast24hrs *
+                data?.LastSnowballInfo?.snobPerBlock).toLocaleString()}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
