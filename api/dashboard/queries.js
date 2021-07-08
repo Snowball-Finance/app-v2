@@ -59,6 +59,40 @@ const GET_LATEST_PAIRS_INFO = gql`
   }
 `;
 
+const MULTIPLE_PAIRS_INFO = gql`
+  query multiplePairsInfo($first: Int!, $grouped: Boolean) {
+    MultiplePairsInfo(first: $first, grouped: $grouped) {
+      createdAt
+      pairs {
+        name
+        source
+        kind
+        status
+        tvlStaked
+        grouped
+        token0 {
+          address
+          name
+          symbol
+          pangolinPrice
+        }
+        token1 {
+          address
+          name
+          symbol
+          pangolinPrice
+        }
+        token2 {
+          address
+          name
+          symbol
+          pangolinPrice
+        }
+      }
+    }
+  }
+`;
+
 const GET_TVL_INFO_LAST_SNOWBALL = gql`
   query {
     LastSnowballInfo {
@@ -77,4 +111,9 @@ const GET_TVL_INFO_LAST_SNOWBALL = gql`
   }
 `;
 
-export { GET_PAIRS_INFOS, GET_LATEST_PAIRS_INFO, GET_TVL_INFO_LAST_SNOWBALL };
+export {
+  GET_PAIRS_INFOS,
+  GET_LATEST_PAIRS_INFO,
+  MULTIPLE_PAIRS_INFO,
+  GET_TVL_INFO_LAST_SNOWBALL,
+};
