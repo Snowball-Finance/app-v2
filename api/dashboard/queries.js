@@ -93,4 +93,27 @@ const MULTIPLE_PAIRS_INFO = gql`
   }
 `;
 
-export { GET_PAIRS_INFOS, GET_LATEST_PAIRS_INFO, MULTIPLE_PAIRS_INFO };
+const GET_TVL_INFO_LAST_SNOWBALL = gql`
+  query {
+    LastSnowballInfo {
+      createdAt
+      snowballTVL
+      blocksPast24hrs
+      snowballTVL
+      snobPerBlock
+      blockHeight
+      snobNextPhase
+      snowballToken {
+        supply
+        pangolinPrice
+      }
+    }
+  }
+`;
+
+export {
+  GET_PAIRS_INFOS,
+  GET_LATEST_PAIRS_INFO,
+  MULTIPLE_PAIRS_INFO,
+  GET_TVL_INFO_LAST_SNOWBALL,
+};
