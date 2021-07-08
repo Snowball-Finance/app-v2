@@ -29,10 +29,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Skeleton = ({ type }) => {
+const Skeleton = ({ type, style }) => {
   const classes = useStyles();
 
-  return <div className={clsx(classes.skeleton, { [classes[type]]: true })} />;
+  return (
+    <div
+      className={clsx(classes.skeleton, { [classes[type]]: true })}
+      style={style}
+    />
+  );
 };
 
 export default memo(Skeleton);
