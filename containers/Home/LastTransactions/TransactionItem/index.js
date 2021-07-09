@@ -4,6 +4,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import moment from 'moment';
 
 import getTransactionInfo from 'utils/helpers/getTransactionInfo'
 
@@ -44,7 +45,7 @@ const TransactionItem = ({
 }) => {
   const classes = useStyles();
 
-  const typeInfo = useMemo(() => getTransactionInfo(transaction.type), [transaction]);
+  const typeInfo = useMemo(() => getTransactionInfo(transaction.type.toLowerCase()), [transaction]);
 
   return (
     <div className={classes.container}>
@@ -56,7 +57,7 @@ const TransactionItem = ({
         >
           <span>{transaction.type}</span>
           <br />
-          {transaction.token}
+          {transaction.ticker}
         </Typography>
         <Typography
           color='textPrimary'
@@ -64,10 +65,10 @@ const TransactionItem = ({
           className={classes.info}
         >
           <span style={{ color: typeInfo.color }}>
-            {`$ ${transaction.balance.toLocaleString()}`}
+            {`$ ${transaction.valueUSD.toLocaleString()}`}
           </span>
           <br />
-          {transaction.time}
+          {moment(transaction.createdAt).fromNow()}
         </Typography>
       </div>
     </div>

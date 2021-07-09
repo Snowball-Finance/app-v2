@@ -111,9 +111,23 @@ const GET_TVL_INFO_LAST_SNOWBALL = gql`
   }
 `;
 
+const MULTIPLE_TRANSACTION_INFO = gql`
+  query multipleTransactionInfo($first: Int!, $skip: Int) {
+    MultipleTransactionInfo(first: $first, skip: $skip) {
+      createdAt
+      source
+      ticker
+      type
+      hash
+      valueUSD
+    }
+  }
+`;
+
 export {
   GET_PAIRS_INFOS,
   GET_LATEST_PAIRS_INFO,
   MULTIPLE_PAIRS_INFO,
   GET_TVL_INFO_LAST_SNOWBALL,
+  MULTIPLE_TRANSACTION_INFO,
 };

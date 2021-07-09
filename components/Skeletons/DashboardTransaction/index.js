@@ -23,11 +23,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DashboardTokenPairsSkeleton = () => {
+const DashboardTransactionSkeleton = () => {
   const classes = useStyles();
 
-  return (
-    <div className={classes.root}>
+  return [1, 2, 3].map((item) => (
+    <div className={classes.root} key={item}>
       <div className={classes.container}>
         <div className={classes.child}>
           <div>
@@ -41,7 +41,7 @@ const DashboardTokenPairsSkeleton = () => {
       </div>
       <Shimmer />
     </div>
-  );
+  ));
 };
 
-export default memo(DashboardTokenPairsSkeleton);
+export default memo(DashboardTransactionSkeleton);

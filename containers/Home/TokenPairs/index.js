@@ -61,7 +61,9 @@ const TokenPairs = () => {
   const loadingTable = () => {
     return [1, 2, 3, 4].map((item) => (
       <TableRow key={item}>
-        <DashboardTokenPairsSkeleton />
+        <TableCell>
+          <DashboardTokenPairsSkeleton />
+        </TableCell>
       </TableRow>
     ));
   };
@@ -80,12 +82,12 @@ const TokenPairs = () => {
   };
 
   const renderTableData = (data) => {
-    return data.map((pair, index) => (
-      <TableRow key={index}>
+    return data.map((pair) => (
+      <TableRow key={pair.name}>
         <TableCell component="th" scope="row" className={classes.cell}>
           <Grid container spacing={2}>
             {pair.token0.address && (
-              <Grid item xs={4} key={index} className={classes.tokenContainer}>
+              <Grid item xs={4} className={classes.tokenContainer}>
                 <SnowPairsIcon size={50} pairsIcon={[pair.token0.address]} />
                 <Typography color="textPrimary" className={classes.token}>
                   <span>{pair.token0.name}</span>
@@ -95,7 +97,7 @@ const TokenPairs = () => {
               </Grid>
             )}
             {pair.token1.address && (
-              <Grid item xs={4} key={index} className={classes.tokenContainer}>
+              <Grid item xs={4} className={classes.tokenContainer}>
                 <SnowPairsIcon size={50} pairsIcon={[pair.token1.address]} />
                 <Typography color="textPrimary" className={classes.token}>
                   <span>{pair.token1.name}</span>
@@ -105,7 +107,7 @@ const TokenPairs = () => {
               </Grid>
             )}
             {pair.token2.address && (
-              <Grid item xs={4} key={index} className={classes.tokenContainer}>
+              <Grid item xs={4} className={classes.tokenContainer}>
                 <SnowPairsIcon size={50} pairsIcon={[pair.token2.address]} />
                 <Typography color="textPrimary" className={classes.token}>
                   <span>{pair.token2.name}</span>
