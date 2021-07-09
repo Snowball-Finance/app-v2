@@ -5,13 +5,13 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useS3dVaultContracts } from 'contexts/s3d-vault-context'
 import SnowLoading from 'components/SnowLoading'
 import VaultHeader from 'parts/Vault/VaultHeader'
-import VaultTabs from 'parts/Vault/VaultTabs'
+import SubMenuTabs from 'parts/SubMenuTabs'
 import SwapForm from './SwapForm'
 import LiquidityForm from './LiquidityForm'
 import TransactionsCard from './TransactionsCard'
 import MyShare from './MyShare'
 import { VAULT_S3D_IMAGE_PATH } from 'utils/constants/image-paths'
-import { VAULT_TABS } from 'utils/constants/vault-tabs'
+import { VAULT_TABS, VAULT_TABS_ARRAY } from 'utils/constants/vault-tabs'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +43,8 @@ const S3dVault = () => {
         icon={VAULT_S3D_IMAGE_PATH}
         className={classes.header}
       />
-      <VaultTabs
+      <SubMenuTabs
+        tabs={VAULT_TABS_ARRAY}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />

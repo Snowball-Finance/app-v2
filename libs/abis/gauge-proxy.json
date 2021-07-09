@@ -1,0 +1,366 @@
+[
+    {
+        "type": "constructor",
+        "stateMutability": "nonpayable",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "contract IceQueen"
+            }
+        ],
+        "name": "MASTER",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "contract IERC20"
+            }
+        ],
+        "name": "SNOWBALL",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "contract IERC20"
+            }
+        ],
+        "name": "SNOWCONE",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "contract IERC20"
+            }
+        ],
+        "name": "TOKEN",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "acceptGovernance",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "addGauge",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_token",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "collect",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "deposit",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "distribute",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ],
+        "name": "gauges",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ],
+        "name": "getGauge",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_token",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ],
+        "name": "governance",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "length",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ],
+        "name": "pendingGovernance",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "pid",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "poke",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_owner",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "reset",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setGovernance",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_governance",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setPID",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_pid",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ],
+        "name": "tokenVote",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            },
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address[]",
+                "name": "",
+                "internalType": "address[]"
+            }
+        ],
+        "name": "tokens",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "totalWeight",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "usedWeights",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "vote",
+        "inputs": [
+            {
+                "type": "address[]",
+                "name": "_tokenVote",
+                "internalType": "address[]"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_weights",
+                "internalType": "uint256[]"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "votes",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            },
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "weights",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ]
+    }
+]

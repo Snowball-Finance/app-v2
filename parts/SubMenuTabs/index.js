@@ -4,8 +4,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Button, Card } from '@material-ui/core'
 import clsx from 'clsx'
 
-import { VAULT_TABS_ARRAY } from 'utils/constants/vault-tabs'
-
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(0.5, 1),
@@ -28,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const VaultTabs = ({
+const SubMenuTabs = ({
+  tabs,
   selectedTab,
   setSelectedTab,
   className
@@ -41,7 +40,7 @@ const VaultTabs = ({
 
   return (
     <Card className={clsx(classes.root, className)}>
-      {VAULT_TABS_ARRAY.map((tab) => (
+      {tabs.map((tab) => (
         <Button
           key={tab.VALUE}
           className={clsx(classes.button, { [classes.selected]: tab.VALUE === selectedTab })}
@@ -54,4 +53,4 @@ const VaultTabs = ({
   )
 }
 
-export default memo(VaultTabs)
+export default memo(SubMenuTabs)

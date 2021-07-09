@@ -13,6 +13,10 @@ const LINKS = Object.freeze({
     HREF: '/s3f-vault',
     IS_NEW: true
   },
+  STAKING: {
+    TITLE: 'Staking',
+    HREF: '/staking'
+  },
   COMPOUND_AND_EARN: {
     TITLE: 'Compound & Earn',
     HREF: '/compound-and-earn'
