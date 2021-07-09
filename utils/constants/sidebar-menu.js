@@ -28,6 +28,10 @@ const SIDEBAR_MENU = [
     ...LINKS.COMPOUND_AND_EARN
   },
   {
+    ICON: MessageIcon,
+    ...LINKS.STAKING
+  },
+  {
     ICON: VoteIcon,
     ...LINKS.VOTE
   },
