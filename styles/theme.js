@@ -28,7 +28,7 @@ const lightTheme = responsiveFontSizes(
                             fontDisplay: 'swap',
                             fontWeight: 400,
                             src: `local('Montserrat'),
-                          url('/assets/fonts/Montserrat.woff') format('woff')`,
+                            url('/assets/fonts/Montserrat.woff') format('woff')`,
                         },
                     ],
                 },
@@ -57,8 +57,8 @@ const lightTheme = responsiveFontSizes(
                 main: '#0085EB',
             },
             secondary: {
-                main: '#B9B9C3',
-                contrastText: '#ffffff',
+                main: '#F8F8F8',
+                contrastText: '#5E5873',
             },
             danger: {
                 main: '#eb196e',
@@ -84,7 +84,7 @@ const lightTheme = responsiveFontSizes(
             },
             layout: {
                 maxCardWidth: 513,
-                maxDesktopWidth: 1550,
+                maxDesktopWidth: 1040,
                 openDrawerWidth: 240,
                 closedDrawerWidth: 57,
             },
@@ -152,7 +152,7 @@ const darkTheme = responsiveFontSizes(
             },
             layout: {
                 maxCardWidth: 513,
-                maxDesktopWidth: 1550,
+                maxDesktopWidth: 1040,
                 openDrawerWidth: 240,
                 closedDrawerWidth: 57,
             },
