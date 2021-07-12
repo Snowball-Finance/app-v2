@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     marginTop: theme.spacing(2),
     width: '100%',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   infoContainer: {
     display: 'flex',
@@ -64,9 +64,9 @@ const TransactionItem = ({ transaction }) => {
         </Typography>
         <Typography color="textPrimary" align="right" className={classes.info}>
           <span style={{ color: typeInfo.color }}>
-            {`$ ${parseFloat(transaction.valueUSD.toLocaleString()).toFixed(
-              2
-            )}`}
+            {`$ ${transaction.valueUSD.toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+            })}`}
           </span>
           <br />
           {moment(transaction.createdAt).fromNow()}
