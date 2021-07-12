@@ -66,6 +66,7 @@ const TransactionItem = ({ transaction }) => {
           <span style={{ color: typeInfo.color }}>
             {`$ ${transaction.valueUSD.toLocaleString('en-US', {
               maximumFractionDigits: 2,
+              minimumFractionDigits: 2,
             })}`}
           </span>
           <br />
