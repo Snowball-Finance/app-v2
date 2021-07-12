@@ -49,7 +49,10 @@ const LastTransactions = () => {
         skip: data?.MultipleTransactionInfo.length,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
+        if (
+          !fetchMoreResult.MultipleTransactionInfo.length ||
+          fetchMoreResult.MultipleTransactionInfo.length < 10
+        ) {
           setFetchMore(false);
           return prev;
         }
