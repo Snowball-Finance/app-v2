@@ -1,8 +1,10 @@
 
 import { memo, useState } from 'react'
+import { useQuery } from '@apollo/client'
 import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { NFTS_LIST } from 'api/nft-marketplace/queries'
 import PageHeader from 'parts/PageHeader'
 import SearchInput from 'components/UI/SearchInput'
 import Selects from 'components/UI/Selects'
@@ -26,7 +28,9 @@ const useStyles = makeStyles((theme) => ({
 
 const NFTMarketplace = () => {
   const classes = useStyles();
+  const { data: { NFTsList: nftsList = [] } = {} } = useQuery(NFTS_LIST);
 
+  console.log(nftsList)
   const [query, setQuery] = useState('');
   const [type, setType] = useState(NFT_TYPES.price.value);
   const [item, setItem] = useState({})
@@ -65,7 +69,7 @@ const NFTMarketplace = () => {
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
-            {NFT_LIST.map((nft, index) => (
+            {nftsList.map((nft, index) => (
               <Grid key={index} item xs={12} sm={6} md={4}>
                 <NFTItem
                   nft={nft}
@@ -89,50 +93,3 @@ const NFTMarketplace = () => {
 }
 
 export default memo(NFTMarketplace)
-
-const NFT_LIST = [
-  {
-    title: 'Snow Ball Head',
-    description: 'Mighty Ice Warrior from Snowball',
-    image: 'https://images.unsplash.com/photo-1499715008769-aa2cf0aaad5b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8ODN8fHNub3diYWxsfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-    price: 5,
-    minted: 140,
-    totalMint: 150,
-    owned: 0,
-    artist: 'Fennec',
-    type: 'ERC-721'
-  },
-  {
-    title: 'Snow Ball Head',
-    description: 'Mighty Ice Warrior from Snowball',
-    image: 'https://images.unsplash.com/photo-1625793741148-5f83903e617c?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-    price: 5,
-    minted: 140,
-    totalMint: 150,
-    owned: 0,
-    artist: 'Fennec',
-    type: 'ERC-721'
-  },
-  {
-    title: 'Snow Ball Head',
-    description: 'Mighty Ice Warrior from Snowball',
-    image: 'https://images.unsplash.com/photo-1606663889134-b1dedb5ed8b7?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjN8fGNhcnRvb258ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-    price: 5,
-    minted: 140,
-    totalMint: 150,
-    owned: 0,
-    artist: 'Fennec',
-    type: 'ERC-721'
-  },
-  {
-    title: 'Snow Ball Head',
-    description: 'Mighty Ice Warrior from Snowball',
-    image: 'https://images.unsplash.com/photo-1499715008769-aa2cf0aaad5b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8ODN8fHNub3diYWxsfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-    price: 5,
-    minted: 140,
-    totalMint: 150,
-    owned: 0,
-    artist: 'Fennec',
-    type: 'ERC-721'
-  }
-]

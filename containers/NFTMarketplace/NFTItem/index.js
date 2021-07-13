@@ -9,7 +9,9 @@ import { NO_IMAGE_PATH } from 'utils/constants/image-paths'
 
 const useStyles = makeStyles((theme) => ({
   card: {
+    position: 'relative',
     height: '100%',
+    paddingBottom: theme.spacing(6),
     '&:hover': {
       transform: 'translateY(-5px)',
       transition: `ease-out 0.4s `,
@@ -21,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   image: {
     height: 186,
+    minHeight: 186,
     width: '100%',
     objectFit: 'contain'
   },
@@ -30,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     display: 'flex',
     justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
   button: {
     borderRadius: 0,
@@ -50,14 +56,14 @@ const NFTItem = ({
         <Grid item xs={12}>
           <img
             alt='carousel'
-            src={nft?.image || NO_IMAGE_PATH}
+            src={nft?.imgUrl || NO_IMAGE_PATH}
             className={classes.image}
           />
         </Grid>
         <Grid item xs={12}>
           <ListItem
             title={nft.title}
-            value={`${nft.price} AVAX`}
+            value={`${nft.baseCost || 0}AVAX`}
             classes={{
               title: classes.title
             }}
@@ -66,20 +72,18 @@ const NFTItem = ({
             {nft.description}
           </Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${nft.minted} / ${nft.totalMint}`}
+            value={`${nft.minted || 0} / ${nft.max || 0}`}
           />
           <ListItem
             title='Artist'
-            value={nft.artist}
+            value={nft.artist || 'No Name'}
           />
-        </Grid>
-        <Grid item xs={6}>
           <ListItem
             title='Owned'
-            value={nft.owned}
+            value={nft.name}
           />
           <ListItem
             title='Type'

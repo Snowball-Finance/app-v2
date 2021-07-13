@@ -1,12 +1,15 @@
 import { memo } from 'react'
-import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   listItem: {
     display: 'flex',
     justifyContent: 'space-between'
+  },
+  title: {
+    fontSize: 14,
+    paddingRight: theme.spacing(1)
   },
   value: {
     fontSize: 14,
@@ -27,12 +30,12 @@ const ListItem = ({
 
   return (
     <div className={clsx(classes.listItem, propClasses.root)}>
-      <Typography variant='body2' className={propClasses.title}>
+      <div className={clsx(classes.title, propClasses.title)}>
         {title}
-      </Typography>
-      <Typography className={clsx(classes.value, propClasses.value)}>
+      </div>
+      <div className={clsx(classes.value, propClasses.value)}>
         {value}
-      </Typography>
+      </div>
     </div>
   );
 }
