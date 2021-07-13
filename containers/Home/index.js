@@ -1,7 +1,7 @@
 
 import { memo } from 'react'
 import { Grid } from '@material-ui/core'
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client'
 
 import { GET_LATEST_PAIRS_INFO } from 'api/dashboard/queries'
 import CompoundAndEarn from './CompoundAndEarn'
