@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 const FarmItem = ({
   item,
   newWeights,
-  value,
+  value = 0,
   onChange
 }) => {
   const classes = useStyles();

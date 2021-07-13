@@ -126,7 +126,6 @@ const useGauge = ({
         }
       })
 
-      console.log('gauges => ', gauges)
       setGauges(gauges)
     } catch (error) {
       console.log('[Error] gaugeProxyContract => ', error)
