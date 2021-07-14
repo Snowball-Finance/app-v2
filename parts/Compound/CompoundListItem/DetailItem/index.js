@@ -7,6 +7,7 @@ import CustomPopover from 'components/CustomPopover';
 import Tags from 'components/Tags';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import Info from '../Info';
+import APYTooltip from '../APYTooltip';
 import { BOOST_INFO_IMAGE_PATH } from 'utils/constants/image-paths';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +35,7 @@ const DetailItem = ({ item }) => {
   return (
     <div className={classes.card}>
       <div>
-        <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50}/>
+        <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50} />
       </div>
 
       <div>
@@ -47,7 +48,14 @@ const DetailItem = ({ item }) => {
 
       <div>
         <Typography variant="body2">
-          APY <CustomPopover />
+          APY{' '}
+          <CustomPopover contentClassName={classes.popover}>
+            <APYTooltip
+              dailyAPY={item.dailyAPY}
+              weeklyAPY={item.weeklyAPY}
+              yearlyAPY={item.yearlyAPY}
+            />
+          </CustomPopover>
         </Typography>
         <Typography variant="subtitle1">
           {item.gaugeInfo.fullYearlyAPY?.toFixed(2)}%
