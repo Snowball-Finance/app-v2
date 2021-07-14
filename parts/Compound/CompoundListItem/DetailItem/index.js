@@ -7,8 +7,9 @@ import CustomPopover from 'components/CustomPopover';
 import Tags from 'components/Tags';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import Info from '../Info';
+import TVLTooltip from '../TVLTooltip';
 import APYTooltip from '../APYTooltip';
-import { BOOST_INFO_IMAGE_PATH } from 'utils/constants/image-paths';
+import { BOOST_INFO_IMAGE_PATH, SNOB_LOCK_IMAGE_PATH } from 'utils/constants/image-paths';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -64,7 +65,10 @@ const DetailItem = ({ item }) => {
 
       <div>
         <Typography variant="body2">
-          TVL <CustomPopover />
+          TVL{' '}
+          <CustomPopover contentClassName={classes.popover}>
+            <TVLTooltip icon={SNOB_LOCK_IMAGE_PATH} />
+          </CustomPopover>
         </Typography>
         <Typography variant="subtitle1">${item.tvlStaked}</Typography>
       </div>

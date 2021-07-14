@@ -9,6 +9,7 @@ const VAULT_S3D_IMAGE_PATH = '/assets/images/icons/vault-s3d.png'
 const VAULT_S3F_IMAGE_PATH = '/assets/images/icons/vault-s3f.png'
 const COMPOUND_AND_EARN_IMAGE_PATH = '/assets/images/icons/compound-and-earn.png'
 const BOOST_INFO_IMAGE_PATH = '/assets/images/icons/boost-info.png'
+const SNOB_LOCK_IMAGE_PATH = '/assets/images/icons/snob-lock.png'
 const DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/dashboard-compound.png'
 const DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/dashboard-total.png'
 const COMPOUND_AND_EARN_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/compound-and-earn.png'
@@ -25,6 +26,7 @@ export {
   VAULT_S3F_IMAGE_PATH,
   COMPOUND_AND_EARN_IMAGE_PATH,
   BOOST_INFO_IMAGE_PATH,
+  SNOB_LOCK_IMAGE_PATH,
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
   DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH,
   COMPOUND_AND_EARN_BACKGROUND_IMAGE_PATH,
