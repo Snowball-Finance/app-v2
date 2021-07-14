@@ -5,6 +5,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   headerContainer: {
@@ -45,9 +46,9 @@ const LastTransactionsHeader = ({
         align='center'
         className={classes.date}
       >
-        THU
+        {moment().format('ddd')}
         <br />
-        <span>04</span>
+        <span>{moment().date()}</span>
       </Typography>
       <Divider
         flexItem

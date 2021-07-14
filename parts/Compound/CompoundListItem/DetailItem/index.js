@@ -8,6 +8,7 @@ import Tags from 'components/Tags';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import Info from '../Info';
 import TVLTooltip from '../TVLTooltip';
+import APYTooltip from '../APYTooltip';
 import { BOOST_INFO_IMAGE_PATH, SNOB_LOCK_IMAGE_PATH } from 'utils/constants/image-paths';
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +49,14 @@ const DetailItem = ({ item }) => {
 
       <div>
         <Typography variant="body2">
-          APY <CustomPopover />
+          APY{' '}
+          <CustomPopover contentClassName={classes.popover}>
+            <APYTooltip
+              dailyAPY={item.dailyAPY}
+              weeklyAPY={item.weeklyAPY}
+              yearlyAPY={item.yearlyAPY}
+            />
+          </CustomPopover>
         </Typography>
         <Typography variant="subtitle1">
           {item.gaugeInfo.fullYearlyAPY?.toFixed(2)}%
