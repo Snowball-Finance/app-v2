@@ -60,16 +60,13 @@ const CompoundListDetail = ({ item }) => {
     <div className={classes.root}>
       <div className={classes.details}>
         <ApyCalculation
-          dailyAPY={item.dailyAPY}
-          weeklyAPY={item.weeklyAPY}
+          dailyAPR={item.dailyAPR}
           yearlyAPY={item.yearlyAPY}
-          totalAPY={item.gaugeInfo.fullYearlyAPY}
+          performanceFees={item.performanceFees}
         />
         <SnobAbyCalculation
-          dailyAPY={item.gaugeInfo.snobDailyAPR}
-          weeklyAPY={item.gaugeInfo.snobWeeklyAPR}
           yearlyAPY={item.gaugeInfo.snobYearlyAPR}
-          performanceFees={item.performanceFees}
+          totalAPY={item.gaugeInfo.fullYearlyAPY}
         />
         <Total />
       </div>
