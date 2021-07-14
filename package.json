@@ -25,6 +25,7 @@
     "date-fns": "^2.16.1",
     "ethers": "^5.1.4",
     "graphql": "^15.5.0",
+    "moment": "^2.29.1",
     "next": "10.0.4",
     "react": "17.0.1",
     "react-chartjs-2": "^3.0.3",
