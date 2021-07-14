@@ -8,6 +8,7 @@ const LAST_SNOWBALL_INFO = gql`
         address
         source
         tvlStaked
+        dailyAPR
         dailyAPY
         weeklyAPY
         yearlyAPY
