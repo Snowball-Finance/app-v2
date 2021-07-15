@@ -4,8 +4,10 @@ import { useQuery } from '@apollo/client'
 import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { useNFTContract } from 'contexts/nft-context'
 import { NFTS_LIST } from 'api/nft-marketplace/queries'
 import PageHeader from 'parts/PageHeader'
+import SnowLoading from 'components/SnowLoading'
 import SearchInput from 'components/UI/SearchInput'
 import Selects from 'components/UI/Selects'
 import NFTItem from './NFTItem'
@@ -28,17 +30,14 @@ const useStyles = makeStyles((theme) => ({
 
 const NFTMarketplace = () => {
   const classes = useStyles();
+  const { loading } = useNFTContract();
+
   const { data: { NFTsList: nftsList = [] } = {} } = useQuery(NFTS_LIST);
 
-  console.log(nftsList)
   const [query, setQuery] = useState('');
   const [type, setType] = useState(NFT_TYPES.price.value);
   const [item, setItem] = useState({})
   const [open, setOpen] = useState(false);
-
-  const purchaseHandler = (item) => {
-    console.log(item)
-  }
 
   const detailHandler = (item) => {
     setItem(item);
@@ -47,6 +46,7 @@ const NFTMarketplace = () => {
 
   return (
     <main className={classes.root}>
+      {loading && <SnowLoading loading={loading} />}
       <PageHeader
         title='NFT Shop'
         subHeader='Check your Collection'
@@ -73,7 +73,6 @@ const NFTMarketplace = () => {
               <Grid key={index} item xs={12} sm={6} md={4}>
                 <NFTItem
                   nft={nft}
-                  onPurchase={purchaseHandler}
                   onDetail={detailHandler}
                 />
               </Grid>

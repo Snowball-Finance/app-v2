@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import SnowDialog from 'components/SnowDialog'
 import ListItem from 'parts/Card/ListItem'
+import { isEmpty } from 'utils/helpers/utility'
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -58,7 +59,7 @@ const NFTDetailDialog = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${item.minted || 0} / ${item.totalMint || 0}`}
+            value={`${item.supply || 0} / ${item.max || 0}`}
           />
           <ListItem
             title='Artist'
@@ -77,57 +78,26 @@ const NFTDetailDialog = ({
             value={item.category}
           />
         </Grid>
-        <Grid item xs={12}>
-          <div className={classes.container}>
-            <Grid container>
-              {MINT_ITEMS.map((item, index) => (
-                <Grid key={index} item xs={6}>
-                  <ListItem
-                    title={item.label}
-                    value={`${item.price} AVAX`}
-                    classes={{
-                      root: classes.item
-                    }}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </div>
-        </Grid>
+        {!isEmpty(item.bondCurve) &&
+          <Grid item xs={12}>
+            <div className={classes.container}>
+              <Grid container>
+                {item.bondCurve.map((item, index) => (
+                  <Grid key={index} item xs={6}>
+                    <ListItem
+                      title={item[0]}
+                      value={`${item[1]} AVAX`}
+                      classes={{ root: classes.item }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </Grid>
+        }
       </Grid>
     </SnowDialog>
   );
 }
 
 export default memo(NFTDetailDialog)
-
-const MINT_ITEMS = [
-  {
-    label: '1-30',
-    price: 0.3
-  },
-  {
-    label: '31-60',
-    price: 0.4
-  },
-  {
-    label: '61-90',
-    price: 0.5
-  },
-  {
-    label: '91-120',
-    price: 0.6
-  },
-  {
-    label: '121-130',
-    price: 1
-  },
-  {
-    label: '131-140',
-    price: 2
-  },
-  {
-    label: '141-150',
-    price: 5
-  }
-]

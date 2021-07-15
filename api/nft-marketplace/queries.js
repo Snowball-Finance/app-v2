@@ -12,8 +12,10 @@ const NFTS_LIST = gql`
       category
       type
       max
+      supply
       buyable
       baseCost
+      bondCurve 
     }
   }
 `;

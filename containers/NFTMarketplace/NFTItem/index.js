@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { useNFTContract } from 'contexts/nft-context'
 import CartIcon from 'components/Icons/CartIcon'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import ListItem from 'parts/Card/ListItem'
@@ -37,6 +38,12 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     width: '100%',
   },
+  detailButton: {
+    backgroundColor: theme.custom.palette.lightGrey,
+    color: theme.custom.palette.darkGrey,
+    borderRadius: 0,
+    padding: theme.spacing(1.5)
+  },
   button: {
     borderRadius: 0,
     padding: theme.spacing(1.5)
@@ -45,10 +52,14 @@ const useStyles = makeStyles((theme) => ({
 
 const NFTItem = ({
   nft,
-  onPurchase,
   onDetail
 }) => {
   const classes = useStyles();
+  const { purchaseNFT } = useNFTContract();
+
+  const purchaseHandler = () => {
+    purchaseNFT(nft)
+  }
 
   return (
     <Card className={classes.card}>
@@ -75,7 +86,7 @@ const NFTItem = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${nft.minted || 0} / ${nft.max || 0}`}
+            value={`${nft.supply || 0} / ${nft.max || 0}`}
           />
           <ListItem
             title='Artist'
@@ -96,7 +107,7 @@ const NFTItem = ({
         <ContainedButton
           fullWidth
           color='secondary'
-          className={classes.button}
+          className={classes.detailButton}
           onClick={() => onDetail(nft)}
         >
           Detail
@@ -105,7 +116,7 @@ const NFTItem = ({
           fullWidth
           startIcon={<CartIcon color='white' />}
           className={classes.button}
-          onClick={onPurchase}
+          onClick={purchaseHandler}
         >
           Buy
         </ContainedButton>
