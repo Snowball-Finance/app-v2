@@ -57,8 +57,8 @@ const lightTheme = responsiveFontSizes(
                 main: '#0085EB',
             },
             secondary: {
-                main: '#F8F8F8',
-                contrastText: '#5E5873',
+                main: '#B9B9C3',
+                contrastText: '#ffffff',
             },
             danger: {
                 main: '#eb196e',
@@ -75,6 +75,8 @@ const lightTheme = responsiveFontSizes(
         custom: {
             palette: {
                 white: '#FFFFFF',
+                lightGrey: '#F8F8F8',
+                darkGrey: '#5E5873',
                 lightBlue: '#DBEDFF',
                 blue: '#1A93F2',
                 darkBlue: '#1E2848',
@@ -143,6 +145,8 @@ const darkTheme = responsiveFontSizes(
         custom: {
             palette: {
                 white: '#FFFFFF',
+                lightGrey: '#F8F8F8',
+                darkGrey: '#5E5873',
                 lightBlue: '#DBEDFF',
                 blue: '#1A93F2',
                 darkBlue: '#1E2848',

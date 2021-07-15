@@ -38,6 +38,12 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     width: '100%',
   },
+  detailButton: {
+    backgroundColor: theme.custom.palette.lightGrey,
+    color: theme.custom.palette.darkGrey,
+    borderRadius: 0,
+    padding: theme.spacing(1.5)
+  },
   button: {
     borderRadius: 0,
     padding: theme.spacing(1.5)
@@ -80,7 +86,7 @@ const NFTItem = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${nft.minted || 0} / ${nft.max || 0}`}
+            value={`${nft.supply || 0} / ${nft.max || 0}`}
           />
           <ListItem
             title='Artist'
@@ -101,7 +107,7 @@ const NFTItem = ({
         <ContainedButton
           fullWidth
           color='secondary'
-          className={classes.button}
+          className={classes.detailButton}
           onClick={() => onDetail(nft)}
         >
           Detail

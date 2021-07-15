@@ -59,7 +59,7 @@ const NFTDetailDialog = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${item.minted || 0} / ${item.totalMint || 0}`}
+            value={`${item.supply || 0} / ${item.max || 0}`}
           />
           <ListItem
             title='Artist'
