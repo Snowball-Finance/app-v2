@@ -1,0 +1,533 @@
+[
+    {
+        "type": "constructor",
+        "stateMutability": "nonpayable",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_crystalVault",
+                "internalType": "address"
+            },
+            {
+                "type": "address",
+                "name": "_governer",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "name": "GovernerAdded",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "governer",
+                "internalType": "address",
+                "indexed": false
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "GovernerRemoved",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "governer",
+                "internalType": "address",
+                "indexed": false
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "NewCrystalVault",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "crystalVault",
+                "internalType": "address",
+                "indexed": false
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "NewProposal",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "proposer",
+                "internalType": "address",
+                "indexed": false
+            },
+            {
+                "type": "uint256",
+                "name": "proposalId",
+                "internalType": "uint256",
+                "indexed": false
+            },
+            {
+                "type": "string",
+                "name": "title",
+                "internalType": "string",
+                "indexed": false
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "NewVote",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "voter",
+                "internalType": "address",
+                "indexed": false
+            },
+            {
+                "type": "uint256",
+                "name": "proposalId",
+                "internalType": "uint256",
+                "indexed": false
+            },
+            {
+                "type": "bool",
+                "name": "support",
+                "internalType": "bool",
+                "indexed": false
+            },
+            {
+                "type": "uint256",
+                "name": "votes",
+                "internalType": "uint256",
+                "indexed": false
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "ProposalExecuted",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "executor",
+                "internalType": "address",
+                "indexed": false
+            },
+            {
+                "type": "uint256",
+                "name": "proposalId",
+                "internalType": "uint256",
+                "indexed": false
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "addGoverner",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_governer",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "contract ICrystalVault"
+            }
+        ],
+        "name": "crystalVault",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "payable",
+        "outputs": [
+            {
+                "type": "bytes",
+                "name": "",
+                "internalType": "bytes"
+            }
+        ],
+        "name": "execute",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_proposalId",
+                "internalType": "uint256"
+            },
+            {
+                "type": "address",
+                "name": "_target",
+                "internalType": "address"
+            },
+            {
+                "type": "uint256",
+                "name": "_value",
+                "internalType": "uint256"
+            },
+            {
+                "type": "bytes",
+                "name": "_data",
+                "internalType": "bytes"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "executionDelay",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "executionExpiration",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "bool",
+                "name": "",
+                "internalType": "bool"
+            }
+        ],
+        "name": "getVote",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_proposalId",
+                "internalType": "uint256"
+            },
+            {
+                "type": "address",
+                "name": "_voter",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "bool",
+                "name": "",
+                "internalType": "bool"
+            }
+        ],
+        "name": "governers",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "minimumVotingPeriod",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "proposalCount",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "proposalThreshold",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "id",
+                "internalType": "uint256"
+            },
+            {
+                "type": "string",
+                "name": "title",
+                "internalType": "string"
+            },
+            {
+                "type": "address",
+                "name": "proposer",
+                "internalType": "address"
+            },
+            {
+                "type": "address",
+                "name": "executor",
+                "internalType": "address"
+            },
+            {
+                "type": "uint256",
+                "name": "startTime",
+                "internalType": "uint256"
+            },
+            {
+                "type": "uint256",
+                "name": "votingPeriod",
+                "internalType": "uint256"
+            },
+            {
+                "type": "uint256",
+                "name": "forVotes",
+                "internalType": "uint256"
+            },
+            {
+                "type": "uint256",
+                "name": "againstVotes",
+                "internalType": "uint256"
+            },
+            {
+                "type": "bytes32",
+                "name": "txHash",
+                "internalType": "bytes32"
+            }
+        ],
+        "name": "proposals",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "propose",
+        "inputs": [
+            {
+                "type": "string",
+                "name": "_title",
+                "internalType": "string"
+            },
+            {
+                "type": "uint256",
+                "name": "_votingPeriod",
+                "internalType": "uint256"
+            },
+            {
+                "type": "address",
+                "name": "_target",
+                "internalType": "address"
+            },
+            {
+                "type": "uint256",
+                "name": "_value",
+                "internalType": "uint256"
+            },
+            {
+                "type": "bytes",
+                "name": "_data",
+                "internalType": "bytes"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "",
+                "internalType": "uint256"
+            }
+        ],
+        "name": "quorumVotes",
+        "inputs": []
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "removeGoverner",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_governer",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setCrystalVault",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_crystalVault",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setExecutionDelay",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_seconds",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setExecutionExpiration",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_seconds",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setMinimumVotingPeriod",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_seconds",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setProposalThreshold",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_votes",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "setQuorumVotes",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_votes",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "view",
+        "outputs": [
+            {
+                "type": "uint8",
+                "name": "",
+                "internalType": "enum Governance.ProposalState"
+            }
+        ],
+        "name": "state",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "proposalId",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "outputs": [],
+        "name": "vote",
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_proposalId",
+                "internalType": "uint256"
+            },
+            {
+                "type": "bool",
+                "name": "_support",
+                "internalType": "bool"
+            }
+        ]
+    }
+]

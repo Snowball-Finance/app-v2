@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { useNFTContract } from 'contexts/nft-context'
 import CartIcon from 'components/Icons/CartIcon'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import ListItem from 'parts/Card/ListItem'
@@ -45,10 +46,14 @@ const useStyles = makeStyles((theme) => ({
 
 const NFTItem = ({
   nft,
-  onPurchase,
   onDetail
 }) => {
   const classes = useStyles();
+  const { purchaseNFT } = useNFTContract();
+
+  const purchaseHandler = () => {
+    purchaseNFT(nft)
+  }
 
   return (
     <Card className={classes.card}>
@@ -105,7 +110,7 @@ const NFTItem = ({
           fullWidth
           startIcon={<CartIcon color='white' />}
           className={classes.button}
-          onClick={onPurchase}
+          onClick={purchaseHandler}
         >
           Buy
         </ContainedButton>
