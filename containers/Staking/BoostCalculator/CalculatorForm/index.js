@@ -3,7 +3,7 @@ import { memo, useEffect, useMemo, useState } from 'react'
 import { Grid } from '@material-ui/core'
 import { formatEther } from 'ethers/lib/utils'
 
-import { useContracts } from 'contexts/contract-context'
+import { useStakingContract } from 'contexts/staking-context'
 import SnowSelect from 'components/UI/SnowSelect'
 import SnowTextField from 'components/UI/TextFields/SnowTextField'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
@@ -13,7 +13,7 @@ const CalculatorForm = ({
   setXSnobRequired,
   setSelectedGauge
 }) => {
-  const { snowconeBalance, totalSupply, gauges } = useContracts();
+  const { snowconeBalance, totalSupply, gauges } = useStakingContract();
 
   const [token, setToken] = useState('')
   const [balance, setBalance] = useState(0)

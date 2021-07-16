@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import detectEthereumProvider from '@metamask/detect-provider'
 import Web3 from 'web3'
 
-import { CONTRACTS, C_CHAIN_ID } from 'config'
+import { CONTRACTS } from 'config'
 import getNFTABI from 'libs/abis/nft'
 import GOVERNANCE_ABI from 'libs/abis/governance.json'
 import { usePopup } from 'contexts/popup-context'
@@ -12,11 +12,10 @@ import { usePopup } from 'contexts/popup-context'
 const ContractContext = createContext(null)
 
 export function NFTContractProvider({ children }) {
-  const { account, library, chainId } = useWeb3React();
+  const { account, library } = useWeb3React();
   const { setPopUp } = usePopup();
   const [loading, setLoading] = useState(false);
 
-  const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
   const governanceContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GOVERNANCE, GOVERNANCE_ABI, library.getSigner()) : null, [library])
 
   const purchaseNFT = async (item) => {
@@ -126,7 +125,6 @@ export function NFTContractProvider({ children }) {
   return (
     <ContractContext.Provider
       value={{
-        isWrongNetwork,
         loading,
         purchaseNFT
       }}
@@ -143,13 +141,11 @@ export function useNFTContract() {
   }
 
   const {
-    isWrongNetwork,
     loading,
     purchaseNFT
   } = context
 
   return {
-    isWrongNetwork,
     loading,
     purchaseNFT
   }
