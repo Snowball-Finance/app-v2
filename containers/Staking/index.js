@@ -6,7 +6,7 @@ import { Grid, Typography } from '@material-ui/core'
 import { useStakingContract } from 'contexts/staking-context'
 import SnowLoading from 'components/SnowLoading'
 import SubMenuTabs from 'parts/SubMenuTabs'
-import StakingHeader from './StakingHeader'
+import PageHeader from 'parts/PageHeader'
 import SnowBalance from './SnowBalance'
 import Unlocked from './Unlocked'
 import TotalLocked from './TotalLocked'
@@ -41,7 +41,10 @@ const Staking = () => {
   return (
     <main className={classes.root}>
       {loading && <SnowLoading loading={loading} />}
-      <StakingHeader />
+      <PageHeader
+        title='Staking'
+        subHeader='Stake your SNOB and earn xSnob to vote in Governance'
+      />
       <SubMenuTabs
         tabs={STAKING_TABS_ARRAY}
         selectedTab={selectedTab}
