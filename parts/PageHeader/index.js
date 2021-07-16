@@ -48,9 +48,19 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.blue,
     borderRadius: '50%',
   },
+  subHeader: {
+    fontSize: 12,
+    color: theme.custom.palette.white,
+    textTransform: 'none',
+  }
 }))
 
-const PageHeader = ({ title, subHeader, className }) => {
+const PageHeader = ({
+  title,
+  subHeader,
+  subButton,
+  className
+}) => {
   const classes = useStyles()
 
   return (
@@ -60,14 +70,21 @@ const PageHeader = ({ title, subHeader, className }) => {
         <Typography variant="h5" className={classes.header}>
           {title}
         </Typography>
-        <ContainedButton
-          className={classes.subHeaderButton}
-          size="small"
-          disableElevation
-          endIcon={<ChevronRightIcon className={classes.rightIcon} />}
-        >
-          {subHeader}
-        </ContainedButton>
+        {subButton &&
+          <ContainedButton
+            className={classes.subHeaderButton}
+            size="small"
+            disableElevation
+            endIcon={<ChevronRightIcon className={classes.rightIcon} />}
+          >
+            {subButton}
+          </ContainedButton>
+        }
+        {subHeader &&
+          <Typography className={classes.subHeader} >
+            {subHeader}
+          </Typography>
+        }
       </div>
     </Card>
   )
