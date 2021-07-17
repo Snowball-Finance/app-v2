@@ -54,10 +54,12 @@ const CompoundListDetail = ({ item }) => {
     setModal({ open: false, title: '' });
   };
 
-  const onSubmit = (method, pairsName, amount) => {
-    submit(method, pairsName, amount);
-    handleClose();
-    setSuccessModal(true);
+  const onSubmit = async(method, pairsName, amount) => {
+    const showModal = await submit(method, pairsName, amount);
+    if ( showModal ) {
+      handleClose();
+      setSuccessModal(true);
+    }
   };
   
   const onApprove = (pairsName, amount) => {
