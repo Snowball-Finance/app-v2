@@ -9,16 +9,17 @@ const useStyles = makeStyles(() => ({
   picture: {
     display: 'flex'
   },
-  img: {
-    height: 18,
+  img: props => ({
+    height: props.height,
     objectFit: 'contain'
-  },
+  }),
 }));
 
 const CoinIcon = ({
+  height = 18,
   className
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({ height })
 
   return (
     <picture className={clsx(classes.picture, className)}>

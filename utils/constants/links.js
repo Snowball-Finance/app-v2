@@ -25,6 +25,10 @@ const LINKS = Object.freeze({
     TITLE: 'Vote',
     HREF: '/vote'
   },
+  VOTE_DETAIL: {
+    TITLE: 'Vote Detail',
+    HREF: '/vote/detail/[proposal]'
+  },
   NFT_MARKETPLACE: {
     TITLE: 'NFT Marketplace',
     HREF: '/nft-marketplace'
