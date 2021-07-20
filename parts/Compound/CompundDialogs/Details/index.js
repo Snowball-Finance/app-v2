@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
 import SnowTokenIcon from 'components/SnowTokenIcon';
+import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,9 +39,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = ({ data, calculatedBalance }) => {
+const Details = ({ data, item, calculatedBalance }) => {
   const classes = useStyles();
-
+  const token0 = item.token0.address;
+  const token1 = item.token1.address;
+  const token2 = item.token2.address;
+  
   const renderTokenIcon = () => {
     return data.pairs.map((pair, index) => {
       return (
@@ -58,10 +62,11 @@ const Details = ({ data, calculatedBalance }) => {
     <div className={classes.root}>
       <div className={classes.container}>
         <div className={classes.pairContainer}>
-          <div className={classes.icons}>{renderTokenIcon()}</div>
+          {/* <div className={classes.icons}>{renderTokenIcon()}</div> */}
+          <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50}/>
           <div>
             <Typography variant="caption">{data.name}</Typography>
-            <Typography variant="subtitle1">{data.pairsName}</Typography>
+            <Typography variant="subtitle1">{item.name}</Typography>
           </div>
         </div>
 

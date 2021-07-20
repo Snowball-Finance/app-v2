@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ListView = ({ poolsInfo }) => {
   const classes = useStyles();
-
   const detailButton = () => (
     <ContainedButton
       className={classes.detailButton}

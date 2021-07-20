@@ -6,6 +6,7 @@ const LAST_SNOWBALL_INFO = gql`
       poolsInfo {
         name
         address
+        lpAddress
         source
         tvlStaked
         dailyAPR

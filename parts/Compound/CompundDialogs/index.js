@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
+const CompoundDialogs = ({ open, title, item, handleClose, onApprove, onSubmit }) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -103,13 +103,14 @@ const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
           onChange={inputHandler}
         />
         <CompoundSlider value={slider} onChange={handleSliderChange} />
-        <Details data={data} calculatedBalance={amount} />
+        <Details data={data} item={item} calculatedBalance={amount} />
         <div className={classes.buttonContainer}>
           <ContainedButton
             className={clsx(classes.button, {
               [classes.greenButton]: slider === 50,
             })}
             disableElevation
+            onClick={() => onApprove(item.name, amount)}
           >
             Approve
           </ContainedButton>
@@ -118,9 +119,9 @@ const CompoundDialogs = ({ open, title, handleClose, onSubmit }) => {
               [classes.greyButton]: slider !== 100,
             })}
             disableElevation
-            onClick={() => onSubmit()}
+            onClick={() => onSubmit(title, item.name, amount)}
           >
-            {data?.name}
+            {title}
           </ContainedButton>
         </div>
       </div>

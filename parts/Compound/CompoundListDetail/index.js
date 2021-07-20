@@ -7,6 +7,7 @@ import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
 import CompoundDialogs from '../CompundDialogs';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,14 +48,23 @@ const CompoundListDetail = ({ item }) => {
   const [modal, setModal] = useState({ open: false, title: '' });
   const [successModal, setSuccessModal] = useState(false);
 
+  const { approve, submit } = useCompoundAndEarnContract();
+
   const handleClose = () => {
     setModal({ open: false, title: '' });
   };
 
-  const onSubmit = () => {
-    handleClose();
-    setSuccessModal(true);
+  const onSubmit = async(method, pairsName, amount) => {
+    const showModal = await submit(method, pairsName, amount);
+    if ( showModal ) {
+      handleClose();
+      setSuccessModal(true);
+    }
   };
+  
+  const onApprove = (pairsName, amount) => {
+    approve(pairsName, amount);
+  }
 
   return (
     <div className={classes.root}>
@@ -92,7 +102,9 @@ const CompoundListDetail = ({ item }) => {
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
+          item={item}
           handleClose={handleClose}
+          onApprove={onApprove}
           onSubmit={onSubmit}
         />
       )}
