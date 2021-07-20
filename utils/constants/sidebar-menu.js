@@ -5,7 +5,6 @@ import HomeIcon from 'components/Icons/HomeIcon'
 import MessageIcon from 'components/Icons/MessageIcon'
 import VoteIcon from 'components/Icons/VoteIcon'
 import CartIcon from 'components/Icons/CartIcon'
-import TIcon from 'components/Icons/TIcon'
 import BubbleIcon from 'components/Icons/BubbleIcon'
 import FeatherIcon from 'components/Icons/FeatherIcon'
 import ChatIcon from 'components/Icons/ChatIcon'
@@ -38,10 +37,6 @@ const SIDEBAR_MENU = [
   {
     ICON: CartIcon,
     ...LINKS.NFT_MARKETPLACE
-  },
-  {
-    ICON: TIcon,
-    ...LINKS.FAQ
   },
   {
     ICON: BubbleIcon,
