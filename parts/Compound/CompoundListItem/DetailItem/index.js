@@ -70,7 +70,7 @@ const DetailItem = ({ item }) => {
             <TVLTooltip icon={SNOB_LOCK_IMAGE_PATH} />
           </CustomPopover>
         </Typography>
-        <Typography variant="subtitle1">${item.tvlStaked}</Typography>
+        <Typography variant="subtitle1">${item.tvlStaked.toFixed(2)}</Typography>
       </div>
 
       <div>
