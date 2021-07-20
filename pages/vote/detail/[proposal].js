@@ -1,8 +1,8 @@
 
-import Vote from 'containers/Vote'
+import VoteDetail from 'containers/VoteDetail'
 
 export default function VotePage() {
   return (
-    <Vote />
+    <VoteDetail />
   )
 }

@@ -8,15 +8,6 @@ import XSnowballCard from 'parts/Vote/XSnowballCard'
 import ProposalItem from 'parts/Vote/ProposalItem'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-  },
-  tabs: {
-    marginTop: theme.spacing(2)
-  },
   container: {
     width: '100%',
     maxWidth: theme.custom.layout.maxDesktopWidth,
@@ -27,7 +18,7 @@ const ActiveProposals = () => {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={3} className={classes.container}>
+    <Grid container spacing={2} className={classes.container}>
       <Grid item xs={12} md={8}>
         <VoteHandHeader />
       </Grid>
