@@ -79,7 +79,7 @@ const CompoundAndEarn = () => {
           <SearchInput
             className={classes.search}
             value={search}
-            placeholder="Search your favorites pairs"
+            placeholder="Search your favorite pairs"
             onChange={(newValue) => handleSearch(newValue)}
             onCancelSearch={() => setSearch('')}
             // onRequestSearch={handleSearch}
