@@ -33,10 +33,6 @@ const LINKS = Object.freeze({
     TITLE: 'NFT Marketplace',
     HREF: '/nft-marketplace'
   },
-  FAQ: {
-    TITLE: 'FAQ',
-    HREF: '/faq'
-  },
   DOCS: {
     TITLE: 'Docs',
     HREF: 'https://snowballs.gitbook.io/snowball-docs/',
