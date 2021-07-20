@@ -1,8 +1,10 @@
 import { memo } from 'react'
+import { useRouter } from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import CircleLeftIcon from 'components/Icons/CircleLeftIcon'
+import LINKS from 'utils/constants/links'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,6 +24,14 @@ const useStyles = makeStyles((theme) => ({
 
 const ProposalDetail = () => {
   const classes = useStyles()
+  const router = useRouter()
+
+  const detailHandler = () => {
+    router.push(
+      LINKS.VOTE_DETAIL.HREF,
+      LINKS.VOTE_DETAIL.HREF.replace('[proposal]', 'proposalId')
+    )
+  }
 
   return (
     <div className={classes.root}>
@@ -30,6 +40,7 @@ const ProposalDetail = () => {
         size='small'
         disableElevation
         endIcon={<CircleLeftIcon />}
+        onClick={detailHandler}
       >
         Detail
       </ContainedButton>

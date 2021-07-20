@@ -4,6 +4,7 @@ import { Typography } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
 import StatusLabel from 'parts/Vote/StatusLabel'
+import getEllipsis from 'utils/helpers/getEllipsis'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,10 +23,14 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     color: theme.custom.palette.blue,
     marginLeft: theme.spacing(0.5)
+  },
+  propose: {
+    padding: theme.spacing(0.5, 0)
   }
 }))
 
 const ProposalTime = ({
+  address,
   status = 'active'
 }) => {
   const classes = useStyles()
@@ -57,6 +62,14 @@ const ProposalTime = ({
         status={status}
         label='2 days, 7 hours left'
       />
+      {address &&
+        <Typography
+          variant='caption'
+          className={classes.propose}
+        >
+          {`Proposed by ${getEllipsis(address)}`}
+        </Typography>
+      }
     </div>
   )
 }

@@ -1,0 +1,28 @@
+
+import { memo } from 'react'
+import SvgIcon from '@material-ui/core/SvgIcon'
+import { makeStyles } from '@material-ui/core/styles'
+import clsx from 'clsx'
+
+const useStyles = makeStyles(() => ({
+  root: {
+    width: 16,
+    height: 16
+  }
+}));
+
+const VoteAgainstIcon = ({
+  className,
+  viewBox,
+  ...rest
+}) => {
+  const classes = useStyles();
+
+  return (
+    <SvgIcon viewBox={viewBox || '0 0 16 16'} {...rest} className={clsx(classes.root, className)}>
+      <path fillRule="evenodd" clipRule="evenodd" d="M15.3327 2.60883C15.1977 1.47032 14.2524 0.666672 13.1047 0.666672H13.0372H3.65253C2.6398 0.666672 1.82961 1.40335 1.62707 2.34095L0.681851 8.36835C0.54682 9.43988 1.28949 10.5114 2.36973 10.6454H2.70731H5.88053V12.6545C5.88053 14.1279 7.09581 15.3333 8.58115 15.3333C8.85121 15.3333 9.12127 15.1994 9.18878 14.9315L11.6869 9.30594H13.0372C14.1849 9.30594 15.1301 8.50229 15.2652 7.36378V7.29681V2.6758C15.3327 2.6758 15.3327 2.60883 15.3327 2.60883ZM10.6067 8.56926L8.17618 13.9939C7.63606 13.793 7.23097 13.3242 7.23097 12.7215V10.0426C7.23097 9.6408 6.96091 9.37292 6.55582 9.37292H2.70744H2.57241C2.23483 9.30594 1.96477 8.97109 2.03229 8.63623L2.9775 2.60884C3.04502 2.27398 3.31508 2.0061 3.65266 2.0061H10.6067V8.56926ZM13.1049 8.03349C13.51 8.03349 13.9151 7.69864 13.9826 7.29681V2.74278C13.9151 2.34095 13.51 2.0061 13.1049 2.0061H11.9572V8.03349H13.1049Z" fill="#DF5F67" />
+    </SvgIcon>
+  )
+}
+
+export default memo(VoteAgainstIcon);

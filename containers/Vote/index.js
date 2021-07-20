@@ -17,10 +17,6 @@ const useStyles = makeStyles((theme) => ({
   },
   tabs: {
     marginTop: theme.spacing(2)
-  },
-  container: {
-    width: '100%',
-    maxWidth: theme.custom.layout.maxDesktopWidth,
   }
 }));
 
