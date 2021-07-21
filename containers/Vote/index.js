@@ -6,6 +6,7 @@ import PageHeader from 'parts/PageHeader'
 import SubMenuTabs from 'parts/SubMenuTabs'
 import ActiveProposals from './ActiveProposals'
 import AllProposals from './AllProposals'
+import NewProposal from './NewProposal'
 import { VOTE_TABS, VOTE_TABS_ARRAY } from 'utils/constants/vote-tabs'
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +39,7 @@ const Vote = () => {
       />
       {selectedTab === VOTE_TABS.active.VALUE && <ActiveProposals />}
       {selectedTab === VOTE_TABS.all.VALUE && <AllProposals />}
+      {selectedTab === VOTE_TABS.newProposal.VALUE && <NewProposal />}
     </main>
   )
 }

@@ -11,6 +11,9 @@ const BALANCE_VALID = yup.number()
 const SELECT_VALID = yup.string()
   .required('Please select one.');
 
+const STRING_VALID = yup.string()
+  .required('Please enter this field.');
+
 const SELECT_OBJECT_VALID = yup.object()
   .nullable()
   .required('Please select one.');
@@ -22,5 +25,6 @@ export {
   SELECT_VALID,
   SELECT_OBJECT_VALID,
   DATE_VALID,
+  STRING_VALID,
   BALANCE_VALID
 };
