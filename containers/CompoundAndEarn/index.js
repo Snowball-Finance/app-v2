@@ -51,7 +51,11 @@ const CompoundAndEarn = () => {
 
   useEffect(() => {
     if (data && !loading) {
-      setLastSnowballInfo(data.LastSnowballInfo.poolsInfo);
+      let clonedData = [...data?.LastSnowballInfo?.poolsInfo];
+      const sortedData = clonedData.sort(
+        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+      );
+      setLastSnowballInfo(sortedData);
     }
   }, [data, loading]);
 
@@ -61,6 +65,19 @@ const CompoundAndEarn = () => {
     );
     setLastSnowballInfo(filterData);
     setSearch(value);
+  };
+
+  const handleSorting = (event) => {
+    let sortedData = [...data?.LastSnowballInfo?.poolsInfo];
+    if (event.target.value === 'apy') {
+      sortedData = sortedData.sort(
+        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+      );
+    } else {
+      sortedData = sortedData.sort((a, b) => b.tvlStaked - a.tvlStaked);
+    }
+    setLastSnowballInfo(sortedData);
+    setType(event.target.value);
   };
 
   if (error) {
@@ -88,9 +105,7 @@ const CompoundAndEarn = () => {
             className={classes.selectBox}
             value={selectType}
             options={TYPES}
-            onChange={(e) => {
-              setType(e.target.value);
-            }}
+            onChange={handleSorting}
           />
           <Selects
             className={classes.selectBox}
