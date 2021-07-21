@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from 'react'
-import { useWeb3React } from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core'
 import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
