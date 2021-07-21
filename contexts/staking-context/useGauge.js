@@ -32,9 +32,20 @@ const useGauge = ({
       const totalWeight = await gaugeProxyContract.totalWeight()
 
       // add any denylist item here
+      const denyListTokens = [
+        0x53b37b9a6631c462d74d65d61e1c056ea9daa637,
+        0x2f17bac3e0339c1bfb6e0dd380d65bd2fc665c75,
+        0x8b2e1802a7e0e0c7e1eae8a7c636058964e21047,
+        0x585DE92A24057400a7c445c89338c7d6c61dd080,
+        0x39BF214A93EC72e42bC0B9b8C07BE1af6Fe169dA,
+      ];
       const approve = token => {
-        return token != 0x53B37b9A6631C462d74D65d61e1c056ea9dAa637
+        return !denyListTokens.includes(+token)
       }
+
+      // const approve = token => {
+      //   return token != 0x53B37b9A6631C462d74D65d61e1c056ea9dAa637
+      // }
       const approvedTokens = tokens.filter(approve)
 
       const gaugeAddresses = await Promise.all(
