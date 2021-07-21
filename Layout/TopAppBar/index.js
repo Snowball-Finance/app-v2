@@ -7,7 +7,6 @@ import MenuOpenIcon from '@material-ui/icons/MenuOpen'
 import { useContracts } from 'contexts/contract-context'
 import { usePrices } from 'contexts/price-context'
 import DollarIcon from 'components/Icons/DollarIcon'
-// import ThemeButton from './ThemeButton'
 import ConnectWallet from './ConnectWallet'
 
 const useStyles = makeStyles((theme) => ({
@@ -77,7 +76,6 @@ const TopAppBar = ({ openDrawer, onDraw }) => {
       </div>
 
       <div className={classes.rowContainer}>
-//         <ThemeButton />
         <ConnectWallet />
       </div>
     </Paper>
