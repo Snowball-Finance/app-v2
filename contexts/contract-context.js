@@ -5,20 +5,26 @@ import { useWeb3React } from '@web3-react/core'
 import { CONTRACTS, C_CHAIN_ID } from 'config'
 import SNOWBALL_ABI from 'libs/abis/snowball.json'
 import SNOWCONE_ABI from 'libs/abis/snowcone.json'
+import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import { usePopup } from 'contexts/popup-context'
+import useGauge from 'contexts/staking-context/useGauge'
+import { usePrices } from 'contexts/price-context'
 import { isEmpty } from 'utils/helpers/utility'
 
 const ContractContext = createContext(null)
 
 export function ContractProvider({ children }) {
+  const [loading, setLoading] = useState(false);
   const { setPopUp } = usePopup();
   const { account, library, chainId } = useWeb3React();
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [snowconeBalance, setSnowconeBalance] = useState(0);
+  const { prices } = usePrices();
 
   const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
   const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner()) : null, [library])
   const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner()) : null, [library])
+  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXY, GAUGE_PROXY_ABI, library.getSigner()) : null, [library])
 
   useEffect(() => {
     if (chainId && chainId !== C_CHAIN_ID) {
@@ -56,9 +62,17 @@ export function ContractProvider({ children }) {
     }
   }
 
+  const { gauges } = useGauge({
+    prices,
+    gaugeProxyContract,
+    setLoading
+  })
+
   return (
     <ContractContext.Provider
       value={{
+        loading,
+        gauges,
         isWrongNetwork,
         snowballBalance,
         snowconeBalance,
@@ -77,6 +91,8 @@ export function useContracts() {
   }
 
   const {
+    loading,
+    gauges,
     isWrongNetwork,
     snowballBalance,
     snowconeBalance,
@@ -84,6 +100,8 @@ export function useContracts() {
   } = context
 
   return {
+    loading,
+    gauges,
     isWrongNetwork,
     snowballBalance,
     snowconeBalance,
