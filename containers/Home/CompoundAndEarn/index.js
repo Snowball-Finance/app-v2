@@ -37,12 +37,13 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 400
     }
   },
-  button: {
-    margin: theme.spacing(3, 0)
+  xSnobBalance: {
+    color: theme.custom.palette.blue
   },
   divider: {
     height: 1,
-    margin: theme.spacing(3, 0)
+    marginTop: theme.spacing(12),
+    marginBottom: theme.spacing(1)
   },
   accountContainer: {
     display: 'flex',
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 const CompoundAndEarn = () => {
   const classes = useStyles();
   const [pendingHarvest, setPendingHarvest] = useState({});
-  const { snowballBalance, gauges } = useContracts();
+  const { snowballBalance, gauges, snowconeBalance } = useContracts();
   const { prices } = usePrices();
 
   const snowballPrice = useMemo(() => prices.snowball * snowballBalance, [prices, snowballBalance]);
@@ -143,9 +144,6 @@ const CompoundAndEarn = () => {
       >
         ${parseFloat(pendingHarvest?.balanceUSD).toFixed(3)} USD
       </Typography>
-      <ContainedButton className={classes.button}>
-        HARVEST
-      </ContainedButton>
 
       <Divider
         flexItem
@@ -165,10 +163,10 @@ const CompoundAndEarn = () => {
             {snowballBalance.toLocaleString()} SNOB<span>$ {snowballPrice.toFixed(3)}</span>
           </Typography>
           <Typography
-            variant='caption'
-            color='textPrimary'
+            className={classes.xSnobBalance}
+            variant='body2'
           >
-            In Governance: 0.000
+            {snowconeBalance.toLocaleString()} xSNOB
           </Typography>
         </div>
 
