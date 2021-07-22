@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import { NO_IMAGE_PATH } from 'utils/constants/image-paths';
+import orderBasePair from 'utils/helpers/orderBasePair';
 
 const useStyles = makeStyles((theme) => ({
   secondTokenIcon: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SnowPairsIcon = ({ pairsIcon, size, className }) => {
   const classes = useStyles({ size });
-
+  pairsIcon = orderBasePair(pairsIcon)
   return pairsIcon.map((pair, index) => {
     if (pair) {
       const src = `https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/${pair}/logo.png`;
