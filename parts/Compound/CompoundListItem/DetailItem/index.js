@@ -10,6 +10,7 @@ import Info from '../Info';
 import TVLTooltip from '../TVLTooltip';
 import APYTooltip from '../APYTooltip';
 import { BOOST_INFO_IMAGE_PATH, SNOB_LOCK_IMAGE_PATH } from 'utils/constants/image-paths';
+import getShortName from 'utils/helpers/getShortName';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '92%',
+    width: '100%',
   },
   popover: {
     backgroundColor: theme.custom.palette.lightBlue,
@@ -32,7 +33,7 @@ const DetailItem = ({ item }) => {
   const token0 = item.token0.address;
   const token1 = item.token1.address;
   const token2 = item.token2.address;
-
+  const shortName = getShortName(item.source)
   return (
     <div className={classes.card}>
       <div>
@@ -41,9 +42,9 @@ const DetailItem = ({ item }) => {
 
       <div>
         <Typography variant="subtitle2">{item.name}</Typography>
-        <Tags type="secondary">
-          <SnowTokenIcon size={12} token="png" />
-          {item.source}
+        <Tags type={shortName}>
+        <SnowTokenIcon size={12} token={shortName} />
+        {item.source}
         </Tags>
       </div>
 
@@ -80,7 +81,7 @@ const DetailItem = ({ item }) => {
             <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" />
           </CustomPopover>
         </Typography>
-        <Tags type="primary">2.5x</Tags>
+        <Tags type="snowball">2.5x</Tags>
       </div>
     </div>
   );
