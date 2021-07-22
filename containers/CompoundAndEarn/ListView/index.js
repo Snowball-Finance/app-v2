@@ -4,7 +4,6 @@ import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CustomAccordion from 'components/CustomAccordion';
-// import DepositItem from 'parts/Compound/CompoundListItem/DepositItem';
 import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
 import CompoundListDetail from 'parts/Compound/CompoundListDetail';
 
@@ -38,8 +37,6 @@ const ListView = ({ poolsInfo }) => {
         details={<CompoundListDetail item={item}/>}
       />
     );
-
-    // return <DepositItem key={item.id} />;
   });
 };
 
