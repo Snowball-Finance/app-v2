@@ -10,9 +10,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const StatusProgressBar = ({
+const StateProgressBar = ({
   header,
-  status,
+  state,
   value
 }) => {
   const classes = useStyles()
@@ -24,10 +24,10 @@ const StatusProgressBar = ({
       </Typography>
       <SnowProgressBar
         value={value}
-        status={status}
+        state={state}
       />
     </div>
   )
 }
 
-export default memo(StatusProgressBar)
+export default memo(StateProgressBar)

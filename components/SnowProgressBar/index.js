@@ -19,10 +19,10 @@ const useStyles = makeStyles(() => ({
 }))
 
 const SnowProgressBar = ({
-  status,
+  state,
   value
 }) => {
-  const colors = useMemo(() => getStatusColor(status), [status]);
+  const colors = useMemo(() => getStatusColor(state), [state]);
   const classes = useStyles({ colors })
 
   return (

@@ -22,14 +22,16 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const ProposalDetail = () => {
+const ProposalDetail = ({
+  proposalId
+}) => {
   const classes = useStyles()
   const router = useRouter()
 
   const detailHandler = () => {
     router.push(
       LINKS.VOTE_DETAIL.HREF,
-      LINKS.VOTE_DETAIL.HREF.replace('[proposal]', 'proposalId')
+      LINKS.VOTE_DETAIL.HREF.replace('[proposal]', proposalId)
     )
   }
 

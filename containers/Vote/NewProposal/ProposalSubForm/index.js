@@ -7,7 +7,6 @@ import { useWeb3React } from '@web3-react/core'
 import CircleHelpIcon from 'components/Icons/CircleHelpIcon'
 import SnowWalletAccount from 'components/SnowWalletAccount'
 import SnowTextField from 'components/UI/TextFields/SnowTextField'
-import SnowSelect from 'components/UI/TextFields/SnowSelect'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,13 +20,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   }
 }))
-
-const PERIOD_TYPES = [
-  { VALUE: 1, LABEL: '1 day' },
-  { VALUE: 2, LABEL: '2 days' },
-  { VALUE: 3, LABEL: '3 days' },
-  { VALUE: 4, LABEL: '4 days' }
-]
 
 const ProposalSubForm = ({
   control,
@@ -47,12 +39,16 @@ const ProposalSubForm = ({
         </Grid>
         <Grid item xs={12}>
           <Controller
-            as={<SnowSelect />}
-            name='period'
+            as={<SnowTextField />}
+            name='votingPeriod'
+            type='number'
+            inputProps={{
+              min: 1,
+              max: 30
+            }}
             label={<>Voting Period in days <CircleHelpIcon /> </>}
             placeholder='Period of days to vote'
-            error={errors.period?.message}
-            options={PERIOD_TYPES}
+            error={errors.votingPeriod?.message}
             control={control}
             defaultValue={''}
           />
@@ -60,7 +56,7 @@ const ProposalSubForm = ({
         <Grid item xs={12}>
           <Controller
             as={<SnowTextField />}
-            name='discussURL'
+            name='metadata'
             label={<>Discuss URL <CircleHelpIcon /> </>}
             placeholder='https://discord.gg/tDuuf12'
             control={control}

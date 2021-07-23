@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
 
-import StatusLabel from 'parts/Vote/StatusLabel'
+import StateLabel from 'parts/Vote/StateLabel'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -13,18 +13,23 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const ProposalInfo = () => {
+const ProposalInfo = ({
+  proposal
+}) => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
       <Typography variant='caption'>
-        Proposal  #4
+        Proposal #{proposal.index + proposal.offset - 1}
       </Typography>
       <Typography variant='body1'>
-        Pursue Liquid Staking Joint Venture under Snowball brand
+        {proposal.title}
       </Typography>
-      <StatusLabel status='active' label='Active' />
+      <StateLabel
+        state={proposal.state}
+        label={proposal.state}
+      />
     </div>
   )
 }

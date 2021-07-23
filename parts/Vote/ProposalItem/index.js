@@ -13,23 +13,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const ProposalItem = () => {
+const ProposalItem = ({
+  proposal
+}) => {
   const classes = useStyles()
 
   return (
     <Card className={classes.root}>
-      <Grid container spacing={4} className={classes.container}>
+      <Grid container spacing={3}>
         <Grid item xs={12} sm={8} md={4}>
-          <ProposalInfo />
+          <ProposalInfo proposal={proposal} />
         </Grid>
         <Grid item xs={12} sm={4} md={2}>
-          <ProposalTime />
+          <ProposalTime proposal={proposal} />
         </Grid>
         <Grid item xs={12} sm={8} md={4}>
-          <ProposalStatus />
+          <ProposalStatus proposal={proposal} />
         </Grid>
         <Grid item xs={12} sm={4} md={2}>
-          <ProposalDetail />
+          <ProposalDetail proposalId={proposal.index} />
         </Grid>
       </Grid>
     </Card>

@@ -1,17 +1,17 @@
 
 const getStatusColor = (value) => {
   switch (value) {
-    case 'active':
+    case 'Active':
       return {
         color: '#28C76F',
         backgroundColor: 'rgba(40, 199, 111, 0.12)'
       }
-    case 'executed':
+    case 'Executed':
       return {
         color: '#28A2FF',
         backgroundColor: 'rgba(40, 162, 255, 0.12)'
       }
-    case 'failed':
+    case 'Failed':
       return {
         color: '#DF5F67',
         backgroundColor: 'rgba(223, 95, 103, 0.12)'

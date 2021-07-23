@@ -1,14 +1,17 @@
 
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Typography } from '@material-ui/core'
+import { useRouter } from 'next/router'
 
+import { useVoteContract } from 'contexts/vote-context'
 import PageHeader from 'parts/PageHeader'
 import XSnowballCard from 'parts/Vote/XSnowballCard'
 import VoteDetailHeader from './VoteDetailHeader'
 import VoteForAction from './VoteForAction'
 import VoteAgainstAction from './VoteAgainstAction'
 import VoteDetailInfo from './VoteDetailInfo'
+import { isEmpty } from 'utils/helpers/utility'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
 
 const VoteDetail = () => {
   const classes = useStyles();
+  const router = useRouter();
+  const { proposals } = useVoteContract();
+
+  const proposal = useMemo(() => proposals.find((proposal) => proposal.index === parseInt(router.query.proposal, 10))
+    , [router.query.proposal, proposals]);
 
   return (
     <main className={classes.root}>
@@ -36,24 +44,28 @@ const VoteDetail = () => {
       <Grid container spacing={2} className={classes.container}>
         <Grid item xs={12}>
           <Typography variant='body1'>
-            Proposal #4 details
+            {`Proposal #${router?.query?.proposal || 0} details`}
           </Typography>
         </Grid>
-        <Grid item xs={12} md={8}>
-          <VoteDetailHeader />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <XSnowballCard />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <VoteForAction />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <VoteAgainstAction />
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <VoteDetailInfo />
-        </Grid>
+        {!isEmpty(proposal) &&
+          <>
+            <Grid item xs={12} md={8}>
+              <VoteDetailHeader proposal={proposal} />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <XSnowballCard />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <VoteForAction proposal={proposal} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <VoteAgainstAction proposal={proposal} />
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <VoteDetailInfo />
+            </Grid>
+          </>
+        }
       </Grid>
     </main>
   )

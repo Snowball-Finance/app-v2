@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 
-import StatusLabel from 'parts/Vote/StatusLabel'
+import StateLabel from 'parts/Vote/StateLabel'
 import ProposalTime from 'parts/Vote/ProposalTime'
 
 const useStyles = makeStyles((theme) => ({
@@ -26,18 +26,23 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const VoteDetailHeader = () => {
+const VoteDetailHeader = ({
+  proposal
+}) => {
   const classes = useStyles()
 
   return (
     <Card className={classes.root}>
       <div className={classes.container}>
         <Typography variant='body1' className={classes.title}>
-          Sherpa distribution
+          {proposal.title}
         </Typography>
-        <StatusLabel status='active' label='Active' />
+        <StateLabel
+          state={proposal.state}
+          label={proposal.state}
+        />
       </div>
-      <ProposalTime address='0x37b5d2EE45d4195bF70dd0cAa46ff0A5803cDFD4' />
+      <ProposalTime proposal={proposal} />
     </Card>
   )
 }

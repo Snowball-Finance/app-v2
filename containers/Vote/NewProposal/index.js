@@ -6,14 +6,15 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
+import { useVoteContract } from 'contexts/vote-context'
 import ProposalMainForm from './ProposalMainForm'
 import ProposalSubForm from './ProposalSubForm'
-import { SELECT_VALID, STRING_VALID } from 'utils/constants/validations'
+import { STRING_VALID, VOTE_PERIOD_VALID } from 'utils/constants/validations'
 
 const schema = yup.object().shape({
   title: STRING_VALID,
-  description: STRING_VALID,
-  period: SELECT_VALID
+  data: STRING_VALID,
+  votingPeriod: VOTE_PERIOD_VALID
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -25,13 +26,14 @@ const useStyles = makeStyles((theme) => ({
 
 const NewProposal = () => {
   const classes = useStyles();
+  const { createProposal } = useVoteContract();
 
   const { control, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema)
   });
 
   const onSubmit = async (data) => {
-    console.log(data)
+    createProposal(data)
   }
 
   return (
