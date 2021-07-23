@@ -4,21 +4,24 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   tags: {
-    display: 'flex',
-    justifyContent: 'space-around',
+    display: 'table-cell',
     alignItems: 'center',
-    padding: theme.spacing(0.2),
+    padding: theme.spacing(0.3),
     fontSize: 12,
     borderRadius: 4
   },
-  primary: {
+  snowball: {
     backgroundColor: 'rgba(103, 166, 240, 0.12)',
-    color: '#28A2FF',
+    color: '#28A2FF'
   },
-  secondary: {
+  png: {
     backgroundColor: 'rgba(255, 107, 0, 0.12)',
-    color: '#FF9F43',
+    color: '#FF9F43'
   },
+  joe: {
+    backgroundColor: 'rgba(242, 113, 106, 0.12)',
+    color: '#F2716A'
+  }
 }));
 
 const Tags = ({ children, style, className, type }) => {
