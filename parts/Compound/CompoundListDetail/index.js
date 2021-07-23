@@ -6,7 +6,7 @@ import SuccessDialog from 'components/SuccessDialog';
 import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
-import CompoundDialogs from '../CompundDialogs';
+import CompoundDialogs from '../CompoundDialogs';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
 
 const useStyles = makeStyles((theme) => ({
