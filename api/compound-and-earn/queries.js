@@ -24,6 +24,7 @@ const LAST_SNOWBALL_INFO = gql`
           address
         }
         gaugeInfo {
+          address
           fullYearlyAPY
           snobDailyAPR
           snobWeeklyAPR
@@ -36,4 +37,18 @@ const LAST_SNOWBALL_INFO = gql`
   }
 `;
 
-export { LAST_SNOWBALL_INFO };
+const USER_LAST_DEPOSIT = gql`
+  query LastDepositPerWallet($wallet: String!, $snowglobe: String!) {
+    LastDepositPerWallet(wallet:$wallet,snowglobe:$snowglobe){
+      lastBlockScanned
+      lpQuantity
+      slpQuantity
+    }
+    PoolsInfoByAddress(address:$snowglobe){
+      pricePoolToken
+    }
+  }
+`;
+
+
+export { LAST_SNOWBALL_INFO, USER_LAST_DEPOSIT };

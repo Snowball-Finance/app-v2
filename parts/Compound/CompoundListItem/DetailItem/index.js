@@ -28,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DetailItem = ({ item }) => {
+const DetailItem = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const token0 = item.token0.address;
   const token1 = item.token1.address;
   const token2 = item.token2.address;
-  const shortName = getShortName(item.source)
+  const shortName = getShortName(item.source);
 
   return (
     <div className={classes.card}>
@@ -61,7 +61,7 @@ const DetailItem = ({ item }) => {
           </CustomPopover>
         </Typography>
         <Typography variant="subtitle1">
-          {item.gaugeInfo.fullYearlyAPY?.toFixed(2)}%
+          {totalAPY?.toFixed(2)}%
         </Typography>
       </div>
 
@@ -79,10 +79,10 @@ const DetailItem = ({ item }) => {
         <Typography variant="body2">
           Boost{' '}
           <CustomPopover contentClassName={classes.popover}>
-            <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" />
+            <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" boost={userBoost} />
           </CustomPopover>
         </Typography>
-        <Tags type="snowball">2.5x</Tags>
+        <Tags type="snowball">{userBoost}</Tags>
       </div>
     </div>
   );
