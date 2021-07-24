@@ -8,6 +8,12 @@ const BALANCE_VALID = yup.number()
     value => value > 0)
   .required('Please input field.');
 
+const VOTE_PERIOD_VALID = yup.number()
+  .typeError('Please enter valid balance')
+  .min(1, 'This field should be more than 1.')
+  .max(30, 'This field should be less than 30.')
+  .required('Please input field.');
+
 const SELECT_VALID = yup.string()
   .required('Please select one.');
 
@@ -26,5 +32,6 @@ export {
   SELECT_OBJECT_VALID,
   DATE_VALID,
   STRING_VALID,
-  BALANCE_VALID
+  BALANCE_VALID,
+  VOTE_PERIOD_VALID
 };

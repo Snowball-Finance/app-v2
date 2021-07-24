@@ -48,10 +48,10 @@ const ProposalMainForm = ({
             as={<SnowTextField />}
             rows={15}
             multiline={true}
-            name='description'
+            name='data'
             label='Description of new proposal'
             placeholder='Description of new proposal'
-            error={errors.description?.message}
+            error={errors.data?.message}
             control={control}
             defaultValue={''}
           />

@@ -1,8 +1,11 @@
 
 import Vote from 'containers/Vote'
+import { VoteContractProvider } from 'contexts/vote-context'
 
 export default function VotePage() {
   return (
-    <Vote />
+    <VoteContractProvider>
+      <Vote />
+    </VoteContractProvider>
   )
 }

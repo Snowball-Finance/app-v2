@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import getStatusColor from 'utils/helpers/getStatusColor'
 
 const useStyles = makeStyles((theme) => ({
-  status: (props) => ({
+  state: (props) => ({
     fontSize: props.size,
     fontWeight: 600,
     width: 'fit-content',
@@ -17,20 +17,20 @@ const useStyles = makeStyles((theme) => ({
   }),
 }))
 
-const StatusLabel = ({
-  status,
+const StateLabel = ({
+  state,
   label,
   size = 14,
   className
 }) => {
-  const colors = useMemo(() => getStatusColor(status), [status]);
+  const colors = useMemo(() => getStatusColor(state), [state]);
   const classes = useStyles({ colors, size })
 
   return (
-    <Typography className={clsx(classes.status, className)}>
+    <Typography className={clsx(classes.state, className)}>
       {label}
     </Typography>
   )
 }
 
-export default memo(StatusLabel)
+export default memo(StateLabel)

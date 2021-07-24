@@ -3,8 +3,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
-import StatusLabel from 'parts/Vote/StatusLabel'
+import StateLabel from 'parts/Vote/StateLabel'
 import getEllipsis from 'utils/helpers/getEllipsis'
+import { getEnglishDate } from 'utils/helpers/time'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,28 +26,28 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(0.5)
   },
   propose: {
+    fontSize: 10,
     padding: theme.spacing(0.5, 0)
   }
 }))
 
 const ProposalTime = ({
-  address,
-  status = 'active'
+  proposal
 }) => {
   const classes = useStyles()
 
   const headerLabel = useMemo(() => {
-    switch (status) {
-      case 'active':
+    switch (proposal.state) {
+      case 'Active':
         return 'Voting finish at'
-      case 'executed':
-        return 'Execured'
-      case 'failed':
+      case 'Executed':
+        return 'Executed'
+      case 'Failed':
         return 'Canceled'
       default:
         return 'Voting finish at'
     }
-  }, [status]);
+  }, [proposal.state]);
 
   return (
     <div className={classes.root}>
@@ -57,17 +58,17 @@ const ProposalTime = ({
         {headerLabel}
         <HelpOutlineIcon className={classes.helpIcon} />
       </Typography>
-      <StatusLabel
+      <StateLabel
         size={12}
-        status={status}
-        label='2 days, 7 hours left'
+        state={proposal.state}
+        label={getEnglishDate(proposal.endDate)}
       />
-      {address &&
+      {proposal.proposer &&
         <Typography
           variant='caption'
           className={classes.propose}
         >
-          {`Proposed by ${getEllipsis(address)}`}
+          {`Proposed by ${getEllipsis(proposal.proposer)}`}
         </Typography>
       }
     </div>
