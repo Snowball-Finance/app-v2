@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SnobApyCalculation = ({ totalAPY, yearlyAPY, userBoost }) => {
+const SnobApyCalculation = ({ totalAPY, snobAPR, userBoost }) => {
   const classes = useStyles();
 
   return (
@@ -30,7 +30,7 @@ const SnobApyCalculation = ({ totalAPY, yearlyAPY, userBoost }) => {
       </Typography>
       <div className={classes.container}>
         <Typography variant="body2">SNOB APR</Typography>
-        <Typography variant="subtitle2">{yearlyAPY?.toFixed(2)}%</Typography>
+        <Typography variant="subtitle2">{snobAPR?.toFixed(2)}%</Typography>
       </div>
       <div className={classes.container}>
         <Typography variant="body2">Boost</Typography>

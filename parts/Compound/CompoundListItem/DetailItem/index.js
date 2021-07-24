@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DetailItem = ({ item, userBoost }) => {
+const DetailItem = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const token0 = item.token0.address;
   const token1 = item.token1.address;
@@ -61,7 +61,7 @@ const DetailItem = ({ item, userBoost }) => {
           </CustomPopover>
         </Typography>
         <Typography variant="subtitle1">
-          {item.gaugeInfo.fullYearlyAPY?.toFixed(2)}%
+          {totalAPY?.toFixed(2)}%
         </Typography>
       </div>
 

@@ -44,6 +44,7 @@ const ListView = ({ poolsInfo }) => {
           1e18, gauge.staked / 1e18, snowconeBalance);
       }
     }
+    const totalAPY = (boost*item.gaugeInfo.snobYearlyAPR)+item.yearlyAPY;
 
     const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
 
@@ -51,8 +52,8 @@ const ListView = ({ poolsInfo }) => {
       <CustomAccordion
         key={item.address}
         expandMoreIcon={detailButton()}
-        summary={<DetailItem item={item} userBoost={userBoost} />}
-        details={<CompoundListDetail item={item} userBoost={userBoost} />}
+        summary={<DetailItem item={item} userBoost={userBoost} totalAPY={totalAPY} />}
+        details={<CompoundListDetail item={item} userBoost={userBoost} totalAPY={totalAPY} />}
       />
     );
   });
