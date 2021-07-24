@@ -23,7 +23,7 @@ const SnowPairsIcon = ({ pairsIcon, size, className }) => {
   pairsIcon = orderBasePair(pairsIcon)
   return pairsIcon.map((pair, index) => {
     if (pair) {
-      const src = `https://raw.githubusercontent.com/ava-labs/bridge-tokens/main/avalanche-tokens/${pair}/logo.png`;
+      const src = `https://raw.githubusercontent.com/Snowball-Finance/bridge-tokens/main/avalanche-tokens/${pair}/logo.png`;
       return (
         <img
           key={pair}
