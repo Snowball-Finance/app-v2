@@ -14,13 +14,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const VoteDetailInfo = () => {
+const VoteDetailInfo = ({
+  proposal
+}) => {
   const classes = useStyles()
 
   return (
     <Card className={classes.root}>
       <Typography variant='caption' className={classes.info}>
-        No Description
+        {proposal?.detail || 'No detail'}
       </Typography>
     </Card>
   )

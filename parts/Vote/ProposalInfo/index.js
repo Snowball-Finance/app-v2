@@ -21,7 +21,7 @@ const ProposalInfo = ({
   return (
     <div className={classes.root}>
       <Typography variant='caption'>
-        Proposal #{proposal.index + proposal.offset - 1}
+        Proposal #{proposal.index}
       </Typography>
       <Typography variant='body1'>
         {proposal.title}

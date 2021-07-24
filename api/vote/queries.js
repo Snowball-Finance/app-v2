@@ -18,6 +18,7 @@ const PROPOSAL_LIST = gql`
         againstVotes
         proposer
         metadata
+        details
       }
     }
   }
