@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundListDetail = ({ item }) => {
+const CompoundListDetail = ({ item, userBoost }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
   const [successModal, setSuccessModal] = useState(false);
@@ -77,6 +77,7 @@ const CompoundListDetail = ({ item }) => {
         <SnobAbyCalculation
           yearlyAPY={item.gaugeInfo.snobYearlyAPR}
           totalAPY={item.gaugeInfo.fullYearlyAPY}
+          userBoost={userBoost}
         />
         <Total />
       </div>

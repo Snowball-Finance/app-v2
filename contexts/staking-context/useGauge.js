@@ -61,7 +61,6 @@ const useGauge = ({
           const aTokenContract = new ethers.Contract(a.address, GAUGE_TOKEN_ABI, library.getSigner())
           const bTokenContract = new ethers.Contract(b.address, GAUGE_TOKEN_ABI, library.getSigner())
           const gaugeContract = new ethers.Contract(gaugeAddresses[index], GAUGE_ABI, library.getSigner())
-
           return [
             gaugeProxyContract.weights(token),
             gaugeContract.rewardRate(),
@@ -86,9 +85,9 @@ const useGauge = ({
         const rewardRate = +balancesUserInfosHarvestables[idx * 13 + 1].toString()
         const derivedSupply = +balancesUserInfosHarvestables[idx * 13 + 2].toString()
         const totalSupply = +balancesUserInfosHarvestables[idx * 13 + 3].toString()
-        const balance = balancesUserInfosHarvestables[idx * 13 + 4]
-        const staked = balancesUserInfosHarvestables[idx * 13 + 5]
-        const harvestable = balancesUserInfosHarvestables[idx * 13 + 6]
+        const balance = +balancesUserInfosHarvestables[idx * 13 + 4]
+        const staked = +balancesUserInfosHarvestables[idx * 13 + 5]
+        const harvestable = +balancesUserInfosHarvestables[idx * 13 + 6]
         const userWeight = +balancesUserInfosHarvestables[idx * 13 + 7].toString()
         const userCurrentWeights = +balancesUserInfosHarvestables[idx * 13 + 8].toString()
         const numAInPairBN = balancesUserInfosHarvestables[idx * 13 + 9]

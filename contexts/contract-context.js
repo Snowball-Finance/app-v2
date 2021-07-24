@@ -19,6 +19,7 @@ export function ContractProvider({ children }) {
   const { account, library, chainId } = useWeb3React();
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [snowconeBalance, setSnowconeBalance] = useState(0);
+  const [totalSnowcone, setTotalSnowcone] = useState(0);
   const { prices } = usePrices();
 
   const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
@@ -49,14 +50,18 @@ export function ContractProvider({ children }) {
       const [
         snowballBalance,
         snowconeBalance,
+        totalSnowconeValue
       ] = await Promise.all([
         snowballContract['balanceOf(address)'](account, { gasLimit: 1000000 }),
         snowconeContract['balanceOf(address)'](account, { gasLimit: 1000000 }),
+        snowconeContract['totalSupply()']({gasLimit: 1000000 }),
       ]);
       const snowballBalanceValue = parseFloat(ethers.utils.formatUnits(snowballBalance, 18));
       const snowconeBalanceValue = parseFloat(ethers.utils.formatUnits(snowconeBalance, 18));
+      
       setSnowballBalance(snowballBalanceValue);
       setSnowconeBalance(snowconeBalanceValue);
+      setTotalSnowcone(totalSnowconeValue);
     } catch (error) {
       console.log('[Error] getBalanceInfo => ', error)
     }
@@ -76,6 +81,7 @@ export function ContractProvider({ children }) {
         isWrongNetwork,
         snowballBalance,
         snowconeBalance,
+        totalSnowcone,
         getBalanceInfo
       }}
     >
@@ -96,6 +102,7 @@ export function useContracts() {
     isWrongNetwork,
     snowballBalance,
     snowconeBalance,
+    totalSnowcone,
     getBalanceInfo
   } = context
 
@@ -105,6 +112,7 @@ export function useContracts() {
     isWrongNetwork,
     snowballBalance,
     snowconeBalance,
+    totalSnowcone,
     getBalanceInfo
   }
 }
