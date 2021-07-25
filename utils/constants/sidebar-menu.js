@@ -3,7 +3,8 @@ import LINKS from 'utils/constants/links'
 
 import HomeIcon from 'components/Icons/HomeIcon'
 import MessageIcon from 'components/Icons/MessageIcon'
-import VoteIcon from 'components/Icons/VoteIcon'
+// ? hide vote page by great.dolphin.ls for first release
+// import VoteIcon from 'components/Icons/VoteIcon'
 import CartIcon from 'components/Icons/CartIcon'
 import BubbleIcon from 'components/Icons/BubbleIcon'
 import FeatherIcon from 'components/Icons/FeatherIcon'
@@ -30,10 +31,11 @@ const SIDEBAR_MENU = [
     ICON: MessageIcon,
     ...LINKS.STAKING
   },
-  {
-    ICON: VoteIcon,
-    ...LINKS.VOTE
-  },
+  // ? hide vote page by great.dolphin.ls for first release
+  // {
+  //   ICON: VoteIcon,
+  //   ...LINKS.VOTE
+  // },
   {
     ICON: CartIcon,
     ...LINKS.NFT_MARKETPLACE

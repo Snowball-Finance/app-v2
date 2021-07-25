@@ -62,7 +62,7 @@ const VoteDetail = () => {
               <VoteAgainstAction proposal={proposal} />
             </Grid>
             <Grid item xs={12} md={8}>
-              <VoteDetailInfo />
+              <VoteDetailInfo proposal={proposal} />
             </Grid>
           </>
         }
