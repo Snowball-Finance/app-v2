@@ -12,7 +12,6 @@ const useClaim = ({
   const { account } = useWeb3React();
 
   const [userClaimable, setUserClaimable] = useState(0);
-  const [nextDistribution, setNextDistribution] = useState(null);
 
   useEffect(() => {
     if (!isEmpty(feeDistributorContract)) {
@@ -24,15 +23,11 @@ const useClaim = ({
   const getFeeDistributorInfo = async () => {
     try {
       const [
-        userClaimable,
-        timeCursor,
+        userClaimable
       ] = await Promise.all([
         feeDistributorContract.callStatic['claim(address)'](account, { gasLimit: 1000000 }),
-        feeDistributorContract['time_cursor()']({ gasLimit: 1000000 }),
       ]);
-
-      const nextDistribution = new Date(timeCursor.toNumber() * 1000);
-      setNextDistribution(nextDistribution);
+ 
       setUserClaimable(userClaimable.toString() ? userClaimable : null);
     } catch (error) {
       console.log('[Error] getSnowconeInfo => ', error)
@@ -70,7 +65,6 @@ const useClaim = ({
 
   return {
     userClaimable,
-    nextDistribution,
     claim
   }
 }

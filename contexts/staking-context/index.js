@@ -51,8 +51,7 @@ export function StakingContractProvider({ children }) {
 
   const {
     claim,
-    userClaimable,
-    nextDistribution,
+    userClaimable
   } = useClaim({
     setLoading,
     feeDistributorContract,
@@ -83,7 +82,6 @@ export function StakingContractProvider({ children }) {
         isExpired,
         gauges,
         userClaimable,
-        nextDistribution,
         claim,
         createLock,
         increaseAmount,
@@ -120,7 +118,6 @@ export function useStakingContract() {
     isExpired,
     gauges,
     userClaimable,
-    nextDistribution,
     claim,
     createLock,
     increaseAmount,
@@ -146,7 +143,6 @@ export function useStakingContract() {
     isExpired,
     gauges,
     userClaimable,
-    nextDistribution,
     claim,
     createLock,
     increaseAmount,
