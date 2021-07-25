@@ -56,6 +56,16 @@ const LAST_SNOWBALL_INFO = gql`
   }
 `;
 
+const CURRENT_DISTRIBUTION_PHASE = gql`
+  query {
+    CurrentDistributionPhase{
+      startDate
+      nextDate
+      snobDistributed
+    }
+  }
+`;
+
 export {
-  LAST_SNOWBALL_INFO
+  LAST_SNOWBALL_INFO, CURRENT_DISTRIBUTION_PHASE
 };

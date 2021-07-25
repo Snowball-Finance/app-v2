@@ -6,13 +6,16 @@ import { useStakingContract } from 'contexts/staking-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import CardWrapper from '../CardWrapper'
 import { formatNumber } from 'utils/helpers/format'
+import { useQuery } from '@apollo/client'
+import { CURRENT_DISTRIBUTION_PHASE } from 'api/init/queries'
 
 const SnowClaim = () => {
   const {
     claim,
-    userClaimable,
-    nextDistribution
+    userClaimable
   } = useStakingContract();
+
+  const {loading,error,data} = useQuery(CURRENT_DISTRIBUTION_PHASE);
 
   const claimable = useMemo(() =>
     userClaimable ? parseFloat(formatEther(userClaimable)) : null
@@ -23,14 +26,14 @@ const SnowClaim = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography color='textPrimary' variant='body1'>
-            {`Current distribution amount: 19k SNOB`}
+            {`Current distribution amount: ${formatNumber(data?.CurrentDistributionPhase.snobDistributed)}`}
           </Typography>
           <Typography color='textPrimary' variant='body1'>
-            {`Current distribution date: Wed Jun 30 2021`}
+            {`Current distribution date: ${new Date(data?.CurrentDistributionPhase.startDate).toLocaleDateString()}`}
           </Typography>
           <br />
           <Typography color='textPrimary' variant='body1'>
-            {`Next distribution: ${nextDistribution?.toDateString()}`}
+            {`Next distribution: ${new Date(data?.CurrentDistributionPhase.nextDate).toLocaleDateString()}`}
           </Typography>
         </Grid>
         <Grid item xs={12}>
