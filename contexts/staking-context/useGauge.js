@@ -5,11 +5,11 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import Web3 from 'web3'
 
 import { CONTRACTS } from 'config'
+import { usePoolContract } from 'contexts/pool-context'
 import GAUGE_TOKEN_ABI from 'libs/abis/gauge-token.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
 import { isEmpty, delay } from 'utils/helpers/utility'
 import getPairDataPrefill from 'utils/helpers/getPairDataPrefill'
-import GAUGE_INFO from 'utils/constants/gauge-info'
 
 const useGauge = ({
   prices,
@@ -18,13 +18,14 @@ const useGauge = ({
 }) => {
   const { library, account } = useWeb3React()
   const [gauges, setGauges] = useState([])
+  const { pools, getGaugeInfo } = usePoolContract();
 
   useEffect(() => {
-    if (!isEmpty(gaugeProxyContract) && !isEmpty(prices)) {
+    if (!isEmpty(gaugeProxyContract) && !isEmpty(prices) && !isEmpty(pools)) {
       getGaugeProxyInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prices, gaugeProxyContract])
+  }, [prices, pools, gaugeProxyContract])
 
   const getGaugeProxyInfo = async () => {
     try {
@@ -43,11 +44,7 @@ const useGauge = ({
         return !denyListTokens.includes(+token)
       }
 
-      // const approve = token => {
-      //   return token != 0x53B37b9A6631C462d74D65d61e1c056ea9dAa637
-      // }
       const approvedTokens = tokens.filter(approve)
-
       const gaugeAddresses = await Promise.all(
         approvedTokens.map((token) => {
           return gaugeProxyContract.getGauge(token)
@@ -56,10 +53,10 @@ const useGauge = ({
 
       const balancesUserInfosHarvestables = await Promise.all(
         approvedTokens.flatMap((token, index) => {
-          const { a, b } = GAUGE_INFO[token]
+          const { token0 = {}, token1 = {} } = getGaugeInfo(token);
           const gaugeTokenContract = new ethers.Contract(token, GAUGE_TOKEN_ABI, library.getSigner())
-          const aTokenContract = new ethers.Contract(a.address, GAUGE_TOKEN_ABI, library.getSigner())
-          const bTokenContract = new ethers.Contract(b.address, GAUGE_TOKEN_ABI, library.getSigner())
+          const aTokenContract = new ethers.Contract(token0.address, GAUGE_TOKEN_ABI, library.getSigner())
+          const bTokenContract = new ethers.Contract(token1.address, GAUGE_TOKEN_ABI, library.getSigner())
           const gaugeContract = new ethers.Contract(gaugeAddresses[index], GAUGE_ABI, library.getSigner())
           return [
             gaugeProxyContract.weights(token),
@@ -97,10 +94,10 @@ const useGauge = ({
         const rewardRatePerYear = derivedSupply
           ? (rewardRate / derivedSupply) * 3600 * 24 * 365
           : Number.POSITIVE_INFINITY
-        const { tokenName, poolName } = GAUGE_INFO[token]
+        const gauge = getGaugeInfo(token);
         const { totalValueOfPair, pricePerToken } = getPairDataPrefill(
           prices,
-          token,
+          gauge,
           numAInPairBN,
           numBInPair,
           totalSupplyBN
@@ -108,7 +105,7 @@ const useGauge = ({
 
         const numTokensInPool = parseFloat(ethers.utils.formatEther(iceQueenPairSupply))
         const valueStakedInGauge = pricePerToken * numTokensInPool
-        const fullApy = (rewardRatePerYear * prices['snowball']) / pricePerToken
+        const fullApy = (rewardRatePerYear * prices['SNOB']) / pricePerToken
 
         return {
           allocPoint: gaugeWeight / totalWeight.toString() || 0,
@@ -125,8 +122,8 @@ const useGauge = ({
           balance,
           staked,
           harvestable,
-          depositTokenName: tokenName,
-          poolName,
+          depositTokenName: gauge?.name || 'No Name',
+          poolName: `${gauge?.name || 'No Name'} Pool`,
           rewardRatePerYear,
           fullApy,
           usdPerToken: pricePerToken,

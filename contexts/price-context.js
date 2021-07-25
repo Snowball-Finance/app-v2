@@ -27,14 +27,15 @@ export function PriceProvider({ children }) {
       });
 
       const prices = {
-        snowball: response['snowball-token']?.usd || 0,
-        png: response['pangolin']?.usd || 0,
-        wavax: response['wrapped-avax']?.usd || 0,
-        busd: response['binance-usd']?.usd || 0,
-        frax: response['frax']?.usd || 0,
+        SNOB: response['snowball-token']?.usd || 0,
+        PNG: response['pangolin']?.usd || 0,
+        WAVAX: response['wrapped-avax']?.usd || 0,
+        BUSD: response['binance-usd']?.usd || 0,
+        FRAX: response['frax']?.usd || 0,
       };
       setPrices(prices);
     };
+
 
     getPrices();
     setInterval(() => getPrices(), 120000);

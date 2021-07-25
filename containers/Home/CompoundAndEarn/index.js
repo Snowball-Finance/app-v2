@@ -79,7 +79,7 @@ const CompoundAndEarn = () => {
   const { snowballBalance, gauges, snowconeBalance } = useContracts();
   const { prices } = usePrices();
 
-  const snowballPrice = useMemo(() => prices.snowball * snowballBalance, [prices, snowballBalance]);
+  const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   const addMetamask = async () => {
     const provider = window.ethereum
@@ -109,7 +109,7 @@ const CompoundAndEarn = () => {
       total =
         total + parseFloat(ethers.utils.formatUnits(gauge.harvestable, 18));
     });
-    const balanceUSD = +(total * prices.snowball).toFixed(2);
+    const balanceUSD = +(total * prices.SNOB).toFixed(2);
     setPendingHarvest({ amount: total.toFixed(2), balanceUSD });
   }, [prices, gauges]);
 

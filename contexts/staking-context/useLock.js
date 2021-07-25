@@ -24,8 +24,8 @@ const useLock = ({
   const [totalSupply, setTotalSupply] = useState(0);
   const [totalLocked, setTotalLocked] = useState(0);
 
-  const lockedValue = useMemo(() => prices.snowball * parseFloat(ethers.utils.formatEther(totalSupply)), [prices?.snowball, totalSupply])
-  const totalSnowballValue = useMemo(() => prices.snowball * parseFloat(ethers.utils.formatEther(totalLocked)), [prices?.snowball, totalLocked])
+  const lockedValue = useMemo(() => prices.SNOB * parseFloat(ethers.utils.formatEther(totalSupply)), [prices?.SNOB, totalSupply])
+  const totalSnowballValue = useMemo(() => prices.SNOB * parseFloat(ethers.utils.formatEther(totalLocked)), [prices?.SNOB, totalLocked])
   const unlockTime = useMemo(() => {
     const date = new Date()
     return date.setTime(+(lockEndDate?.toString() || 0) * 1000)
