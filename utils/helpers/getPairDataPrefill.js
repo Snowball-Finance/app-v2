@@ -1,24 +1,24 @@
 import { ethers } from 'ethers'
-import GAUGE_INFO from 'utils/constants/gauge-info'
 
 const getPairDataPrefill = (
   prices,
-  pairAddress,
+  gauge,
   numAInPairBN,
   numBInPairBN,
   totalSupplyBN,
 ) => {
-  const { a, b } = GAUGE_INFO[pairAddress];
+  const { token0 = {}, token1 = {} } = gauge;
 
   const numAInPair = parseFloat(
-    ethers.utils.formatUnits(numAInPairBN, a.decimals),
+    ethers.utils.formatUnits(numAInPairBN, token0.decimals),
   );
   const numBInPair = parseFloat(
-    ethers.utils.formatUnits(numBInPairBN, b.decimals),
+    ethers.utils.formatUnits(numBInPairBN, token1.decimals),
   );
 
-  const priceA = prices[a.priceId];
-  const priceB = prices[b.priceId];
+  const priceA = prices[token0.symbol];
+  const priceB = prices[token1.symbol];
+
   let totalValueOfPair;
   // In case price one token is not listed on coingecko
   if (priceA) {

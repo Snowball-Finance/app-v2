@@ -48,7 +48,7 @@ const TopAppBar = ({ openDrawer, onDraw }) => {
   const { snowballBalance } = useContracts()
   const { prices } = usePrices();
 
-  const snowballPrice = useMemo(() => prices.snowball * snowballBalance, [prices, snowballBalance]);
+  const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   return (
     <Paper className={classes.appBar} elevation={0}>
