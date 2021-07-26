@@ -13,123 +13,128 @@ import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import VaultAddLiquidityDialog from 'parts/Vault/VaultAddLiquidityDialog'
 import { useFormStyles } from 'styles/use-styles'
 
-const AddLiquidity = ({vault}) => {
-	const classes = useFormStyles();
-	const { setPopUp } = usePopup();
-	const {tokenArray, getDepositReview, addLiquidity} = (vault == 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
+const AddLiquidity = ({ vault }) => {
+  const classes = useFormStyles();
+  const { setPopUp } = usePopup();
+  const { tokenArray, getDepositReview, addLiquidity } = (vault === 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
 
-	const [maxSlippage, setMaxSlippage]         = useState(0.1);
-	const [liquidityData, setLiquidityData]     = useState([]);
-	const [receivingValue, setReceivingValue]   = useState({});
-	const [discount, setDiscount]               = useState(0);
-	const [liquidityDialog, setLiquidityDialog] = useState(false);
+  const [maxSlippage, setMaxSlippage] = useState(0.1);
+  const [liquidityData, setLiquidityData] = useState([]);
+  const [receivingValue, setReceivingValue] = useState({});
+  const [discount, setDiscount] = useState(0);
+  const [liquidityDialog, setLiquidityDialog] = useState(false);
 
-	const { control, handleSubmit, setValue }   = useForm();
+  const { control, handleSubmit, setValue } = useForm();
 
-	const onSubmit = async (data) => {
-		if (!data.firstInput && !data.secondInput && !data.thirdInput) {
-			setPopUp({
-				title: 'Input Error',
-				text: `Please enter at least one input`
-			})
-			return;
-		}
+  const onSubmit = async (data) => {
+    if (!data.firstInput && !data.secondInput && !data.thirdInput) {
+      setPopUp({
+        title: 'Input Error',
+        text: `Please enter at least one input`
+      })
+      return;
+    }
 
-		const liquidityData = [
-			{
-				token: tokenArray[0],
-				value: data.firstInput
-			},
-			{
-				token: tokenArray[1],
-				value: data.secondInput
-			},
-			{
-				token: tokenArray[2],
-				value: data.thirdInput
-			}
-		]
+    const liquidityData = [
+      {
+        token: tokenArray[0],
+        value: data?.firstInput || 0
+      },
+      {
+        token: tokenArray[1],
+        value: data?.secondInput || 0
+      },
+      {
+        token: tokenArray[2],
+        value: data?.thirdInput || 0
+      }
+    ]
 
-		const { minToMintValue, discount } = await getDepositReview(liquidityData)
-		const receivingValue = {
-			token: vault,
-			value: minToMintValue
-		}
+    const { minToMintValue, discount } = await getDepositReview(liquidityData)
+    const receivingValue = {
+      token: vault,
+      value: minToMintValue
+    }
 
-		setLiquidityData(liquidityData)
-		setReceivingValue(receivingValue)
-		setDiscount(discount)
-		setLiquidityDialog(true)
-	}
+    setLiquidityData(liquidityData)
+    setReceivingValue(receivingValue)
+    setDiscount(discount)
+    setLiquidityDialog(true)
+  }
 
-	const addLiquidityHandler = async () => {
-		setLiquidityDialog(false)
+  const addLiquidityHandler = async () => {
+    setLiquidityDialog(false)
+    await addLiquidity(liquidityData, maxSlippage, receivingValue)
+    setValue('firstInput', '')
+    setValue('secondInput', '')
+    setValue('thirdInput', '')
+  }
 
-		await addLiquidity(liquidityData, maxSlippage, receivingValue)
-		setValue('firstInput', 0)
-		setValue('secondInput', 0)
-		setValue('thirdInput', 0)
-	}
-	console.log(tokenArray)
-	return (
-		<CardFormWrapper title='Add Liquidity'>
-			<form onSubmit={handleSubmit(onSubmit)} noValidate>
-				<Grid container spacing={2}>
-					{tokenArray.map((token, index) => {
-						return (
-							<>
-							<Grid item xs={12}>
-								<Controller
-									as={<TokenTextField />}
-									name={(index == 0) ? 'firstInput' : (index == 1) ? 'secondInput' : 'thirdInput'}
-									label='Input:'
-									token={token}
-									balance={token.balance}
-									control={control}
-									defaultValue={0}
-								/>
-			
-								{(index < 2) &&
-									<div className={classes.iconContainer}>
-										<AddIcon className={classes.icon} />
-									</div>
-								}
-							</Grid>
-							</>
-						);
-					})}
-	
-					<Grid item xs={12}>
-						<AdvancedTransactionOption
-							value={maxSlippage}
-							setValue={setMaxSlippage}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<GradientButton
-							fullWidth
-							type='submit'
-							color={(vault == 's3D') ? 'primary' : 'secondary'}
-							className={classes.button}
-						>
-							Add Liquidity
-						</GradientButton>
-					</Grid>
-				</Grid>
-			</form>
-			{liquidityDialog &&
-				<VaultAddLiquidityDialog
-					discount={discount}
-					liquidityData={liquidityData}
-					receivingValue={receivingValue}
-					maxSlippage={maxSlippage}
-					open={liquidityDialog}
-					setOpen={setLiquidityDialog}
-					onConfirm={addLiquidityHandler}
-				/>
-			}
-		</CardFormWrapper>
-	)
+  return (
+    <CardFormWrapper title='Add Liquidity'>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Grid container spacing={2}>
+          {tokenArray.map((token, index) => {
+            return (
+              <>
+                <Grid item xs={12}>
+                  <Controller
+                    as={<TokenTextField />}
+                    name={(index === 0)
+                      ? 'firstInput'
+                      : (index === 1)
+                        ? 'secondInput'
+                        : 'thirdInput'
+                    }
+                    label='Input:'
+                    placeholder='0.0'
+                    token={token}
+                    balance={token.balance}
+                    control={control}
+                    defaultValue={''}
+                  />
+
+                  {(index < 2) &&
+                    <div className={classes.iconContainer}>
+                      <AddIcon className={classes.icon} />
+                    </div>
+                  }
+                </Grid>
+              </>
+            );
+          })}
+
+          <Grid item xs={12}>
+            <AdvancedTransactionOption
+              value={maxSlippage}
+              setValue={setMaxSlippage}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <GradientButton
+              fullWidth
+              type='submit'
+              color={(vault == 's3D') ? 'primary' : 'secondary'}
+              className={classes.button}
+            >
+              Add Liquidity
+            </GradientButton>
+          </Grid>
+        </Grid>
+      </form>
+      {liquidityDialog &&
+        <VaultAddLiquidityDialog
+          discount={discount}
+          liquidityData={liquidityData}
+          receivingValue={receivingValue}
+          maxSlippage={maxSlippage}
+          open={liquidityDialog}
+          setOpen={setLiquidityDialog}
+          onConfirm={addLiquidityHandler}
+        />
+      }
+    </CardFormWrapper>
+  )
 }
 
 export default memo(AddLiquidity)
