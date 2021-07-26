@@ -125,7 +125,7 @@ export function CompoundAndEarnProvider({ children }) {
             const totalSupply = gauge.totalSupply / 1e18;
             return {
               address: pool.address, userLP, usdValue: userLP *
-                pool.pangolinPrice, totalSupply
+                pool.pricePoolToken, totalSupply
             };
           }
         }
