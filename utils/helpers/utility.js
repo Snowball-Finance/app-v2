@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 
 const isServer = () => typeof window === 'undefined'
 
@@ -12,8 +13,14 @@ const isEmpty = value => {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+let provider = null;
+if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+}
+
 export {
   isServer,
   isEmpty,
-  delay
+  delay,
+  provider
 }

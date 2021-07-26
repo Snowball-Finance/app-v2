@@ -1,5 +1,5 @@
 
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState, useMemo } from 'react'
 import { Grid } from '@material-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -14,6 +14,7 @@ import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import VaultSwapDialog from 'parts/Vault/VaultSwapDialog'
 import { BALANCE_VALID } from 'utils/constants/validations'
 import { useFormStyles } from 'styles/use-styles'
+import { isEmpty } from 'utils/helpers/utility'
 
 const schema = yup.object().shape({
   fromSwap: BALANCE_VALID
@@ -21,7 +22,7 @@ const schema = yup.object().shape({
 
 const SwapForm = () => {
   const classes = useFormStyles();
-  const { tokenArray, getToSwapAmount, onSwap } = useS3fVaultContracts()
+  const { tokenArray, tokenValues, getToSwapAmount, onSwap } = useS3fVaultContracts()
 
   const [fromToken, setFromToken] = useState({});
   const [toToken, setToToken] = useState({});
@@ -33,6 +34,20 @@ const SwapForm = () => {
     setFromToken(tokenArray[0])
     setToToken(tokenArray[1])
   }, [tokenArray]);
+
+  const fromTokenBalance = useMemo(() => {
+    if (isEmpty(fromToken) && isEmpty(tokenValues)) {
+      return 0
+    }
+    return tokenValues[fromToken.name]?.balance || 0
+  }, [fromToken, tokenValues])
+
+  const toTokenBalance = useMemo(() => {
+    if (isEmpty(toToken) && isEmpty(tokenValues)) {
+      return 0
+    }
+    return tokenValues[toToken.name]?.balance || 0
+  }, [toToken, tokenValues])
 
   const { control, handleSubmit, errors, watch, setValue } = useForm({
     resolver: yupResolver(schema)
@@ -63,7 +78,7 @@ const SwapForm = () => {
       maxSlippage
     }
     await onSwap(params)
-    setValue('fromSwap', 0)
+    setValue('fromSwap', '')
   }
 
   return (
@@ -76,13 +91,14 @@ const SwapForm = () => {
               isTokenSelect
               name='fromSwap'
               label='Swap from:'
+              placeholder='0.0'
               token={fromToken}
               setToken={setFromToken}
               tokens={tokenArray}
-              balance={fromToken.balance}
+              balance={fromTokenBalance}
               error={errors.fromSwap?.message}
               control={control}
-              defaultValue={0}
+              defaultValue={''}
             />
             <div className={classes.iconContainer}>
               <SwapIcon className={classes.icon} />
@@ -94,11 +110,12 @@ const SwapForm = () => {
               isTokenSelect
               disabledMax
               label='Swap to:'
+              placeholder='0.0'
               token={toToken}
               setToken={setToToken}
               tokens={tokenArray}
-              balance={toToken.balance}
-              value={parseFloat(toSwap || 0, 3).toFixed(3)}
+              balance={toTokenBalance}
+              value={!!toSwap ? parseFloat(toSwap || 0, 3).toFixed(3) : ''}
             />
           </Grid>
           <Grid item xs={12}>
@@ -115,7 +132,7 @@ const SwapForm = () => {
               className={classes.button}
             >
               Swap
-          </GradientButton>
+            </GradientButton>
           </Grid>
         </Grid>
       </form>

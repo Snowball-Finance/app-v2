@@ -38,15 +38,15 @@ const AddLiquidity = () => {
     const liquidityData = [
       {
         token: usdtToken,
-        value: data.firstInput
+        value: data?.firstInput || 0
       },
       {
         token: busdToken,
-        value: data.secondInput
+        value: data?.secondInput || 0
       },
       {
         token: daiToken,
-        value: data.thirdInput
+        value: data?.thirdInput || 0
       }
     ]
 
@@ -65,9 +65,9 @@ const AddLiquidity = () => {
   const addLiquidityHandler = async () => {
     setLiquidityDialog(false)
     await addLiquidity(liquidityData, maxSlippage, receivingValue)
-    setValue('firstInput', 0)
-    setValue('secondInput', 0)
-    setValue('thirdInput', 0)
+    setValue('firstInput', '')
+    setValue('secondInput', '')
+    setValue('thirdInput', '')
   }
 
   return (
@@ -79,10 +79,11 @@ const AddLiquidity = () => {
               as={<TokenTextField />}
               name='firstInput'
               label='Input:'
+              placeholder='0.0'
               token={usdtToken}
               balance={usdtToken.balance}
               control={control}
-              defaultValue={0}
+              defaultValue={''}
             />
             <div className={classes.iconContainer}>
               <AddIcon className={classes.icon} />
@@ -93,10 +94,11 @@ const AddLiquidity = () => {
               as={<TokenTextField />}
               name='secondInput'
               label='Input:'
+              placeholder='0.0'
               token={busdToken}
               balance={busdToken.balance}
               control={control}
-              defaultValue={0}
+              defaultValue={''}
             />
             <div className={classes.iconContainer}>
               <AddIcon className={classes.icon} />
@@ -107,10 +109,11 @@ const AddLiquidity = () => {
               as={<TokenTextField />}
               name='thirdInput'
               label='Input:'
+              placeholder='0.0'
               token={daiToken}
               balance={daiToken.balance}
               control={control}
-              defaultValue={0}
+              defaultValue={''}
             />
           </Grid>
           <Grid item xs={12}>
