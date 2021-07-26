@@ -66,7 +66,7 @@ const NFTItem = ({
       <Grid container spacing={2} className={classes.infoContainer}>
         <Grid item xs={12}>
           <img
-            alt='carousel'
+            alt='NFT Image'
             src={nft?.imgUrl || NO_IMAGE_PATH}
             className={classes.image}
           />

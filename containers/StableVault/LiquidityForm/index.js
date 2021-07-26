@@ -1,4 +1,3 @@
-
 import { memo } from 'react'
 import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -27,19 +26,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const LiquidityForm = () => {
-  const classes = useStyles();
+const LiquidityForm = ({vault}) => {
+	const classes = useStyles();
 
-  return (
-    <Grid container spacing={6} className={classes.container}>
-      <Grid item sm={12} md={6} className={classes.leftCard}>
-        <AddLiquidity />
-      </Grid>
-      <Grid item sm={12} md={6} className={classes.rightCard}>
-        <RemoveLiquidity />
-      </Grid>
-    </Grid>
-  )
+	return (
+		<Grid container spacing={6} className={classes.container}>
+			<Grid item sm={12} md={6} className={classes.leftCard}>
+				<AddLiquidity vault={vault}/>
+			</Grid>
+			<Grid item sm={12} md={6} className={classes.rightCard}>
+				<RemoveLiquidity vault={vault}/>
+			</Grid>
+		</Grid>
+	)
 }
 
 export default memo(LiquidityForm)

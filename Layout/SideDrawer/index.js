@@ -57,7 +57,7 @@ const SideDrawer = ({
   openDraw
 }) => {
   const classes = useStyles();
-  const router = useRouter()
+  const router = useRouter();
   const [selectedItem, setSelectedItem] = useState('')
 
   useEffect(() => {

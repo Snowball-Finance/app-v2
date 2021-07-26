@@ -21,7 +21,7 @@ export function S3dVaultContractProvider({ children }) {
   const { setPopUp } = usePopup();
 
   const [loading, setLoading] = useState(false)
-  const [s3dToken, setS3dToken] = useState({ name: 'S3D', priceId: 's3d', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
+  const [svToken, setSVToken] = useState({ name: 'S3D', priceId: 's3d', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
   const [usdtToken, setUsdtToken] = useState({ index: 0, name: 'USDT', priceId: 'usdt', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [busdToken, setBusdToken] = useState({ index: 1, name: 'BUSD', priceId: 'busd', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
   const [daiToken, setDaiToken] = useState({ index: 2, name: 'DAI', priceId: 'dai', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
@@ -36,6 +36,7 @@ export function S3dVaultContractProvider({ children }) {
   const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, library.getSigner()) : null, [library])
   const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
   const tokenArray = useMemo(() => [usdtToken, busdToken, daiToken], [usdtToken, busdToken, daiToken]);
+  const pairNames = 'USDT + BUSD + DAI';
 
   const getTokenContract = (token) => {
     switch (token.name) {
@@ -103,7 +104,7 @@ export function S3dVaultContractProvider({ children }) {
       const s3dRatio = s3dSupplyValue ? totalSupply / s3dSupplyValue : 0
       setTotalSupply(totalSupply)
       setStaked(stakedValue)
-      setS3dToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue, ratio: s3dRatio }))
+      setSVToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue, ratio: s3dRatio }))
       setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue, percentage: usdtPercentage, supply: usdtSupplyValue }));
       setBusdToken((prev) => ({ ...prev, balance: busdBalanceValue, percentage: busdPercentage, supply: busdSupplyValue }));
       setDaiToken((prev) => ({ ...prev, balance: daiBalanceValue, percentage: daiPercentage, supply: daiSupplyValue }));
@@ -267,7 +268,7 @@ export function S3dVaultContractProvider({ children }) {
     }
 
     try {
-      const calculatedWithdraw = s3dToken.balance * withdrawPercentage / 100;
+      const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
 
       if (checkedValue === -1) {
@@ -304,7 +305,7 @@ export function S3dVaultContractProvider({ children }) {
 
     const minToMint = await vaultContract.calculateTokenAmount(account, [usdtAmount, busdAmount, daiAmount], true)
     const minToMintValue = parseFloat(ethers.utils.formatUnits(minToMint, 18))
-    const difference = (minToMintValue * (s3dToken.ratio || 1)) - totalAmount
+    const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
     const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
 
     return {
@@ -484,7 +485,7 @@ export function S3dVaultContractProvider({ children }) {
         }
       }
 
-      const calculatedWithdraw = s3dToken.balance * withdrawPercentage / 100;
+      const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
       const deadline = Date.now() + 180;
       if (selectedToken === -1) {
@@ -544,7 +545,7 @@ export function S3dVaultContractProvider({ children }) {
       const ethereumProvider = await detectEthereumProvider();
       const web3 = new Web3(ethereumProvider);
 
-      const amount = ethers.utils.parseUnits((s3dToken.balance).toString(), s3dToken.decimal);
+      const amount = ethers.utils.parseUnits((svToken.balance).toString(), svToken.decimal);
       const { hash: approveHash } = await s3dContract.approve(CONTRACTS.S3D.GAUGE, amount);
 
       while (loop) {
@@ -599,7 +600,7 @@ export function S3dVaultContractProvider({ children }) {
       const ethereumProvider = await detectEthereumProvider();
       const web3 = new Web3(ethereumProvider);
 
-      const amount = ethers.utils.parseUnits((staked).toString(), s3dToken.decimal);
+      const amount = ethers.utils.parseUnits((staked).toString(), svToken.decimal);
       const { hash: withdrawHash } = await gaugeContract.withdraw(amount);
 
       loop = true;
@@ -626,11 +627,12 @@ export function S3dVaultContractProvider({ children }) {
     <ContractContext.Provider
       value={{
         loading,
-        s3dToken,
+        svToken,
         usdtToken,
         busdToken,
         daiToken,
         tokenArray,
+        pairNames,
         totalSupply,
         staked,
         transactions,
@@ -658,11 +660,12 @@ export function useS3dVaultContracts() {
 
   const {
     loading,
-    s3dToken,
+    svToken,
     usdtToken,
     busdToken,
     daiToken,
     tokenArray,
+    pairNames,
     totalSupply,
     staked,
     transactions,
@@ -679,11 +682,12 @@ export function useS3dVaultContracts() {
 
   return {
     loading,
-    s3dToken,
+    svToken,
     usdtToken,
     busdToken,
     daiToken,
     tokenArray,
+    pairNames,
     totalSupply,
     staked,
     transactions,

@@ -55,7 +55,7 @@ const WithdrawPercentage = ({
   return (
     <div className={classes.container}>
       <Typography className={classes.label}>
-        {`Withdraw percentage (%): ${value}`}
+        {`Withdraw percentage: ${value}%`}
       </Typography>
       <div className={classes.bar}>
         <Slider

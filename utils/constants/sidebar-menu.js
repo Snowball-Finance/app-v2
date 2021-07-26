@@ -9,6 +9,7 @@ import CartIcon from 'components/Icons/CartIcon'
 import BubbleIcon from 'components/Icons/BubbleIcon'
 import FeatherIcon from 'components/Icons/FeatherIcon'
 import ChatIcon from 'components/Icons/ChatIcon'
+import StableVaultIcon from 'components/Icons/StableVaultIcon'
 
 const SIDEBAR_MENU = [
   {
@@ -16,7 +17,7 @@ const SIDEBAR_MENU = [
     ...LINKS.HOME
   },
   {
-    ICON: HomeIcon,
+    ICON: StableVaultIcon,
     TITLE: 'StableVault',
     CHILDREN: [
       LINKS.S3D_VAULT,

@@ -1,14 +1,12 @@
-import { memo, useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
-
-import { COMPOUND_AND_EARN_IMAGE_PATH } from 'utils/constants/image-paths';
+import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
-import CompoundHeader from 'parts/Compound/CompoundHeader';
+import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
-import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
+import PageHeader from 'parts/PageHeader'
+import { memo, useEffect, useState } from 'react';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -86,10 +84,9 @@ const CompoundAndEarn = () => {
 
   return (
     <main className={classes.root}>
-      <CompoundHeader
+      <PageHeader
         title="Compound and Earn SNOB now!"
-        subHeader="Check your Investment"
-        icon={COMPOUND_AND_EARN_IMAGE_PATH}
+        subHeader="Check your Investments"
       />
       <div className={classes.container}>
         <div className={classes.filter}>

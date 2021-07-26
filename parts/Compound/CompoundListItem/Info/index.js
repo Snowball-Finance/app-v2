@@ -47,7 +47,7 @@ const Info = ({ icon, buttonText, boost }) => {
       <div className={classes.left}>
         <div className={classes.header}>
           <Typography variant="h6">What’s Boost?</Typography>
-          <Tags type="snowball">{boost}</Tags>
+          <Tags type="SNOB">{boost}</Tags>
         </div>
         <Typography variant="subtitle2">
           The {boost} showing in pools is the incentivations of xSNOB earned.

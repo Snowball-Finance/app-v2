@@ -1,12 +1,12 @@
 
-import S3dVault from 'containers/S3dVault'
+import StableVault from 'containers/StableVault'
 
 import { S3dVaultContractProvider } from 'contexts/s3d-vault-context'
 
-export default function S3fVaultPage() {
+export default function S3dVaultPage() {
   return (
     <S3dVaultContractProvider>
-      <S3dVault />
+      <StableVault vault="s3D" />
     </S3dVaultContractProvider>
   )
 }
