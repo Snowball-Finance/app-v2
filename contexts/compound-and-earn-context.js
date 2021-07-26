@@ -5,6 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import { IS_MAINNET, CONTRACTS } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
+import GAUGE_ABI from 'libs/abis/gauge.json'
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
@@ -82,8 +83,34 @@ export function CompoundAndEarnProvider({ children }) {
     }
   }
 
+  const getBalanceInfosByPool = async () => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`,
+      });
+      return false;
+    } else {
+      const dataWithPollBalance = await Promise.all(
+        data?.LastSnowballInfo?.poolsInfo.map(async (item) => {
+          const gaugeContractForPNG = new ethers.Contract(item.address, GAUGE_ABI, library.getSigner());
+          const gaugeContractForTraderJoe = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
+
+          const traderJoeBalance = await gaugeContractForTraderJoe.balanceOf(account);
+          const pngBalance = await gaugeContractForPNG.balanceOf(account);
+          return {
+            ...item,
+            traderJoeBalance: parseFloat(ethers.utils.formatUnits(traderJoeBalance, 18)),
+            pngBalance: parseFloat(ethers.utils.formatUnits(pngBalance, 18)),
+          };
+        })
+      );
+      return dataWithPollBalance;
+    }
+  };
+  
   return (
-    <CompoundAndEarnContext.Provider value={{approve, submit}}>
+    <CompoundAndEarnContext.Provider value={{approve, submit, getBalanceInfosByPool}}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -95,7 +122,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const {approve, submit} = context;
+  const {approve, submit, getBalanceInfosByPool} = context;
 
-  return {approve, submit};
+  return {approve, submit, getBalanceInfosByPool};
 }

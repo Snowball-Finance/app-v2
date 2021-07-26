@@ -1,12 +1,14 @@
+import { memo, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
-import PageHeader from 'parts/PageHeader'
-import { memo, useEffect, useState } from 'react';
+import PageHeader from 'parts/PageHeader';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,20 +43,29 @@ const useStyles = makeStyles((theme) => ({
 const CompoundAndEarn = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
-  const [selectType, setType] = useState('apy');
-  const [selectPool, setPool] = useState('all');
+  const [type, setType] = useState('apy');
+  const [userPool, setPool] = useState('all');
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
+
+  const { getBalanceInfosByPool } = useCompoundAndEarnContract();
 
   const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
 
-  useEffect(() => {
-    if (data && !loading) {
-      let clonedData = [...data?.LastSnowballInfo?.poolsInfo];
-      const sortedData = clonedData.sort(
+  const modifiedDataWithUserPoll = async () => {
+    const modifiedData = await getBalanceInfosByPool();
+    if (modifiedData) {
+      const sortedData = modifiedData.sort(
         (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
       );
       setLastSnowballInfo(sortedData);
     }
+  };
+
+  useEffect(() => {
+    if (data && !loading) {
+      modifiedDataWithUserPoll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, loading]);
 
   const handleSearch = (value) => {
@@ -66,16 +77,22 @@ const CompoundAndEarn = () => {
   };
 
   const handleSorting = (event) => {
-    let sortedData = [...data?.LastSnowballInfo?.poolsInfo];
-    if (event.target.value === 'apy') {
-      sortedData = sortedData.sort(
-        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
-      );
-    } else {
-      sortedData = sortedData.sort((a, b) => b.tvlStaked - a.tvlStaked);
-    }
+    const sortedData = sortingByType(
+      event.target.value,
+      data?.LastSnowballInfo?.poolsInfo
+    );
     setLastSnowballInfo(sortedData);
     setType(event.target.value);
+  };
+
+  const handleUserPoolChange = (event) => {
+    const sortedData = sortingByUserPool(
+      type,
+      event.target.value,
+      lastSnowballInfo
+    );
+    setLastSnowballInfo(sortedData);
+    setPool(event.target.value);
   };
 
   if (error) {
@@ -96,21 +113,18 @@ const CompoundAndEarn = () => {
             placeholder="Search your favorite pairs"
             onChange={(newValue) => handleSearch(newValue)}
             onCancelSearch={() => setSearch('')}
-            // onRequestSearch={handleSearch}
           />
           <Selects
             className={classes.selectBox}
-            value={selectType}
+            value={type}
             options={TYPES}
             onChange={handleSorting}
           />
           <Selects
             className={classes.selectBox}
-            value={selectPool}
+            value={userPool}
             options={POOLS}
-            onChange={(e) => {
-              setPool(e.target.value);
-            }}
+            onChange={handleUserPoolChange}
           />
         </div>
 
@@ -144,10 +158,61 @@ const TYPES = [
 const POOLS = [
   {
     value: 'all',
-    label: 'All pools',
+    label: 'All Pools',
   },
   {
-    value: 'joined',
-    label: 'Only joined',
+    value: 'pangolin',
+    label: 'Pangolin Pools',
+  },
+  {
+    value: 'traderJoe',
+    label: 'Trader Joe Pools',
   },
 ];
+
+const sortingByType = (type, data) => {
+  let sortedData = [...data];
+  if (type === 'apy') {
+    sortedData = sortedData.sort(
+      (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+    );
+  } else {
+    sortedData = sortedData.sort((a, b) => b.tvlStaked - a.tvlStaked);
+  }
+  return sortedData;
+};
+
+const sortingByUserPool = (type, userPool, data) => {
+  let sortedData = [...data];
+  if (type === 'apy') {
+    if (userPool === 'pangolin') {
+      sortedData = sortedData.sort(
+        (a, b) =>
+          b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY ||
+          b.pngBalance - a.pngBalance
+      );
+    } else if (userPool === 'traderJoe') {
+      sortedData = sortedData.sort(
+        (a, b) =>
+          b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY ||
+          b.traderJoeBalance - a.traderJoeBalance
+      );
+    } else {
+      sortedData = sortingByType(type, data);
+    }
+  } else {
+    if (userPool === 'pangolin') {
+      sortedData = sortedData.sort(
+        (a, b) => b.tvlStaked - a.tvlStaked || b.pngBalance - a.pngBalance
+      );
+    } else if (userPool === 'traderJoe') {
+      sortedData = sortedData.sort(
+        (a, b) =>
+          b.tvlStaked - a.tvlStaked || b.traderJoeBalance - a.traderJoeBalance
+      );
+    } else {
+      sortedData = sortingByType(type, data);
+    }
+  }
+  return sortedData;
+};
