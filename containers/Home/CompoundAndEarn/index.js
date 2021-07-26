@@ -169,7 +169,7 @@ const CompoundAndEarn = () => {
             {snowconeBalance.toLocaleString()} xSNOB
           </Typography>
         </div>
-
+        
         <ContainedButton
           color='secondary'
           className={classes.addMetamask}

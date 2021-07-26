@@ -99,7 +99,7 @@ const TokenTextField = React.forwardRef(({
   return (
     <div className={clsx(classes.root, { [classes.errorInput]: !!error })}>
       <div className={classes.control}>
-        <SnowTokenIcon token={token.priceId} className={classes.tokenIcon} />
+        <SnowTokenIcon token={token.name} className={classes.tokenIcon} />
         <div>
           <Typography variant='caption'>
             {label}

@@ -10,15 +10,15 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     borderRadius: 4
   },
-  snowball: {
+  SNOB: {
     backgroundColor: 'rgba(103, 166, 240, 0.12)',
     color: '#28A2FF'
   },
-  png: {
+  PNG: {
     backgroundColor: 'rgba(255, 107, 0, 0.12)',
     color: '#FF9F43'
   },
-  joe: {
+  JOE: {
     backgroundColor: 'rgba(242, 113, 106, 0.12)',
     color: '#F2716A'
   }

@@ -42,8 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const VaultHeader = ({
   title,
-  subHeader1,
-  subHeader2,
+  subHeader,
   icon,
   className
 }) => {
@@ -65,9 +64,7 @@ const VaultHeader = ({
         {title}
       </Typography>
       <Typography variant='body2' align='center' className={classes.subHeader}>
-        {subHeader1}
-        <br />
-        {subHeader2}
+        {subHeader}
       </Typography>
     </Card>
   )

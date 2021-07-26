@@ -37,11 +37,10 @@ const CurrencyItem = ({
   value,
 }) => {
   const classes = useStyles();
-
   return (
     <div className={classes.container}>
       <div className={classes.infoContainer}>
-        <SnowTokenIcon token={token.priceId} />
+        <SnowTokenIcon token={token.name} />
         <Typography className={classes.token}>
           {token.name}
         </Typography>

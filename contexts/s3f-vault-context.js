@@ -13,29 +13,30 @@ import { isEmpty, delay } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 
-const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
-const ContractContext = createContext(null)
+const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
+const ContractContext = createContext(null);
 
 export function S3fVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
 
-  const [loading, setLoading] = useState(false)
-  const [s3fToken, setS3fToken] = useState({ name: 'S3F', priceId: 's3f', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
-  const [fraxToken, setFraxToken] = useState({ index: 0, name: 'FRAX', priceId: 'frax', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
-  const [tusdToken, setTusdToken] = useState({ index: 1, name: 'TUSD', priceId: 'tusd', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
-  const [usdtToken, setUsdtToken] = useState({ index: 2, name: 'USDT', priceId: 'usdt', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [loading, setLoading] = useState(false);
+  const [svToken, setSVToken] = useState({ name: 'S3F', priceId: 's3f', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 });
+  const [fraxToken, setFraxToken] = useState({ index: 0, name: 'FRAX', priceId: 'frax', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 });
+  const [tusdToken, setTusdToken] = useState({ index: 1, name: 'TUSD', priceId: 'tusd', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 });
+  const [usdtToken, setUsdtToken] = useState({ index: 2, name: 'USDT', priceId: 'usdt', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 });
   const [totalSupply, setTotalSupply] = useState(0);
   const [staked, setStaked] = useState(0);
-  const [transactions, setTransactions] = useState([])
+  const [transactions, setTransactions] = useState([]);
 
-  const s3fContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, library.getSigner()) : null, [library])
-  const fraxContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, library.getSigner()) : null, [library])
-  const tusdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, library.getSigner()) : null, [library])
-  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, library.getSigner()) : null, [library])
-  const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, library.getSigner()) : null, [library])
-  const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
+  const s3fContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, library.getSigner()) : null, [library]);
+  const fraxContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, library.getSigner()) : null, [library]);
+  const tusdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, library.getSigner()) : null, [library]);
+  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, library.getSigner()) : null, [library]);
+  const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, library.getSigner()) : null, [library]);
+  const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3F.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library]);
   const tokenArray = useMemo(() => [fraxToken, tusdToken, usdtToken], [fraxToken, tusdToken, usdtToken]);
+  const pairNames = 'FRAX + TUSD + USDT';
 
   const getTokenContract = (token) => {
     switch (token.name) {
@@ -103,7 +104,7 @@ export function S3fVaultContractProvider({ children }) {
       const s3fRatio = s3fSupplyValue ? totalSupply / s3fSupplyValue : 0
       setTotalSupply(totalSupply)
       setStaked(stakedValue)
-      setS3fToken((prev) => ({ ...prev, balance: s3fBalanceValue, percentage: s3fPercentage, supply: s3fSupplyValue, ratio: s3fRatio }))
+      setSVToken((prev) => ({ ...prev, balance: s3fBalanceValue, percentage: s3fPercentage, supply: s3fSupplyValue, ratio: s3fRatio }))
       setFraxToken((prev) => ({ ...prev, balance: fraxBalanceValue, percentage: fraxPercentage, supply: fraxSupplyValue }));
       setTusdToken((prev) => ({ ...prev, balance: tusdBalanceValue, percentage: tusdPercentage, supply: tusdSupplyValue }));
       setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue, percentage: usdtPercentage, supply: usdtSupplyValue }));
@@ -267,7 +268,7 @@ export function S3fVaultContractProvider({ children }) {
     }
 
     try {
-      const calculatedWithdraw = s3fToken.balance * withdrawPercentage / 100;
+      const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
 
       if (checkedValue === -1) {
@@ -304,7 +305,7 @@ export function S3fVaultContractProvider({ children }) {
 
     const minToMint = await vaultContract.calculateTokenAmount(account, [fraxAmount, tusdAmount, usdtAmount], true)
     const minToMintValue = parseFloat(ethers.utils.formatUnits(minToMint, 18))
-    const difference = (minToMintValue * (s3fToken.ratio || 1)) - totalAmount
+    const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
     const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
 
     return {
@@ -484,7 +485,7 @@ export function S3fVaultContractProvider({ children }) {
         }
       }
 
-      const calculatedWithdraw = s3fToken.balance * withdrawPercentage / 100;
+      const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
       const deadline = Date.now() + 180;
       if (selectedToken === -1) {
@@ -544,7 +545,7 @@ export function S3fVaultContractProvider({ children }) {
       const ethereumProvider = await detectEthereumProvider();
       const web3 = new Web3(ethereumProvider);
 
-      const amount = ethers.utils.parseUnits((s3fToken.balance).toString(), s3fToken.decimal);
+      const amount = ethers.utils.parseUnits((svToken.balance).toString(), svToken.decimal);
       const { hash: approveHash } = await s3fContract.approve(CONTRACTS.S3F.GAUGE, amount);
 
       while (loop) {
@@ -599,7 +600,7 @@ export function S3fVaultContractProvider({ children }) {
       const ethereumProvider = await detectEthereumProvider();
       const web3 = new Web3(ethereumProvider);
 
-      const amount = ethers.utils.parseUnits((staked).toString(), s3fToken.decimal);
+      const amount = ethers.utils.parseUnits((staked).toString(), svToken.decimal);
       const { hash: withdrawHash } = await gaugeContract.withdraw(amount);
 
       loop = true;
@@ -626,11 +627,12 @@ export function S3fVaultContractProvider({ children }) {
     <ContractContext.Provider
       value={{
         loading,
-        s3fToken,
+        svToken,
         fraxToken,
         tusdToken,
         usdtToken,
         tokenArray,
+        pairNames,
         totalSupply,
         staked,
         transactions,
@@ -658,11 +660,12 @@ export function useS3fVaultContracts() {
 
   const {
     loading,
-    s3fToken,
+    svToken,
     fraxToken,
     tusdToken,
     usdtToken,
     tokenArray,
+    pairNames,
     totalSupply,
     staked,
     transactions,
@@ -679,11 +682,12 @@ export function useS3fVaultContracts() {
 
   return {
     loading,
-    s3fToken,
+    svToken,
     fraxToken,
     tusdToken,
     usdtToken,
     tokenArray,
+    pairNames,
     totalSupply,
     staked,
     transactions,

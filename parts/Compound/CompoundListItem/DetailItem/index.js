@@ -10,7 +10,6 @@ import Info from '../Info';
 import TVLTooltip from '../TVLTooltip';
 import APYTooltip from '../APYTooltip';
 import { BOOST_INFO_IMAGE_PATH, SNOB_LOCK_IMAGE_PATH } from 'utils/constants/image-paths';
-import getShortName from 'utils/helpers/getShortName';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -33,7 +32,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const token0 = item.token0.address;
   const token1 = item.token1.address;
   const token2 = item.token2.address;
-  const shortName = getShortName(item.source);
+  const dexTokenName = item.source == "Pangolin" ? "PNG" : item.source == "Trader Joe" ? "JOE" : "SNOB";
 
   return (
     <div className={classes.card}>
@@ -43,8 +42,8 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
 
       <div>
         <Typography variant="subtitle2">{item.name}</Typography>
-        <Tags type={shortName}>
-          <SnowTokenIcon size={12} token={shortName} />
+        <Tags type={dexTokenName}>
+          <SnowTokenIcon size={12} token={dexTokenName} />
           {item.source}
         </Tags>
       </div>
@@ -82,7 +81,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
             <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" boost={userBoost} />
           </CustomPopover>
         </Typography>
-        <Tags type="snowball">{userBoost}</Tags>
+        <Tags type="SNOB">{userBoost}</Tags>
       </div>
     </div>
   );

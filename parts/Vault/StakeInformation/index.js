@@ -3,7 +3,6 @@ import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Typography } from '@material-ui/core'
 
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -53,8 +52,6 @@ const StakeInformation = ({
   type = 's3d',
   availableStake,
   staked,
-  onWithdraw,
-  onStake
 }) => {
   const classes = useStyles();
 
@@ -83,22 +80,6 @@ const StakeInformation = ({
               {`${staked.toLocaleString()} ${type}`}
             </Typography>
           </div>
-        </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
-          <ContainedButton
-            disabled={!staked}
-            className={classes.withdrawButton}
-            onClick={onWithdraw}
-          >
-            Withdraw
-          </ContainedButton>
-          <ContainedButton
-            disabled={!availableStake}
-            className={classes.stakeButton}
-            onClick={onStake}
-          >
-            {`Stake ${type}`}
-          </ContainedButton>
         </Grid>
       </Grid>
     </div>
