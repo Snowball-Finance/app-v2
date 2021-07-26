@@ -43,7 +43,8 @@ const useStyles = makeStyles((theme) => ({
 const VaultHeader = ({
   title,
   subHeader1,
-  subHeader2,
+  // hide APR value by greatdolphinls
+  // subHeader2,
   icon,
   className
 }) => {
@@ -66,8 +67,9 @@ const VaultHeader = ({
       </Typography>
       <Typography variant='body2' align='center' className={classes.subHeader}>
         {subHeader1}
+        {/* hide APR value by greatdolphinls
         <br />
-        {subHeader2}
+        {subHeader2} */}
       </Typography>
     </Card>
   )
