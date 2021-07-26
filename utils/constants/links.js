@@ -1,4 +1,3 @@
-
 const LINKS = Object.freeze({
   HOME: {
     TITLE: 'Dashboard',
@@ -36,22 +35,22 @@ const LINKS = Object.freeze({
   DOCS: {
     TITLE: 'Docs',
     HREF: 'https://snowballs.gitbook.io/snowball-docs/',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
   GITHUB: {
-    TITLE: 'Github',
+    TITLE: 'GitHub',
     HREF: 'https://github.com/Snowball-Finance/',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
   TELEGRAM: {
     TITLE: 'Telegram',
     HREF: 'https://t.me/throwsnowballs',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
   DISCORD: {
     TITLE: 'Discord',
     HREF: 'https://discord.gg/BGpEHvehMz',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
 });
 

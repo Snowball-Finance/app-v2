@@ -3,7 +3,7 @@ import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { useNFTContract } from 'contexts/nft-context'
-import CartIcon from 'components/Icons/CartIcon'
+import {ShoppingCart} from 'react-feather';
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import ListItem from 'parts/Card/ListItem'
 import { NO_IMAGE_PATH } from 'utils/constants/image-paths'
@@ -114,7 +114,7 @@ const NFTItem = ({
         </ContainedButton>
         <ContainedButton
           fullWidth
-          startIcon={<CartIcon color='white' />}
+          startIcon={<ShoppingCart size={18} color='white' />}
           className={classes.button}
           onClick={purchaseHandler}
         >
