@@ -14,6 +14,7 @@ const LAST_SNOWBALL_INFO = gql`
         weeklyAPY
         yearlyAPY
         performanceFees
+        pricePoolToken
         token0 {
           address
         }
@@ -43,9 +44,6 @@ const USER_LAST_DEPOSIT = gql`
       lastBlockScanned
       lpQuantity
       slpQuantity
-    }
-    PoolsInfoByAddress(address:$snowglobe){
-      pricePoolToken
     }
   }
 `;

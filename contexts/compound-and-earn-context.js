@@ -1,13 +1,16 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 
 import { IS_MAINNET, CONTRACTS } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
+import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
+import { usePoolContract } from './pool-context';
+import { useContracts } from './contract-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -16,6 +19,17 @@ const AVAX_WBTC_PAIR_TOKEN = '0x7a6131110b82dacbb5872c7d352bfe071ea6a17c';
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
+  const [userPools, setUserPools] = useState([]);
+  const { gauges } = useContracts();
+  const { pools } = usePoolContract();
+
+  useEffect(() => {
+    {
+      getUserPools();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pools, gauges, account]);
+
   const pairToken = useMemo(() => library ? new ethers.Contract(AVAX_WBTC_PAIR_TOKEN, ERC20_ABI, library.getSigner()) : null, [library])
   if(pairToken) {
     Promise.all([
@@ -82,8 +96,46 @@ export function CompoundAndEarnProvider({ children }) {
     }
   }
 
+  const getUserPools = async () => {
+    if (account && pools && gauges) {
+      const formatedPools = await Promise.all(pools.map(async (pool) => {
+        let userLP = 0;
+        if (pool.kind === 'Snowglobe') {
+          const gauge = gauges.find((item) => item.gaugeAddress.toLowerCase() ===
+            pool.gaugeInfo.address.toLowerCase());
+          if (gauge) {
+            const snowglobeContract = new ethers.Contract(pool.address,
+              SNOWGLOBE_ABI, library.getSigner());
+
+            const totalSupply = await snowglobeContract.totalSupply() / 1e18;
+            const snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
+            const balanceSnowglobe = await snowglobeContract.balanceOf(account);
+
+            userLP = ((balanceSnowglobe + gauge.staked) * snowglobeRatio) / 1e18;
+            return {
+              address: pool.address, userLP: userLP,
+              usdValue: userLP * pool.pricePoolToken, totalSupply
+            };
+          }
+        } else {
+          const gauge = gauges.find((item) => item.address.toLowerCase() ===
+            pool.gaugeInfo.address.toLowerCase());
+          if (gauge) {
+            userLP = gauge.staked / 1e18;
+            const totalSupply = gauge.totalSupply / 1e18;
+            return {
+              address: pool.address, userLP, usdValue: userLP *
+                pool.pangolinPrice, totalSupply
+            };
+          }
+        }
+      }));
+      setUserPools(formatedPools);
+    }
+  }
+
   return (
-    <CompoundAndEarnContext.Provider value={{approve, submit}}>
+    <CompoundAndEarnContext.Provider value={{ approve, submit, userPools }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -95,7 +147,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const {approve, submit} = context;
+  const { approve, submit, userPools } = context;
 
-  return {approve, submit};
+  return { approve, submit, userPools };
 }
