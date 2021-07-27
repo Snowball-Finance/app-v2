@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => {
     input: {
       fontSize: 26,
       fontWeight: 'bold',
-      direction: 'rtl',
+      textAlign: 'right',
       padding: theme.spacing(0),
       color: theme.palette.text.primary,
     },
