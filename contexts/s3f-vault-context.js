@@ -134,7 +134,7 @@ export function S3fVaultContractProvider({ children }) {
       let attempt = 0;
 
       while (events.length < 10 && attempt < 10) {
-        const moreEvents = await vaultContract.queryFilter('*', blockNumber - 500, blockNumber);
+        const moreEvents = await unsignedVaultContract.queryFilter('*', blockNumber - 500, blockNumber);
         events = events.concat(moreEvents);
         blockNumber = blockNumber - 501;
         attempt += 1;
