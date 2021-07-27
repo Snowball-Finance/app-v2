@@ -89,10 +89,12 @@ const CompoundAndEarn = () => {
   };
 
   const handleSorting = (event) => {
-    const sortedData = sortingByType(
-      event.target.value,
-      data?.LastSnowballInfo?.poolsInfo
-    );
+    let filteredData =
+      userPool === 'all'
+        ? [...data?.LastSnowballInfo?.poolsInfo]
+        : [...lastSnowballInfo];
+
+    const sortedData = sortingByType(event.target.value, filteredData);
     setLastSnowballInfo(sortedData);
     setType(event.target.value);
   };
