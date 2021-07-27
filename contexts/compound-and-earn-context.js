@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 
@@ -12,22 +12,11 @@ import { usePopup } from 'contexts/popup-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
-const AVAX_WBTC_PAIR_TOKEN = '0x7a6131110b82dacbb5872c7d352bfe071ea6a17c';
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
-  const pairToken = useMemo(() => library ? new ethers.Contract(AVAX_WBTC_PAIR_TOKEN, ERC20_ABI, library.getSigner()) : null, [library])
-  if(pairToken) {
-    Promise.all([
-      pairToken.balanceOf(account),
-    ]).then(result=>{
-      console.log('uuuuuuuu===>', result);
-    }).catch(err=>{
-      console.log('eeeeeee==>', err)
-    })
-  }
-  const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
+  const { data } = useQuery(LAST_SNOWBALL_INFO);
   
   const approve = async (pairsName, amount) => {
     if (!account) {

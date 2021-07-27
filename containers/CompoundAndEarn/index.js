@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useWeb3React } from '@web3-react/core';
 
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
@@ -9,6 +10,8 @@ import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
 import PageHeader from 'parts/PageHeader';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
+import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -46,24 +49,33 @@ const CompoundAndEarn = () => {
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
+  const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
 
   const { getBalanceInfosByPool } = useCompoundAndEarnContract();
 
   const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
+  const { library, account } = useWeb3React();
 
   const modifiedDataWithUserPoll = async () => {
     const modifiedData = await getBalanceInfosByPool();
     if (modifiedData) {
-      const sortedData = modifiedData.sort(
-        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
-      );
+      const sortedData = sortingByType(type, modifiedData);
+      setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
     }
   };
 
   useEffect(() => {
     if (data && !loading) {
-      modifiedDataWithUserPoll();
+      if (!(library && account)) {
+        let clonedData = [...data?.LastSnowballInfo?.poolsInfo];
+        const sortedData = clonedData.sort(
+          (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+        );
+        setLastSnowballInfo(sortedData);
+      } else {
+        modifiedDataWithUserPoll();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, loading]);
@@ -86,10 +98,19 @@ const CompoundAndEarn = () => {
   };
 
   const handleUserPoolChange = (event) => {
+    let filteredData = lastSnowballModifiedInfo.length
+      ? [...lastSnowballModifiedInfo]
+      : [...data?.LastSnowballInfo?.poolsInfo];
+
+    if (event.target.value !== 'all') {
+      filteredData = filteredData.filter((item) =>
+        item.source.toLowerCase().includes(event.target.value)
+      );
+    }
     const sortedData = sortingByUserPool(
       type,
       event.target.value,
-      lastSnowballInfo
+      filteredData
     );
     setLastSnowballInfo(sortedData);
     setPool(event.target.value);
@@ -143,76 +164,3 @@ const CompoundAndEarn = () => {
 };
 
 export default memo(CompoundAndEarn);
-
-const TYPES = [
-  {
-    value: 'apy',
-    label: 'APY',
-  },
-  {
-    value: 'tvl',
-    label: 'TVL',
-  },
-];
-
-const POOLS = [
-  {
-    value: 'all',
-    label: 'All Pools',
-  },
-  {
-    value: 'pangolin',
-    label: 'Pangolin Pools',
-  },
-  {
-    value: 'traderJoe',
-    label: 'Trader Joe Pools',
-  },
-];
-
-const sortingByType = (type, data) => {
-  let sortedData = [...data];
-  if (type === 'apy') {
-    sortedData = sortedData.sort(
-      (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
-    );
-  } else {
-    sortedData = sortedData.sort((a, b) => b.tvlStaked - a.tvlStaked);
-  }
-  return sortedData;
-};
-
-const sortingByUserPool = (type, userPool, data) => {
-  let sortedData = [...data];
-  if (type === 'apy') {
-    if (userPool === 'pangolin') {
-      sortedData = sortedData.sort(
-        (a, b) =>
-          b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY ||
-          b.pngBalance - a.pngBalance
-      );
-    } else if (userPool === 'traderJoe') {
-      sortedData = sortedData.sort(
-        (a, b) =>
-          b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY ||
-          b.traderJoeBalance - a.traderJoeBalance
-      );
-    } else {
-      sortedData = sortingByType(type, data);
-    }
-  } else {
-    if (userPool === 'pangolin') {
-      sortedData = sortedData.sort(
-        (a, b) => b.tvlStaked - a.tvlStaked || b.pngBalance - a.pngBalance
-      );
-    } else if (userPool === 'traderJoe') {
-      sortedData = sortedData.sort(
-        (a, b) =>
-          b.tvlStaked - a.tvlStaked || b.traderJoeBalance - a.traderJoeBalance
-      );
-    } else {
-      sortedData = sortingByType(type, data);
-    }
-  }
-  return sortedData;
-};
