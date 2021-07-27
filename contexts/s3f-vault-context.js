@@ -15,6 +15,11 @@ import { usePopup } from 'contexts/popup-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const ContractContext = createContext(null);
+
+const unsignedS3fContract = provider ? new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, provider) : null
+const unsignedFraxContract = provider ? new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, provider) : null
+const unsignedTusdContract = provider ? new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, provider) : null
+const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, provider) : null
 const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, provider) : null
 
 const tokenArray = [
@@ -70,11 +75,52 @@ export function S3fVaultContractProvider({ children }) {
   }
 
   useEffect(() => {
-    if (s3fContract && fraxContract && tusdContract && usdtContract && vaultContract && gaugeContract) {
+    if (unsignedS3fContract && unsignedFraxContract && unsignedTusdContract && unsignedUsdtContract) {
+      getSupply();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unsignedS3fContract, unsignedFraxContract, unsignedTusdContract, unsignedUsdtContract]);
+
+  const getSupply = async () => {
+    try {
+      const [
+        s3fSupply,
+        fraxSupply,
+        tusdSupply,
+        usdtSupply
+      ] = await Promise.all([
+        unsignedS3fContract.totalSupply({ gasLimit: 1000000 }),
+        unsignedFraxContract.balanceOf(CONTRACTS.S3F.VAULT, { gasLimit: 1000000 }),
+        unsignedTusdContract.balanceOf(CONTRACTS.S3F.VAULT, { gasLimit: 1000000 }),
+        unsignedUsdtContract.balanceOf(CONTRACTS.S3F.VAULT, { gasLimit: 1000000 }),
+      ]);
+
+      const s3fSupplyValue = parseFloat(ethers.utils.formatUnits(s3fSupply, svToken.decimal))
+      const fraxSupplyValue = parseFloat(ethers.utils.formatUnits(fraxSupply, fraxToken.decimal))
+      const tusdSupplyValue = parseFloat(ethers.utils.formatUnits(tusdSupply, tusdToken.decimal))
+      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, usdtToken.decimal))
+      const totalSupply = fraxSupplyValue + tusdSupplyValue + usdtSupplyValue
+      const fraxPercentage = totalSupply ? fraxSupplyValue / totalSupply : 0
+      const tusdPercentage = totalSupply ? tusdSupplyValue / totalSupply : 0
+      const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
+      const s3fRatio = s3fSupplyValue ? totalSupply / s3fSupplyValue : 0
+
+      setTotalSupply(totalSupply)
+      setSVToken((prev) => ({ ...prev, supply: s3fSupplyValue, ratio: s3fRatio }))
+      setFraxToken((prev) => ({ ...prev, percentage: fraxPercentage, supply: fraxSupplyValue }));
+      setTusdToken((prev) => ({ ...prev, percentage: tusdPercentage, supply: tusdSupplyValue }));
+      setUsdtToken((prev) => ({ ...prev, percentage: usdtPercentage, supply: usdtSupplyValue }));
+    } catch (error) {
+      console.log('[Error] getSupply => ', error)
+    }
+  }
+
+  useEffect(() => {
+    if (!!account && s3fContract && fraxContract && tusdContract && usdtContract && gaugeContract) {
       getInit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s3fContract, fraxContract, tusdContract, usdtContract, vaultContract, gaugeContract]);
+  }, [account, s3fContract, fraxContract, tusdContract, usdtContract, gaugeContract]);
 
   const getInit = async () => {
     try {
@@ -84,9 +130,6 @@ export function S3fVaultContractProvider({ children }) {
         tusdBalance,
         usdtBalance,
         s3fSupply,
-        fraxSupply,
-        tusdSupply,
-        usdtSupply,
         stakedBalance
       ] = await Promise.all([
         s3fContract.balanceOf(account, { gasLimit: 1000000 }),
@@ -94,9 +137,6 @@ export function S3fVaultContractProvider({ children }) {
         tusdContract.balanceOf(account, { gasLimit: 1000000 }),
         usdtContract.balanceOf(account, { gasLimit: 1000000 }),
         s3fContract.totalSupply({ gasLimit: 1000000 }),
-        fraxContract.balanceOf(CONTRACTS.S3F.VAULT, { gasLimit: 1000000 }),
-        tusdContract.balanceOf(CONTRACTS.S3F.VAULT, { gasLimit: 1000000 }),
-        usdtContract.balanceOf(CONTRACTS.S3F.VAULT, { gasLimit: 1000000 }),
         gaugeContract.balanceOf(account, { gasLimit: 1000000 })
       ]);
 
@@ -105,22 +145,14 @@ export function S3fVaultContractProvider({ children }) {
       const tusdBalanceValue = parseFloat(ethers.utils.formatUnits(tusdBalance, tusdToken.decimal))
       const usdtBalanceValue = parseFloat(ethers.utils.formatUnits(usdtBalance, usdtToken.decimal))
       const s3fSupplyValue = parseFloat(ethers.utils.formatUnits(s3fSupply, svToken.decimal))
-      const fraxSupplyValue = parseFloat(ethers.utils.formatUnits(fraxSupply, fraxToken.decimal))
-      const tusdSupplyValue = parseFloat(ethers.utils.formatUnits(tusdSupply, tusdToken.decimal))
-      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, usdtToken.decimal))
       const stakedValue = parseFloat(ethers.utils.formatUnits(stakedBalance, 18))
-      const totalSupply = fraxSupplyValue + tusdSupplyValue + usdtSupplyValue
       const s3fPercentage = s3fSupplyValue ? s3fBalanceValue / s3fSupplyValue : 0
-      const fraxPercentage = totalSupply ? fraxSupplyValue / totalSupply : 0
-      const tusdPercentage = totalSupply ? tusdSupplyValue / totalSupply : 0
-      const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
-      const s3fRatio = s3fSupplyValue ? totalSupply / s3fSupplyValue : 0
-      setTotalSupply(totalSupply)
+
       setStaked(stakedValue)
-      setSVToken((prev) => ({ ...prev, balance: s3fBalanceValue, percentage: s3fPercentage, supply: s3fSupplyValue, ratio: s3fRatio }))
-      setFraxToken((prev) => ({ ...prev, balance: fraxBalanceValue, percentage: fraxPercentage, supply: fraxSupplyValue }));
-      setTusdToken((prev) => ({ ...prev, balance: tusdBalanceValue, percentage: tusdPercentage, supply: tusdSupplyValue }));
-      setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue, percentage: usdtPercentage, supply: usdtSupplyValue }));
+      setSVToken((prev) => ({ ...prev, balance: s3fBalanceValue, percentage: s3fPercentage, supply: s3fSupplyValue }))
+      setFraxToken((prev) => ({ ...prev, balance: fraxBalanceValue }));
+      setTusdToken((prev) => ({ ...prev, balance: tusdBalanceValue }));
+      setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue }));
     } catch (error) {
       console.log('[Error] getInit => ', error)
     }

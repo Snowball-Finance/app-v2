@@ -16,15 +16,13 @@ const CurrencyReserves = ({ vault }) => {
         {tokenArray.map((token) => {
           const tokenValue = tokenValues[token.name]
           return (
-            <>
-              <Grid item xs={12}>
-                <CurrencyItem
-                  token={token}
-                  value={tokenValue.supply}
-                  percent={tokenValue.percentage * 100}
-                />
-              </Grid>
-            </>
+            <Grid key={token.name} item xs={12}>
+              <CurrencyItem
+                token={token}
+                value={tokenValue.supply}
+                percent={tokenValue.percentage * 100}
+              />
+            </Grid>
           );
         })}
 

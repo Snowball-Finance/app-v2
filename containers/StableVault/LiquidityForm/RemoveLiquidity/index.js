@@ -100,14 +100,12 @@ const RemoveLiquidity = ({ vault }) => {
         </Grid>
         {tokenArray.map((token, index) => {
           return (
-            <>
-              <Grid item xs={12}>
-                <CurrencyItem
-                  token={token}
-                  value={withdrawAmount[index] || 0}
-                />
-              </Grid>
-            </>
+            <Grid key={index} item xs={12}>
+              <CurrencyItem
+                token={token}
+                value={withdrawAmount[index] || 0}
+              />
+            </Grid>
           );
         })}
 

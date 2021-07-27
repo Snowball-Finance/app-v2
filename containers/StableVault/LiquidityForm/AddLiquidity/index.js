@@ -76,31 +76,29 @@ const AddLiquidity = ({ vault }) => {
         <Grid container spacing={2}>
           {tokenArray.map((token, index) => {
             return (
-              <>
-                <Grid item xs={12}>
-                  <Controller
-                    as={<TokenTextField />}
-                    name={(index === 0)
-                      ? 'firstInput'
-                      : (index === 1)
-                        ? 'secondInput'
-                        : 'thirdInput'
-                    }
-                    label='Input:'
-                    placeholder='0.0'
-                    token={token}
-                    balance={token.balance}
-                    control={control}
-                    defaultValue={''}
-                  />
-
-                  {(index < 2) &&
-                    <div className={classes.iconContainer}>
-                      <AddIcon className={classes.icon} />
-                    </div>
+              <Grid key={index} item xs={12}>
+                <Controller
+                  as={<TokenTextField />}
+                  name={(index === 0)
+                    ? 'firstInput'
+                    : (index === 1)
+                      ? 'secondInput'
+                      : 'thirdInput'
                   }
-                </Grid>
-              </>
+                  label='Input:'
+                  placeholder='0.0'
+                  token={token}
+                  balance={token.balance}
+                  control={control}
+                  defaultValue={''}
+                />
+
+                {(index < 2) &&
+                  <div className={classes.iconContainer}>
+                    <AddIcon className={classes.icon} />
+                  </div>
+                }
+              </Grid>
             );
           })}
 
