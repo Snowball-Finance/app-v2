@@ -50,6 +50,7 @@ const CompoundAndEarn = () => {
   const [userPool, setPool] = useState('all');
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
+  const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
   const { getBalanceInfosByPool } = useCompoundAndEarnContract();
 
@@ -81,7 +82,7 @@ const CompoundAndEarn = () => {
   }, [data, loading]);
 
   const handleSearch = (value) => {
-    const filterData = data?.LastSnowballInfo?.poolsInfo.filter(
+    const filterData = filterDataByProtocol.filter(
       (item) => item.name.search(value.toUpperCase()) != -1
     );
     setLastSnowballInfo(filterData);
@@ -115,6 +116,7 @@ const CompoundAndEarn = () => {
       filteredData
     );
     setLastSnowballInfo(sortedData);
+    setFilterDataByProtocol(sortedData);
     setPool(event.target.value);
   };
 
