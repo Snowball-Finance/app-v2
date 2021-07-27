@@ -50,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
 
 const StakeInformation = ({
   type = 's3d',
-  availableStake,
   staked,
 }) => {
   const classes = useStyles();
@@ -64,14 +63,6 @@ const StakeInformation = ({
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <div className={classes.infoContainer}>
-            <Typography variant='body2'>
-              Available to stake:
-            </Typography>
-            <Typography variant='body2' className={classes.value}>
-              {`${availableStake.toLocaleString()} ${type}`}
-            </Typography>
-          </div>
           <div className={classes.infoContainer}>
             <Typography variant='body2'>
               Staked:
