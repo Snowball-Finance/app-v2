@@ -82,15 +82,12 @@ export function CompoundAndEarnProvider({ children }) {
     } else {
       const dataWithPollBalance = await Promise.all(
         data?.LastSnowballInfo?.poolsInfo.map(async (item) => {
-          const gaugeContractForPNG = new ethers.Contract(item.address, GAUGE_ABI, library.getSigner());
-          const gaugeContractForTraderJoe = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
+          const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
-          const traderJoeBalance = await gaugeContractForTraderJoe.balanceOf(account);
-          const pngBalance = await gaugeContractForPNG.balanceOf(account);
+          const gaugeBalance = await gaugeContract.balanceOf(account);
           return {
             ...item,
-            traderJoeBalance: parseFloat(ethers.utils.formatUnits(traderJoeBalance, 18)),
-            pngBalance: parseFloat(ethers.utils.formatUnits(pngBalance, 18)),
+            gaugeBalance: parseFloat(ethers.utils.formatUnits(gaugeBalance, 18)),
           };
         })
       );

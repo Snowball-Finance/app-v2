@@ -12,12 +12,8 @@ export const sortingByType = (type, data) => {
 
 export const sortingByUserPool = (type, userPool, data) => {
   let sortedData = [...data];
-  if (userPool === 'pangolin') {
-    sortedData = sortedData.sort((a, b) => b.pngBalance - a.pngBalance);
-  } else if (userPool === 'trader') {
-    sortedData = sortedData.sort(
-      (a, b) => b.traderJoeBalance - a.traderJoeBalance
-    );
+  if (userPool !== 'all') {
+    sortedData = sortedData.sort((a, b) => b.gaugeBalance - a.gaugeBalance);
   } else {
     sortedData = sortingByType(type, data);
   }
