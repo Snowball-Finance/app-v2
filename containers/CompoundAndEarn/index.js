@@ -1,12 +1,17 @@
+import { memo, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useWeb3React } from '@web3-react/core';
+
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
-import PageHeader from 'parts/PageHeader'
-import { memo, useEffect, useState } from 'react';
+import PageHeader from 'parts/PageHeader';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
+import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,24 +46,49 @@ const useStyles = makeStyles((theme) => ({
 const CompoundAndEarn = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
-  const [selectType, setType] = useState('apy');
-  const [selectPool, setPool] = useState('all');
+  const [type, setType] = useState('apy');
+  const [userPool, setPool] = useState('all');
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
+  const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
+  const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
+
+  const { getBalanceInfosByPool } = useCompoundAndEarnContract();
 
   const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
+  const { library, account } = useWeb3React();
+
+  const modifiedDataWithUserPoll = async () => {
+    const modifiedData = await getBalanceInfosByPool();
+    if (modifiedData) {
+      const sortedData = sortingByUserPool(type, modifiedData);
+      setLastSnowballModifiedInfo(sortedData);
+      setLastSnowballInfo(sortedData);
+    }
+  };
 
   useEffect(() => {
     if (data && !loading) {
-      let clonedData = [...data?.LastSnowballInfo?.poolsInfo];
-      const sortedData = clonedData.sort(
-        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
-      );
-      setLastSnowballInfo(sortedData);
+      if (!(library && account)) {
+        let clonedData = [...data?.LastSnowballInfo?.poolsInfo];
+        const sortedData = clonedData.sort(
+          (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+        );
+        setLastSnowballInfo(sortedData);
+      } else {
+        modifiedDataWithUserPoll();
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, loading]);
 
   const handleSearch = (value) => {
-    const filterData = data?.LastSnowballInfo?.poolsInfo.filter(
+    let filterData = filterDataByProtocol.length
+      ? [...filterDataByProtocol]
+      : lastSnowballModifiedInfo.length
+      ? [...lastSnowballModifiedInfo]
+      : [...lastSnowballInfo];
+
+    filterData = filterData.filter(
       (item) => item.name.search(value.toUpperCase()) != -1
     );
     setLastSnowballInfo(filterData);
@@ -66,16 +96,35 @@ const CompoundAndEarn = () => {
   };
 
   const handleSorting = (event) => {
-    let sortedData = [...data?.LastSnowballInfo?.poolsInfo];
-    if (event.target.value === 'apy') {
-      sortedData = sortedData.sort(
-        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
-      );
-    } else {
-      sortedData = sortedData.sort((a, b) => b.tvlStaked - a.tvlStaked);
+    const filterData = filterDataByProtocol.length
+      ? [...filterDataByProtocol]
+      : lastSnowballModifiedInfo.length
+      ? [...lastSnowballModifiedInfo]
+      : [...lastSnowballInfo];
+
+    let sortedData = sortingByType(event.target.value, filterData);
+    if (library && account) {
+      sortedData = sortingByUserPool(event.target.value, filterData);
     }
+
     setLastSnowballInfo(sortedData);
     setType(event.target.value);
+  };
+
+  const handleUserPoolChange = (event) => {
+    let filteredData = lastSnowballModifiedInfo.length
+      ? [...lastSnowballModifiedInfo]
+      : [...data?.LastSnowballInfo?.poolsInfo];
+
+    if (event.target.value !== 'all') {
+      filteredData = filteredData.filter((item) =>
+        item.source.toLowerCase().includes(event.target.value)
+      );
+    }
+    const sortedData = sortingByUserPool(type, filteredData);
+    setLastSnowballInfo(sortedData);
+    setFilterDataByProtocol(sortedData);
+    setPool(event.target.value);
   };
 
   if (error) {
@@ -96,21 +145,18 @@ const CompoundAndEarn = () => {
             placeholder="Search your favorite pairs"
             onChange={(newValue) => handleSearch(newValue)}
             onCancelSearch={() => setSearch('')}
-            // onRequestSearch={handleSearch}
           />
           <Selects
             className={classes.selectBox}
-            value={selectType}
+            value={type}
             options={TYPES}
             onChange={handleSorting}
           />
           <Selects
             className={classes.selectBox}
-            value={selectPool}
+            value={userPool}
             options={POOLS}
-            onChange={(e) => {
-              setPool(e.target.value);
-            }}
+            onChange={handleUserPoolChange}
           />
         </div>
 
@@ -129,25 +175,3 @@ const CompoundAndEarn = () => {
 };
 
 export default memo(CompoundAndEarn);
-
-const TYPES = [
-  {
-    value: 'apy',
-    label: 'APY',
-  },
-  {
-    value: 'tvl',
-    label: 'TVL',
-  },
-];
-
-const POOLS = [
-  {
-    value: 'all',
-    label: 'All pools',
-  },
-  {
-    value: 'joined',
-    label: 'Only joined',
-  },
-];
