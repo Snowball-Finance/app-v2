@@ -52,9 +52,9 @@ export function ContractProvider({ children }) {
         snowconeBalance,
         totalSnowconeValue
       ] = await Promise.all([
-        snowballContract['balanceOf(address)'](account, { gasLimit: 1000000 }),
-        snowconeContract['balanceOf(address)'](account, { gasLimit: 1000000 }),
-        snowconeContract['totalSupply()']({gasLimit: 1000000 }),
+        snowballContract['balanceOf(address)'](account),
+        snowconeContract['balanceOf(address)'](account),
+        snowconeContract['totalSupply()'](),
       ]);
       const snowballBalanceValue = parseFloat(ethers.utils.formatUnits(snowballBalance, 18));
       const snowconeBalanceValue = parseFloat(ethers.utils.formatUnits(snowconeBalance, 18));
