@@ -156,6 +156,7 @@ const TokenTextField = React.forwardRef(({
             input: classes.input,
             notchedOutline: classes.notchedOutline
           }}
+          inputProps={{ min: 0 }}
           onKeyDown={e => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
           onChange={onChange}
           {...rest}
