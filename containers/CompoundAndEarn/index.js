@@ -60,7 +60,7 @@ const CompoundAndEarn = () => {
   const modifiedDataWithUserPoll = async () => {
     const modifiedData = await getBalanceInfosByPool();
     if (modifiedData) {
-      const sortedData = sortingByType(type, modifiedData);
+      const sortedData = sortingByUserPool(type, modifiedData);
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
     }
@@ -82,7 +82,13 @@ const CompoundAndEarn = () => {
   }, [data, loading]);
 
   const handleSearch = (value) => {
-    const filterData = filterDataByProtocol.filter(
+    let filterData = filterDataByProtocol.length
+      ? [...filterDataByProtocol]
+      : lastSnowballModifiedInfo.length
+      ? [...lastSnowballModifiedInfo]
+      : [...lastSnowballInfo];
+
+    filterData = filterData.filter(
       (item) => item.name.search(value.toUpperCase()) != -1
     );
     setLastSnowballInfo(filterData);
@@ -90,12 +96,17 @@ const CompoundAndEarn = () => {
   };
 
   const handleSorting = (event) => {
-    let filteredData =
-      userPool === 'all'
-        ? [...data?.LastSnowballInfo?.poolsInfo]
-        : [...lastSnowballInfo];
+    const filterData = filterDataByProtocol.length
+      ? [...filterDataByProtocol]
+      : lastSnowballModifiedInfo.length
+      ? [...lastSnowballModifiedInfo]
+      : [...lastSnowballInfo];
 
-    const sortedData = sortingByType(event.target.value, filteredData);
+    let sortedData = sortingByType(event.target.value, filterData);
+    if (library && account) {
+      sortedData = sortingByUserPool(event.target.value, filterData);
+    }
+
     setLastSnowballInfo(sortedData);
     setType(event.target.value);
   };
@@ -110,11 +121,7 @@ const CompoundAndEarn = () => {
         item.source.toLowerCase().includes(event.target.value)
       );
     }
-    const sortedData = sortingByUserPool(
-      type,
-      event.target.value,
-      filteredData
-    );
+    const sortedData = sortingByUserPool(type, filteredData);
     setLastSnowballInfo(sortedData);
     setFilterDataByProtocol(sortedData);
     setPool(event.target.value);

@@ -10,12 +10,18 @@ export const sortingByType = (type, data) => {
   return sortedData;
 };
 
-export const sortingByUserPool = (type, userPool, data) => {
+export const sortingByUserPool = (type, data) => {
   let sortedData = [...data];
-  if (userPool !== 'all') {
-    sortedData = sortedData.sort((a, b) => b.gaugeBalance - a.gaugeBalance);
+  if (type === 'apy') {
+    sortedData = sortedData.sort(
+      (a, b) =>
+        b.gaugeBalance - a.gaugeBalance ||
+        b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+    );
   } else {
-    sortedData = sortingByType(type, data);
+    sortedData = sortedData.sort(
+      (a, b) => b.gaugeBalance - a.gaugeBalance || b.tvlStaked - a.tvlStaked
+    );
   }
   return sortedData;
 };
