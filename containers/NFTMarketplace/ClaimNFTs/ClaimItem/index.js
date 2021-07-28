@@ -3,7 +3,6 @@ import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { useNFTContract } from 'contexts/nft-context'
-import {ShoppingCart} from 'react-feather';
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import ListItem from 'parts/Card/ListItem'
 import { NO_IMAGE_PATH } from 'utils/constants/image-paths'
@@ -38,27 +37,20 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     width: '100%',
   },
-  detailButton: {
-    backgroundColor: theme.custom.palette.lightGrey,
-    color: theme.custom.palette.darkGrey,
-    borderRadius: 0,
-    padding: theme.spacing(1.5)
-  },
   button: {
     borderRadius: 0,
     padding: theme.spacing(1.5)
   }
 }));
 
-const NFTItem = ({
-  nft,
-  onDetail
+const ClaimItem = ({
+  nft
 }) => {
   const classes = useStyles();
-  const { purchaseNFT } = useNFTContract();
+  const { claimNFT } = useNFTContract();
 
   const purchaseHandler = () => {
-    purchaseNFT(nft)
+    claimNFT(nft)
   }
 
   return (
@@ -85,20 +77,12 @@ const NFTItem = ({
         </Grid>
         <Grid item xs={12}>
           <ListItem
-            title='Minted'
-            value={`${nft.supply || 0} / ${nft.max || 0}`}
-          />
-          <ListItem
-            title='Artist'
-            value={nft.artist || 'No Name'}
-          />
-          <ListItem
-            title='Owned'
-            value={nft.name}
-          />
-          <ListItem
             title='Type'
             value={nft.type}
+          />
+          <ListItem
+            title='Status'
+            value='Do not Donate'
           />
         </Grid>
       </Grid>
@@ -106,23 +90,14 @@ const NFTItem = ({
       <div className={classes.buttonContainer}>
         <ContainedButton
           fullWidth
-          color='secondary'
-          className={classes.detailButton}
-          onClick={() => onDetail(nft)}
-        >
-          Detail
-        </ContainedButton>
-        <ContainedButton
-          fullWidth
-          startIcon={<ShoppingCart size={18} color='white' />}
           className={classes.button}
           onClick={purchaseHandler}
         >
-          Buy
+          Claim
         </ContainedButton>
       </div>
     </Card>
   );
 }
 
-export default memo(NFTItem)
+export default memo(ClaimItem)
