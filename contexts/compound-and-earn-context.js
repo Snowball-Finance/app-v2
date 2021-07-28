@@ -89,7 +89,6 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account || !gauges || !pools) {
       return false;
     }
-    console.log(gauges);
     const dataWithPoolBalance = await Promise.all(pools.map(async (item) => {
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
@@ -125,11 +124,10 @@ export function CompoundAndEarnProvider({ children }) {
       };
     }));
     setUserPools(dataWithPoolBalance);
-    return dataWithPoolBalance;
   };
 
   return (
-    <CompoundAndEarnContext.Provider value={{ approve, submit, getBalanceInfosByPool, userPools }}>
+    <CompoundAndEarnContext.Provider value={{ approve, submit, userPools }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -141,7 +139,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const { approve, submit, getBalanceInfosByPool, userPools } = context;
+  const { approve, submit, userPools } = context;
 
-  return { approve, submit, getBalanceInfosByPool, userPools };
+  return { approve, submit, userPools };
 }

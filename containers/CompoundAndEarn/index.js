@@ -52,20 +52,10 @@ const CompoundAndEarn = () => {
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
-  const { getBalanceInfosByPool } = useCompoundAndEarnContract();
+  const { userPools } = useCompoundAndEarnContract();
 
   const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
   const { library, account } = useWeb3React();
-
-  const modifiedDataWithUserPoll = async () => {
-    const modifiedData = await getBalanceInfosByPool();
-    if (modifiedData) {
-      const sortedData = sortingByUserPool(type, modifiedData);
-      setLastSnowballModifiedInfo(sortedData);
-      setLastSnowballInfo(sortedData);
-    }
-  };
-
   useEffect(() => {
     if (data && !loading) {
       if (!(library && account)) {
@@ -75,11 +65,15 @@ const CompoundAndEarn = () => {
         );
         setLastSnowballInfo(sortedData);
       } else {
-        modifiedDataWithUserPoll();
+        if (userPools) {
+          const sortedData = sortingByUserPool(type, userPools);
+          setLastSnowballModifiedInfo(sortedData);
+          setLastSnowballInfo(sortedData);
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading]);
+  }, [data, loading, userPools]);
 
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length
