@@ -78,6 +78,7 @@ const TokenTextField = React.forwardRef(({
   label,
   isTokenSelect = false,
   disabledMax = false,
+  disabledToken,
   token,
   setToken,
   tokens,
@@ -118,7 +119,11 @@ const TokenTextField = React.forwardRef(({
               >
                 {tokens.map((token, index) => {
                   return (
-                    <MenuItem key={index} value={token}>
+                    <MenuItem
+                      key={index}
+                      value={token}
+                      disabled={disabledToken.name === token.name}
+                    >
                       {token.name}
                     </MenuItem>
                   );

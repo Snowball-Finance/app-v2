@@ -77,6 +77,13 @@ const SwapForm = ({ vault }) => {
     setSwapDialog(true)
   }
 
+  const swapIconHandler = () => {
+    const newFromToken = toToken;
+    const newToToken = fromToken;
+    setFromToken(newFromToken)
+    setToToken(newToToken)
+  }
+
   const onSwapHandler = async () => {
     setSwapDialog(false)
     const params = {
@@ -101,6 +108,7 @@ const SwapForm = ({ vault }) => {
               name='fromSwap'
               label='Swap from:'
               placeholder='0.0'
+              disabledToken={toToken}
               token={fromToken}
               setToken={setFromToken}
               tokens={tokenArray}
@@ -110,7 +118,10 @@ const SwapForm = ({ vault }) => {
               defaultValue={''}
             />
             <div className={classes.iconContainer}>
-              <SwapIcon className={classes.icon} />
+              <SwapIcon
+                className={classes.icon}
+                onClick={swapIconHandler}
+              />
             </div>
           </Grid>
           <Grid item xs={12}>
@@ -120,6 +131,7 @@ const SwapForm = ({ vault }) => {
               disabledMax
               label='Swap to:'
               placeholder='0.0'
+              disabledToken={fromToken}
               token={toToken}
               setToken={setToToken}
               tokens={tokenArray}
