@@ -1,0 +1,40 @@
+
+import { memo } from 'react'
+import { Grid } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+
+import { useNFTContract } from 'contexts/nft-context'
+import ClaimItem from './ClaimItem'
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+  },
+  container: {
+    width: '100%',
+    maxWidth: theme.custom.layout.maxDesktopWidth,
+  },
+  header: {
+    marginBottom: theme.spacing(3)
+  },
+}));
+
+const ClaimNFTs = () => {
+  const classes = useStyles();
+  const { claimNFTs } = useNFTContract();
+
+  return (
+    <Grid container spacing={2} className={classes.container}>
+      {claimNFTs.map((nft, index) => (
+        <Grid key={index} item xs={12} sm={6} md={4}>
+          <ClaimItem nft={nft} />
+        </Grid>
+      ))}
+    </Grid>
+  )
+}
+
+export default memo(ClaimNFTs)

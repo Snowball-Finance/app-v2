@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const NFTDetailDialog = ({
+const ShopDetailDialog = ({
   item,
   open,
   setOpen
@@ -100,4 +100,4 @@ const NFTDetailDialog = ({
   );
 }
 
-export default memo(NFTDetailDialog)
+export default memo(ShopDetailDialog)

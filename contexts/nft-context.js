@@ -1,10 +1,10 @@
 import { createContext, useState, useContext, useMemo } from 'react'
+import { useQuery } from '@apollo/client'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3'
 
 import { CONTRACTS } from 'config'
+import { NFTS_LIST } from 'api/nft-marketplace/queries'
 import getNFTABI from 'libs/abis/nft'
 import GOVERNANCE_ABI from 'libs/abis/governance.json'
 import { usePopup } from 'contexts/popup-context'
@@ -16,9 +16,13 @@ export function NFTContractProvider({ children }) {
   const { setPopUp } = usePopup();
   const [loading, setLoading] = useState(false);
 
+  const { data: { NFTsList: nftsList = [] } = {} } = useQuery(NFTS_LIST);
   const governanceContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GOVERNANCE, GOVERNANCE_ABI, library.getSigner()) : null, [library])
 
-  const purchaseNFT = async (item) => {
+  const claimNFTs = useMemo(() => nftsList.filter((item) => item.category === 'Claimmable'), [nftsList]);
+  const shopNFTs = useMemo(() => nftsList.filter((item) => item.category !== 'Claimmable'), [nftsList]);
+
+  const claimNFT = async (item) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -28,16 +32,11 @@ export function NFTContractProvider({ children }) {
     }
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider()
-      const web3 = new Web3(ethereumProvider)
-
-      const { baseCost, address } = item;
+      const { address } = item;
       const { abi, type } = getNFTABI(address);
       const nftContract = new ethers.Contract(address, abi, library.getSigner())
 
-      let hash = ''
+      let nftClaim = {}
       if (type === 'EARLY_VOTER') {
         const userVote1 = await governanceContract.getVote(1, account)
         const userVote2 = await governanceContract.getVote(2, account)
@@ -60,8 +59,7 @@ export function NFTContractProvider({ children }) {
           return;
         }
 
-        const response = await nftContract.claim(account)
-        hash = response.hash;
+        nftClaim = await nftContract.claim(account)
       }
 
       if (type === 'COVID_RELIEF') {
@@ -85,28 +83,45 @@ export function NFTContractProvider({ children }) {
           return;
         }
 
-        const response = await nftContract.mint(account)
-        hash = response.hash;
+        nftClaim = await nftContract.mint(account)
       }
 
-      if (type === 'SNOWBALL_HEAD' || type === 'ROLLING') {
-        const overrides = {
-          value: ethers.utils.parseEther((baseCost || 0).toString()),
-        }
-        const response = await nftContract.mint(account, overrides)
-        hash = response.hash;
+      const transactionClaim = await nftClaim.wait(1);
+      if (transactionClaim.status) {
+        setPopUp({
+          title: 'Success',
+          text: `You claimed this NFT successfully`
+        })
       }
+    } catch (error) {
+      setPopUp({
+        title: 'Error',
+        text: `You don\'t have enough AVAX to buy this NFT`
+      })
+      console.log('[Error] claimNFT => ', error)
+    }
+    setLoading(false)
+  }
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(hash)
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
+  const purchaseNFT = async (item) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+    setLoading(true)
+    try {
+      const { baseCost, address } = item;
+      const { abi } = getNFTABI(address);
+      const nftContract = new ethers.Contract(address, abi, library.getSigner())
 
-      if (tx.status) {
+      const overrides = { value: ethers.utils.parseEther((baseCost || 0).toString()) }
+      const nftMint = await nftContract.approve(account, overrides);
+      const transactionMint = await nftMint.wait(1);
+
+      if (transactionMint.status) {
         setPopUp({
           title: 'Success',
           text: `You purchased this NFT successfully`
@@ -126,7 +141,10 @@ export function NFTContractProvider({ children }) {
     <ContractContext.Provider
       value={{
         loading,
-        purchaseNFT
+        claimNFTs,
+        shopNFTs,
+        purchaseNFT,
+        claimNFT
       }}
     >
       {children}
@@ -142,11 +160,17 @@ export function useNFTContract() {
 
   const {
     loading,
-    purchaseNFT
+    claimNFTs,
+    shopNFTs,
+    purchaseNFT,
+    claimNFT
   } = context
 
   return {
     loading,
-    purchaseNFT
+    claimNFTs,
+    shopNFTs,
+    purchaseNFT,
+    claimNFT
   }
 }
