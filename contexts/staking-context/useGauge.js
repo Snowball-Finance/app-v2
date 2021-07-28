@@ -16,7 +16,7 @@ const useGauge = ({
   gaugeProxyContract,
   setLoading
 }) => {
-  const { library, account } = useWeb3React()
+  const { library,account } = useWeb3React()
   const [gauges, setGauges] = useState([])
   const { pools, getGaugeInfo } = usePoolContract();
 
@@ -25,20 +25,16 @@ const useGauge = ({
       getGaugeProxyInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prices, pools, gaugeProxyContract])
+  }, [prices, pools, gaugeProxyContract, account])
 
   const getGaugeProxyInfo = async () => {
     try {
-      const tokens = await gaugeProxyContract.tokens()
+      const tokens = await gaugeProxyContract.tokens();
       const totalWeight = await gaugeProxyContract.totalWeight()
 
       // add any denylist item here
       const denyListTokens = [
         0x53b37b9a6631c462d74d65d61e1c056ea9daa637,
-        0x2f17bac3e0339c1bfb6e0dd380d65bd2fc665c75,
-        0x8b2e1802a7e0e0c7e1eae8a7c636058964e21047,
-        0x585DE92A24057400a7c445c89338c7d6c61dd080,
-        0x39BF214A93EC72e42bC0B9b8C07BE1af6Fe169dA,
       ];
       const approve = token => {
         return !denyListTokens.includes(+token)
@@ -84,7 +80,7 @@ const useGauge = ({
         const totalSupply = +balancesUserInfosHarvestables[idx * 13 + 3].toString()
         const balance = +balancesUserInfosHarvestables[idx * 13 + 4]
         const staked = +balancesUserInfosHarvestables[idx * 13 + 5]
-        const harvestable = balancesUserInfosHarvestables[idx * 13 + 6]
+        const harvestable = +balancesUserInfosHarvestables[idx * 13 + 6]
         const userWeight = +balancesUserInfosHarvestables[idx * 13 + 7].toString()
         const userCurrentWeights = +balancesUserInfosHarvestables[idx * 13 + 8].toString()
         const numAInPairBN = balancesUserInfosHarvestables[idx * 13 + 9]

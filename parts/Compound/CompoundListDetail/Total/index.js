@@ -1,6 +1,8 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,38 +34,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Total = () => {
+const Total = ({ item }) => {
   const classes = useStyles();
+  const { userPools } = useCompoundAndEarnContract();
+  let userPool = {
+    usdValue: 0,
+    userLP: 0,
+    totalSupply: 0,
+    valueEarned: 0,
+    SNOBHarvestable: 0,
+    SNOBValue: 0
+  };
+
+  if (userPools) {
+    userPool = userPools.find((pool) => pool?.address.toLowerCase() === item.address.toLowerCase());
+  }
 
   return (
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
           <Typography variant="h6">SNOB</Typography>
-          <Typography variant="h5">77,000.5</Typography>
+          <Typography variant="h5">{formatNumber(userPool?.SNOBHarvestable || 0.00,3)}</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="caption">Claimable</Typography>
-          <Typography variant="caption">($27,500)</Typography>
+          <Typography variant="caption">(${formatNumber(userPool?.SNOBValue || 0.00,3)})</Typography>
         </div>
       </div>
 
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">115,216 PGL ($22.1510)</Typography>
+          <Typography variant="subtitle2">{formatNumber(userPool?.userLP || 0.00,5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
-          <Typography variant="subtitle2">0.095 %</Typography>
+          <Typography variant="subtitle2">{formatNumber(
+            userPool?.userLP / userPool?.totalSupply * 100 || 0.00,5)}%</Typography>
         </div>
         <div className={classes.container}>
-          <Typography variant="body2" className={classes.boldSubtitle}>
+        {/*  <Typography variant="body2" className={classes.boldSubtitle}>
             Total earned
           </Typography>
           <Typography variant="subtitle2" className={classes.boldSubtitle}>
-            $10,000
-          </Typography>
+            ${formatNumber((userPool?.userLP-userPool?.lpLogged/1e18)*item.pricePoolToken) || 0}
+          </Typography> */}
         </div>
       </div>
     </div>

@@ -3,6 +3,9 @@ import { gql } from '@apollo/client';
 const LAST_SNOWBALL_INFO = gql`
   query {
     LastSnowballInfo {
+      snowballToken{
+        pangolinPrice
+      }
       poolsInfo {
         name
         address
@@ -14,6 +17,7 @@ const LAST_SNOWBALL_INFO = gql`
         weeklyAPY
         yearlyAPY
         performanceFees
+        pricePoolToken
         token0 {
           address
         }
@@ -38,14 +42,12 @@ const LAST_SNOWBALL_INFO = gql`
 `;
 
 const USER_LAST_DEPOSIT = gql`
-  query LastDepositPerWallet($wallet: String!, $snowglobe: String!) {
-    LastDepositPerWallet(wallet:$wallet,snowglobe:$snowglobe){
+query ListLastDepositsPerWallet($wallet: String!) {
+  ListLastDepositsPerWallet(wallet:$wallet){
+      snowglobeAddress
       lastBlockScanned
       lpQuantity
       slpQuantity
-    }
-    PoolsInfoByAddress(address:$snowglobe){
-      pricePoolToken
     }
   }
 `;

@@ -79,7 +79,9 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           totalAPY={totalAPY}
           userBoost={userBoost}
         />
-        <Total />
+        <Total 
+          item={item}
+        />
       </div>
       <div className={classes.button}>
         <ContainedButton

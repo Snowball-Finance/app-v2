@@ -106,8 +106,7 @@ const CompoundAndEarn = () => {
   const getTotalPendingHarvest = useCallback(() => {
     let total = 0;
     gauges.map((gauge) => {
-      total =
-        total + parseFloat(ethers.utils.formatUnits(gauge.harvestable, 18));
+      total += parseFloat(gauge.harvestable / 1e18);
     });
     const balanceUSD = +(total * prices.SNOB).toFixed(2);
     setPendingHarvest({ amount: total.toFixed(2), balanceUSD });

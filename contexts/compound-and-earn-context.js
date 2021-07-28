@@ -1,23 +1,36 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 
 import { IS_MAINNET, CONTRACTS } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
-import GAUGE_ABI from 'libs/abis/gauge.json'
+import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json'
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
+import { usePoolContract } from './pool-context';
+import { useContracts } from './contract-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
+  const [userPools, setUserPools] = useState([]);
+  const { gauges } = useContracts();
+  const { pools } = usePoolContract();
+
+  useEffect(() => {
+    {
+      getBalanceInfosByPool();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pools, gauges, account]);
+
   const { setPopUp } = usePopup();
   const { data } = useQuery(LAST_SNOWBALL_INFO);
-  
+
   const approve = async (pairsName, amount) => {
     if (!account) {
       setPopUp({
@@ -26,12 +39,12 @@ export function CompoundAndEarnProvider({ children }) {
       })
     } else {
       const filterData = data?.LastSnowballInfo?.poolsInfo.filter(
-        (item) => item.name.search(pairsName.toUpperCase()) !=-1
+        (item) => item.name.search(pairsName.toUpperCase()) != -1
       );
       const lpContract = new ethers.Contract(filterData[0].lpAddress, ERC20_ABI, library.getSigner());
       amount = ethers.utils.parseEther(amount.toString());
       const balance = await lpContract.balanceOf(account);
-      if ( amount > balance ) {
+      if (amount > balance) {
         setPopUp({
           title: 'Error',
           text: `Insufficient Balance`
@@ -43,7 +56,7 @@ export function CompoundAndEarnProvider({ children }) {
     }
   }
 
-  const submit = async (method, pairsName,  amount) => {
+  const submit = async (method, pairsName, amount) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -52,13 +65,13 @@ export function CompoundAndEarnProvider({ children }) {
       return false;
     } else {
       const filterData = data?.LastSnowballInfo?.poolsInfo.filter(
-        (item) => item.name.search(pairsName.toUpperCase()) !=-1
+        (item) => item.name.search(pairsName.toUpperCase()) != -1
       );
-      if ( method === 'Deposit') {
+      if (method === 'Deposit') {
         const lpContract = new ethers.Contract(filterData[0].lpAddress, ERC20_ABI, library.getSigner());
         amount = ethers.utils.parseEther(amount.toString());
         const balance = await lpContract.balanceOf(account);
-        if ( amount > balance ) {
+        if (amount > balance) {
           setPopUp({
             title: 'Error',
             text: `Insufficient Balance`
@@ -73,30 +86,48 @@ export function CompoundAndEarnProvider({ children }) {
   }
 
   const getBalanceInfosByPool = async () => {
-    if (!account) {
-      setPopUp({
-        title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`,
-      });
+    if (!account || !gauges || !pools) {
       return false;
-    } else {
-      const dataWithPollBalance = await Promise.all(
-        data?.LastSnowballInfo?.poolsInfo.map(async (item) => {
-          const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
-          const gaugeBalance = await gaugeContract.balanceOf(account);
-          return {
-            ...item,
-            gaugeBalance: parseFloat(ethers.utils.formatUnits(gaugeBalance, 18)),
-          };
-        })
-      );
-      return dataWithPollBalance;
     }
+    const dataWithPoolBalance = await Promise.all(pools.map(async (item) => {
+      const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
+        item.gaugeInfo.address.toLowerCase());
+      let totalSupply, userLP, SNOBHarvestable, SNOBValue;
+      if (item.kind === 'Snowglobe') {
+        const snowglobeContract = new ethers.Contract(item.address,
+          SNOWGLOBE_ABI, library.getSigner());
+
+        totalSupply = await snowglobeContract.totalSupply() / 1e18;
+        const snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
+        let balanceSnowglobe = await snowglobeContract.balanceOf(account) / 1e18;
+        if (gauge) {
+          balanceSnowglobe += gauge.staked / 1e18;
+          SNOBHarvestable = gauge.harvestable / 1e18;
+          SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
+        }
+        userLP = (balanceSnowglobe * snowglobeRatio);
+      } else {
+        if (gauge) {
+          userLP = gauge.staked / 1e18;
+          totalSupply = gauge.totalSupply / 1e18;
+          SNOBHarvestable = gauge.harvestable / 1e18;
+          SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
+        }
+      }
+      return {
+        ...item,
+        address: item.address,
+        userLP: userLP,
+        usdValue: userLP * item.pricePoolToken,
+        totalSupply, SNOBHarvestable,
+        SNOBValue
+      };
+    }));
+    setUserPools(dataWithPoolBalance);
   };
-  
+
   return (
-    <CompoundAndEarnContext.Provider value={{approve, submit, getBalanceInfosByPool}}>
+    <CompoundAndEarnContext.Provider value={{ approve, submit, userPools }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -108,7 +139,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const {approve, submit, getBalanceInfosByPool} = context;
+  const { approve, submit, userPools } = context;
 
-  return {approve, submit, getBalanceInfosByPool};
+  return { approve, submit, userPools };
 }
