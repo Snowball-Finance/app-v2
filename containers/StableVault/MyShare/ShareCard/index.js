@@ -7,8 +7,11 @@ import TokenSwapIcon from 'components/Icons/TokenSwapIcon'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import StakeInformation from 'parts/Vault/StakeInformation'
 
-const ShareCard = ({ vault }) => {
-  const { svToken, staked } = (vault == 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
+const ShareCard = ({
+  vault
+}) => {
+  const { staked } = (vault == 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
+
   return (
     <CardFormWrapper
       icon={<TokenSwapIcon />}
@@ -19,7 +22,6 @@ const ShareCard = ({ vault }) => {
         <Grid item xs={12}>
           <StakeInformation
             type={vault}
-            availableStake={svToken.balance}
             staked={staked}
           />
         </Grid>

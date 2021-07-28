@@ -15,6 +15,7 @@ import VaultSwapDialog from 'parts/Vault/VaultSwapDialog'
 import { BALANCE_VALID } from 'utils/constants/validations'
 import { useFormStyles } from 'styles/use-styles'
 import { isEmpty } from 'utils/helpers/utility'
+import { usePopup } from 'contexts/popup-context'
 
 const schema = yup.object().shape({
   fromSwap: BALANCE_VALID
@@ -22,6 +23,7 @@ const schema = yup.object().shape({
 
 const SwapForm = ({ vault }) => {
   const classes = useFormStyles();
+  const { setPopUp } = usePopup();
   const { tokenArray, tokenValues, getToSwapAmount, onSwap } = (vault === 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
 
   const [fromToken, setFromToken] = useState({});
@@ -65,7 +67,21 @@ const SwapForm = ({ vault }) => {
   }, [fromToken, toToken, fromSwap])
 
   const onSubmit = () => {
+    if (fromToken.name === toToken.name) {
+      setPopUp({
+        title: 'Alert',
+        text: 'You cannot select same token to swap. Please choose other token.'
+      })
+      return
+    }
     setSwapDialog(true)
+  }
+
+  const swapIconHandler = () => {
+    const newFromToken = toToken;
+    const newToToken = fromToken;
+    setFromToken(newFromToken)
+    setToToken(newToToken)
   }
 
   const onSwapHandler = async () => {
@@ -92,6 +108,7 @@ const SwapForm = ({ vault }) => {
               name='fromSwap'
               label='Swap from:'
               placeholder='0.0'
+              disabledToken={toToken}
               token={fromToken}
               setToken={setFromToken}
               tokens={tokenArray}
@@ -101,7 +118,10 @@ const SwapForm = ({ vault }) => {
               defaultValue={''}
             />
             <div className={classes.iconContainer}>
-              <SwapIcon className={classes.icon} />
+              <SwapIcon
+                className={classes.icon}
+                onClick={swapIconHandler}
+              />
             </div>
           </Grid>
           <Grid item xs={12}>
@@ -111,6 +131,7 @@ const SwapForm = ({ vault }) => {
               disabledMax
               label='Swap to:'
               placeholder='0.0'
+              disabledToken={fromToken}
               token={toToken}
               setToken={setToToken}
               tokens={tokenArray}

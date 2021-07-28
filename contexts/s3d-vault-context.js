@@ -15,6 +15,11 @@ import { usePopup } from 'contexts/popup-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
+
+const unsignedS3dContract = provider ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider) : null
+const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider) : null
+const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider) : null
+const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider) : null
 const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider) : null
 
 const tokenArray = [
@@ -71,11 +76,52 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   useEffect(() => {
-    if (!!account && s3dContract && usdtContract && busdContract && daiContract && vaultContract && gaugeContract) {
+    if (unsignedS3dContract && unsignedUsdtContract && unsignedBusdContract && unsignedDaiContract) {
+      getSupply();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unsignedS3dContract, unsignedUsdtContract, unsignedBusdContract, unsignedDaiContract]);
+
+  const getSupply = async () => {
+    try {
+      const [
+        s3dSupply,
+        usdtSupply,
+        busdSupply,
+        daiSupply
+      ] = await Promise.all([
+        unsignedS3dContract.totalSupply({ gasLimit: 1000000 }),
+        unsignedUsdtContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+        unsignedBusdContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+        unsignedDaiContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+      ]);
+
+      const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, svToken.decimal))
+      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, usdtToken.decimal))
+      const busdSupplyValue = parseFloat(ethers.utils.formatUnits(busdSupply, busdToken.decimal))
+      const daiSupplyValue = parseFloat(ethers.utils.formatUnits(daiSupply, daiToken.decimal))
+      const totalSupply = usdtSupplyValue + busdSupplyValue + daiSupplyValue
+      const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
+      const busdPercentage = totalSupply ? busdSupplyValue / totalSupply : 0
+      const daiPercentage = totalSupply ? daiSupplyValue / totalSupply : 0
+      const s3dRatio = s3dSupplyValue ? totalSupply / s3dSupplyValue : 0
+
+      setTotalSupply(totalSupply)
+      setSVToken((prev) => ({ ...prev, supply: s3dSupplyValue, ratio: s3dRatio }))
+      setUsdtToken((prev) => ({ ...prev, percentage: usdtPercentage, supply: usdtSupplyValue }));
+      setBusdToken((prev) => ({ ...prev, percentage: busdPercentage, supply: busdSupplyValue }));
+      setDaiToken((prev) => ({ ...prev, percentage: daiPercentage, supply: daiSupplyValue }));
+    } catch (error) {
+      console.log('[Error] getSupply => ', error)
+    }
+  }
+
+  useEffect(() => {
+    if (!!account && s3dContract && usdtContract && busdContract && daiContract && gaugeContract) {
       getInit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, s3dContract, usdtContract, busdContract, daiContract, vaultContract, gaugeContract]);
+  }, [account, s3dContract, usdtContract, busdContract, daiContract, gaugeContract]);
 
   const getInit = async () => {
     try {
@@ -85,9 +131,6 @@ export function S3dVaultContractProvider({ children }) {
         busdBalance,
         daiBalance,
         s3dSupply,
-        usdtSupply,
-        busdSupply,
-        daiSupply,
         stakedBalance
       ] = await Promise.all([
         s3dContract.balanceOf(account, { gasLimit: 1000000 }),
@@ -95,9 +138,6 @@ export function S3dVaultContractProvider({ children }) {
         busdContract.balanceOf(account, { gasLimit: 1000000 }),
         daiContract.balanceOf(account, { gasLimit: 1000000 }),
         s3dContract.totalSupply({ gasLimit: 1000000 }),
-        usdtContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        busdContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        daiContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
         gaugeContract.balanceOf(account, { gasLimit: 1000000 })
       ]);
 
@@ -106,22 +146,13 @@ export function S3dVaultContractProvider({ children }) {
       const busdBalanceValue = parseFloat(ethers.utils.formatUnits(busdBalance, busdToken.decimal))
       const daiBalanceValue = parseFloat(ethers.utils.formatUnits(daiBalance, daiToken.decimal))
       const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, svToken.decimal))
-      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, usdtToken.decimal))
-      const busdSupplyValue = parseFloat(ethers.utils.formatUnits(busdSupply, busdToken.decimal))
-      const daiSupplyValue = parseFloat(ethers.utils.formatUnits(daiSupply, daiToken.decimal))
       const stakedValue = parseFloat(ethers.utils.formatUnits(stakedBalance, 18))
-      const totalSupply = usdtSupplyValue + busdSupplyValue + daiSupplyValue
       const s3dPercentage = s3dSupplyValue ? s3dBalanceValue / s3dSupplyValue : 0
-      const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
-      const busdPercentage = totalSupply ? busdSupplyValue / totalSupply : 0
-      const daiPercentage = totalSupply ? daiSupplyValue / totalSupply : 0
-      const s3dRatio = s3dSupplyValue ? totalSupply / s3dSupplyValue : 0
-      setTotalSupply(totalSupply)
       setStaked(stakedValue)
-      setSVToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue, ratio: s3dRatio }))
-      setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue, percentage: usdtPercentage, supply: usdtSupplyValue }));
-      setBusdToken((prev) => ({ ...prev, balance: busdBalanceValue, percentage: busdPercentage, supply: busdSupplyValue }));
-      setDaiToken((prev) => ({ ...prev, balance: daiBalanceValue, percentage: daiPercentage, supply: daiSupplyValue }));
+      setSVToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue }))
+      setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue }));
+      setBusdToken((prev) => ({ ...prev, balance: busdBalanceValue }));
+      setDaiToken((prev) => ({ ...prev, balance: daiBalanceValue }));
     } catch (error) {
       console.log('[Error] getInit => ', error)
     }
