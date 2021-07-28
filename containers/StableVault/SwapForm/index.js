@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Grid } from '@material-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -14,122 +14,160 @@ import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import VaultSwapDialog from 'parts/Vault/VaultSwapDialog'
 import { BALANCE_VALID } from 'utils/constants/validations'
 import { useFormStyles } from 'styles/use-styles'
+import { isEmpty } from 'utils/helpers/utility'
+import { usePopup } from 'contexts/popup-context'
 
 const schema = yup.object().shape({
-	fromSwap: BALANCE_VALID
+  fromSwap: BALANCE_VALID
 });
 
-const SwapForm = ({vault}) => {
-	const classes = useFormStyles();
-	const { tokenArray, getToSwapAmount, onSwap } = (vault == 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
+const SwapForm = ({ vault }) => {
+  const classes = useFormStyles();
+  const { setPopUp } = usePopup();
+  const { tokenArray, tokenValues, getToSwapAmount, onSwap } = (vault === 's3D') ? useS3dVaultContracts() : useS3fVaultContracts();
 
-	const [fromToken, setFromToken] = useState({});
-	const [toToken, setToToken] = useState({});
-	const [toSwap, setToSwap] = useState(0);
-	const [maxSlippage, setMaxSlippage] = useState(0.1)
-	const [swapDialog, setSwapDialog] = useState(false);
+  const [fromToken, setFromToken] = useState({});
+  const [toToken, setToToken] = useState({});
+  const [toSwap, setToSwap] = useState(0);
+  const [maxSlippage, setMaxSlippage] = useState(0.1)
+  const [swapDialog, setSwapDialog] = useState(false);
 
-	useEffect(() => {
-		setFromToken(tokenArray[0])
-		setToToken(tokenArray[1])
-	}, [tokenArray]);
+  useEffect(() => {
+    setFromToken(tokenArray[0])
+    setToToken(tokenArray[1])
+  }, [tokenArray]);
 
-	const { control, handleSubmit, errors, watch, setValue } = useForm({
-		resolver: yupResolver(schema)
-	});
+  const fromTokenBalance = useMemo(() => {
+    if (isEmpty(fromToken) && isEmpty(tokenValues)) {
+      return 0
+    }
+    return tokenValues[fromToken.name]?.balance || 0
+  }, [fromToken, tokenValues])
 
-	const fromSwap = watch('fromSwap')
+  const toTokenBalance = useMemo(() => {
+    if (isEmpty(toToken) && isEmpty(tokenValues)) {
+      return 0
+    }
+    return tokenValues[toToken.name]?.balance || 0
+  }, [toToken, tokenValues])
 
-	useEffect(() => {
-		const calculateToSwap = async () => {
-			const toSwap = await getToSwapAmount(fromToken, toToken, fromSwap);
-			setToSwap(toSwap)
-		}
-		calculateToSwap();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fromToken, toToken, fromSwap])
+  const { control, handleSubmit, errors, watch, setValue } = useForm({
+    resolver: yupResolver(schema)
+  });
 
-	const onSubmit = () => {
-		setSwapDialog(true)
-	}
+  const fromSwap = watch('fromSwap')
 
-	const onSwapHandler = async () => {
-		setSwapDialog(false)
-		const params = {
-			fromToken,
-			toToken,
-			fromAmount: fromSwap,
-			toAmount: toSwap,
-			maxSlippage
-		}
-		await onSwap(params)
-		setValue('fromSwap', 0)
-	}
+  useEffect(() => {
+    const calculateToSwap = async () => {
+      const toSwap = await getToSwapAmount(fromToken, toToken, fromSwap);
+      setToSwap(toSwap)
+    }
+    calculateToSwap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromToken, toToken, fromSwap])
 
-	return (
-		<CardFormWrapper title='Swap'>
-			<form onSubmit={handleSubmit(onSubmit)} noValidate>
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<Controller
-							as={<TokenTextField />}
-							isTokenSelect
-							name='fromSwap'
-							label='Swap from:'
-							token={fromToken}
-							setToken={setFromToken}
-							tokens={tokenArray}
-							balance={fromToken.balance}
-							error={errors.fromSwap?.message}
-							control={control}
-							defaultValue={0}
-						/>
-						<div className={classes.iconContainer}>
-							<SwapIcon className={classes.icon} />
-						</div>
-					</Grid>
-					<Grid item xs={12}>
-						<TokenTextField
-							readOnly
-							isTokenSelect
-							disabledMax
-							label='Swap to:'
-							token={toToken}
-							setToken={setToToken}
-							tokens={tokenArray}
-							balance={toToken.balance}
-							value={parseFloat(toSwap || 0, 3).toFixed(3)}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<AdvancedTransactionOption
-							value={maxSlippage}
-							setValue={setMaxSlippage}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<GradientButton
-							fullWidth
-							type='submit'
-							color={(vault == 's3D') ? 'primary' : 'secondary'}
-							className={classes.button}
-						>
-						Swap
-						</GradientButton>
-					</Grid>
-				</Grid>
-			</form>
-			{swapDialog &&
-				<VaultSwapDialog
-					open={swapDialog}
-					setOpen={setSwapDialog}
-					onConfirm={onSwapHandler}
-					token={toToken}
-					value={toSwap}
-					maxSlippage={maxSlippage}
-				/>
-			}
-		</CardFormWrapper>
-	)
+  const onSubmit = () => {
+    if (fromToken.name === toToken.name) {
+      setPopUp({
+        title: 'Alert',
+        text: 'You cannot select same token to swap. Please choose other token.'
+      })
+      return
+    }
+    setSwapDialog(true)
+  }
+
+  const swapIconHandler = () => {
+    const newFromToken = toToken;
+    const newToToken = fromToken;
+    setFromToken(newFromToken)
+    setToToken(newToToken)
+  }
+
+  const onSwapHandler = async () => {
+    setSwapDialog(false)
+    const params = {
+      fromToken,
+      toToken,
+      fromAmount: fromSwap,
+      toAmount: toSwap,
+      maxSlippage
+    }
+    await onSwap(params)
+    setValue('fromSwap', '')
+  }
+
+  return (
+    <CardFormWrapper title='Swap'>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Controller
+              as={<TokenTextField />}
+              isTokenSelect
+              name='fromSwap'
+              label='Swap from:'
+              placeholder='0.0'
+              disabledToken={toToken}
+              token={fromToken}
+              setToken={setFromToken}
+              tokens={tokenArray}
+              balance={fromTokenBalance}
+              error={errors.fromSwap?.message}
+              control={control}
+              defaultValue={''}
+            />
+            <div className={classes.iconContainer}>
+              <SwapIcon
+                className={classes.icon}
+                onClick={swapIconHandler}
+              />
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <TokenTextField
+              readOnly
+              isTokenSelect
+              disabledMax
+              label='Swap to:'
+              placeholder='0.0'
+              disabledToken={fromToken}
+              token={toToken}
+              setToken={setToToken}
+              tokens={tokenArray}
+              balance={toTokenBalance}
+              value={!!toSwap ? parseFloat(toSwap || 0, 3).toFixed(3) : ''}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <AdvancedTransactionOption
+              value={maxSlippage}
+              setValue={setMaxSlippage}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <GradientButton
+              fullWidth
+              type='submit'
+              color={(vault == 's3D') ? 'primary' : 'secondary'}
+              className={classes.button}
+            >
+              Swap
+            </GradientButton>
+          </Grid>
+        </Grid>
+      </form>
+      {swapDialog &&
+        <VaultSwapDialog
+          open={swapDialog}
+          setOpen={setSwapDialog}
+          onConfirm={onSwapHandler}
+          token={toToken}
+          value={toSwap}
+          maxSlippage={maxSlippage}
+        />
+      }
+    </CardFormWrapper>
+  )
 }
 export default memo(SwapForm)

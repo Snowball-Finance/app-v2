@@ -1,19 +1,11 @@
-
 import LINKS from 'utils/constants/links'
 
-import HomeIcon from 'components/Icons/HomeIcon'
-import MessageIcon from 'components/Icons/MessageIcon'
-// ? hide vote page by great.dolphin.ls for first release
-// import VoteIcon from 'components/Icons/VoteIcon'
-import CartIcon from 'components/Icons/CartIcon'
-import BubbleIcon from 'components/Icons/BubbleIcon'
-import FeatherIcon from 'components/Icons/FeatherIcon'
-import ChatIcon from 'components/Icons/ChatIcon'
+import { Home, Layers, Anchor, ShoppingCart, BookOpen, GitHub, Send, Link} from 'react-feather';
 import StableVaultIcon from 'components/Icons/StableVaultIcon'
 
 const SIDEBAR_MENU = [
   {
-    ICON: HomeIcon,
+    ICON: Home,
     ...LINKS.HOME
   },
   {
@@ -25,36 +17,31 @@ const SIDEBAR_MENU = [
     ]
   },
   {
-    ICON: MessageIcon,
+    ICON: Layers,
     ...LINKS.COMPOUND_AND_EARN
   },
   {
-    ICON: MessageIcon,
+    ICON: Anchor,
     ...LINKS.STAKING
   },
-  // ? hide vote page by great.dolphin.ls for first release
-  // {
-  //   ICON: VoteIcon,
-  //   ...LINKS.VOTE
-  // },
   {
-    ICON: CartIcon,
+    ICON: ShoppingCart,
     ...LINKS.NFT_MARKETPLACE
   },
   {
-    ICON: BubbleIcon,
+    ICON: BookOpen,
     ...LINKS.DOCS
   },
   {
-    ICON: FeatherIcon,
+    ICON: GitHub,
     ...LINKS.GITHUB
   },
   {
-    ICON: ChatIcon,
+    ICON: Send,
     ...LINKS.TELEGRAM
   },
   {
-    ICON: ChatIcon,
+    ICON: Link,
     ...LINKS.DISCORD
   },
 ]

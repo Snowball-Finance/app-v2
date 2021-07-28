@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => {
     input: {
       fontSize: 26,
       fontWeight: 'bold',
-      direction: 'rtl',
+      textAlign: 'right',
       padding: theme.spacing(0),
       color: theme.palette.text.primary,
     },
@@ -78,6 +78,7 @@ const TokenTextField = React.forwardRef(({
   label,
   isTokenSelect = false,
   disabledMax = false,
+  disabledToken,
   token,
   setToken,
   tokens,
@@ -118,7 +119,11 @@ const TokenTextField = React.forwardRef(({
               >
                 {tokens.map((token, index) => {
                   return (
-                    <MenuItem key={index} value={token}>
+                    <MenuItem
+                      key={index}
+                      value={token}
+                      disabled={disabledToken.name === token.name}
+                    >
                       {token.name}
                     </MenuItem>
                   );
@@ -151,6 +156,7 @@ const TokenTextField = React.forwardRef(({
             input: classes.input,
             notchedOutline: classes.notchedOutline
           }}
+          onKeyDown={e => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
           onChange={onChange}
           {...rest}
         />

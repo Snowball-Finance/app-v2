@@ -9,12 +9,26 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S3D_VAULT_ABI from 'libs/abis/s3d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { isEmpty, delay } from 'utils/helpers/utility'
+import { isEmpty, delay, provider } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
+
+const unsignedS3dContract = provider ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider) : null
+const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider) : null
+const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider) : null
+const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider) : null
+const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider) : null
+
+const tokenArray = [
+  { index: 0, name: 'USDT', priceId: 'usdt', decimal: 6 },
+  { index: 1, name: 'BUSD', priceId: 'busd', decimal: 18 },
+  { index: 2, name: 'DAI', priceId: 'dai', decimal: 18 },
+]
+
+const pairNames = 'USDT + BUSD + DAI'
 
 export function S3dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
@@ -22,9 +36,9 @@ export function S3dVaultContractProvider({ children }) {
 
   const [loading, setLoading] = useState(false)
   const [svToken, setSVToken] = useState({ name: 'S3D', priceId: 's3d', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0, ratio: 0 })
-  const [usdtToken, setUsdtToken] = useState({ index: 0, name: 'USDT', priceId: 'usdt', decimal: 6, price: 0, balance: 0, supply: 0, percentage: 0 })
-  const [busdToken, setBusdToken] = useState({ index: 1, name: 'BUSD', priceId: 'busd', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
-  const [daiToken, setDaiToken] = useState({ index: 2, name: 'DAI', priceId: 'dai', decimal: 18, price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [usdtToken, setUsdtToken] = useState({ ...tokenArray[0], price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [busdToken, setBusdToken] = useState({ ...tokenArray[1], price: 0, balance: 0, supply: 0, percentage: 0 })
+  const [daiToken, setDaiToken] = useState({ ...tokenArray[2], price: 0, balance: 0, supply: 0, percentage: 0 })
   const [totalSupply, setTotalSupply] = useState(0);
   const [staked, setStaked] = useState(0);
   const [transactions, setTransactions] = useState([])
@@ -35,8 +49,13 @@ export function S3dVaultContractProvider({ children }) {
   const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, library.getSigner()) : null, [library])
   const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, library.getSigner()) : null, [library])
   const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
-  const tokenArray = useMemo(() => [usdtToken, busdToken, daiToken], [usdtToken, busdToken, daiToken]);
-  const pairNames = 'USDT + BUSD + DAI';
+  const tokenValues = useMemo(() => {
+    return {
+      USDT: usdtToken,
+      BUSD: busdToken,
+      DAI: daiToken,
+    }
+  }, [usdtToken, busdToken, daiToken]);
 
   const getTokenContract = (token) => {
     switch (token.name) {
@@ -48,7 +67,7 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   const getTokenById = (id) => {
-    switch (id) {
+    switch (parseInt(id, 10)) {
       case 0: return usdtToken;
       case 1: return busdToken;
       case 2: return daiToken;
@@ -57,11 +76,52 @@ export function S3dVaultContractProvider({ children }) {
   }
 
   useEffect(() => {
-    if (s3dContract && usdtContract && busdContract && daiContract && vaultContract && gaugeContract) {
+    if (unsignedS3dContract && unsignedUsdtContract && unsignedBusdContract && unsignedDaiContract) {
+      getSupply();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unsignedS3dContract, unsignedUsdtContract, unsignedBusdContract, unsignedDaiContract]);
+
+  const getSupply = async () => {
+    try {
+      const [
+        s3dSupply,
+        usdtSupply,
+        busdSupply,
+        daiSupply
+      ] = await Promise.all([
+        unsignedS3dContract.totalSupply({ gasLimit: 1000000 }),
+        unsignedUsdtContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+        unsignedBusdContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+        unsignedDaiContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+      ]);
+
+      const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, svToken.decimal))
+      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, usdtToken.decimal))
+      const busdSupplyValue = parseFloat(ethers.utils.formatUnits(busdSupply, busdToken.decimal))
+      const daiSupplyValue = parseFloat(ethers.utils.formatUnits(daiSupply, daiToken.decimal))
+      const totalSupply = usdtSupplyValue + busdSupplyValue + daiSupplyValue
+      const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
+      const busdPercentage = totalSupply ? busdSupplyValue / totalSupply : 0
+      const daiPercentage = totalSupply ? daiSupplyValue / totalSupply : 0
+      const s3dRatio = s3dSupplyValue ? totalSupply / s3dSupplyValue : 0
+
+      setTotalSupply(totalSupply)
+      setSVToken((prev) => ({ ...prev, supply: s3dSupplyValue, ratio: s3dRatio }))
+      setUsdtToken((prev) => ({ ...prev, percentage: usdtPercentage, supply: usdtSupplyValue }));
+      setBusdToken((prev) => ({ ...prev, percentage: busdPercentage, supply: busdSupplyValue }));
+      setDaiToken((prev) => ({ ...prev, percentage: daiPercentage, supply: daiSupplyValue }));
+    } catch (error) {
+      console.log('[Error] getSupply => ', error)
+    }
+  }
+
+  useEffect(() => {
+    if (!!account && s3dContract && usdtContract && busdContract && daiContract && gaugeContract) {
       getInit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s3dContract, usdtContract, busdContract, daiContract, vaultContract, gaugeContract]);
+  }, [account, s3dContract, usdtContract, busdContract, daiContract, gaugeContract]);
 
   const getInit = async () => {
     try {
@@ -71,9 +131,6 @@ export function S3dVaultContractProvider({ children }) {
         busdBalance,
         daiBalance,
         s3dSupply,
-        usdtSupply,
-        busdSupply,
-        daiSupply,
         stakedBalance
       ] = await Promise.all([
         s3dContract.balanceOf(account, { gasLimit: 1000000 }),
@@ -81,33 +138,21 @@ export function S3dVaultContractProvider({ children }) {
         busdContract.balanceOf(account, { gasLimit: 1000000 }),
         daiContract.balanceOf(account, { gasLimit: 1000000 }),
         s3dContract.totalSupply({ gasLimit: 1000000 }),
-        usdtContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        busdContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        daiContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
         gaugeContract.balanceOf(account, { gasLimit: 1000000 })
       ]);
 
-      const s3dBalanceValue = parseFloat(ethers.utils.formatUnits(s3dBalance, 18))
-      const usdtBalanceValue = parseFloat(ethers.utils.formatUnits(usdtBalance, 6))
-      const busdBalanceValue = parseFloat(ethers.utils.formatUnits(busdBalance, 18))
-      const daiBalanceValue = parseFloat(ethers.utils.formatUnits(daiBalance, 18))
-      const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, 18))
-      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, 6))
-      const busdSupplyValue = parseFloat(ethers.utils.formatUnits(busdSupply, 18))
-      const daiSupplyValue = parseFloat(ethers.utils.formatUnits(daiSupply, 18))
+      const s3dBalanceValue = parseFloat(ethers.utils.formatUnits(s3dBalance, svToken.decimal))
+      const usdtBalanceValue = parseFloat(ethers.utils.formatUnits(usdtBalance, usdtToken.decimal))
+      const busdBalanceValue = parseFloat(ethers.utils.formatUnits(busdBalance, busdToken.decimal))
+      const daiBalanceValue = parseFloat(ethers.utils.formatUnits(daiBalance, daiToken.decimal))
+      const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, svToken.decimal))
       const stakedValue = parseFloat(ethers.utils.formatUnits(stakedBalance, 18))
-      const totalSupply = usdtSupplyValue + busdSupplyValue + daiSupplyValue
       const s3dPercentage = s3dSupplyValue ? s3dBalanceValue / s3dSupplyValue : 0
-      const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
-      const busdPercentage = totalSupply ? busdSupplyValue / totalSupply : 0
-      const daiPercentage = totalSupply ? daiSupplyValue / totalSupply : 0
-      const s3dRatio = s3dSupplyValue ? totalSupply / s3dSupplyValue : 0
-      setTotalSupply(totalSupply)
       setStaked(stakedValue)
-      setSVToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue, ratio: s3dRatio }))
-      setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue, percentage: usdtPercentage, supply: usdtSupplyValue }));
-      setBusdToken((prev) => ({ ...prev, balance: busdBalanceValue, percentage: busdPercentage, supply: busdSupplyValue }));
-      setDaiToken((prev) => ({ ...prev, balance: daiBalanceValue, percentage: daiPercentage, supply: daiSupplyValue }));
+      setSVToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue }))
+      setUsdtToken((prev) => ({ ...prev, balance: usdtBalanceValue }));
+      setBusdToken((prev) => ({ ...prev, balance: busdBalanceValue }));
+      setDaiToken((prev) => ({ ...prev, balance: daiBalanceValue }));
     } catch (error) {
       console.log('[Error] getInit => ', error)
     }
@@ -115,13 +160,13 @@ export function S3dVaultContractProvider({ children }) {
 
   const getTransactions = async () => {
     try {
-      let blockNumber = await library.getBlockNumber();
+      let blockNumber = await provider.getBlockNumber();
       let events = [];
       let transactions = [];
       let attempt = 0;
 
       while (events.length < 10 && attempt < 10) {
-        const moreEvents = await vaultContract.queryFilter('*', blockNumber - 500, blockNumber);
+        const moreEvents = await unsignedVaultContract.queryFilter('*', blockNumber - 500, blockNumber);
         events = events.concat(moreEvents);
         blockNumber = blockNumber - 501;
         attempt += 1;
@@ -241,11 +286,11 @@ export function S3dVaultContractProvider({ children }) {
 
   const getToSwapAmount = async (fromToken, toToken, fromAmount) => {
     try {
-      if (!vaultContract) { return 0; }
+      if (fromAmount === '' || !unsignedVaultContract) { return 0; }
       if (fromToken.name === toToken.name) { return fromAmount }
 
       const fromAmountValue = ethers.utils.parseUnits(fromAmount.toString(), fromToken.decimal);
-      const toAmount = await vaultContract.calculateSwap(fromToken.index, toToken.index, fromAmountValue)
+      const toAmount = await unsignedVaultContract.calculateSwap(fromToken.index, toToken.index, fromAmountValue)
       const toAmountValue = parseFloat(ethers.utils.formatUnits(toAmount, toToken.decimal))
       return toAmountValue || 0;
     } catch (error) {
@@ -257,7 +302,7 @@ export function S3dVaultContractProvider({ children }) {
   const getWithdrawAmount = async (withdrawPercentage, checkedValue) => {
     let withdrawAmount = [0, 0, 0]
     if (!withdrawPercentage) { return withdrawAmount }
-    if (!vaultContract) { return withdrawAmount }
+    if (!unsignedVaultContract) { return withdrawAmount }
 
     if (!account) {
       setPopUp({
@@ -272,13 +317,13 @@ export function S3dVaultContractProvider({ children }) {
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
 
       if (checkedValue === -1) {
-        const removeAmounts = await vaultContract.calculateRemoveLiquidity(account, calculatedWithdrawValue);
+        const removeAmounts = await unsignedVaultContract.calculateRemoveLiquidity(account, calculatedWithdrawValue);
         for (let i = 0; i < 3; i++) {
           const token = getTokenById(i);
           withdrawAmount[i] = parseFloat(ethers.utils.formatUnits(removeAmounts[i], token.decimal))
         }
       } else {
-        const removeAmount = await vaultContract.calculateRemoveLiquidityOneToken(account, calculatedWithdrawValue, checkedValue);
+        const removeAmount = await unsignedVaultContract.calculateRemoveLiquidityOneToken(account, calculatedWithdrawValue, checkedValue);
         const token = getTokenById(checkedValue);
         withdrawAmount[checkedValue] = parseFloat(ethers.utils.formatUnits(removeAmount, token.decimal));
       }
@@ -303,7 +348,7 @@ export function S3dVaultContractProvider({ children }) {
     const daiAmount = ethers.utils.parseUnits(data[2].value.toString(), data[2].token.decimal)
     const totalAmount = data[0].value + data[1].value + data[2].value
 
-    const minToMint = await vaultContract.calculateTokenAmount(account, [usdtAmount, busdAmount, daiAmount], true)
+    const minToMint = await unsignedVaultContract.calculateTokenAmount(account, [usdtAmount, busdAmount, daiAmount], true)
     const minToMintValue = parseFloat(ethers.utils.formatUnits(minToMint, 18))
     const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
     const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
@@ -351,7 +396,7 @@ export function S3dVaultContractProvider({ children }) {
       const fromAmountValue = ethers.utils.parseUnits(fromAmount.toString(), fromToken.decimal)
       const slippageMultiplier = 1000 - (maxSlippage * 10);
       const minAmount = toAmount * slippageMultiplier / 1000;
-      const minAmountValue = ethers.utils.parseUnits(minAmount.toString(), toToken.decimal)
+      const minAmountValue = ethers.utils.parseUnits(minAmount.toFixed(toToken.decimal).toString(), toToken.decimal)
       const deadline = Date.now() + 180;
 
       const { hash: swapHash } = await vaultContract.swap(
@@ -632,6 +677,7 @@ export function S3dVaultContractProvider({ children }) {
         busdToken,
         daiToken,
         tokenArray,
+        tokenValues,
         pairNames,
         totalSupply,
         staked,
@@ -665,6 +711,7 @@ export function useS3dVaultContracts() {
     busdToken,
     daiToken,
     tokenArray,
+    tokenValues,
     pairNames,
     totalSupply,
     staked,
@@ -687,6 +734,7 @@ export function useS3dVaultContracts() {
     busdToken,
     daiToken,
     tokenArray,
+    tokenValues,
     pairNames,
     totalSupply,
     staked,
