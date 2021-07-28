@@ -25,7 +25,7 @@ const useGauge = ({
       getGaugeProxyInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prices, pools, gaugeProxyContract])
+  }, [prices, pools, gaugeProxyContract, account])
 
   const getGaugeProxyInfo = async () => {
     try {
@@ -84,7 +84,7 @@ const useGauge = ({
         const totalSupply = +balancesUserInfosHarvestables[idx * 13 + 3].toString()
         const balance = +balancesUserInfosHarvestables[idx * 13 + 4]
         const staked = +balancesUserInfosHarvestables[idx * 13 + 5]
-        const harvestable = balancesUserInfosHarvestables[idx * 13 + 6]
+        const harvestable = +balancesUserInfosHarvestables[idx * 13 + 6]
         const userWeight = +balancesUserInfosHarvestables[idx * 13 + 7].toString()
         const userCurrentWeights = +balancesUserInfosHarvestables[idx * 13 + 8].toString()
         const numAInPairBN = balancesUserInfosHarvestables[idx * 13 + 9]

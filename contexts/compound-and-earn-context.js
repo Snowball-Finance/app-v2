@@ -101,7 +101,7 @@ export function CompoundAndEarnProvider({ children }) {
       const formatedPools = await Promise.all(pools.map(async (pool) => {
         let userLP = 0;
         if (pool.kind === 'Snowglobe') {
-          const gauge = gauges.find((item) => item.gaugeAddress.toLowerCase() ===
+          const gauge = gauges.find((item) => item.address.toLowerCase() ===
             pool.gaugeInfo.address.toLowerCase());
           
             const snowglobeContract = new ethers.Contract(pool.address,
@@ -110,13 +110,16 @@ export function CompoundAndEarnProvider({ children }) {
             const totalSupply = await snowglobeContract.totalSupply() / 1e18;
             const snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
             let balanceSnowglobe = await snowglobeContract.balanceOf(account) /1e18;
+            let SNOBHarvestable,SNOBValue;
             if(gauge){
               balanceSnowglobe += gauge.staked/1e18;
+              SNOBHarvestable = gauge.harvestable /1e18;
+              SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
             }
             userLP = (balanceSnowglobe * snowglobeRatio) ;
             return {
               address: pool.address, userLP: userLP,
-              usdValue: userLP * pool.pricePoolToken, totalSupply
+              usdValue: userLP * pool.pricePoolToken, totalSupply,SNOBHarvestable,SNOBValue
             };
         } else {
           const gauge = gauges.find((item) => item.address.toLowerCase() ===

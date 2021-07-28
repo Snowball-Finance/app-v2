@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
-import { formatNumber } from 'utils/helpers/format';
+import { formatAPY, formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,23 +55,23 @@ const Total = ({ item }) => {
       <div className={classes.upper}>
         <div className={classes.container}>
           <Typography variant="h6">SNOB</Typography>
-          <Typography variant="h5">{formatNumber(userPool?.SNOBHarvestable || 0)}</Typography>
+          <Typography variant="h5">{formatNumber(userPool?.SNOBHarvestable || 0.00,3)}</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="caption">Claimable</Typography>
-          <Typography variant="caption">(${formatNumber(userPool?.SNOBValue || 0)})</Typography>
+          <Typography variant="caption">(${formatNumber(userPool?.SNOBValue || 0.00,3)})</Typography>
         </div>
       </div>
 
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">{formatNumber(userPool?.userLP || 0)} LP (${formatNumber(userPool?.usdValue || 0)})</Typography>
+          <Typography variant="subtitle2">{formatNumber(userPool?.userLP || 0.00,5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-            userPool?.userLP / userPool?.totalSupply * 100 || 0)}%</Typography>
+            userPool?.userLP / userPool?.totalSupply * 100 || 0.00,5)}%</Typography>
         </div>
         <div className={classes.container}>
         {/*  <Typography variant="body2" className={classes.boldSubtitle}>
