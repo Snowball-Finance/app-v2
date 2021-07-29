@@ -29,26 +29,18 @@ const useGauge = ({
 
   const getGaugeProxyInfo = async () => {
     try {
-      const tokens = await gaugeProxyContract.tokens();
-      const totalWeight = await gaugeProxyContract.totalWeight()
+      const totalWeight = await gaugeProxyContract.totalWeight();
 
-      // add any denylist item here
-      const denyListTokens = [
-        0x53b37b9a6631c462d74d65d61e1c056ea9daa637,
-      ];
-      const approve = token => {
-        return !denyListTokens.includes(+token)
-      }
-
-      const approvedTokens = tokens.filter(approve)
-      const gaugeAddresses = await Promise.all(
-        approvedTokens.map((token) => {
-          return gaugeProxyContract.getGauge(token)
-        }),
-      )
-
+      const gaugeAddresses =[];
+      const poolAddresses = [];
+      pools.forEach((item) => {
+        if(item?.gaugeInfo.address != '0x0000000000000000000000000000000000000000'){
+          gaugeAddresses.push(item.gaugeInfo.address);
+          poolAddresses.push(item.address);
+        }
+      });
       const balancesUserInfosHarvestables = await Promise.all(
-        approvedTokens.flatMap((token, index) => {
+        poolAddresses.flatMap((token, index) => {
           const { token0 = {}, token1 = {} } = getGaugeInfo(token);
           const gaugeTokenContract = new ethers.Contract(token, GAUGE_TOKEN_ABI, library.getSigner())
           const aTokenContract = new ethers.Contract(token0.address, GAUGE_TOKEN_ABI, library.getSigner())
@@ -72,7 +64,7 @@ const useGauge = ({
         }),
       )
 
-      const gauges = approvedTokens.map((token, idx) => {
+      const gauges = poolAddresses.map((token, idx) => {
         const address = gaugeAddresses[idx]
         const gaugeWeight = +balancesUserInfosHarvestables[idx * 13].toString()
         const rewardRate = +balancesUserInfosHarvestables[idx * 13 + 1].toString()
