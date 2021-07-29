@@ -1,11 +1,12 @@
 
 import { memo, useState } from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { useNFTContract } from 'contexts/nft-context'
 import ShopItem from './ShopItem'
 import ShopDetailDialog from './ShopDetailDialog'
+import { isEmpty } from 'utils/helpers/utility'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,14 +39,23 @@ const ShopNFTs = () => {
   return (
     <>
       <Grid container spacing={2} className={classes.container}>
-        {shopNFTs.map((nft, index) => (
-          <Grid key={index} item xs={12} sm={6} md={4}>
-            <ShopItem
-              nft={nft}
-              onDetail={detailHandler}
-            />
-          </Grid>
-        ))}
+        {isEmpty(shopNFTs)
+          ? (
+            <Grid item xs={12}>
+              <Typography variant='h6' align='center'>
+                No NFT
+              </Typography>
+            </Grid>
+          )
+          : shopNFTs.map((nft, index) => (
+            <Grid key={index} item xs={12} sm={6} md={4}>
+              <ShopItem
+                nft={nft}
+                onDetail={detailHandler}
+              />
+            </Grid>
+          ))
+        }
       </Grid>
       {open &&
         <ShopDetailDialog

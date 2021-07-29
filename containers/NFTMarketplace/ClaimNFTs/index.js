@@ -1,10 +1,11 @@
 
 import { memo } from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { useNFTContract } from 'contexts/nft-context'
 import ClaimItem from './ClaimItem'
+import { isEmpty } from 'utils/helpers/utility'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,17 +23,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ClaimNFTs = () => {
+const ClaimNFTs = ({
+  onCollect
+}) => {
   const classes = useStyles();
   const { claimNFTs } = useNFTContract();
 
   return (
     <Grid container spacing={2} className={classes.container}>
-      {claimNFTs.map((nft, index) => (
-        <Grid key={index} item xs={12} sm={6} md={4}>
-          <ClaimItem nft={nft} />
-        </Grid>
-      ))}
+      {isEmpty(claimNFTs)
+        ? (
+          <Grid item xs={12}>
+            <Typography variant='h6' align='center'>
+              No NFT
+            </Typography>
+          </Grid>
+        )
+        : claimNFTs.map((nft, index) => (
+          <Grid key={index} item xs={12} sm={6} md={4}>
+            <ClaimItem
+              nft={nft}
+              onCollect={onCollect}
+            />
+          </Grid>
+        ))
+      }
     </Grid>
   )
 }
