@@ -18,10 +18,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     width: '100%',
   },
-  container: {
-    width: '100%',
-    maxWidth: theme.custom.layout.maxDesktopWidth,
-  },
   header: {
     marginBottom: theme.spacing(3)
   },
@@ -32,6 +28,10 @@ const NFTMarketplace = () => {
   const { loading } = useNFTContract();
 
   const [selectedTab, setSelectedTab] = useState(NFT_TABS.shop.VALUE)
+
+  const collectionHandler = () => {
+    setSelectedTab(NFT_TABS.collection.VALUE)
+  }
 
   return (
     <main className={classes.root}>
@@ -46,9 +46,9 @@ const NFTMarketplace = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />
-      
+
       {selectedTab === NFT_TABS.shop.VALUE && <ShopNFTs />}
-      {selectedTab === NFT_TABS.claim.VALUE && <ClaimNFTs />}
+      {selectedTab === NFT_TABS.claim.VALUE && <ClaimNFTs onCollect={collectionHandler} />}
       {selectedTab === NFT_TABS.collection.VALUE && <CollectionNFTs />}
     </main>
   )
