@@ -8,12 +8,12 @@ const NFT_STATUS = Object.freeze({
   CLAIMED: {
     LABEL: 'Claimed',
     VALUE: 'CLAIMED',
-    BUTTON: 'CLAIM'
+    BUTTON: 'SEE IN YOUR COLLECTION'
   },
   ELIGIBLE: {
     LABEL: 'Eligible',
     VALUE: 'ELIGIBLE',
-    BUTTON: 'SEE IN YOUR COLLECTION'
+    BUTTON: 'CLAIM'
   }
 })
 
