@@ -1,34 +1,13 @@
-import { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
-
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CustomAccordion from 'components/CustomAccordion';
-import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
-import CompoundListDetail from 'parts/Compound/CompoundListDetail';
 import { useContracts } from 'contexts/contract-context';
+import CompoundListDetail from 'parts/Compound/CompoundListDetail';
+import CompoundActionButton from 'parts/Compound/CompoundActionButton';
+import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
+import { memo } from 'react';
 import getUserBoost from 'utils/helpers/getUserBoost';
-
-const useStyles = makeStyles((theme) => ({
-  detailButton: {
-    textTransform: 'none',
-    backgroundColor: theme.custom.palette.lightBlue,
-    color: theme.custom.palette.blue,
-  },
-}));
+import getProperAction from 'utils/helpers/getProperAction';
 
 const ListView = ({ poolsInfo }) => {
-  const classes = useStyles();
-  const detailButton = () => (
-    <ContainedButton
-      className={classes.detailButton}
-      size="small"
-      disableElevation
-      endIcon={<ArrowDropDownCircleIcon />}
-    >
-      Details
-    </ContainedButton>
-  );
   const { gauges, snowconeBalance, totalSnowcone } = useContracts();
 
   return poolsInfo?.map((item) => {
@@ -48,12 +27,18 @@ const ListView = ({ poolsInfo }) => {
 
     const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
 
+    const [ actionType, action ] = getProperAction(item, item.userLPBalance, item.userDepositedLP);
+    
     return (
       <CustomAccordion
         key={item.address}
-        expandMoreIcon={detailButton()}
+        expandMoreIcon={<CompoundActionButton type={actionType} action={action} />}
         summary={<DetailItem item={item} userBoost={userBoost} totalAPY={totalAPY} />}
-        details={<CompoundListDetail item={item} userBoost={userBoost} totalAPY={totalAPY} />}
+        details={
+          (actionType === "Details")
+          ? <CompoundListDetail item={item} userBoost={userBoost} totalAPY={totalAPY} />
+          : null
+        }
       />
     );
   });

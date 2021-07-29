@@ -31,7 +31,6 @@ const RemoveLiquidity = ({ vault }) => {
       setWithdrawAmount(withdrawAmount)
     }
     load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [withdrawPercentage, selectedToken])
 
   const onSubmit = async () => {

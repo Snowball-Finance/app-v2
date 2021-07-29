@@ -34,7 +34,6 @@ const CalculatorForm = ({
       console.log(totalBalance)
       setTotalBalance(totalBalance)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   const onCalculate = async () => {

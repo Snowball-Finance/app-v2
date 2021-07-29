@@ -1,11 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
+import detectEthereumProvider from '@metamask/detect-provider'
+import Web3 from 'web3'
 
 import { IS_MAINNET, CONTRACTS } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
-import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json'
+import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
+import GAUGE_ABI from 'libs/abis/gauge.json';
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
@@ -25,7 +28,6 @@ export function CompoundAndEarnProvider({ children }) {
     {
       getBalanceInfosByPool();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pools, gauges, account]);
 
   const { setPopUp } = usePopup();
@@ -42,8 +44,9 @@ export function CompoundAndEarnProvider({ children }) {
         (item) => item.name.search(pairsName.toUpperCase()) != -1
       );
       const lpContract = new ethers.Contract(filterData[0].lpAddress, ERC20_ABI, library.getSigner());
-      amount = ethers.utils.parseEther(amount.toString());
       const balance = await lpContract.balanceOf(account);
+
+      amount = ethers.utils.parseEther(amount.toString());
       if (amount > balance) {
         setPopUp({
           title: 'Error',
@@ -69,8 +72,9 @@ export function CompoundAndEarnProvider({ children }) {
       );
       if (method === 'Deposit') {
         const lpContract = new ethers.Contract(filterData[0].lpAddress, ERC20_ABI, library.getSigner());
-        amount = ethers.utils.parseEther(amount.toString());
         const balance = await lpContract.balanceOf(account);
+
+        amount = ethers.utils.parseEther(amount.toString());
         if (amount > balance) {
           setPopUp({
             title: 'Error',
@@ -85,6 +89,26 @@ export function CompoundAndEarnProvider({ children }) {
     }
   }
 
+  const claim = async (item) => {
+    if (!account || !gauges || !pools) {
+      return {claimTxReceipt: null, error: "Network Error"};
+    }
+    const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
+    const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
+    const ethereumProvider = await detectEthereumProvider();
+    const web3 = new Web3(ethereumProvider);
+
+    gaugeContract.getReward().then((t) => {
+      web3.waitForTransaction(t.hash).then((receipt) => {
+        return {claimTxReceipt: receipt, error: null};
+      }).catch((error) => {
+        return {claimTxReceipt: null, error: error};     
+      }); 
+    }).catch((error) => {
+      return {claimTxReceipt: null, error: error};
+    }); 
+  }
+
   const getBalanceInfosByPool = async () => {
     if (!account || !gauges || !pools) {
       return false;
@@ -92,7 +116,7 @@ export function CompoundAndEarnProvider({ children }) {
     const dataWithPoolBalance = await Promise.all(pools.map(async (item) => {
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
-      let totalSupply, userLP, SNOBHarvestable, SNOBValue;
+      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue;
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address,
           SNOWGLOBE_ABI, library.getSigner());
@@ -105,21 +129,27 @@ export function CompoundAndEarnProvider({ children }) {
           SNOBHarvestable = gauge.harvestable / 1e18;
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
-        userLP = (balanceSnowglobe * snowglobeRatio);
+        userDepositedLP = (balanceSnowglobe * snowglobeRatio);
       } else {
         if (gauge) {
-          userLP = gauge.staked / 1e18;
+          userDepositedLP = gauge.staked / 1e18;
           totalSupply = gauge.totalSupply / 1e18;
           SNOBHarvestable = gauge.harvestable / 1e18;
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
       }
+
+      const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
+      const userLPBalance = await lpContract.balanceOf(account) / 1e18;
+
       return {
         ...item,
         address: item.address,
-        userLP: userLP,
-        usdValue: userLP * item.pricePoolToken,
-        totalSupply, SNOBHarvestable,
+        userLPBalance: userLPBalance,
+        userDepositedLP: userDepositedLP,
+        usdValue: userDepositedLP * item.pricePoolToken,
+        totalSupply, 
+        SNOBHarvestable,
         SNOBValue
       };
     }));
@@ -127,7 +157,7 @@ export function CompoundAndEarnProvider({ children }) {
   };
 
   return (
-    <CompoundAndEarnContext.Provider value={{ approve, submit, userPools }}>
+    <CompoundAndEarnContext.Provider value={{ approve, submit, claim, userPools }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -139,7 +169,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const { approve, submit, userPools } = context;
+  const { approve, submit, claim, userPools } = context;
 
-  return { approve, submit, userPools };
+  return { approve, submit, claim, userPools };
 }

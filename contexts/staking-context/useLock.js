@@ -37,7 +37,6 @@ const useLock = ({
     if (!isEmpty(snowballContract)) {
       getSnowballInfo()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballContract])
 
   const getSnowballInfo = async () => {
@@ -54,7 +53,6 @@ const useLock = ({
     if (!isEmpty(snowconeContract)) {
       getSnowconeInfo()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowconeContract])
 
   const getSnowconeInfo = async () => {

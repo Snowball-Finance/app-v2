@@ -39,7 +39,7 @@ const Total = ({ item }) => {
   const { userPools } = useCompoundAndEarnContract();
   let userPool = {
     usdValue: 0,
-    userLP: 0,
+    userDepositedLP: 0,
     totalSupply: 0,
     valueEarned: 0,
     SNOBHarvestable: 0,
@@ -66,19 +66,19 @@ const Total = ({ item }) => {
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">{formatNumber(userPool?.userLP || 0.00,5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
+          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP || 0.00,5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-            userPool?.userLP / userPool?.totalSupply * 100 || 0.00,5)}%</Typography>
+            userPool?.userDepositedLP / userPool?.totalSupply * 100 || 0.00,5)}%</Typography>
         </div>
         <div className={classes.container}>
         {/*  <Typography variant="body2" className={classes.boldSubtitle}>
             Total earned
           </Typography>
           <Typography variant="subtitle2" className={classes.boldSubtitle}>
-            ${formatNumber((userPool?.userLP-userPool?.lpLogged/1e18)*item.pricePoolToken) || 0}
+            ${formatNumber((userPool?.userDepositedLP-userPool?.lpLogged/1e18)*item.pricePoolToken) || 0}
           </Typography> */}
         </div>
       </div>

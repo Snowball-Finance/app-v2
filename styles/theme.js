@@ -82,7 +82,18 @@ const lightTheme = responsiveFontSizes(
         darkBlue: '#1E2848',
         green: '#28C76F',
         darkGreen: '#2A4428',
+        png_orange: '#FF9F43',
+        joe_red: '#F2716A',
+        snob_blue: '28A2FF',
+        s3d_blue: '#1891FC',
+        s3f_green: '#39CD33',
         border: '#D8D6DE',
+        transparent: {
+          snob_blue: 'rgba(103, 166, 240, 0.12)',
+          png_orange: 'rgba(255, 107, 0, 0.12)',
+          joe_red: 'rgba(242, 113, 106, 0.12)',
+          green: 'rgba(40, 199, 111, 0.12)'
+        }
       },
       layout: {
         maxCardWidth: 513,

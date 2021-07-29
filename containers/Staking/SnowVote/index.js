@@ -54,7 +54,6 @@ const SnowVote = () => {
     if (!isEmpty(selectedFarms)) {
       initialize();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gauges]);
 
   useEffect(() => {
@@ -68,7 +67,6 @@ const SnowVote = () => {
     }
     setNewWeights([]);
     setVoteWeights(newVoteWeights);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFarms]);
 
   const calculateNewWeights = () => {
@@ -98,7 +96,6 @@ const SnowVote = () => {
 
   useEffect(() => {
     calculateNewWeights();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weightsValid]);
 
   const onVoteWeightChange = (address) => (value) => {

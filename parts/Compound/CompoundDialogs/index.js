@@ -37,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'none',
   },
   greenButton: {
-    color: '#28C76F',
-    backgroundColor: 'rgba(40, 199, 111, 0.12)',
+    color: theme.custom.palette.green,
+    backgroundColor: theme.custom.palette.transparent.green,
     textTransform: 'none',
   },
   greyButton: {

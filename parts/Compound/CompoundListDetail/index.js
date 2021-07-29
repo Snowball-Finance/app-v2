@@ -1,13 +1,15 @@
-import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import SuccessDialog from 'components/SuccessDialog';
+import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { memo, useState } from 'react';
+import getProperAction from 'utils/helpers/getProperAction';
+import CompoundActionButton from '../CompoundActionButton';
+import CompoundDialogs from '../CompoundDialogs';
 import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
-import CompoundDialogs from '../CompoundDialogs';
-import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,15 +42,17 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogCloseIcon: {
     color: 'currentColor',
-  },
+  }
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
   const [successModal, setSuccessModal] = useState(false);
+  const [txReceipt, setTxReceipt] = useState();
 
-  const { approve, submit } = useCompoundAndEarnContract();
+  const { approve, submit, claim } = useCompoundAndEarnContract();
+  const [ actionType, action ] = getProperAction(item, item.userLPBalance);
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
@@ -60,6 +64,17 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
       handleClose();
       setSuccessModal(true);
     }
+  };
+
+  const onClaim = async(item) => {
+    const {claimTxReceipt, error} = await claim(item);
+    if (error) {
+      // Error Modal
+      // Modal should be a context 
+      return console.log(error)
+    }
+    setTxReceipt(claimTxReceipt);
+    setSuccessModal(true);
   };
   
   const onApprove = (pairsName, amount) => {
@@ -84,18 +99,15 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         />
       </div>
       <div className={classes.button}>
-        <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Deposit' })}
-        >
-          Deposit
-        </ContainedButton>
+        <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
           onClick={() => setModal({ open: true, title: 'Withdraw' })}
         >
           Withdraw
         </ContainedButton>
         <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Claim' })}
+          onClick={() => onClaim(item)}
+          disabled={(item.SNOBHarvestable == 0) ? true : false}
         >
           Claim
         </ContainedButton>
@@ -116,7 +128,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <SuccessDialog
           open={successModal}
           subHeader="Transaction submitted"
-          handleClose={() => setSuccessModal(false)}
+          txReceipt={txReceipt}
+          handleClose={() => {
+            setSuccessModal(false)
+            setTimeout(() => {
+              window.location.reload();
+            }, 5000)
+          }}
         />
       )}
     </div>

@@ -63,7 +63,6 @@ const SwapForm = ({ vault }) => {
       setToSwap(toSwap)
     }
     calculateToSwap();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromToken, toToken, fromSwap])
 
   const onSubmit = () => {

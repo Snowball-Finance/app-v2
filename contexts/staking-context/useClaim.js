@@ -17,7 +17,6 @@ const useClaim = ({
     if (!isEmpty(feeDistributorContract)) {
       getFeeDistributorInfo()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeDistributorContract])
 
   const getFeeDistributorInfo = async () => {
