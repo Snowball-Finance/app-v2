@@ -105,6 +105,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
+          hasApproveButton={modal.title === 'Deposit'}
           item={item}
           handleClose={handleClose}
           onApprove={onApprove}

@@ -3,64 +3,74 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
 import SnowPairsIcon from 'components/SnowPairsIcon';
+import SnowTextField from 'components/UI/TextFields/SnowTextField';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(4),
-    padding: theme.spacing(2),
-    borderWidth: 1,
+  inputContainer: {
+    border: '1px solid rgba(108, 117, 125, 0.12)',
     borderRadius: 7,
-    borderStyle: 'solid',
-    borderColor: theme.custom.palette.border,
+    padding: theme.spacing(1, 0),
   },
-  icons: {
-    marginRight: theme.spacing(1),
+  input: {
+    '& .MuiOutlinedInput-root': {
+      border: 'none',
+    },
+    '& input': {
+      textAlign: 'end',
+      fontSize: theme.typography.h4.fontSize
+    },
   },
-  secondTokenIcon: {
-    marginLeft: theme.spacing(-2),
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  pairContainer: {
-    flexGrow: 1,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  balanceContainer: {
-    flexGrow: 1,
+  balanceText: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-end',
+    paddingRight: 20
+  },
+  pairContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  pairText: {
+    textAlign: 'center',
   },
 }));
 
-const Details = ({ data, item, calculatedBalance }) => {
+const Details = ({ data, item, amount, error, inputHandler }) => {
   const classes = useStyles();
   const token0 = item.token0.address;
   const token1 = item.token1.address;
   const token2 = item.token2.address;
 
   return (
-    <div className={classes.root}>
-      <div className={classes.container}>
-        <div className={classes.pairContainer}>
-          <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50}/>
-          <div>
-            <Typography variant="caption">{data.name}</Typography>
-            <Typography variant="subtitle1">{item.name}</Typography>
-          </div>
+    <>
+      <div className={classes.pairContainer}>
+        <div>
+          <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50} />
         </div>
-
-        <div className={classes.balanceContainer}>
-          <Typography variant="subtitle1">{calculatedBalance}</Typography>
-          <Typography variant="caption">Available: {data.availableBalance}PGL</Typography>
+        <div className={classes.pairText}>
+          <Typography variant="caption">{data.name}</Typography>
+          <Typography variant="h6">{item.name}</Typography>
         </div>
       </div>
-    </div>
+
+      <div className={classes.inputContainer}>
+        <SnowTextField
+          className={classes.input}
+          type="number"
+          name="percent"
+          value={amount}
+          error={error}
+          onChange={inputHandler}
+        />
+        <Typography variant="caption" className={classes.balanceText}>
+          Available: {data.availableBalance}PGL
+        </Typography>
+      </div>
+    </>
   );
 };
 
