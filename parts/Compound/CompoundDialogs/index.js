@@ -1,11 +1,8 @@
 import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import clsx from 'clsx';
+import { Grid } from '@material-ui/core';
 
 import SnowDialog from 'components/SnowDialog';
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import SnowTextField from 'components/UI/TextFields/SnowTextField';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 
@@ -28,25 +25,17 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
   buttonContainer: {
-    marginTop: theme.spacing(2),
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  button: {
-    width: '48%',
-    textTransform: 'none',
-  },
-  greenButton: {
-    color: '#28C76F',
-    backgroundColor: 'rgba(40, 199, 111, 0.12)',
-    textTransform: 'none',
-  },
-  greyButton: {
-    backgroundColor: '#BDBDBD',
+    margin: theme.spacing(1, 0),
   },
 }));
 
-const CompoundDialogs = ({ open, title, item, handleClose, onApprove, onSubmit }) => {
+const CompoundDialogs = ({
+  open,
+  title,
+  item,
+  handleClose,
+  footerButton,
+}) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -67,12 +56,12 @@ const CompoundDialogs = ({ open, title, item, handleClose, onApprove, onSubmit }
 
   const inputHandler = (event) => {
     const percentage = calculatePercentage(event.target.value);
-    if(data?.availableBalance >= event.target.value) {
+    if (data?.availableBalance >= event.target.value) {
       setAmount(event.target.value);
       setSlider(percentage);
       setError(null);
     } else {
-      setError(`Can't exceed the max limit`)
+      setError(`Can't exceed the max limit`);
     }
   };
 
@@ -93,37 +82,19 @@ const CompoundDialogs = ({ open, title, item, handleClose, onApprove, onSubmit }
       closeIconClass={classes.dialogCloseIcon}
     >
       <div className={classes.container}>
-        <Typography variant="subtitle2">Amount</Typography>
-        <SnowTextField
-          type="number"
-          name="percent"
-          endAdornment="PGL"
-          value={amount}
+        <Details
+          data={data}
+          item={item}
+          amount={amount}
+          inputHandler={inputHandler}
           error={error}
-          onChange={inputHandler}
         />
+
         <CompoundSlider value={slider} onChange={handleSliderChange} />
-        <Details data={data} item={item} calculatedBalance={amount} />
-        <div className={classes.buttonContainer}>
-          <ContainedButton
-            className={clsx(classes.button, {
-              [classes.greenButton]: slider === 50,
-            })}
-            disableElevation
-            onClick={() => onApprove(item.name, amount)}
-          >
-            Approve
-          </ContainedButton>
-          <ContainedButton
-            className={clsx(classes.button, {
-              [classes.greyButton]: slider !== 100,
-            })}
-            disableElevation
-            onClick={() => onSubmit(title, item.name, amount)}
-          >
-            {title}
-          </ContainedButton>
-        </div>
+
+        <Grid container spacing={1} className={classes.buttonContainer}>
+          {footerButton()}
+        </Grid>
       </div>
     </SnowDialog>
   );

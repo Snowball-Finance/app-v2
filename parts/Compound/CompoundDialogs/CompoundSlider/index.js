@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { Slider } from '@material-ui/core';
 import clsx from 'clsx';
 
@@ -19,6 +19,30 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.blue,
   },
 }));
+
+const BorderSlider = withStyles(() => ({
+  root: {
+    height: 8,
+  },
+  thumb: {
+    height: 24,
+    width: 24,
+    border: '2px solid currentColor',
+    marginTop: -8,
+    marginLeft: -12,
+    '&:focus, &:hover, &$active': {
+      boxShadow: 'inherit',
+    },
+  },
+  track: {
+    height: 8,
+    borderRadius: 4,
+  },
+  rail: {
+    height: 8,
+    borderRadius: 4,
+  },
+}))(Slider);
 
 const marks = [
   {
@@ -44,7 +68,7 @@ const CompoundSlider = ({ value, onChange }) => {
 
   return (
     <div>
-      <Slider
+      <BorderSlider
         aria-labelledby="discrete-slider-custom"
         valueLabelDisplay="auto"
         value={value}
