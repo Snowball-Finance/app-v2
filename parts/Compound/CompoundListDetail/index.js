@@ -1,5 +1,6 @@
 import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import SuccessDialog from 'components/SuccessDialog';
@@ -7,7 +8,8 @@ import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
 import CompoundDialogs from '../CompoundDialogs';
-import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
+import GradientButton from 'components/UI/Buttons/GradientButton';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +43,13 @@ const useStyles = makeStyles((theme) => ({
   dialogCloseIcon: {
     color: 'currentColor',
   },
+  button: {
+    padding: theme.spacing(2, 0),
+    textTransform: 'none',
+  },
+  greyButton: {
+    background: '#BDBDBD',
+  },
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
@@ -54,17 +63,71 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
     setModal({ open: false, title: '' });
   };
 
-  const onSubmit = async(method, pairsName, amount) => {
+  const onSubmit = async (method, pairsName, amount) => {
     const showModal = await submit(method, pairsName, amount);
-    if ( showModal ) {
+    if (showModal) {
       handleClose();
       setSuccessModal(true);
     }
   };
-  
+
   const onApprove = (pairsName, amount) => {
     approve(pairsName, amount);
-  }
+  };
+
+  // TODO: Please manage the coditional rendring of buttons
+  const renderButton = () => {
+    switch (modal.title) {
+      case 'Withdraw': {
+        return (
+          <Grid item xs={12}>
+            <GradientButton
+              className={clsx(classes.button, {
+                [classes.greyButton]: slider !== 100,
+              })}
+              disableElevation
+              fullWidth
+              onClick={() => onSubmit(title, item.name, amount)}
+            >
+              {title}
+            </GradientButton>
+          </Grid>
+        );
+      }
+      case 'Deposit': {
+        return (
+          <>
+            <Grid item xs={6}>
+              <ContainedButton
+                className={clsx(classes.button, {
+                  [classes.greyButton]: slider === 100,
+                })}
+                disableElevation
+                fullWidth
+                onClick={() => onApprove(item.name, amount)}
+              >
+                Approve
+              </ContainedButton>
+            </Grid>
+            <Grid item xs={6}>
+              <GradientButton
+                className={clsx(classes.button, {
+                  [classes.greyButton]: slider !== 100,
+                })}
+                disableElevation
+                fullWidth
+                onClick={() => onSubmit(title, item.name, amount)}
+              >
+                {title}
+              </GradientButton>
+            </Grid>
+          </>
+        );
+      }
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -79,9 +142,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           totalAPY={totalAPY}
           userBoost={userBoost}
         />
-        <Total 
-          item={item}
-        />
+        <Total item={item} />
       </div>
       <div className={classes.button}>
         <ContainedButton
@@ -105,7 +166,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
-          hasApproveButton={modal.title === 'Deposit'}
+          footerButton={renderButton}
           item={item}
           handleClose={handleClose}
           onApprove={onApprove}

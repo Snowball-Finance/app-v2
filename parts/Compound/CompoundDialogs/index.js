@@ -1,11 +1,8 @@
 import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-import clsx from 'clsx';
 
 import SnowDialog from 'components/SnowDialog';
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 
@@ -30,13 +27,6 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     margin: theme.spacing(1, 0),
   },
-  button: {
-    padding: theme.spacing(2, 0),
-    textTransform: 'none',
-  },
-  greyButton: {
-    background: '#BDBDBD',
-  },
 }));
 
 const CompoundDialogs = ({
@@ -44,9 +34,7 @@ const CompoundDialogs = ({
   title,
   item,
   handleClose,
-  hasApproveButton,
-  onApprove,
-  onSubmit,
+  footerButton,
 }) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
@@ -105,32 +93,7 @@ const CompoundDialogs = ({
         <CompoundSlider value={slider} onChange={handleSliderChange} />
 
         <Grid container spacing={1} className={classes.buttonContainer}>
-          {hasApproveButton && (
-            <Grid item xs={6}>
-              <ContainedButton
-                className={clsx(classes.button, {
-                  [classes.greyButton]: slider === 100,
-                })}
-                disableElevation
-                fullWidth
-                onClick={() => onApprove(item.name, amount)}
-              >
-                Approve
-              </ContainedButton>
-            </Grid>
-          )}
-          <Grid item xs={hasApproveButton ? 6 : 12}>
-            <GradientButton
-              className={clsx(classes.button, {
-                [classes.greyButton]: slider !== 100,
-              })}
-              disableElevation
-              fullWidth
-              onClick={() => onSubmit(title, item.name, amount)}
-            >
-              {title}
-            </GradientButton>
-          </Grid>
+          {footerButton()}
         </Grid>
       </div>
     </SnowDialog>
