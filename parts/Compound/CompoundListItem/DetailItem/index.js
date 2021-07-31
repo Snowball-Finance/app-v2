@@ -45,7 +45,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
 
       <Grid item xs={2}>
         <Typography variant="subtitle2">{item.name}</Typography>
-        <Grid item xs={12} xl={5} md={12} lg={12}>
+        <Grid item xs={12} xl={7} md={12} lg={12}>
           <Tags type={dexTokenName}>
             <Grid container direction="row" alignItems="center" spacing={2}>
               <Grid item xs={2}>
@@ -92,7 +92,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
             <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" boost={userBoost} />
           </CustomPopover>
         </Typography>
-        <Grid item xs={6} xl={2} md={3} lg={4}>
+        <Grid item xs={6} xl={3} md={3} lg={4}>
           <Tags type="SNOB" className={classes.boost}>{userBoost}</Tags>
         </Grid>
       </Grid>
