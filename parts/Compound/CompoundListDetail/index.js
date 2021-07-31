@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
+import clsx from 'clsx';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import SuccessDialog from 'components/SuccessDialog';
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   dialogCloseIcon: {
     color: 'currentColor',
   },
-  button: {
+  modalButton: {
     padding: theme.spacing(2, 0),
     textTransform: 'none',
   },
@@ -82,7 +83,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         return (
           <Grid item xs={12}>
             <GradientButton
-              className={clsx(classes.button, {
+              className={clsx(classes.modalButton, {
                 [classes.greyButton]: slider !== 100,
               })}
               disableElevation
@@ -99,7 +100,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           <>
             <Grid item xs={6}>
               <ContainedButton
-                className={clsx(classes.button, {
+                className={clsx(classes.modalButton, {
                   [classes.greyButton]: slider === 100,
                 })}
                 disableElevation
@@ -111,7 +112,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             </Grid>
             <Grid item xs={6}>
               <GradientButton
-                className={clsx(classes.button, {
+                className={clsx(classes.modalButton, {
                   [classes.greyButton]: slider !== 100,
                 })}
                 disableElevation
