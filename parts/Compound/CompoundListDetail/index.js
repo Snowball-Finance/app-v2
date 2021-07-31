@@ -1,14 +1,15 @@
-import { memo, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-
+import { makeStyles } from '@material-ui/core/styles';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import GradientButton from 'components/UI/Buttons/GradientButton';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import CompoundActionButton from 'parts/Compound/CompoundActionButton';
+import { memo, useState } from 'react';
+import getProperAction from 'utils/helpers/getProperAction';
+import CompoundDialogs from '../CompoundDialogs';
 import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
-import CompoundDialogs from '../CompoundDialogs';
-import GradientButton from 'components/UI/Buttons/GradientButton';
-import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
