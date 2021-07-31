@@ -1,15 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3'
 
 import { IS_MAINNET, CONTRACTS } from 'config'
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S4D_VAULT_ABI from 'libs/abis/s4d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { isEmpty, delay, provider } from 'utils/helpers/utility'
+import { provider } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 
@@ -209,47 +207,15 @@ export function S4dVaultContractProvider({ children }) {
             break;
           case 'RemoveLiquidity':
             const removeTokenAmounts = item.args.tokenAmounts;
-            if (removeTokenAmounts[0] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'remove',
-                  token: daiToken.name,
-                  time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[0], daiToken.decimal)
-                }
-              ]
-            }
-            if (removeTokenAmounts[1] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'remove',
-                  token: fraxToken.name,
-                  time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[1], fraxToken.decimal)
-                }
-              ]
-            }
-            if (removeTokenAmounts[2] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'remove',
-                  token: tusdToken.name,
-                  time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[2], tusdToken.decimal)
-                }
-              ]
-            }
-            if (removeTokenAmounts[3] > 0) {
+            for (let i = 0; i < 4; i++) {
+              const removedToken = getTokenById(i)
               transactions = [
                 ...transactions,
                 {
                   type: 'remove',
                   token: usdtToken.name,
                   time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[3], usdtToken.decimal)
+                  balance: -ethers.utils.formatUnits(removeTokenAmounts[0], removedToken.decimal)
                 }
               ]
             }
@@ -268,47 +234,15 @@ export function S4dVaultContractProvider({ children }) {
             break;
           case 'AddLiquidity':
             const addTokenAmounts = item.args.tokenAmounts;
-            if (addTokenAmounts[0] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'add',
-                  token: daiToken.name,
-                  time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[0], daiToken.decimal)
-                }
-              ]
-            }
-            if (addTokenAmounts[1] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'add',
-                  token: fraxToken.name,
-                  time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[1], fraxToken.decimal)
-                }
-              ]
-            }
-            if (addTokenAmounts[2] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'add',
-                  token: tusdToken.name,
-                  time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[2], tusdToken.decimal)
-                }
-              ]
-            }
-            if (addTokenAmounts[3] > 0) {
+            for (let i = 0; i < 4; i++) {
+              const addedToken = getTokenById(i)
               transactions = [
                 ...transactions,
                 {
                   type: 'add',
                   token: usdtToken.name,
                   time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[3], usdtToken.decimal)
+                  balance: ethers.utils.formatUnits(addTokenAmounts[0], addedToken.decimal)
                 }
               ]
             }
@@ -409,25 +343,12 @@ export function S4dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
       const tokenContract = getTokenContract(fromToken);
-
       const amount = ethers.utils.parseUnits((fromAmount).toString(), fromToken.decimal);
-      const { hash: approveHash } = await tokenContract.approve(CONTRACTS.S4D.VAULT, amount);
+      const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, amount);
+      const transactionApprove = await tokenApprove.wait(1)
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(approveHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (!tx.status) {
+      if (!transactionApprove.status) {
         setLoading(false)
         return;
       }
@@ -438,26 +359,16 @@ export function S4dVaultContractProvider({ children }) {
       const minAmountValue = ethers.utils.parseUnits(minAmount.toFixed(toToken.decimal).toString(), toToken.decimal)
       const deadline = Date.now() + 180;
 
-      const { hash: swapHash } = await vaultContract.swap(
+      const tokenSwap = await vaultContract.swap(
         fromToken.index,
         toToken.index,
         fromAmountValue,
         minAmountValue,
         deadline
       );
+      const transactionSwap = await tokenSwap.wait(1)
 
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(swapHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionSwap.status) {
         await getInit();
       }
     } catch (error) {
@@ -477,27 +388,14 @@ export function S4dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       for (const item of liquidityData) {
         const { token, value } = item;
         if (value) {
           const tokenContract = getTokenContract(token);
-          const { hash: approveHash } = await tokenContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256);
+          const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256);
+          const transactionApprove = await tokenApprove.wait(1)
 
-          while (loop) {
-            tx = await web3.eth.getTransactionReceipt(approveHash);
-            if (isEmpty(tx)) {
-              await delay(300)
-            } else {
-              loop = false
-            }
-          }
-
-          if (!tx.status) {
+          if (!transactionApprove.status) {
             setLoading(false)
             return;
           }
@@ -513,20 +411,10 @@ export function S4dVaultContractProvider({ children }) {
       const minToMintAmount = ethers.utils.parseUnits(minToMint.toString(), 18)
       const deadline = Date.now() + 180;
 
-      const { hash: liquidityHash } = await vaultContract.addLiquidity([daiAmount, fraxAmount, tusdAmount, usdtAmount], minToMintAmount, deadline);
+      const addLiquidity = await vaultContract.addLiquidity([daiAmount, fraxAmount, tusdAmount, usdtAmount], minToMintAmount, deadline);
+      const transactionAddLiquidity = await addLiquidity.wait(1)
 
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(liquidityHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionAddLiquidity.status) {
         await getInit();
       }
     } catch (error) {
@@ -546,25 +434,12 @@ export function S4dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       const allowedTokens = await s4dContract.allowance(account, CONTRACTS.S4D.VAULT)
       if (allowedTokens !== ethers.constants.MaxUint256) {
-        const { hash: approveHash } = await s4dContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256)
+        const tokenApprove = await s4dContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256)
+        const transactionApprove = await tokenApprove.wait(1)
 
-        while (loop) {
-          tx = await web3.eth.getTransactionReceipt(approveHash);
-          if (isEmpty(tx)) {
-            await delay(300)
-          } else {
-            loop = false
-          }
-        }
-
-        if (!tx.status) {
+        if (!transactionApprove.status) {
           setLoading(false)
           return;
         }
@@ -573,39 +448,25 @@ export function S4dVaultContractProvider({ children }) {
       const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
       const deadline = Date.now() + 180;
+      let transactionRemoveLiquidity = {};
       if (selectedToken === -1) {
         const minToRemoveAmount = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 4; i++) {
           const { token, value } = liquidityData[i];
           minToRemoveAmount[i] = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
         }
 
-        const { hash: removeHash } = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
-        while (loop) {
-          tx = await web3.eth.getTransactionReceipt(removeHash);
-          if (isEmpty(tx)) {
-            await delay(300)
-          } else {
-            loop = false
-          }
-        }
+        const removeLiquidity = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
+        transactionRemoveLiquidity = await removeLiquidity.wait(1)
       } else {
         const { token, value } = liquidityData[selectedToken];
         const minToRemoveAmount = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
 
-        const { hash: removeHash } = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
-
-        while (loop) {
-          tx = await web3.eth.getTransactionReceipt(removeHash);
-          if (isEmpty(tx)) {
-            await delay(300)
-          } else {
-            loop = false
-          }
-        }
+        const removeLiquidityOneToken = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
+        transactionRemoveLiquidity = await removeLiquidityOneToken.wait(1)
       }
 
-      if (tx.status) {
+      if (transactionRemoveLiquidity.status) {
         await getInit();
       }
     } catch (error) {

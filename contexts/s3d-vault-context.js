@@ -1,15 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3'
 
 import { IS_MAINNET, CONTRACTS } from 'config'
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S3D_VAULT_ABI from 'libs/abis/s3d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { isEmpty, delay, provider } from 'utils/helpers/utility'
+import { provider } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 
@@ -27,7 +25,6 @@ const tokenArray = [
   { index: 1, name: 'BUSD', priceId: 'busd', decimal: 18 },
   { index: 2, name: 'DAI', priceId: 'dai', decimal: 18 },
 ]
-
 const pairNames = 'USDT + BUSD + DAI'
 
 export function S3dVaultContractProvider({ children }) {
@@ -328,25 +325,13 @@ export function S3dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
       const tokenContract = getTokenContract(fromToken);
-
       const amount = ethers.utils.parseUnits((fromAmount).toString(), fromToken.decimal);
-      const { hash: approveHash } = await tokenContract.approve(CONTRACTS.S3D.VAULT, amount);
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(approveHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
+      const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, amount);
+      const transactionApprove = await tokenApprove.wait(1)
 
-      if (!tx.status) {
+      if (!transactionApprove.status) {
         setLoading(false)
         return;
       }
@@ -357,26 +342,16 @@ export function S3dVaultContractProvider({ children }) {
       const minAmountValue = ethers.utils.parseUnits(minAmount.toFixed(toToken.decimal).toString(), toToken.decimal)
       const deadline = Date.now() + 180;
 
-      const { hash: swapHash } = await vaultContract.swap(
+      const tokenSwap = await vaultContract.swap(
         fromToken.index,
         toToken.index,
         fromAmountValue,
         minAmountValue,
         deadline
       );
+      const transactionSwap = await tokenSwap.wait(1)
 
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(swapHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionSwap.status) {
         await getInit();
       }
     } catch (error) {
@@ -396,27 +371,14 @@ export function S3dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       for (const item of liquidityData) {
         const { token, value } = item;
         if (value) {
           const tokenContract = getTokenContract(token);
-          const { hash: approveHash } = await tokenContract.approve(CONTRACTS.S3D.VAULT, ethers.constants.MaxUint256);
+          const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, ethers.constants.MaxUint256);
+          const transactionApprove = await tokenApprove.wait(1)
 
-          while (loop) {
-            tx = await web3.eth.getTransactionReceipt(approveHash);
-            if (isEmpty(tx)) {
-              await delay(300)
-            } else {
-              loop = false
-            }
-          }
-
-          if (!tx.status) {
+          if (!transactionApprove.status) {
             setLoading(false)
             return;
           }
@@ -431,20 +393,10 @@ export function S3dVaultContractProvider({ children }) {
       const minToMintAmount = ethers.utils.parseUnits(minToMint.toString(), 18)
       const deadline = Date.now() + 180;
 
-      const { hash: liquidityHash } = await vaultContract.addLiquidity([usdtAmount, busdAmount, daiAmount], minToMintAmount, deadline);
+      const addLiquidity = await vaultContract.addLiquidity([usdtAmount, busdAmount, daiAmount], minToMintAmount, deadline);
+      const transactionAddLiquidity = await addLiquidity.wait(1)
 
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(liquidityHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionAddLiquidity.status) {
         await getInit();
       }
     } catch (error) {
@@ -464,25 +416,12 @@ export function S3dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       const allowedTokens = await s3dContract.allowance(account, CONTRACTS.S3D.VAULT)
       if (allowedTokens !== ethers.constants.MaxUint256) {
-        const { hash: approveHash } = await s3dContract.approve(CONTRACTS.S3D.VAULT, ethers.constants.MaxUint256)
+        const tokenApprove = await s3dContract.approve(CONTRACTS.S3D.VAULT, ethers.constants.MaxUint256)
+        const transactionApprove = await tokenApprove.wait(1)
 
-        while (loop) {
-          tx = await web3.eth.getTransactionReceipt(approveHash);
-          if (isEmpty(tx)) {
-            await delay(300)
-          } else {
-            loop = false
-          }
-        }
-
-        if (!tx.status) {
+        if (!transactionApprove.status) {
           setLoading(false)
           return;
         }
@@ -491,6 +430,7 @@ export function S3dVaultContractProvider({ children }) {
       const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
       const deadline = Date.now() + 180;
+      let transactionRemoveLiquidity = {};
       if (selectedToken === -1) {
         const minToRemoveAmount = [];
         for (let i = 0; i < 3; i++) {
@@ -498,32 +438,17 @@ export function S3dVaultContractProvider({ children }) {
           minToRemoveAmount[i] = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
         }
 
-        const { hash: removeHash } = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
-        while (loop) {
-          tx = await web3.eth.getTransactionReceipt(removeHash);
-          if (isEmpty(tx)) {
-            await delay(300)
-          } else {
-            loop = false
-          }
-        }
+        const removeLiquidity = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
+        transactionRemoveLiquidity = await removeLiquidity.wait(1)
       } else {
         const { token, value } = liquidityData[selectedToken];
         const minToRemoveAmount = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
 
-        const { hash: removeHash } = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
-
-        while (loop) {
-          tx = await web3.eth.getTransactionReceipt(removeHash);
-          if (isEmpty(tx)) {
-            await delay(300)
-          } else {
-            loop = false
-          }
-        }
+        const removeLiquidityOneToken = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
+        transactionRemoveLiquidity = await removeLiquidityOneToken.wait(1)
       }
 
-      if (tx.status) {
+      if (transactionRemoveLiquidity.status) {
         await getInit();
       }
     } catch (error) {
