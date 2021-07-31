@@ -83,14 +83,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         return (
           <Grid item xs={12}>
             <GradientButton
-              className={clsx(classes.modalButton, {
-                [classes.greyButton]: slider !== 100,
-              })}
+              className={clsx(classes.modalButton)}
               disableElevation
               fullWidth
-              onClick={() => onSubmit(title, item.name, amount)}
+              onClick={() => onSubmit(modal.title, item.name, amount)}
             >
-              {title}
+              {modal.title}
             </GradientButton>
           </Grid>
         );
@@ -100,9 +98,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           <>
             <Grid item xs={6}>
               <ContainedButton
-                className={clsx(classes.modalButton, {
-                  [classes.greyButton]: slider === 100,
-                })}
+                className={clsx(classes.modalButton, classes.greyButton)}
                 disableElevation
                 fullWidth
                 onClick={() => onApprove(item.name, amount)}
@@ -112,14 +108,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             </Grid>
             <Grid item xs={6}>
               <GradientButton
-                className={clsx(classes.modalButton, {
-                  [classes.greyButton]: slider !== 100,
-                })}
+                className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                onClick={() => onSubmit(title, item.name, amount)}
+                onClick={() => onSubmit(modal.title, item.name, amount)}
               >
-                {title}
+                {modal.title}
               </GradientButton>
             </Grid>
           </>
