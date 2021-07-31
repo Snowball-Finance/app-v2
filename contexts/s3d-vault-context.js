@@ -17,9 +17,9 @@ const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
 
 const unsignedS3dContract = provider ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider) : null
-const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider) : null
-const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider) : null
-const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider) : null
+const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.USDT, ERC20_ABI, provider) : null
+const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.BUSD, ERC20_ABI, provider) : null
+const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.DAI, ERC20_ABI, provider) : null
 const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider) : null
 
 const tokenArray = [
@@ -44,9 +44,9 @@ export function S3dVaultContractProvider({ children }) {
   const [transactions, setTransactions] = useState([])
 
   const s3dContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, library.getSigner()) : null, [library])
-  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, library.getSigner()) : null, [library])
-  const busdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, library.getSigner()) : null, [library])
-  const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, library.getSigner()) : null, [library])
+  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.USDT, ERC20_ABI, library.getSigner()) : null, [library])
+  const busdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.BUSD, ERC20_ABI, library.getSigner()) : null, [library])
+  const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.DAI, ERC20_ABI, library.getSigner()) : null, [library])
   const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, library.getSigner()) : null, [library])
   const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
   const tokenValues = useMemo(() => {
@@ -193,36 +193,15 @@ export function S3dVaultContractProvider({ children }) {
             break;
           case 'RemoveLiquidity':
             const removeTokenAmounts = item.args.tokenAmounts;
-            if (removeTokenAmounts[0] > 0) {
+            for (let i = 0; i < 3; i++) {
+              const removedToken = getTokenById(i)
               transactions = [
                 ...transactions,
                 {
                   type: 'remove',
                   token: usdtToken.name,
                   time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[0], usdtToken.decimal)
-                }
-              ]
-            }
-            if (removeTokenAmounts[1] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'remove',
-                  token: busdToken.name,
-                  time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[1], busdToken.decimal)
-                }
-              ]
-            }
-            if (removeTokenAmounts[2] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'remove',
-                  token: daiToken.name,
-                  time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[2], daiToken.decimal)
+                  balance: -ethers.utils.formatUnits(removeTokenAmounts[0], removedToken.decimal)
                 }
               ]
             }
@@ -241,36 +220,15 @@ export function S3dVaultContractProvider({ children }) {
             break;
           case 'AddLiquidity':
             const addTokenAmounts = item.args.tokenAmounts;
-            if (addTokenAmounts[0] > 0) {
+            for (let i = 0; i < 3; i++) {
+              const addedToken = getTokenById(i)
               transactions = [
                 ...transactions,
                 {
                   type: 'add',
                   token: usdtToken.name,
                   time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[0], usdtToken.decimal)
-                }
-              ]
-            }
-            if (addTokenAmounts[1] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'add',
-                  token: busdToken.name,
-                  time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[1], busdToken.decimal)
-                }
-              ]
-            }
-            if (addTokenAmounts[2] > 0) {
-              transactions = [
-                ...transactions,
-                {
-                  type: 'add',
-                  token: daiToken.name,
-                  time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[2], daiToken.decimal)
+                  balance: ethers.utils.formatUnits(addTokenAmounts[0], addedToken.decimal)
                 }
               ]
             }
@@ -574,100 +532,6 @@ export function S3dVaultContractProvider({ children }) {
     setLoading(false)
   }
 
-  const onStake = async () => {
-    if (!account) {
-      setPopUp({
-        title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
-      })
-      return;
-    }
-
-    setLoading(true)
-    try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
-      const amount = ethers.utils.parseUnits((svToken.balance).toString(), svToken.decimal);
-      const { hash: approveHash } = await s3dContract.approve(CONTRACTS.S3D.GAUGE, amount);
-
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(approveHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (!tx.status) {
-        setLoading(false)
-        return;
-      }
-
-      const { hash: stakeHash } = await gaugeContract.deposit(amount);
-
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(stakeHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
-        await getInit();
-      }
-    } catch (error) {
-      console.log('[Error] onSwap => ', error)
-    }
-    setLoading(false)
-  }
-
-  const onWithdraw = async () => {
-    if (!account) {
-      setPopUp({
-        title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
-      })
-      return;
-    }
-
-    setLoading(true)
-    try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
-      const amount = ethers.utils.parseUnits((staked).toString(), svToken.decimal);
-      const { hash: withdrawHash } = await gaugeContract.withdraw(amount);
-
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(withdrawHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
-        await getInit();
-      }
-    } catch (error) {
-      console.log('[Error] onSwap => ', error)
-    }
-    setLoading(false)
-  }
-
   return (
     <ContractContext.Provider
       value={{
@@ -688,9 +552,7 @@ export function S3dVaultContractProvider({ children }) {
         getWithdrawAmount,
         onSwap,
         addLiquidity,
-        removeLiquidity,
-        onStake,
-        onWithdraw
+        removeLiquidity
       }}
     >
       {children}
@@ -722,9 +584,7 @@ export function useS3dVaultContracts() {
     getWithdrawAmount,
     onSwap,
     addLiquidity,
-    removeLiquidity,
-    onStake,
-    onWithdraw
+    removeLiquidity
   } = context
 
   return {
@@ -745,8 +605,6 @@ export function useS3dVaultContracts() {
     getWithdrawAmount,
     onSwap,
     addLiquidity,
-    removeLiquidity,
-    onStake,
-    onWithdraw
+    removeLiquidity
   }
 }
