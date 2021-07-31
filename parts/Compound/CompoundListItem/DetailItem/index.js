@@ -18,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.custom.palette.lightBlue,
     },
   },
+  boost: {
+    display: 'flex',
+    justifyContent: 'center'
+  }
 }));
 
 const DetailItem = ({ item, userBoost, totalAPY }) => {
@@ -41,16 +45,18 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
 
       <Grid item xs={2}>
         <Typography variant="subtitle2">{item.name}</Typography>
-        <Tags type={dexTokenName}>
-          <Grid container direction="row" alignItems="center" spacing={2}>
-            <Grid item xs={2}>
-              <SnowTokenIcon size={12} token={dexTokenName} />
+        <Grid item xs={12} xl={5} md={12} lg={12}>
+          <Tags type={dexTokenName}>
+            <Grid container direction="row" alignItems="center" spacing={2}>
+              <Grid item xs={2}>
+                <SnowTokenIcon size={12} token={dexTokenName} />
+              </Grid>
+              <Grid item>
+                {item.source}
+              </Grid>
             </Grid>
-            <Grid item>
-              {item.source}
-            </Grid>
-          </Grid>
-        </Tags>
+          </Tags>
+        </Grid>
       </Grid>
 
       <Grid item xs={2}>
@@ -86,7 +92,9 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
             <Info icon={BOOST_INFO_IMAGE_PATH} buttonText="More info" boost={userBoost} />
           </CustomPopover>
         </Typography>
-        <Tags type="SNOB" style={{width: '40%'}}>{userBoost}</Tags>
+        <Grid item xs={6} xl={2} md={3} lg={4}>
+          <Tags type="SNOB" className={classes.boost}>{userBoost}</Tags>
+        </Grid>
       </Grid>
     </Grid>
   );
