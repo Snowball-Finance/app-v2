@@ -45,7 +45,8 @@ const getIcon = (type) => {
 const CompoundActionButton = ({
   type, 
   action,
-  endIcon = true
+  endIcon = true,
+  setModal = () => {}
 }) => {
   const classes = useStyles();
   const router = useRouter();
@@ -54,9 +55,9 @@ const CompoundActionButton = ({
     <ContainedButton
       className={clsx({[classes.button]: endIcon}, classes[type])}
       size={endIcon ? 'small' : ''}
-      disableElevation = {endIcon ? true : false}
+      disableElevation = {(endIcon)}
       endIcon={endIcon ? getIcon(type) : null}
-      onClick={() => {action(router)}}
+      onClick={() => {action(router, setModal)}}
     >
     {type.replace("_", " ")}
     </ContainedButton>

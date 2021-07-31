@@ -135,7 +135,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <Total item={item} />
       </div>
       <div className={classes.button}>
-        <CompoundActionButton type={actionType} action={action} endIcon={false} />
+        <CompoundActionButton type={actionType} action={action} endIcon={false} setModal={setModal}/>
         <ContainedButton
           onClick={() => withdraw(item)}
         >

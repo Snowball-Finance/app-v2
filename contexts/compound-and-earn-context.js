@@ -8,6 +8,7 @@ import { IS_MAINNET } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json'
+import GAUGE_ABI from 'libs/abis/gauge.json';
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
