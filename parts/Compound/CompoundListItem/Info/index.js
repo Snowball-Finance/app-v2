@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
   right: {
     width: '20%'
   },
-  header: {
-    display: 'flex',
-  },
   icon: {
     position: 'absolute',
     right: 10,
@@ -37,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.custom.palette.blue,
     textTransform: 'none',
   },
+  boost: {
+    display: 'flex',
+    justifyContent: 'center'
+  }
 }));
 
 const Info = ({ icon, buttonText, boost }) => {
@@ -45,10 +46,14 @@ const Info = ({ icon, buttonText, boost }) => {
   return (
     <div className={classes.info}>
       <div className={classes.left}>
-        <div className={classes.header}>
-          <Typography variant="h6">What’s Boost?</Typography>
-          <Tags type="SNOB">{boost}</Tags>
-        </div>
+        <Grid container alignItems="center">
+          <Grid item xs={6} xl={6} md={6} lg={6}>
+            <Typography variant="h6">What’s Boost?</Typography>
+          </Grid>
+          <Grid item xs={2} xl={2} md={2} lg={2}>
+            <Tags type="SNOB" className={classes.boost}>{boost}</Tags>
+          </Grid>
+        </Grid>
         <Typography variant="subtitle2">
           The {boost} showing in pools is the incentivations of xSNOB earned.
         </Typography>
