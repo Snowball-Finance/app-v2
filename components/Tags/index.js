@@ -4,8 +4,9 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   tags: {
-    display: 'table-cell',
+    display: 'flex',
     alignItems: 'center',
+    width: '100%',
     padding: theme.spacing(0.3),
     fontSize: 12,
     borderRadius: 4
