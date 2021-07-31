@@ -57,6 +57,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   // const [successModal, setSuccessModal] = useState(false);
 
   const { approve, deposit, withdraw, claim } = useCompoundAndEarnContract();
+  const [ actionType, action ] = getProperAction(item, item.userLPBalance);
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
@@ -133,11 +134,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <Total item={item} />
       </div>
       <div className={classes.button}>
-        <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Deposit' })}
-        >
-          Deposit
-        </ContainedButton>
+        <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
           onClick={() => withdraw(item)}
         >
@@ -145,6 +142,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </ContainedButton>
         <ContainedButton
           onClick={() => claim(item)}
+          disabled={(item.SNOBHarvestable == 0)}
         >
           Claim
         </ContainedButton>
