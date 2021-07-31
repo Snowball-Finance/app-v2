@@ -1,10 +1,17 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
+import clsx from 'clsx'
 
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import SnowDialog from 'components/SnowDialog';
+import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
+
 import Details from './Details';
+import { ethers } from 'ethers';
+import { roundDown } from 'utils/helpers/utility';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -27,6 +34,13 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     margin: theme.spacing(1, 0),
   },
+  modalButton: {
+    padding: theme.spacing(2, 0),
+    textTransform: 'none',
+  },
+  greyButton: {
+    background: '#BDBDBD',
+  }
 }));
 
 const CompoundDialogs = ({
@@ -34,34 +48,38 @@ const CompoundDialogs = ({
   title,
   item,
   handleClose,
-  footerButton,
 }) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
-  const [data, setData] = useState(null);
+  const [inputAmount, setinputAmount] = useState(0);
+  const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    setData(demoDataToDisplay[title.toLowerCase()]);
-  }, [title]);
+ 
+  const { approve, deposit } = useCompoundAndEarnContract();
 
   const calculatePercentage = (amount) => {
-    return (amount / data?.availableBalance) * 100;
+    return amount / (item?.userLPBalance/1e18) * 100;
   };
 
   const calculatedBalance = (value) => {
-    return (data?.availableBalance * value) / 100;
+    return item?.userLPBalance.mul(value).div(100);
   };
 
   const inputHandler = (event) => {
-    const percentage = calculatePercentage(event.target.value);
-    if (data?.availableBalance >= event.target.value) {
-      setAmount(event.target.value);
-      setSlider(percentage);
-      setError(null);
-    } else {
-      setError(`Can't exceed the max limit`);
+    if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
+      const percentage = calculatePercentage(event.target.value);
+      if (item?.userLPBalance/1e18 >= event.target.value) {
+        setinputAmount(event.target.value);
+        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
+        setSlider(percentage);
+        setError(null);
+      } else {
+        setError(`Can't exceed the max limit`);
+      }
+    }else{
+      setAmount(ethers.BigNumber.from(0));
+      setinputAmount(0);
     }
   };
 
@@ -69,6 +87,42 @@ const CompoundDialogs = ({
     const usedBalance = calculatedBalance(value);
     setSlider(value);
     setAmount(usedBalance);
+    setinputAmount(usedBalance/1e18);
+  };
+
+  const renderButton = () => {
+    switch (title) {
+      case 'Deposit': {
+        return (
+          <>
+            <Grid item xs={6}>
+              <ContainedButton
+                className={clsx(classes.modalButton)}
+                disableElevation
+                fullWidth
+                disabled={(approved) || (amount == 0)}
+                onClick={() => {setApproved(approve(item, amount))}}
+              >
+                Approve
+              </ContainedButton>
+            </Grid>
+            <Grid item xs={6}>
+              <GradientButton
+                className={clsx(classes.modalButton)}
+                disableElevation
+                fullWidth
+                disabled={!(approved) || (amount == 0)}
+                onClick={() => deposit(item, amount)}
+              >
+                Deposit
+              </GradientButton>
+            </Grid>
+          </>
+        );
+      }
+      default:
+        return null;
+    }
   };
 
   return (
@@ -83,9 +137,8 @@ const CompoundDialogs = ({
     >
       <div className={classes.container}>
         <Details
-          data={data}
           item={item}
-          amount={amount}
+          amount={inputAmount}
           inputHandler={inputHandler}
           error={error}
         />
@@ -93,7 +146,7 @@ const CompoundDialogs = ({
         <CompoundSlider value={slider} onChange={handleSliderChange} />
 
         <Grid container spacing={1} className={classes.buttonContainer}>
-          {footerButton()}
+          {renderButton()}
         </Grid>
       </div>
     </SnowDialog>
@@ -101,24 +154,3 @@ const CompoundDialogs = ({
 };
 
 export default memo(CompoundDialogs);
-
-const demoDataToDisplay = {
-  deposit: {
-    name: 'Deposit',
-    pairs: ['png', 'wavax'],
-    pairsName: 'PNG-AVAX',
-    availableBalance: 154001,
-  },
-  withdraw: {
-    name: 'Withdraw',
-    pairs: ['png', 'wavax'],
-    pairsName: 'PNG-AVAX',
-    availableBalance: 154001,
-  },
-  claim: {
-    name: 'Claim',
-    pairs: ['snowball'],
-    pairsName: 'SNOB',
-    availableBalance: 154001,
-  },
-};

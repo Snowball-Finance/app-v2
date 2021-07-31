@@ -9,6 +9,7 @@ const LAST_SNOWBALL_INFO = gql`
         name
         kind
         source
+        symbol
         tvlStaked
         dailyAPR
         dailyAPY
