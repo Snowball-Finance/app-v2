@@ -6,6 +6,7 @@ import { useNFTContract } from 'contexts/nft-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import ListItem from 'parts/Card/ListItem'
 import { NO_IMAGE_PATH } from 'utils/constants/image-paths'
+import NFT_STATUS from 'utils/constants/nft-status'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -44,13 +45,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ClaimItem = ({
-  nft
+  nft,
+  onCollect
 }) => {
   const classes = useStyles();
   const { claimNFT } = useNFTContract();
 
   const purchaseHandler = () => {
-    claimNFT(nft)
+    if (nft.status === NFT_STATUS.ELIGIBLE.VALUE) {
+      claimNFT(nft)
+    } else {
+      onCollect()
+    }
   }
 
   return (
@@ -82,7 +88,7 @@ const ClaimItem = ({
           />
           <ListItem
             title='Status'
-            value='Do not Donate'
+            value={NFT_STATUS[nft.status].LABEL}
           />
         </Grid>
       </Grid>
@@ -90,10 +96,11 @@ const ClaimItem = ({
       <div className={classes.buttonContainer}>
         <ContainedButton
           fullWidth
+          disabled={nft.status === NFT_STATUS.NOT_DONATE.VALUE}
           className={classes.button}
           onClick={purchaseHandler}
         >
-          Claim
+          {NFT_STATUS[nft.status].BUTTON}
         </ContainedButton>
       </div>
     </Card>

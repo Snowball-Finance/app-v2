@@ -1,15 +1,14 @@
-import { makeStyles } from '@material-ui/core/styles';
-import SuccessDialog from 'components/SuccessDialog';
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { memo, useState } from 'react';
-import getProperAction from 'utils/helpers/getProperAction';
-import CompoundActionButton from '../CompoundActionButton';
-import CompoundDialogs from '../CompoundDialogs';
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
+
+import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
-
+import CompoundDialogs from '../CompoundDialogs';
+import GradientButton from 'components/UI/Buttons/GradientButton';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,44 +41,81 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogCloseIcon: {
     color: 'currentColor',
-  }
+  },
+  button: {
+    padding: theme.spacing(2, 0),
+    textTransform: 'none',
+  },
+  greyButton: {
+    background: '#BDBDBD',
+  },
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
-  const [successModal, setSuccessModal] = useState(false);
-  const [txReceipt, setTxReceipt] = useState();
+  // const [successModal, setSuccessModal] = useState(false);
 
-  const { approve, submit, claim } = useCompoundAndEarnContract();
-  const [ actionType, action ] = getProperAction(item, item.userLPBalance);
+  const { approve, deposit, withdraw, claim } = useCompoundAndEarnContract();
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
   };
 
-  const onSubmit = async(method, pairsName, amount) => {
-    const showModal = await submit(method, pairsName, amount);
-    if ( showModal ) {
-      handleClose();
-      setSuccessModal(true);
+  // TODO: Please manage the coditional rendring of buttons
+  const renderButton = () => {
+    switch (modal.title) {
+      // big.wampa does not want variable withdraw
+      // case 'Withdraw': {
+      //   return (
+      //     <Grid item xs={12}>
+      //       <GradientButton
+      //         className={clsx(classes.button, {
+      //           [classes.greyButton]: slider !== 100,
+      //         })}
+      //         disableElevation
+      //         fullWidth
+      //         onClick={() => withdraw(item)}
+      //       >
+      //         Withdraw
+      //       </GradientButton>
+      //     </Grid>
+      //   );
+      // }
+      case 'Deposit': {
+        return (
+          <>
+            <Grid item xs={6}>
+              <ContainedButton
+                className={clsx(classes.button, {
+                  [classes.greyButton]: slider === 100,
+                })}
+                disableElevation
+                fullWidth
+                onClick={() => approve(item, amount)}
+              >
+                Approve
+              </ContainedButton>
+            </Grid>
+            <Grid item xs={6}>
+              <GradientButton
+                className={clsx(classes.button, {
+                  [classes.greyButton]: slider !== 100,
+                })}
+                disableElevation
+                fullWidth
+                onClick={() => deposit(item, amount)}
+              >
+                Deposit
+              </GradientButton>
+            </Grid>
+          </>
+        );
+      }
+      default:
+        return null;
     }
   };
-
-  const onClaim = async(item) => {
-    const {claimTxReceipt, error} = await claim(item);
-    if (error) {
-      // Error Modal
-      // Modal should be a context 
-      return console.log(error)
-    }
-    setTxReceipt(claimTxReceipt);
-    setSuccessModal(true);
-  };
-  
-  const onApprove = (pairsName, amount) => {
-    approve(pairsName, amount);
-  }
 
   return (
     <div className={classes.root}>
@@ -94,20 +130,21 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           totalAPY={totalAPY}
           userBoost={userBoost}
         />
-        <Total 
-          item={item}
-        />
+        <Total item={item} />
       </div>
       <div className={classes.button}>
-        <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Withdraw' })}
+          onClick={() => setModal({ open: true, title: 'Deposit' })}
+        >
+          Deposit
+        </ContainedButton>
+        <ContainedButton
+          onClick={() => withdraw(item)}
         >
           Withdraw
         </ContainedButton>
         <ContainedButton
-          onClick={() => onClaim(item)}
-          disabled={(item.SNOBHarvestable == 0) ? true : false}
+          onClick={() => claim(item)}
         >
           Claim
         </ContainedButton>
@@ -117,6 +154,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
+          footerButton={renderButton}
           item={item}
           handleClose={handleClose}
           onApprove={onApprove}
@@ -124,19 +162,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         />
       )}
 
-      {successModal && (
+      {/* {successModal && (
         <SuccessDialog
           open={successModal}
           subHeader="Transaction submitted"
-          txReceipt={txReceipt}
-          handleClose={() => {
-            setSuccessModal(false)
-            setTimeout(() => {
-              window.location.reload();
-            }, 5000)
-          }}
+          handleClose={() => setSuccessModal(false)}
         />
-      )}
+      )} */}
     </div>
   );
 };

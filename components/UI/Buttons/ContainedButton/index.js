@@ -17,7 +17,8 @@ const useStyles = makeStyles(theme => ({
   },
   disabled: {
     opacity: 0.6,
-    color: `${theme.palette.primary.main} !important`,
+    backgroundColor: `${theme.custom.palette.lightGrey} !important`,
+    color: `${theme.custom.palette.darkGrey} !important`,
   }
 }));
 

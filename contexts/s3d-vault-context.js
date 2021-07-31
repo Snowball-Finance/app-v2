@@ -79,6 +79,7 @@ export function S3dVaultContractProvider({ children }) {
     if (unsignedS3dContract && unsignedUsdtContract && unsignedBusdContract && unsignedDaiContract) {
       getSupply();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unsignedS3dContract, unsignedUsdtContract, unsignedBusdContract, unsignedDaiContract]);
 
   const getSupply = async () => {
@@ -119,6 +120,7 @@ export function S3dVaultContractProvider({ children }) {
     if (!!account && s3dContract && usdtContract && busdContract && daiContract && gaugeContract) {
       getInit();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, s3dContract, usdtContract, busdContract, daiContract, gaugeContract]);
 
   const getInit = async () => {

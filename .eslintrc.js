@@ -23,7 +23,6 @@ module.exports = {
     'react/no-unknown-property': 0,
     'react/prop-types': 0,
     'react/react-in-jsx-scope': 0,
-    'react-hooks/exhaustive-deps': 0,
     'react-hooks/rules-of-hooks': 0
   }
 };

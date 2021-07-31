@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SuccessDialog = ({ open, handleClose, subHeader, txReceipt }) => {
+const SuccessDialog = ({ open, handleClose, subHeader }) => {
   const classes = useStyles();
 
   return (
@@ -40,14 +40,13 @@ const SuccessDialog = ({ open, handleClose, subHeader, txReceipt }) => {
       <div className={classes.container}>
         <Typography variant="h3">Success</Typography>
         <Typography variant="subtitle1">{subHeader}</Typography>
-        <Typography variant="subtitle2">{txReceipt}</Typography>
         <ContainedButton
           className={classes.button}
           onClick={() => handleClose()}
           disableElevation
           fullWidth
         >
-          Reload
+          Close
         </ContainedButton>
       </div>
     </SnowDialog>

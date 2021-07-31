@@ -75,6 +75,7 @@ const IncreaseTime = () => {
         setValue('date', getDayOffset(lockEndDateValue, 7))
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchAllFields.duration]);
 
   const displayLockTime = useMemo(() => {

@@ -2,7 +2,6 @@
 import { memo, useMemo, useState, useCallback, useEffect } from 'react'
 import { Card, Typography, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { ethers } from 'ethers'
 
 import { CONTRACTS } from 'config'
 import { useContracts } from 'contexts/contract-context'

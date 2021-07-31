@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useMemo } from 'react'
+import { createContext, useState, useContext, useMemo, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
@@ -8,19 +8,120 @@ import { NFTS_LIST } from 'api/nft-marketplace/queries'
 import getNFTABI from 'libs/abis/nft'
 import GOVERNANCE_ABI from 'libs/abis/governance.json'
 import { usePopup } from 'contexts/popup-context'
+import { isEmpty } from 'utils/helpers/utility'
+import NFT_STATUS from 'utils/constants/nft-status'
 
 const ContractContext = createContext(null)
 
 export function NFTContractProvider({ children }) {
   const { account, library } = useWeb3React();
   const { setPopUp } = usePopup();
+
   const [loading, setLoading] = useState(false);
+  const [claimNFTs, setClaimNFTs] = useState([]);
+  const [shopNFTs, setShopNFTs] = useState([]);
+  const [purchasedNFTs, setPurchasedNFTs] = useState([]);
 
   const { data: { NFTsList: nftsList = [] } = {} } = useQuery(NFTS_LIST);
   const governanceContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GOVERNANCE, GOVERNANCE_ABI, library.getSigner()) : null, [library])
 
-  const claimNFTs = useMemo(() => nftsList.filter((item) => item.category === 'Claimmable'), [nftsList]);
-  const shopNFTs = useMemo(() => nftsList.filter((item) => item.category !== 'Claimmable'), [nftsList]);
+  useEffect(() => {
+    if (!isEmpty(nftsList)) {
+      getNFTData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, nftsList])
+
+  const getNFTData = async () => {
+    let claimNFTs = []
+    let shopNFTs = []
+    let purchasedNFTs = []
+
+    setLoading(true)
+    for (const item of nftsList) {
+      const { category, address } = item;
+
+      if (account) {
+        const { abi, type } = getNFTABI(address);
+        const nftContract = new ethers.Contract(address, abi, library.getSigner());
+
+        if (category === 'Claimmable') {
+          let newItem = { ...item, status: NFT_STATUS.NOT_DONATE.VALUE }
+
+          if (type === 'EARLY_VOTER') {
+            const userVote1 = await governanceContract.getVote(1, account)
+            const userVote2 = await governanceContract.getVote(2, account)
+
+            if (!!userVote1 || !!userVote2) {
+              const userEarlyVoteBalance = await nftContract.balanceOf(account)
+              newItem = {
+                ...newItem,
+                status: userEarlyVoteBalance > 0 ? NFT_STATUS.CLAIMED.VALUE : NFT_STATUS.ELIGIBLE.VALUE
+              }
+
+              if (userEarlyVoteBalance > 0) {
+                purchasedNFTs = [
+                  ...purchasedNFTs,
+                  newItem
+                ]
+              }
+            }
+          }
+
+          if (type === 'COVID_RELIEF') {
+            const covidReliefEligible = await nftContract.Wallets(account)
+            if (!!covidReliefEligible) {
+              const covidReliefBalance = await nftContract.balanceOf(account)
+
+              newItem = {
+                ...newItem,
+                status: covidReliefBalance > 0 ? NFT_STATUS.CLAIMED.VALUE : NFT_STATUS.ELIGIBLE.VALUE
+              }
+              if (covidReliefBalance > 0) {
+                purchasedNFTs = [
+                  ...purchasedNFTs,
+                  newItem
+                ]
+              }
+            }
+          }
+
+          claimNFTs = [
+            ...claimNFTs,
+            newItem
+          ]
+        } else {
+          shopNFTs = [...shopNFTs, item]
+          const mintNFTBalance = await nftContract.balanceOf(account)
+          const mintNFTBalanceValue = parseFloat(ethers.utils.formatUnits(mintNFTBalance, 18));
+
+          if (mintNFTBalanceValue > 0) {
+            purchasedNFTs = [
+              ...purchasedNFTs,
+              item
+            ]
+          }
+        }
+      } else {
+        if (category === 'Claimmable') {
+          claimNFTs = [
+            ...claimNFTs,
+            {
+              ...item,
+              status: NFT_STATUS.NOT_DONATE.VALUE
+            }
+          ]
+        } else {
+          shopNFTs = [...shopNFTs, item]
+        }
+      }
+    }
+
+    setClaimNFTs(claimNFTs)
+    setShopNFTs(shopNFTs)
+    setPurchasedNFTs(purchasedNFTs)
+    setLoading(false)
+  }
 
   const claimNFT = async (item) => {
     if (!account) {
@@ -30,6 +131,15 @@ export function NFTContractProvider({ children }) {
       })
       return;
     }
+
+    if (item.status !== NFT_STATUS.ELIGIBLE.VALUE) {
+      setPopUp({
+        title: 'Claim Error',
+        text: `You cannot claim this NFT`
+      })
+      return;
+    }
+
     setLoading(true)
     try {
       const { address } = item;
@@ -38,51 +148,10 @@ export function NFTContractProvider({ children }) {
 
       let nftClaim = {}
       if (type === 'EARLY_VOTER') {
-        const userVote1 = await governanceContract.getVote(1, account)
-        const userVote2 = await governanceContract.getVote(2, account)
-        if (!userVote1 && !userVote2) {
-          setPopUp({
-            title: 'Network Error',
-            text: `You did not vote`
-          })
-          setLoading(false)
-          return;
-        }
-
-        const userEarlyVoteBalance = await nftContract.balanceOf(account)
-        if (userEarlyVoteBalance > 0) {
-          setPopUp({
-            title: 'Alert',
-            text: `Already Claimed`
-          })
-          setLoading(false)
-          return;
-        }
-
         nftClaim = await nftContract.claim(account)
       }
 
       if (type === 'COVID_RELIEF') {
-        const covidReliefEligible = await nftContract.Wallets(account)
-        if (!covidReliefEligible) {
-          setPopUp({
-            title: 'Network Error',
-            text: `You did not donate`
-          })
-          setLoading(false)
-          return;
-        }
-
-        const covidReliefBalance = await nftContract.balanceOf(account)
-        if (covidReliefBalance > 0) {
-          setPopUp({
-            title: 'Alert',
-            text: `Already Claimed`
-          })
-          setLoading(false)
-          return;
-        }
-
         nftClaim = await nftContract.mint(account)
       }
 
@@ -92,6 +161,7 @@ export function NFTContractProvider({ children }) {
           title: 'Success',
           text: `You claimed this NFT successfully`
         })
+        getNFTData()
       }
     } catch (error) {
       setPopUp({
@@ -118,7 +188,7 @@ export function NFTContractProvider({ children }) {
       const nftContract = new ethers.Contract(address, abi, library.getSigner())
 
       const overrides = { value: ethers.utils.parseEther((baseCost || 0).toString()) }
-      const nftMint = await nftContract.approve(account, overrides);
+      const nftMint = await nftContract.mint(account, overrides);
       const transactionMint = await nftMint.wait(1);
 
       if (transactionMint.status) {
@@ -126,6 +196,7 @@ export function NFTContractProvider({ children }) {
           title: 'Success',
           text: `You purchased this NFT successfully`
         })
+        getNFTData()
       }
     } catch (error) {
       setPopUp({
@@ -143,6 +214,7 @@ export function NFTContractProvider({ children }) {
         loading,
         claimNFTs,
         shopNFTs,
+        purchasedNFTs,
         purchaseNFT,
         claimNFT
       }}
@@ -162,6 +234,7 @@ export function useNFTContract() {
     loading,
     claimNFTs,
     shopNFTs,
+    purchasedNFTs,
     purchaseNFT,
     claimNFT
   } = context
@@ -170,6 +243,7 @@ export function useNFTContract() {
     loading,
     claimNFTs,
     shopNFTs,
+    purchasedNFTs,
     purchaseNFT,
     claimNFT
   }

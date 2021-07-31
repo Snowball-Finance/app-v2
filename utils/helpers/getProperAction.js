@@ -9,7 +9,7 @@ const getProperAction = (item, balance, deposit = 0) => {
 	if (deposit > 0) {
 		action = ["Details", () => {}]
 	} else if (balance > 0) {
-		action = ["Deposit", () => setModal({ open: true, title: 'Deposit' })];
+		action = ["Deposit", () => {setModal({ title: 'Deposit', item: item })}];
 	} else {
 		if (item.source == "Pangolin") {
 			action = ["Get_PGL", () => {window.open(`${PangolinPoolURL}${item.token0.address.toLowerCase()}/${item.token1.address.toLowerCase()}`)}];

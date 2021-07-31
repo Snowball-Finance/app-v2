@@ -1,10 +1,11 @@
 
 import { memo } from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { useNFTContract } from 'contexts/nft-context'
 import CollectionItem from './CollectionItem'
+import { isEmpty } from 'utils/helpers/utility'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,15 +25,24 @@ const useStyles = makeStyles((theme) => ({
 
 const CollectionNFTs = () => {
   const classes = useStyles();
-  const { claimNFTs } = useNFTContract();
+  const { purchasedNFTs } = useNFTContract();
 
   return (
     <Grid container spacing={2} className={classes.container}>
-      {claimNFTs.map((nft, index) => (
-        <Grid key={index} item xs={12} sm={6} md={4}>
-          <CollectionItem nft={nft} />
-        </Grid>
-      ))}
+      {isEmpty(purchasedNFTs)
+        ? (
+          <Grid item xs={12}>
+            <Typography variant='h6' align='center'>
+              No Collection
+            </Typography>
+          </Grid>
+        )
+        : purchasedNFTs.map((nft, index) => (
+          <Grid key={index} item xs={12} sm={6} md={4}>
+            <CollectionItem nft={nft} />
+          </Grid>
+        ))
+      }
     </Grid>
   )
 }

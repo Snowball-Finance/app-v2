@@ -35,12 +35,14 @@ export function ContractProvider({ children }) {
       })
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
 
   useEffect(() => {
     if (!isEmpty(snowballContract) && !isEmpty(snowconeContract)) {
       getBalanceInfo()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballContract, snowconeContract])
 
   const getBalanceInfo = async () => {

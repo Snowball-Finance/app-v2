@@ -72,6 +72,7 @@ const CompoundAndEarn = () => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, loading, userPools]);
 
   const handleSearch = (value) => {
@@ -160,7 +161,7 @@ const CompoundAndEarn = () => {
         {loading ? (
           <CompoundAndEarnSkeleton />
         ) : (
-          <ListView poolsInfo={ lastSnowballInfo } />
+          <ListView poolsInfo={lastSnowballInfo} />
         )}
       </div>
     </main>

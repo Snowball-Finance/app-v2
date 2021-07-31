@@ -1,9 +1,11 @@
+import { memo } from 'react';
+
 import CustomAccordion from 'components/CustomAccordion';
-import { useContracts } from 'contexts/contract-context';
+import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
 import CompoundListDetail from 'parts/Compound/CompoundListDetail';
 import CompoundActionButton from 'parts/Compound/CompoundActionButton';
-import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
-import { memo } from 'react';
+
+import { useContracts } from 'contexts/contract-context';
 import getUserBoost from 'utils/helpers/getUserBoost';
 import getProperAction from 'utils/helpers/getProperAction';
 
@@ -24,11 +26,9 @@ const ListView = ({ poolsInfo }) => {
       }
     }
     const totalAPY = (boost*item.gaugeInfo.snobYearlyAPR)+item.yearlyAPY;
-
     const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
-
-    const [ actionType, action ] = getProperAction(item, item.userLPBalance, item.userDepositedLP);
     
+    const [ actionType, action ] = getProperAction(item, item.userLPBalance, item.userDepositedLP);
     return (
       <CustomAccordion
         key={item.address}
