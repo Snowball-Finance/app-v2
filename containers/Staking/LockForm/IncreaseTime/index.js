@@ -31,8 +31,9 @@ const maxDate = getDayOffset(new Date(), 365 * 2);
 const IncreaseTime = () => {
   const classes = useStyles();
   const { lockEndDate, increaseTime } = useStakingContract();
+  const today = new Date();
   const lockEndDateValue = dateFromEpoch(+(lockEndDate?.toString() || 0));
-  const dateAfter = getDayOffset(lockEndDateValue, 7);
+  const dateAfter = getDayOffset(today, 7);
 
   const schema = yup.object().shape({
     date: DATE_VALID.test('date',
@@ -61,19 +62,19 @@ const IncreaseTime = () => {
     let newDate;
     switch (watchAllFields.duration) {
       case '1':
-        newDate = getDayOffset(lockEndDateValue, 7);
+        newDate = getDayOffset(today, 7);
         break;
       case '2':
-        newDate = getDayOffset(lockEndDateValue, 30);
+        newDate = getDayOffset(today, 30);
         break;
       case '3':
-        newDate = getDayOffset(lockEndDateValue, 364);
+        newDate = getDayOffset(today, 364);
         break;
       case '4':
-        newDate = getDayOffset(lockEndDateValue, 365 * 2);
+        newDate = getDayOffset(today, 365 * 2);
         break;
       default:
-        newDate = getDayOffset(lockEndDateValue, 7);
+        newDate = getDayOffset(today, 7);
         break;
     }
     setValue('date', newDate > maxDate ? maxDate : newDate);
@@ -81,14 +82,14 @@ const IncreaseTime = () => {
   }, [watchAllFields.duration]);
 
   const displayLockTime = useMemo(() => {
-    const lockingWeeks = getWeekDiff(lockEndDateValue, (watchAllFields?.date || dateAfter));
+    const lockingWeeks = getWeekDiff(today, (watchAllFields?.date || dateAfter));
     let resultStr;
 
     if (lockingWeeks < 52) {
       resultStr = `${lockingWeeks} week${lockingWeeks > 1 ? 's' : ''}`;
     } else {
       const years = Number(
-        (+watchAllFields?.date - +lockEndDateValue) / 365 / 1000 / 3600 / 24,
+        (+watchAllFields?.date - +today) / 365 / 1000 / 3600 / 24,
       ).toFixed(0);
       resultStr = `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
     }
@@ -96,7 +97,7 @@ const IncreaseTime = () => {
       resultStr += ' maxed out.'
     }
     return resultStr;
-  }, [watchAllFields?.date, lockEndDateValue, dateAfter])
+  }, [watchAllFields?.date, today, dateAfter])
 
   return (
     <form
