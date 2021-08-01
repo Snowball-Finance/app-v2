@@ -13,7 +13,8 @@ const SIDEBAR_MENU = [
     TITLE: 'StableVault',
     CHILDREN: [
       LINKS.S3D_VAULT,
-      LINKS.S3F_VAULT
+      LINKS.S3F_VAULT,
+      LINKS.S4D_VAULT,
     ]
   },
   {

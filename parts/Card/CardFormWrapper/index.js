@@ -6,10 +6,9 @@ import clsx from 'clsx'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: theme.spacing(4, 2.5, 3.5),
     width: '100%',
-    height: '100%',
-    maxWidth: theme.custom.layout.maxCardWidth
+    maxWidth: theme.custom.layout.maxCardWidth,
+    padding: theme.spacing(2),
   },
   header: {
     display: 'flex',
@@ -18,8 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: theme.spacing(0.5)
+    fontWeight: 'bold'
   }
 }));
 
