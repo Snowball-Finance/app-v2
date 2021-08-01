@@ -7,7 +7,7 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S4D_VAULT_ABI from 'libs/abis/s4d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { provider } from 'utils/helpers/utility'
+import { provider, roundDown } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 
@@ -262,7 +262,7 @@ export function S4dVaultContractProvider({ children }) {
       if (fromAmount === '' || !unsignedVaultContract) { return 0; }
       if (fromToken.name === toToken.name) { return fromAmount }
 
-      const fromAmountValue = ethers.utils.parseUnits(fromAmount.toString(), fromToken.decimal);
+      const fromAmountValue = ethers.utils.parseUnits(roundDown(fromAmount, fromToken.decimal).toString(), fromToken.decimal);
       const toAmount = await unsignedVaultContract.calculateSwap(fromToken.index, toToken.index, fromAmountValue)
       const toAmountValue = parseFloat(ethers.utils.formatUnits(toAmount, toToken.decimal))
       return toAmountValue || 0;
@@ -287,9 +287,8 @@ export function S4dVaultContractProvider({ children }) {
 
     try {
       const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
-      const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
+      const calculatedWithdrawValue = ethers.utils.parseUnits(roundDown(calculatedWithdraw).toString(), 18);
 
-      console.log(calculatedWithdraw)
       if (checkedValue === -1) {
         const removeAmounts = await unsignedVaultContract.calculateRemoveLiquidity(calculatedWithdrawValue);
         for (let i = 0; i < 4; i++) {
@@ -318,10 +317,10 @@ export function S4dVaultContractProvider({ children }) {
     }
 
     try {
-      const daiAmount = ethers.utils.parseUnits(data[0].value.toString(), data[0].token.decimal)
-      const fraxAmount = ethers.utils.parseUnits(data[1].value.toString(), data[1].token.decimal)
-      const tusdAmount = ethers.utils.parseUnits(data[2].value.toString(), data[2].token.decimal)
-      const usdtAmount = ethers.utils.parseUnits(data[3].value.toString(), data[3].token.decimal)
+      const daiAmount = ethers.utils.parseUnits(roundDown(data[0].value, data[0].token.decimal).toString(), data[0].token.decimal)
+      const fraxAmount = ethers.utils.parseUnits(roundDown(data[1].value, data[1].token.decimal).toString(), data[1].token.decimal)
+      const tusdAmount = ethers.utils.parseUnits(roundDown(data[2].value, data[2].token.decimal).toString(), data[2].token.decimal)
+      const usdtAmount = ethers.utils.parseUnits(roundDown(data[3].value, data[3].token.decimal).toString(), data[3].token.decimal)
       const totalAmount = data[0].value + data[1].value + data[2].value + data[3].value
 
       const minToMint = await unsignedVaultContract.calculateTokenAmount([daiAmount, fraxAmount, tusdAmount, usdtAmount], true)
@@ -351,7 +350,7 @@ export function S4dVaultContractProvider({ children }) {
     setLoading(true)
     try {
       const tokenContract = getTokenContract(fromToken);
-      const amount = ethers.utils.parseUnits((fromAmount).toString(), fromToken.decimal);
+      const amount = ethers.utils.parseUnits(roundDown(fromAmount, fromToken.decimal).toString(), fromToken.decimal);
       const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, amount);
       const transactionApprove = await tokenApprove.wait(1)
 
@@ -360,10 +359,10 @@ export function S4dVaultContractProvider({ children }) {
         return;
       }
 
-      const fromAmountValue = ethers.utils.parseUnits(fromAmount.toString(), fromToken.decimal)
+      const fromAmountValue = ethers.utils.parseUnits(roundDown(fromAmount, fromToken.decimal).toString(), fromToken.decimal)
       const slippageMultiplier = 1000 - (maxSlippage * 10);
       const minAmount = toAmount * slippageMultiplier / 1000;
-      const minAmountValue = ethers.utils.parseUnits(minAmount.toFixed(toToken.decimal).toString(), toToken.decimal)
+      const minAmountValue = ethers.utils.parseUnits(roundDown(minAmount, toToken.decimal).toString(), toToken.decimal)
       const deadline = Date.now() + 180;
 
       const tokenSwap = await vaultContract.swap(
@@ -409,13 +408,13 @@ export function S4dVaultContractProvider({ children }) {
         }
       }
 
-      const daiAmount = ethers.utils.parseUnits(liquidityData[0].value.toString(), liquidityData[0].token.decimal)
-      const fraxAmount = ethers.utils.parseUnits(liquidityData[1].value.toString(), liquidityData[1].token.decimal)
-      const tusdAmount = ethers.utils.parseUnits(liquidityData[2].value.toString(), liquidityData[2].token.decimal)
-      const usdtAmount = ethers.utils.parseUnits(liquidityData[3].value.toString(), liquidityData[3].token.decimal)
+      const daiAmount = ethers.utils.parseUnits(roundDown(liquidityData[0].value, liquidityData[0].token.decimal).toString(), liquidityData[0].token.decimal)
+      const fraxAmount = ethers.utils.parseUnits(roundDown(liquidityData[1].value, liquidityData[1].token.decimal).toString(), liquidityData[1].token.decimal)
+      const tusdAmount = ethers.utils.parseUnits(roundDown(liquidityData[2].value, liquidityData[2].token.decimal).toString(), liquidityData[2].token.decimal)
+      const usdtAmount = ethers.utils.parseUnits(roundDown(liquidityData[3].value, liquidityData[3].token.decimal).toString(), liquidityData[3].token.decimal)
       const slippageMultiplier = 1000 - (maxSlippage * 10);
       const minToMint = receivingValue.value * slippageMultiplier / 1000;
-      const minToMintAmount = ethers.utils.parseUnits(minToMint.toString(), 18)
+      const minToMintAmount = ethers.utils.parseUnits(roundDown(minToMint).toString(), 18)
       const deadline = Date.now() + 180;
 
       const addLiquidity = await vaultContract.addLiquidity([daiAmount, fraxAmount, tusdAmount, usdtAmount], minToMintAmount, deadline);
@@ -453,21 +452,21 @@ export function S4dVaultContractProvider({ children }) {
       }
 
       const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
-      const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
+      const calculatedWithdrawValue = ethers.utils.parseUnits(roundDown(calculatedWithdraw).toString(), 18);
       const deadline = Date.now() + 180;
       let transactionRemoveLiquidity = {};
       if (selectedToken === -1) {
         const minToRemoveAmount = [];
         for (let i = 0; i < 4; i++) {
           const { token, value } = liquidityData[i];
-          minToRemoveAmount[i] = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
+          minToRemoveAmount[i] = ethers.utils.parseUnits(roundDown(value * maxSlippage, token.decimal).toString(), token.decimal)
         }
 
         const removeLiquidity = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
         transactionRemoveLiquidity = await removeLiquidity.wait(1)
       } else {
         const { token, value } = liquidityData[selectedToken];
-        const minToRemoveAmount = ethers.utils.parseUnits((value * maxSlippage).toFixed(token.decimal).toString(), token.decimal)
+        const minToRemoveAmount = ethers.utils.parseUnits(roundDown(value * maxSlippage, token.decimal).toString(), token.decimal)
 
         const removeLiquidityOneToken = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
         transactionRemoveLiquidity = await removeLiquidityOneToken.wait(1)
