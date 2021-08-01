@@ -26,18 +26,19 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const dateBefore = getDayOffset(new Date(), 365 * 2);
+const maxDate = getDayOffset(new Date(), 365 * 2);
 
 const IncreaseTime = () => {
   const classes = useStyles();
   const { lockEndDate, increaseTime } = useStakingContract();
+  const today = new Date();
   const lockEndDateValue = dateFromEpoch(+(lockEndDate?.toString() || 0));
-  const dateAfter = getDayOffset(lockEndDateValue, 7);
+  const dateAfter = getDayOffset(today, 7);
 
   const schema = yup.object().shape({
     date: DATE_VALID.test('date',
       'Please adjust date to be 2 years or less',
-      value => new Date(value) <= dateBefore),
+      value => new Date(value) <= maxDate),
     duration: SELECT_VALID
   });
 
@@ -58,38 +59,42 @@ const IncreaseTime = () => {
   }, [dateAfter, increaseTime, setValue]);
 
   useEffect(() => {
+    let newDate;
     switch (watchAllFields.duration) {
       case '1':
-        setValue('date', getDayOffset(lockEndDateValue, 7))
+        newDate = getDayOffset(today, 7);
         break;
       case '2':
-        setValue('date', getDayOffset(lockEndDateValue, 30))
+        newDate = getDayOffset(today, 30);
         break;
       case '3':
-        setValue('date', getDayOffset(lockEndDateValue, 364))
+        newDate = getDayOffset(today, 364);
         break;
       case '4':
-        setValue('date', getDayOffset(lockEndDateValue, 365 * 2))
+        newDate = getDayOffset(today, 365 * 2);
         break;
       default:
-        setValue('date', getDayOffset(lockEndDateValue, 7))
+        newDate = getDayOffset(today, 7);
         break;
     }
+    setValue('date', newDate > maxDate ? maxDate : newDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchAllFields.duration]);
 
   const displayLockTime = useMemo(() => {
-    const lockingWeeks = getWeekDiff(lockEndDateValue, (watchAllFields?.date || dateAfter));
+    const lockingWeeks = getWeekDiff(today, (watchAllFields?.date || dateAfter));
+    let resultStr;
 
     if (lockingWeeks < 52) {
-      return `${lockingWeeks} week${lockingWeeks > 1 ? 's' : ''}`;
+      resultStr = `${lockingWeeks} week${lockingWeeks > 1 ? 's' : ''}`;
     } else {
       const years = Number(
-        (+watchAllFields?.date - +lockEndDateValue) / 365 / 1000 / 3600 / 24,
+        (+watchAllFields?.date - +today) / 365 / 1000 / 3600 / 24,
       ).toFixed(0);
-      return `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
+      resultStr = `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
     }
-  }, [watchAllFields?.date, lockEndDateValue, dateAfter])
+    return resultStr;
+  }, [watchAllFields?.date, today, dateAfter])
 
   return (
     <form
@@ -104,7 +109,7 @@ const IncreaseTime = () => {
             name='date'
             label={`Lock for: ${displayLockTime}`}
             placeholder='Date'
-            onMax={() => setValue('date', dateBefore)}
+            onMax={() => setValue('date', maxDate)}
             error={errors.date?.message}
             control={control}
             defaultValue={dateAfter}
@@ -121,10 +126,12 @@ const IncreaseTime = () => {
         </Grid>
         <Grid item xs={12}>
           <ContainedButton
+            disabled={watchAllFields?.date < lockEndDateValue}
             fullWidth
             type='submit'
           >
-            Extend Lock Time
+            {watchAllFields?.date < lockEndDateValue ? `Can't decrease your lockout` :
+             `Extend your lockout`}
           </ContainedButton>
         </Grid>
       </Grid>
