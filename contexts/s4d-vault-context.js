@@ -15,10 +15,10 @@ const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
 
 const unsignedS4dContract = provider ? new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider) : null
-const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.DAI, ERC20_ABI, provider) : null
-const unsignedFraxContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.FRAX, ERC20_ABI, provider) : null
-const unsignedTusdContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.TUSD, ERC20_ABI, provider) : null
-const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.USDT, ERC20_ABI, provider) : null
+const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider) : null
+const unsignedFraxContract = provider ? new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, provider) : null
+const unsignedTusdContract = provider ? new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, provider) : null
+const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, provider) : null
 const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, provider) : null
 
 const tokenArray = [
@@ -45,10 +45,10 @@ export function S4dVaultContractProvider({ children }) {
   const [transactions, setTransactions] = useState([])
 
   const s4dContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, library.getSigner()) : null, [library])
-  const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.DAI, ERC20_ABI, library.getSigner()) : null, [library])
-  const fraxContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.FRAX, ERC20_ABI, library.getSigner()) : null, [library]);
-  const tusdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.TUSD, ERC20_ABI, library.getSigner()) : null, [library]);
-  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.USDT, ERC20_ABI, library.getSigner()) : null, [library])
+  const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, library.getSigner()) : null, [library])
+  const fraxContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, library.getSigner()) : null, [library]);
+  const tusdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, library.getSigner()) : null, [library]);
+  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, library.getSigner()) : null, [library])
   const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, library.getSigner()) : null, [library])
   const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
   const tokenValues = useMemo(() => {
@@ -83,6 +83,7 @@ export function S4dVaultContractProvider({ children }) {
   useEffect(() => {
     if (unsignedS4dContract && unsignedDaiContract && unsignedFraxContract && unsignedTusdContract && unsignedUsdtContract) {
       getSupply();
+      getTransactions();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unsignedS4dContract, unsignedDaiContract, unsignedFraxContract, unsignedTusdContract, unsignedUsdtContract]);
@@ -315,20 +316,25 @@ export function S4dVaultContractProvider({ children }) {
       return { minToMintValue: 0, discount: 0 };
     }
 
-    const daiAmount = ethers.utils.parseUnits(data[0].value.toString(), data[0].token.decimal)
-    const fraxAmount = ethers.utils.parseUnits(data[1].value.toString(), data[1].token.decimal)
-    const tusdAmount = ethers.utils.parseUnits(data[2].value.toString(), data[2].token.decimal)
-    const usdtAmount = ethers.utils.parseUnits(data[3].value.toString(), data[3].token.decimal)
-    const totalAmount = data[0].value + data[1].value + data[2].value + data[3].value
+    try {
+      const daiAmount = ethers.utils.parseUnits(data[0].value.toString(), data[0].token.decimal)
+      const fraxAmount = ethers.utils.parseUnits(data[1].value.toString(), data[1].token.decimal)
+      const tusdAmount = ethers.utils.parseUnits(data[2].value.toString(), data[2].token.decimal)
+      const usdtAmount = ethers.utils.parseUnits(data[3].value.toString(), data[3].token.decimal)
+      const totalAmount = data[0].value + data[1].value + data[2].value + data[3].value
 
-    const minToMint = await unsignedVaultContract.calculateTokenAmount(account, [daiAmount, fraxAmount, tusdAmount, usdtAmount], true)
-    const minToMintValue = parseFloat(ethers.utils.formatUnits(minToMint, 18))
-    const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
-    const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
+      const minToMint = await unsignedVaultContract.calculateTokenAmount([daiAmount, fraxAmount, tusdAmount, usdtAmount], true)
+      const minToMintValue = parseFloat(ethers.utils.formatUnits(minToMint, 18))
+      const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
+      const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
 
-    return {
-      minToMintValue,
-      discount
+      return {
+        minToMintValue,
+        discount
+      }
+    } catch (error) {
+      console.log('[Error] getWithdrawAmount => ', error)
+      return { minToMintValue: 0, discount: 0 };
     }
   }
 
@@ -490,7 +496,6 @@ export function S4dVaultContractProvider({ children }) {
         totalSupply,
         staked,
         transactions,
-        getTransactions,
         getToSwapAmount,
         getDepositReview,
         getWithdrawAmount,
@@ -523,7 +528,6 @@ export function useS4dVaultContracts() {
     totalSupply,
     staked,
     transactions,
-    getTransactions,
     getToSwapAmount,
     getDepositReview,
     getWithdrawAmount,
@@ -545,7 +549,6 @@ export function useS4dVaultContracts() {
     totalSupply,
     staked,
     transactions,
-    getTransactions,
     getToSwapAmount,
     getDepositReview,
     getWithdrawAmount,

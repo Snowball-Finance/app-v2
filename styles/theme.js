@@ -84,6 +84,12 @@ const lightTheme = responsiveFontSizes(
         darkGreen: '#2A4428',
         border: '#D8D6DE',
       },
+      gradient: {
+        blue: 'linear-gradient(90deg, #1A93F2 0%, #1E2848 100%)',
+        green: 'linear-gradient(90deg, #32CE27 0%, #2A4428 100%)',
+        grey: 'linear-gradient(90deg, #969797 0%, #1E2848 100%)',
+        red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)'
+      },
       layout: {
         maxCardWidth: 513,
         maxDesktopWidth: 1040,
@@ -153,6 +159,12 @@ const darkTheme = responsiveFontSizes(
         green: '#28C76F',
         darkGreen: '#2A4428',
         border: '#D8D6DE',
+      },
+      gradient: {
+        blue: 'linear-gradient(90deg, #1A93F2 0%, #1E2848 100%)',
+        green: 'linear-gradient(90deg, #32CE27 0%, #2A4428 100%)',
+        grey: 'linear-gradient(90deg, #969797 0%, #1E2848 100%)',
+        red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)'
       },
       layout: {
         maxCardWidth: 513,

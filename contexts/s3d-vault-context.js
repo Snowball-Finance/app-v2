@@ -15,9 +15,9 @@ const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
 
 const unsignedS3dContract = provider ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider) : null
-const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.USDT, ERC20_ABI, provider) : null
-const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.BUSD, ERC20_ABI, provider) : null
-const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.TOKEN.DAI, ERC20_ABI, provider) : null
+const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider) : null
+const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider) : null
+const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider) : null
 const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider) : null
 
 const tokenArray = [
@@ -41,9 +41,9 @@ export function S3dVaultContractProvider({ children }) {
   const [transactions, setTransactions] = useState([])
 
   const s3dContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, library.getSigner()) : null, [library])
-  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.USDT, ERC20_ABI, library.getSigner()) : null, [library])
-  const busdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.BUSD, ERC20_ABI, library.getSigner()) : null, [library])
-  const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.TOKEN.DAI, ERC20_ABI, library.getSigner()) : null, [library])
+  const usdtContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, library.getSigner()) : null, [library])
+  const busdContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, library.getSigner()) : null, [library])
+  const daiContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, library.getSigner()) : null, [library])
   const vaultContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, library.getSigner()) : null, [library])
   const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S3D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
   const tokenValues = useMemo(() => {
@@ -75,6 +75,7 @@ export function S3dVaultContractProvider({ children }) {
   useEffect(() => {
     if (unsignedS3dContract && unsignedUsdtContract && unsignedBusdContract && unsignedDaiContract) {
       getSupply();
+      getTransactions();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unsignedS3dContract, unsignedUsdtContract, unsignedBusdContract, unsignedDaiContract]);
@@ -471,7 +472,6 @@ export function S3dVaultContractProvider({ children }) {
         totalSupply,
         staked,
         transactions,
-        getTransactions,
         getToSwapAmount,
         getDepositReview,
         getWithdrawAmount,
@@ -503,7 +503,6 @@ export function useS3dVaultContracts() {
     totalSupply,
     staked,
     transactions,
-    getTransactions,
     getToSwapAmount,
     getDepositReview,
     getWithdrawAmount,
@@ -524,7 +523,6 @@ export function useS3dVaultContracts() {
     totalSupply,
     staked,
     transactions,
-    getTransactions,
     getToSwapAmount,
     getDepositReview,
     getWithdrawAmount,

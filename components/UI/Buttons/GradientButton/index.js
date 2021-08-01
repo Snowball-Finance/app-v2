@@ -7,10 +7,16 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton'
 
 const useStyles = makeStyles(theme => ({
   primary: {
-    background: `linear-gradient(90deg, ${theme.custom.palette.blue} 0%, ${theme.custom.palette.darkBlue} 100%)`,
+    background: theme.custom.gradient.blue,
   },
   secondary: {
-    background: `linear-gradient(90deg, ${theme.custom.palette.green} 0%, ${theme.custom.palette.darkGreen} 100%)`,
+    background: theme.custom.gradient.green,
+  },
+  grey: {
+    background: theme.custom.gradient.grey,
+  },
+  red: {
+    background: theme.custom.gradient.red,
   }
 }));
 
@@ -25,7 +31,7 @@ const GradientButton = React.forwardRef(({
   return (
     <ContainedButton
       ref={ref}
-      className={clsx(className, color === 'primary' ? classes.primary : classes.secondary)}
+      className={clsx(className, classes[color])}
       {...rest}>
       {children}
     </ContainedButton>
