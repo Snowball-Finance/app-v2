@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const dateBefore = getDayOffset(new Date(), 365 * 2);
+const maxDate = getDayOffset(new Date(), 365 * 2);
 
 const IncreaseTime = () => {
   const classes = useStyles();
@@ -37,7 +37,7 @@ const IncreaseTime = () => {
   const schema = yup.object().shape({
     date: DATE_VALID.test('date',
       'Please adjust date to be 2 years or less',
-      value => new Date(value) <= dateBefore),
+      value => new Date(value) <= maxDate),
     duration: SELECT_VALID
   });
 
@@ -58,37 +58,44 @@ const IncreaseTime = () => {
   }, [dateAfter, increaseTime, setValue]);
 
   useEffect(() => {
+    let newDate;
     switch (watchAllFields.duration) {
       case '1':
-        setValue('date', getDayOffset(lockEndDateValue, 7))
+        newDate = getDayOffset(lockEndDateValue, 7);
         break;
       case '2':
-        setValue('date', getDayOffset(lockEndDateValue, 30))
+        newDate = getDayOffset(lockEndDateValue, 30);
         break;
       case '3':
-        setValue('date', getDayOffset(lockEndDateValue, 364))
+        newDate = getDayOffset(lockEndDateValue, 364);
         break;
       case '4':
-        setValue('date', getDayOffset(lockEndDateValue, 365 * 2))
+        newDate = getDayOffset(lockEndDateValue, 365 * 2);
         break;
       default:
-        setValue('date', getDayOffset(lockEndDateValue, 7))
+        newDate = getDayOffset(lockEndDateValue, 7);
         break;
     }
+    setValue('date', newDate > maxDate ? maxDate : newDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchAllFields.duration]);
 
   const displayLockTime = useMemo(() => {
     const lockingWeeks = getWeekDiff(lockEndDateValue, (watchAllFields?.date || dateAfter));
+    let resultStr;
 
     if (lockingWeeks < 52) {
-      return `${lockingWeeks} week${lockingWeeks > 1 ? 's' : ''}`;
+      resultStr = `${lockingWeeks} week${lockingWeeks > 1 ? 's' : ''}`;
     } else {
       const years = Number(
         (+watchAllFields?.date - +lockEndDateValue) / 365 / 1000 / 3600 / 24,
       ).toFixed(0);
-      return `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
+      resultStr = `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
     }
+    if(watchAllFields?.date === maxDate){
+      resultStr += ' maxed out.'
+    }
+    return resultStr;
   }, [watchAllFields?.date, lockEndDateValue, dateAfter])
 
   return (
@@ -104,7 +111,7 @@ const IncreaseTime = () => {
             name='date'
             label={`Lock for: ${displayLockTime}`}
             placeholder='Date'
-            onMax={() => setValue('date', dateBefore)}
+            onMax={() => setValue('date', maxDate)}
             error={errors.date?.message}
             control={control}
             defaultValue={dateAfter}
