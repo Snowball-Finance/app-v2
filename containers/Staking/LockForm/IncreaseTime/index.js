@@ -93,9 +93,6 @@ const IncreaseTime = () => {
       ).toFixed(0);
       resultStr = `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
     }
-    if(watchAllFields?.date === maxDate){
-      resultStr += ' maxed out.'
-    }
     return resultStr;
   }, [watchAllFields?.date, today, dateAfter])
 
@@ -129,10 +126,12 @@ const IncreaseTime = () => {
         </Grid>
         <Grid item xs={12}>
           <ContainedButton
+            disabled={watchAllFields?.date < lockEndDateValue}
             fullWidth
             type='submit'
           >
-            Extend Lock Time
+            {watchAllFields?.date < lockEndDateValue ? `Can't decrease your lockout` :
+             `Extend your lockout`}
           </ContainedButton>
         </Grid>
       </Grid>
