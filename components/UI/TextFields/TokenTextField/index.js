@@ -162,7 +162,7 @@ const TokenTextField = React.forwardRef(({
           {...rest}
         />
         <Typography align='right' className={classes.balance}>
-          {`Balance: ${balance.toLocaleString()}`}
+          {`Balance: ${balance}`}
         </Typography>
         {!!error &&
           <Typography

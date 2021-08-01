@@ -214,9 +214,9 @@ export function S4dVaultContractProvider({ children }) {
                 ...transactions,
                 {
                   type: 'remove',
-                  token: usdtToken.name,
+                  token: removedToken.name,
                   time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[0], removedToken.decimal)
+                  balance: -ethers.utils.formatUnits(removeTokenAmounts[i], removedToken.decimal)
                 }
               ]
             }
@@ -241,9 +241,9 @@ export function S4dVaultContractProvider({ children }) {
                 ...transactions,
                 {
                   type: 'add',
-                  token: usdtToken.name,
+                  token: addedToken.name,
                   time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[0], addedToken.decimal)
+                  balance: ethers.utils.formatUnits(addTokenAmounts[i], addedToken.decimal)
                 }
               ]
             }
@@ -289,14 +289,15 @@ export function S4dVaultContractProvider({ children }) {
       const calculatedWithdraw = svToken.balance * withdrawPercentage / 100;
       const calculatedWithdrawValue = ethers.utils.parseUnits(calculatedWithdraw.toString(), 18);
 
+      console.log(calculatedWithdraw)
       if (checkedValue === -1) {
-        const removeAmounts = await unsignedVaultContract.calculateRemoveLiquidity(account, calculatedWithdrawValue);
+        const removeAmounts = await unsignedVaultContract.calculateRemoveLiquidity(calculatedWithdrawValue);
         for (let i = 0; i < 4; i++) {
           const token = getTokenById(i);
           withdrawAmount[i] = parseFloat(ethers.utils.formatUnits(removeAmounts[i], token.decimal))
         }
       } else {
-        const removeAmount = await unsignedVaultContract.calculateRemoveLiquidityOneToken(account, calculatedWithdrawValue, checkedValue);
+        const removeAmount = await unsignedVaultContract.calculateRemoveLiquidityOneToken(calculatedWithdrawValue, checkedValue);
         const token = getTokenById(checkedValue);
         withdrawAmount[checkedValue] = parseFloat(ethers.utils.formatUnits(removeAmount, token.decimal));
       }

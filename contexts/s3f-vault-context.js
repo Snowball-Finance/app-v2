@@ -198,9 +198,9 @@ export function S3fVaultContractProvider({ children }) {
                 ...transactions,
                 {
                   type: 'remove',
-                  token: usdtToken.name,
+                  token: removedToken.name,
                   time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[0], removedToken.decimal)
+                  balance: -ethers.utils.formatUnits(removeTokenAmounts[i], removedToken.decimal)
                 }
               ]
             }
@@ -225,9 +225,9 @@ export function S3fVaultContractProvider({ children }) {
                 ...transactions,
                 {
                   type: 'add',
-                  token: usdtToken.name,
+                  token: addedToken.name,
                   time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[0], addedToken.decimal)
+                  balance: ethers.utils.formatUnits(addTokenAmounts[i], addedToken.decimal)
                 }
               ]
             }
