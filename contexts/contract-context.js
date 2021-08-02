@@ -42,6 +42,12 @@ export function ContractProvider({ children }) {
     if (!isEmpty(snowballContract) && !isEmpty(snowconeContract)) {
       getBalanceInfo()
     }
+
+    if(isEmpty(account)) {
+      setSnowballBalance(0)
+      setSnowconeBalance(0)
+      setTotalSnowcone(0)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballContract, snowconeContract, account])
 
