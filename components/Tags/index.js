@@ -12,16 +12,16 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 4
   },
   SNOB: {
-    backgroundColor: 'rgba(103, 166, 240, 0.12)',
-    color: '#28A2FF'
+    backgroundColor: theme.custom.palette.transparent.snob_blue,
+    color: theme.custom.palette.snob_blue
   },
   PNG: {
-    backgroundColor: 'rgba(255, 107, 0, 0.12)',
-    color: '#FF9F43'
+    backgroundColor: theme.custom.palette.transparent.png_orange,
+    color: theme.custom.palette.png_orange
   },
   JOE: {
-    backgroundColor: 'rgba(242, 113, 106, 0.12)',
-    color: '#F2716A'
+    backgroundColor: theme.custom.palette.transparent.joe_red,
+    color: theme.custom.palette.joe_red
   }
 }));
 

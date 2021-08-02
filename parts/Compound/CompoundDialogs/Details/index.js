@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = ({ data, item, amount, error, inputHandler }) => {
+const Details = ({ item, amount, error, inputHandler }) => {
   const classes = useStyles();
   const token0 = item.token0.address;
   const token1 = item.token1.address;
@@ -52,7 +52,7 @@ const Details = ({ data, item, amount, error, inputHandler }) => {
           <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50} />
         </div>
         <div className={classes.pairText}>
-          <Typography variant="caption">{data.name}</Typography>
+          <Typography variant="caption">Deposit</Typography>
           <Typography variant="h6">{item.name}</Typography>
         </div>
       </div>
@@ -62,12 +62,12 @@ const Details = ({ data, item, amount, error, inputHandler }) => {
           className={classes.input}
           type="number"
           name="percent"
-          value={amount}
+          value={amount > 0 ? amount: 0}
           error={error}
           onChange={inputHandler}
         />
         <Typography variant="caption" className={classes.balanceText}>
-          Available: {data.availableBalance}PGL
+          Available: {item.userLPBalance / 1e18}{item.symbol}
         </Typography>
       </div>
     </>
