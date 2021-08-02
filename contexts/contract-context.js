@@ -43,7 +43,7 @@ export function ContractProvider({ children }) {
       getBalanceInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snowballContract, snowconeContract])
+  }, [snowballContract, snowconeContract, account])
 
   const getBalanceInfo = async () => {
     try {
