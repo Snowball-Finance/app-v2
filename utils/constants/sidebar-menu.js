@@ -1,6 +1,6 @@
 import LINKS from 'utils/constants/links'
 
-import { Home, Layers, Anchor, ShoppingCart, BookOpen, GitHub, Send, Link} from 'react-feather';
+import { Home, Layers, Anchor, ShoppingCart, BookOpen, GitHub, Send, Link, Archive} from 'react-feather';
 import StableVaultIcon from 'components/Icons/StableVaultIcon'
 
 const SIDEBAR_MENU = [
@@ -45,6 +45,10 @@ const SIDEBAR_MENU = [
     ICON: Link,
     ...LINKS.DISCORD
   },
+  {
+    ICON: Archive,
+    ...LINKS.REGRESS
+  }
 ]
 
 export default SIDEBAR_MENU

@@ -10,7 +10,6 @@ const LINKS = Object.freeze({
   S3F_VAULT: {
     TITLE: 's3F Vault',
     HREF: '/s3f-vault',
-    IS_NEW: true
   },
   S4D_VAULT: {
     TITLE: 's4D Vault',
@@ -55,6 +54,11 @@ const LINKS = Object.freeze({
   DISCORD: {
     TITLE: 'Discord',
     HREF: 'https://discord.gg/BGpEHvehMz',
+    IS_EXT_LINK: true
+  },
+  REGRESS: {
+    TITLE: 'Use Old Website',
+    HREF: 'https://app.snowball.network',
     IS_EXT_LINK: true
   },
 });

@@ -145,7 +145,7 @@ export function CompoundAndEarnProvider({ children }) {
       setPopUp({
         title: 'Network Error',
         text: `Please Switch to Avalanche Chain and connect metamask`
-      });
+      }); 
       return false;
     }
   
