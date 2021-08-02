@@ -28,7 +28,7 @@ const lightTheme = responsiveFontSizes(
               fontDisplay: 'swap',
               fontWeight: 400,
               src: `local('Montserrat'),
-                            url('/assets/fonts/Montserrat.woff') format('woff')`,
+                            url('/assets/fonts/Montserrat.woff2') format('woff2')`,
             },
           ],
         },
@@ -64,8 +64,9 @@ const lightTheme = responsiveFontSizes(
         main: '#eb196e',
       },
       background: {
-        default: '#E5E5E5',
+        default: '#F8F8F8',
         primary: '#FFFFFF',
+        lightBlue: 'rgb(114 187 243 / 15%)',
       },
       text: {
         primary: '#6E6B7B',
@@ -88,12 +89,13 @@ const lightTheme = responsiveFontSizes(
         blue: 'linear-gradient(90deg, #1A93F2 0%, #1E2848 100%)',
         green: 'linear-gradient(90deg, #32CE27 0%, #2A4428 100%)',
         grey: 'linear-gradient(90deg, #969797 0%, #1E2848 100%)',
-        red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)'
+        red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)',
+        lightBlue: 'linear-gradient(307deg,#5bbdfc9e,rgb(255 255 255))',
       },
       layout: {
         maxCardWidth: 513,
         maxDesktopWidth: 1040,
-        openDrawerWidth: 240,
+        openDrawerWidth: 250,
         closedDrawerWidth: 57,
       },
     },
@@ -116,7 +118,7 @@ const darkTheme = responsiveFontSizes(
               fontWeight: 400,
               src: `
             local('Montserrat'),
-            url('/assets/fonts/Montserrat.woff') format('woff')`,
+            url('/assets/fonts/Montserrat.woff2') format('woff2')`,
             },
           ],
         },
@@ -164,7 +166,7 @@ const darkTheme = responsiveFontSizes(
         blue: 'linear-gradient(90deg, #1A93F2 0%, #1E2848 100%)',
         green: 'linear-gradient(90deg, #32CE27 0%, #2A4428 100%)',
         grey: 'linear-gradient(90deg, #969797 0%, #1E2848 100%)',
-        red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)'
+        red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)',
       },
       layout: {
         maxCardWidth: 513,

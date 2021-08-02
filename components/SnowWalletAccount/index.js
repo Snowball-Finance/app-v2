@@ -10,31 +10,28 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     borderRadius: '10px 16px 16px 10px',
-    backgroundColor: 'rgba(40, 162, 255, 0.12)'
+    backgroundColor: 'rgba(40, 162, 255, 0.12)',
   },
   account: {
     padding: theme.spacing(0, 1),
-  }
-}));
+  },
+}))
 
-const SnowWalletAccount = ({
-  account,
-  ...rest
-}) => {
-  const classes = useStyles();
+const SnowWalletAccount = ({ account, ...rest }) => {
+  const classes = useStyles()
 
   return (
     <div className={classes.root} {...rest}>
       <Typography
-        variant='caption'
-        color='textPrimary'
+        variant="caption"
+        color="textPrimary"
         className={classes.account}
       >
         {getEllipsis(account || '')}
       </Typography>
       <SnowIdenticon value={account} />
     </div>
-  );
-};
+  )
+}
 
-export default memo(SnowWalletAccount);
+export default memo(SnowWalletAccount)
