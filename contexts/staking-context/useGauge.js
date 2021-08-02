@@ -24,6 +24,10 @@ const useGauge = ({
     if (!isEmpty(gaugeProxyContract) && !isEmpty(prices) && !isEmpty(pools)) {
       getGaugeProxyInfo()
     }
+
+    if(isEmpty(account)) {
+      setGauges([])
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prices, pools, gaugeProxyContract, account])
 
