@@ -35,7 +35,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
     <Grid
       container
       direction="row"
-      justifyContent='space-between'
+      justify='space-between'
       alignItems="center"
       spacing={4}
     >
