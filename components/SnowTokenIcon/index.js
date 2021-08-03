@@ -25,7 +25,7 @@ const SnowTokenIcon = ({
   return (
     <img
       alt='token-icon'
-      src={LP_ICONS[token || 'snowball']}
+      src={LP_ICONS[token || "SNOB"]}
       className={clsx(classes.tokenImage, className)}
     />
   )

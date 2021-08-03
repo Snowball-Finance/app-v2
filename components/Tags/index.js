@@ -5,20 +5,24 @@ import clsx from 'clsx';
 const useStyles = makeStyles((theme) => ({
   tags: {
     display: 'flex',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    padding: theme.spacing(0.2),
+    width: '100%',
+    padding: theme.spacing(0.3),
     fontSize: 12,
     borderRadius: 4
   },
-  primary: {
-    backgroundColor: 'rgba(103, 166, 240, 0.12)',
-    color: '#28A2FF',
+  SNOB: {
+    backgroundColor: theme.custom.palette.transparent.snob_blue,
+    color: theme.custom.palette.snob_blue
   },
-  secondary: {
-    backgroundColor: 'rgba(255, 107, 0, 0.12)',
-    color: '#FF9F43',
+  PNG: {
+    backgroundColor: theme.custom.palette.transparent.png_orange,
+    color: theme.custom.palette.png_orange
   },
+  JOE: {
+    backgroundColor: theme.custom.palette.transparent.joe_red,
+    color: theme.custom.palette.joe_red
+  }
 }));
 
 const Tags = ({ children, style, className, type }) => {

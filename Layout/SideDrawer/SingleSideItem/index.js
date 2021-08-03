@@ -29,13 +29,13 @@ const SingleSideItem = ({
   return (
     <div onClick={() => onTab(sidebar.TITLE)}>
       <ListItemLink
-        target={sidebar.IS_OUT_LINK ? '_blank' : ''}
-        rel={sidebar.IS_OUT_LINK ? 'noreferrer' : ''}
+        target={sidebar.IS_EXT_LINK ? '_blank' : ''}
+        rel={sidebar.IS_EXT_LINK ? 'noreferrer' : ''}
         href={sidebar.HREF}
         className={clsx({ [classes.selected]: isSelect })}
       >
         <ListItemIcon className={classes.itemIcon}>
-          <sidebar.ICON />
+          <sidebar.ICON color="black" size={18}/>
         </ListItemIcon>
         <ListItemText primary={sidebar.TITLE} />
       </ListItemLink>

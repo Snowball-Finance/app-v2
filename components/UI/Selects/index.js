@@ -41,6 +41,7 @@ const Selects = React.forwardRef(
         elevation={0}
       >
         <Select
+          ref={ref}
           className={classes.selectBox}
           value={value}
           onChange={onChange}

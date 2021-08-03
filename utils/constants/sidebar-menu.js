@@ -1,60 +1,54 @@
-
 import LINKS from 'utils/constants/links'
 
-import HomeIcon from 'components/Icons/HomeIcon'
-import MessageIcon from 'components/Icons/MessageIcon'
-import VoteIcon from 'components/Icons/VoteIcon'
-import CartIcon from 'components/Icons/CartIcon'
-import TIcon from 'components/Icons/TIcon'
-import BubbleIcon from 'components/Icons/BubbleIcon'
-import FeatherIcon from 'components/Icons/FeatherIcon'
-import ChatIcon from 'components/Icons/ChatIcon'
+import { Home, Layers, Anchor, ShoppingCart, BookOpen, GitHub, Send, Link, Archive} from 'react-feather';
+import StableVaultIcon from 'components/Icons/StableVaultIcon'
 
 const SIDEBAR_MENU = [
   {
-    ICON: HomeIcon,
+    ICON: Home,
     ...LINKS.HOME
   },
   {
-    ICON: HomeIcon,
+    ICON: StableVaultIcon,
     TITLE: 'StableVault',
     CHILDREN: [
       LINKS.S3D_VAULT,
-      LINKS.S3F_VAULT
+      LINKS.S3F_VAULT,
+      // LINKS.S4D_VAULT,
     ]
   },
   {
-    ICON: MessageIcon,
+    ICON: Layers,
     ...LINKS.COMPOUND_AND_EARN
   },
   {
-    ICON: VoteIcon,
-    ...LINKS.VOTE
+    ICON: Anchor,
+    ...LINKS.STAKING
   },
   {
-    ICON: CartIcon,
+    ICON: ShoppingCart,
     ...LINKS.NFT_MARKETPLACE
   },
   {
-    ICON: TIcon,
-    ...LINKS.FAQ
-  },
-  {
-    ICON: BubbleIcon,
+    ICON: BookOpen,
     ...LINKS.DOCS
   },
   {
-    ICON: FeatherIcon,
+    ICON: GitHub,
     ...LINKS.GITHUB
   },
   {
-    ICON: ChatIcon,
+    ICON: Send,
     ...LINKS.TELEGRAM
   },
   {
-    ICON: ChatIcon,
+    ICON: Link,
     ...LINKS.DISCORD
   },
+  {
+    ICON: Archive,
+    ...LINKS.REGRESS
+  }
 ]
 
 export default SIDEBAR_MENU

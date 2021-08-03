@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 
 const isServer = () => typeof window === 'undefined'
 
@@ -12,8 +13,14 @@ const isEmpty = value => {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+const provider = new ethers.providers.getDefaultProvider('https://api.avax.network/ext/bc/C/rpc')
+
+const roundDown = (number, decimals = 18) => (Math.floor(parseFloat(number) * Math.pow(10, decimals)) / Math.pow(10, decimals))
+
 export {
   isServer,
   isEmpty,
-  delay
+  delay,
+  roundDown,
+  provider
 }

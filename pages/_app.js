@@ -7,7 +7,9 @@ import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
 import { PopupProvider } from 'contexts/popup-context'
+import { PriceProvider } from 'contexts/price-context'
 import { ContractProvider } from 'contexts/contract-context'
+import { PoolContractProvider } from 'contexts/pool-context'
 import SnowWeb3Provider from 'utils/hocs/SnowWeb3Provider'
 import ThemeProvider from 'utils/hocs/ThemeProvider'
 import * as COMMON_CONSTANTS from 'utils/constants/common'
@@ -52,12 +54,16 @@ function MyApp({ Component, pageProps }) {
           <DarkModeProvider>
             <ThemeProvider>
               <PopupProvider>
-                <ContractProvider>
-                  <CssBaseline />
-                  <Layout>
-                    <Component {...pageProps} />
-                  </Layout>
-                </ContractProvider>
+                <PriceProvider>
+                  <PoolContractProvider>
+                    <ContractProvider>
+                      <CssBaseline />
+                      <Layout>
+                        <Component {...pageProps} />
+                      </Layout>
+                    </ContractProvider>
+                  </PoolContractProvider>
+                </PriceProvider>
               </PopupProvider>
             </ThemeProvider>
           </DarkModeProvider>

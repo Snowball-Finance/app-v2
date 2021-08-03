@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => {
     input: {
       fontSize: 26,
       fontWeight: 'bold',
-      direction: 'rtl',
+      textAlign: 'right',
       padding: theme.spacing(0),
       color: theme.palette.text.primary,
     },
@@ -78,6 +78,7 @@ const TokenTextField = React.forwardRef(({
   label,
   isTokenSelect = false,
   disabledMax = false,
+  disabledToken,
   token,
   setToken,
   tokens,
@@ -99,7 +100,7 @@ const TokenTextField = React.forwardRef(({
   return (
     <div className={clsx(classes.root, { [classes.errorInput]: !!error })}>
       <div className={classes.control}>
-        <SnowTokenIcon token={token.priceId} className={classes.tokenIcon} />
+        <SnowTokenIcon token={token.name} className={classes.tokenIcon} />
         <div>
           <Typography variant='caption'>
             {label}
@@ -118,7 +119,11 @@ const TokenTextField = React.forwardRef(({
               >
                 {tokens.map((token, index) => {
                   return (
-                    <MenuItem key={index} value={token}>
+                    <MenuItem
+                      key={index}
+                      value={token}
+                      disabled={disabledToken.name === token.name}
+                    >
                       {token.name}
                     </MenuItem>
                   );
@@ -151,11 +156,13 @@ const TokenTextField = React.forwardRef(({
             input: classes.input,
             notchedOutline: classes.notchedOutline
           }}
+          inputProps={{ min: 0 }}
+          onKeyDown={e => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
           onChange={onChange}
           {...rest}
         />
         <Typography align='right' className={classes.balance}>
-          {`Balance: ${balance.toLocaleString()}`}
+          {`Balance: ${balance}`}
         </Typography>
         {!!error &&
           <Typography

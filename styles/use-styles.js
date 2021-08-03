@@ -26,6 +26,7 @@ const useFormStyles = makeStyles((theme) => ({
     justifyContent: 'center'
   },
   icon: {
+    cursor: 'pointer',
     position: 'absolute',
     bottom: -theme.spacing(4.5),
   }

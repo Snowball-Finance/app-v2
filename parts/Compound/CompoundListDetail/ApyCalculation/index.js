@@ -20,25 +20,31 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ApyCalculation = () => {
+const ApyCalculation = ({
+  dailyAPR,
+  yearlyAPY,
+  performanceFees,
+}) => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Typography variant="subtitle1" className={classes.boldSubtitle}>
-        APY Calculations
+        Compounded APY
       </Typography>
       <div className={classes.container}>
-        <Typography variant="body2">Daily:</Typography>
-        <Typography variant="subtitle2">0.25%</Typography>
+        <Typography variant="body2">Base APY</Typography>
+        <Typography variant="subtitle2">
+          {(dailyAPR * 365)?.toFixed(2)}%
+        </Typography>
       </div>
       <div className={classes.container}>
-        <Typography variant="body2">Weekly:</Typography>
-        <Typography variant="subtitle2">1.76%</Typography>
+        <Typography variant="body2">Compounded APY</Typography>
+        <Typography variant="subtitle2">{yearlyAPY?.toFixed(2)}%</Typography>
       </div>
       <div className={classes.container}>
-        <Typography variant="body2">Total APY:</Typography>
-        <Typography variant="subtitle2">191.60%</Typography>
+        <Typography variant="body2">Performance Fee</Typography>
+        <Typography variant="subtitle2">{performanceFees}%</Typography>
       </div>
     </div>
   );
