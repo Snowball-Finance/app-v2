@@ -40,7 +40,6 @@ const ListItem = ({
   const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
 
   const [ actionType, action ] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
-
   return (
     <>
       <CustomAccordion
