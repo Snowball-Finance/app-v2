@@ -2,11 +2,13 @@ import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import SuccessDialog from 'components/SuccessDialog';
 import ApyCalculation from './ApyCalculation';
 import SnobAbyCalculation from './SnobAbyCalculation';
 import Total from './Total';
-import CompoundDialogs from '../CompundDialogs';
+import CompoundDialogs from '../CompoundDialogs';
+import getProperAction from 'utils/helpers/getProperAction';
+import CompoundActionButton from '../CompoundActionButton';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,40 +44,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundListDetail = () => {
+const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
-  const [successModal, setSuccessModal] = useState(false);
 
+  const { withdraw, claim } = useCompoundAndEarnContract();
+
+  const [ actionType, action ] = getProperAction(item, setModal, item.userLPBalance); 
+  
   const handleClose = () => {
     setModal({ open: false, title: '' });
-  };
-
-  const onSubmit = () => {
-    handleClose();
-    setSuccessModal(true);
   };
 
   return (
     <div className={classes.root}>
       <div className={classes.details}>
-        <ApyCalculation />
-        <SnobAbyCalculation />
-        <Total />
+        <ApyCalculation
+          dailyAPR={item.dailyAPR}
+          yearlyAPY={item.yearlyAPY}
+          performanceFees={item.performanceFees}
+        />
+        <SnobAbyCalculation
+          snobAPR={item.gaugeInfo.snobYearlyAPR}
+          totalAPY={totalAPY}
+          userBoost={userBoost}
+        />
+        <Total item={item} />
       </div>
       <div className={classes.button}>
+        <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Deposit' })}
-        >
-          Deposit
-        </ContainedButton>
-        <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Withdraw' })}
+          onClick={() => {withdraw(item)}}
         >
           Withdraw
         </ContainedButton>
         <ContainedButton
-          onClick={() => setModal({ open: true, title: 'Claim' })}
+          onClick={() => {claim(item)}}
+          disabled={(item.SNOBHarvestable == 0)}
         >
           Claim
         </ContainedButton>
@@ -85,16 +90,8 @@ const CompoundListDetail = () => {
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
+          item={item}
           handleClose={handleClose}
-          onSubmit={onSubmit}
-        />
-      )}
-
-      {successModal && (
-        <SuccessDialog
-          open={successModal}
-          subHeader='Transaction submitted'
-          handleClose={() => setSuccessModal(false)}
         />
       )}
     </div>

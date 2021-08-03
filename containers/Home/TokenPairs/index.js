@@ -1,225 +1,144 @@
+import { memo } from 'react';
+import { Card, Grid, Typography, TableCell, TableRow } from '@material-ui/core';
+import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
+import { makeStyles } from '@material-ui/core/styles';
+import { useQuery } from '@apollo/client';
 
-import { memo } from 'react'
-import {
-  Card,
-  Grid,
-  Typography,
-  TableCell,
-  TableRow,
-} from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-
-import ChartUpIcon from 'components/Icons/ChartUpIcon'
-import ChartDownIcon from 'components/Icons/ChartDownIcon'
-import SnowTokenIcon from 'components/SnowTokenIcon'
-import TableContainer from './TableContainer'
+import ChartUpIcon from 'components/Icons/ChartUpIcon';
+import ChartDownIcon from 'components/Icons/ChartDownIcon';
+import DashboardTokenPairsSkeleton from 'components/Skeletons/DashboardTokenPairs';
+import { MULTIPLE_PAIRS_INFO } from 'api/dashboard/queries';
+import TableContainer from './TableContainer';
+import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
   card: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    height: '100%'
+    height: '100%',
   },
   cell: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
   },
   tokenContainer: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   token: {
     fontSize: 12,
     marginLeft: theme.spacing(1),
     '& span': {
       fontSize: 14,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     },
     [theme.breakpoints.down('xs')]: {
-      display: 'none'
-    }
+      display: 'none',
+    },
   },
   locked: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   balance: {
     fontSize: 14,
     fontWeight: 'bold',
-    marginRight: theme.spacing(2)
-  }
+    marginRight: theme.spacing(2),
+  },
 }));
 
 const TokenPairs = () => {
   const classes = useStyles();
+  const { data, loading, error } = useQuery(MULTIPLE_PAIRS_INFO, {
+    variables: { first: 1, grouped: true },
+  });
+
+  if (error) {
+    return <div>Something went wrong...</div>;
+  }
+
+  const loadingTable = () => {
+    return [1, 2, 3, 4].map((item) => (
+      <TableRow key={item}>
+        <TableCell>
+          <DashboardTokenPairsSkeleton />
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
+  const renderChartIcon = (status) => {
+    switch (status) {
+      case 'gain':
+        return <ChartUpIcon />;
+      case 'loss':
+        return <ChartDownIcon />;
+      case 'even':
+        return <TrendingFlatIcon color="primary" />;
+      default:
+        return null;
+    }
+  };
+
+  const renderTableData = (data) => {
+    return data.map((pair) => (
+      <TableRow key={pair.name}>
+        <TableCell component="th" scope="row" className={classes.cell}>
+          <Grid container spacing={2}>
+            {pair.token0.address && (
+              <Grid item xs={4} className={classes.tokenContainer}>
+                <SnowPairsIcon size={50} pairsIcon={[pair.token0.address]} />
+                <Typography color="textPrimary" className={classes.token}>
+                  <span>{pair.token0.name}</span>
+                  <br />
+                  {`${pair.token0.pangolinPrice?.toLocaleString()}USD`}
+                </Typography>
+              </Grid>
+            )}
+            {pair.token1.address && (
+              <Grid item xs={4} className={classes.tokenContainer}>
+                <SnowPairsIcon size={50} pairsIcon={[pair.token1.address]} />
+                <Typography color="textPrimary" className={classes.token}>
+                  <span>{pair.token1.name}</span>
+                  <br />
+                  {`${pair.token1.pangolinPrice?.toLocaleString()}USD`}
+                </Typography>
+              </Grid>
+            )}
+            {pair.token2.address && (
+              <Grid item xs={4} className={classes.tokenContainer}>
+                <SnowPairsIcon size={50} pairsIcon={[pair.token2.address]} />
+                <Typography color="textPrimary" className={classes.token}>
+                  <span>{pair.token2.name}</span>
+                  <br />
+                  {`${pair.token2.pangolinPrice?.toLocaleString()}USD`}
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+        </TableCell>
+        <TableCell align="right" className={classes.cell}>
+          <div className={classes.locked}>
+            <Typography color="textPrimary" className={classes.balance}>
+              {`$${pair.tvlStaked.toLocaleString()}`}
+            </Typography>
+            {renderChartIcon(pair.status)}
+          </div>
+        </TableCell>
+      </TableRow>
+    ));
+  };
 
   return (
     <Card className={classes.card}>
       <TableContainer>
-        {pairs.map((pair, index) => (
-          <TableRow key={index}>
-            <TableCell component='th' scope='row' className={classes.cell}>
-              <Grid container spacing={2}>
-                {pair.tokens.map((token, index) => (
-                  <Grid item xs={4} key={index} className={classes.tokenContainer}>
-                    <SnowTokenIcon
-                      size={34}
-                      token={token.priceId}
-                    />
-                    <Typography
-                      color='textPrimary'
-                      className={classes.token}
-                    >
-                      <span>{token.name}</span>
-                      <br />
-                      {`${token.price}USD`}
-                    </Typography>
-                  </Grid>
-                ))}
-              </Grid>
-            </TableCell>
-            <TableCell align='right' className={classes.cell}>
-              <div className={classes.locked}>
-                <Typography
-                  color='textPrimary'
-                  className={classes.balance}
-                >
-                  {`$${pair.balance.toLocaleString()}`}
-                </Typography>
-                {pair.isUp ? <ChartUpIcon /> : <ChartDownIcon />}
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
+        {loading
+          ? loadingTable()
+          : renderTableData(data?.MultiplePairsInfo[0].pairs)}
       </TableContainer>
     </Card>
-  )
-}
+  );
+};
 
 export default memo(TokenPairs);
-
-const pairs = [
-  {
-    tokens: [
-      {
-        name: 'Tether USD',
-        priceId: 'usdt',
-        price: '1.000'
-      },
-      {
-        name: 'DAI',
-        priceId: 'dai',
-        price: '0.9996'
-      },
-      {
-        name: 'BUSD',
-        priceId: 'busd',
-        price: '1.311'
-      }
-    ],
-    balance: 891.2,
-    isUp: false
-  },
-  {
-    tokens: [
-      {
-        name: 'Frax',
-        priceId: 'frax',
-        price: '0.9978'
-      },
-      {
-        name: 'TrueUSD',
-        priceId: 'tusd',
-        price: '0.9708'
-      },
-      {
-        name: 'Tether USD',
-        priceId: 'usdt',
-        price: '1.000'
-      }
-    ],
-    balance: 893847,
-    isUp: true
-  },
-  {
-    tokens: [
-      {
-        name: 'Wrapped BTC',
-        priceId: 'wbtc',
-        price: '54900'
-      },
-      {
-        name: 'Wrapped Avax',
-        priceId: 'wavax',
-        price: '33.43'
-      },
-    ],
-    balance: 38052,
-    isUp: true
-  },
-  {
-    tokens: [
-      {
-        name: 'Wrapped BTC',
-        priceId: 'wbtc',
-        price: '54900'
-      },
-      {
-        name: 'Pangolin',
-        priceId: 'png',
-        price: '3.932'
-      },
-    ],
-    balance: 78076,
-    isUp: true
-  },
-  {
-    tokens: [
-      {
-        name: 'Sushi Token',
-        priceId: 'sushi',
-        price: '13.31'
-      },
-      {
-        name: 'Pangolin',
-        priceId: 'png',
-        price: '3.932'
-      },
-    ],
-    balance: 23266,
-    isUp: true
-  },
-  {
-    tokens: [
-      {
-        name: 'Snowball',
-        priceId: 'snowball',
-        price: '0.4843'
-      },
-      {
-        name: 'Wrapped Avax',
-        priceId: 'wavax',
-        price: '33.43'
-      },
-    ],
-    balance: 1973372,
-    isUp: true
-  },
-  {
-    tokens: [
-      {
-        name: 'Wrapped Avax',
-        priceId: 'wavax',
-        price: '33.43'
-      },
-      {
-        name: 'Ethereum',
-        priceId: 'ether',
-        price: '3243'
-      },
-    ],
-    balance: 59072,
-    isUp: true
-  }
-]

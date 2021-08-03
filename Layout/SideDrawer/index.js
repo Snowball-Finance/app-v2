@@ -57,7 +57,7 @@ const SideDrawer = ({
   openDraw
 }) => {
   const classes = useStyles();
-  const router = useRouter()
+  const router = useRouter();
   const [selectedItem, setSelectedItem] = useState('')
 
   useEffect(() => {
@@ -111,7 +111,7 @@ const SideDrawer = ({
           if (isEmpty(sidebar?.CHILDREN)) {
             return (
               <React.Fragment key={sidebar.TITLE}>
-                {sidebar.TITLE === LINKS.FAQ.TITLE && openDrawer &&
+                {sidebar.TITLE === LINKS.DOCS.TITLE && openDrawer &&
                   <Typography
                     color='textPrimary'
                     className={classes.subtitle}>

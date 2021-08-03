@@ -1,4 +1,3 @@
-
 const LINKS = Object.freeze({
   HOME: {
     TITLE: 'Dashboard',
@@ -11,7 +10,15 @@ const LINKS = Object.freeze({
   S3F_VAULT: {
     TITLE: 's3F Vault',
     HREF: '/s3f-vault',
-    IS_NEW: true
+  },
+  // S4D_VAULT: {
+  //   TITLE: 's4D Vault',
+  //   HREF: '/s4d-vault',
+  //   IS_NEW: true
+  // },
+  STAKING: {
+    TITLE: 'Staking',
+    HREF: '/staking'
   },
   COMPOUND_AND_EARN: {
     TITLE: 'Compound & Earn',
@@ -21,33 +28,38 @@ const LINKS = Object.freeze({
     TITLE: 'Vote',
     HREF: '/vote'
   },
+  VOTE_DETAIL: {
+    TITLE: 'Vote Detail',
+    HREF: '/vote/detail/[proposal]'
+  },
   NFT_MARKETPLACE: {
     TITLE: 'NFT Marketplace',
     HREF: '/nft-marketplace'
   },
-  FAQ: {
-    TITLE: 'FAQ',
-    HREF: '/faq'
-  },
   DOCS: {
     TITLE: 'Docs',
     HREF: 'https://snowballs.gitbook.io/snowball-docs/',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
   GITHUB: {
-    TITLE: 'Github',
+    TITLE: 'GitHub',
     HREF: 'https://github.com/Snowball-Finance/',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
   TELEGRAM: {
     TITLE: 'Telegram',
     HREF: 'https://t.me/throwsnowballs',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
   },
   DISCORD: {
     TITLE: 'Discord',
     HREF: 'https://discord.gg/BGpEHvehMz',
-    IS_OUT_LINK: true
+    IS_EXT_LINK: true
+  },
+  REGRESS: {
+    TITLE: 'Use Old Website',
+    HREF: 'https://app.snowball.network',
+    IS_EXT_LINK: true
   },
 });
 

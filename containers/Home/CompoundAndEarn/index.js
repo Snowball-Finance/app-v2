@@ -1,9 +1,11 @@
 
-import { memo } from 'react'
+import { memo, useMemo, useState, useCallback, useEffect } from 'react'
 import { Card, Typography, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { CONTRACTS } from 'config'
+import { useContracts } from 'contexts/contract-context'
+import { usePrices } from 'contexts/price-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import {
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
@@ -34,12 +36,13 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 400
     }
   },
-  button: {
-    margin: theme.spacing(3, 0)
+  xSnobBalance: {
+    color: theme.custom.palette.blue
   },
   divider: {
     height: 1,
-    margin: theme.spacing(3, 0)
+    marginTop: theme.spacing(12),
+    marginBottom: theme.spacing(1)
   },
   accountContainer: {
     display: 'flex',
@@ -71,6 +74,11 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundAndEarn = () => {
   const classes = useStyles();
+  const [pendingHarvest, setPendingHarvest] = useState({});
+  const { snowballBalance, gauges, snowconeBalance } = useContracts();
+  const { prices } = usePrices();
+
+  const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   const addMetamask = async () => {
     const provider = window.ethereum
@@ -94,6 +102,19 @@ const CompoundAndEarn = () => {
     }
   }
 
+  const getTotalPendingHarvest = useCallback(() => {
+    let total = 0;
+    gauges.map((gauge) => {
+      total += parseFloat(gauge.harvestable / 1e18);
+    });
+    const balanceUSD = +(total * prices.SNOB).toFixed(2);
+    setPendingHarvest({ amount: total.toFixed(2), balanceUSD });
+  }, [prices, gauges]);
+
+  useEffect(() => {
+    getTotalPendingHarvest();
+  }, [gauges, getTotalPendingHarvest]);
+
   return (
     <Card className={classes.card}>
       <Typography
@@ -113,17 +134,14 @@ const CompoundAndEarn = () => {
         color='textPrimary'
         className={classes.snob}
       >
-        5.221 <span>SNOB</span>
+        {pendingHarvest?.amount?.toLocaleString()} <span>SNOB</span>
       </Typography>
       <Typography
         variant='h6'
         color='textSecondary'
       >
-        $2.6 USD
+        ${parseFloat(pendingHarvest?.balanceUSD).toFixed(3)} USD
       </Typography>
-      <ContainedButton className={classes.button}>
-        HARVEST
-      </ContainedButton>
 
       <Divider
         flexItem
@@ -140,16 +158,16 @@ const CompoundAndEarn = () => {
             Wallet balance
           </Typography>
           <Typography className={classes.balance}>
-            4330.7586 SNOB<span>$ 1705,515</span>
+            {snowballBalance.toLocaleString()} SNOB<span>$ {snowballPrice.toFixed(3)}</span>
           </Typography>
           <Typography
-            variant='caption'
-            color='textPrimary'
+            className={classes.xSnobBalance}
+            variant='body2'
           >
-            In Governance: 0.000
+            {snowconeBalance.toLocaleString()} xSNOB
           </Typography>
         </div>
-
+        
         <ContainedButton
           color='secondary'
           className={classes.addMetamask}

@@ -6,22 +6,12 @@ const VAULT_TABS = Object.freeze({
   liquidity: {
     LABEL: 'Liquidity',
     VALUE: 'liquidity'
-  },
-  transactions: {
-    LABEL: 'Transactions',
-    VALUE: 'transactions'
-  },
-  share: {
-    LABEL: 'My share',
-    VALUE: 'share'
-  },
+  }
 })
 
 const VAULT_TABS_ARRAY = [
   VAULT_TABS.swap,
-  VAULT_TABS.liquidity,
-  VAULT_TABS.transactions,
-  VAULT_TABS.share,
+  VAULT_TABS.liquidity
 ]
 
 export {

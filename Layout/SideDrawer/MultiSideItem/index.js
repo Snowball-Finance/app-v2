@@ -12,7 +12,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import clsx from 'clsx';
 
-import CircleIcon from 'components/Icons/CircleIcon'
+import {Circle} from 'react-feather';
 import ListItemLink from '../ListItemLink'
 
 const useStyles = makeStyles((theme) => ({
@@ -63,12 +63,12 @@ const MultiSideItem = ({
           {sidebar?.CHILDREN.map((item) => (
             <ListItemLink
               key={item.TITLE}
-              target={item?.IS_OUT_LINK ? '_blank' : ''}
-              rel={item?.IS_OUT_LINK ? 'noreferrer' : ''}
+              target={item?.IS_EXT_LINK ? '_blank' : ''}
+              rel={item?.IS_EXT_LINK ? 'noreferrer' : ''}
               href={item.HREF}
             >
               <ListItemIcon className={classes.nestedItemIcon}>
-                <CircleIcon />
+                <Circle size={15}/>
               </ListItemIcon>
               <ListItemText primary={item.TITLE} />
               {item?.IS_NEW &&

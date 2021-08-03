@@ -15,7 +15,7 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    minWidth: 700,
+    minWidth: 520,
     borderRadius: 10,
     backgroundColor: theme.palette.primary.default,
     [theme.breakpoints.down('sm')]: {
@@ -25,26 +25,23 @@ const useStyles = makeStyles((theme) => ({
   dialogTitle: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
     height: 68,
     lineHeight: 'initial',
-    background: `linear-gradient(90deg, ${theme.custom.palette.blue} 0%, ${theme.custom.palette.darkBlue} 100%)`,
+    padding: theme.spacing(2),
   },
   title: {
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    color: theme.custom.palette.white
+    fontSize: 20,
+    fontWeight: 'bold'
   },
   closeIcon: {
     position: 'absolute',
     top: theme.spacing(1),
-    right: theme.spacing(2),
-    color: theme.custom.palette.white
+    right: theme.spacing(2)
   },
   dialogContent: {
     width: '100%',
-    minWidth: 520,
-    minHeight: 130,
+    minWidth: '100%',
+    minHeight: 90,
     padding: theme.spacing(2),
     [theme.breakpoints.down('xs')]: {
       minWidth: 'unset',
