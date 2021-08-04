@@ -92,7 +92,7 @@ const CompoundAndEarn = () => {
               address: CONTRACTS.SNOWBALL,
               symbol: 'SNOB',
               decimals: '18',
-              image: '',
+              image: 'https://raw.githubusercontent.com/Snowball-Finance/Assets/main/snowball-128x128.png',
             },
           },
         })
