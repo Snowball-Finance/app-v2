@@ -18,6 +18,7 @@ const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
+  const [loading, setLoading] = useState(false);
 
   const [userPools, setUserPools] = useState([]);
   const { gauges } = useContracts();
@@ -242,6 +243,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account || !gauges || !pools) {
       return false;
     }
+    setLoading(true);
     const dataWithPoolBalance = await Promise.all(pools.map(async (item) => {
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
@@ -282,11 +284,12 @@ export function CompoundAndEarnProvider({ children }) {
         SNOBValue
       };
     }));
+    setLoading(false);
     setUserPools(dataWithPoolBalance);
   };
 
   return (
-    <CompoundAndEarnContext.Provider value={{ approve, deposit, withdraw, claim, userPools }}>
+    <CompoundAndEarnContext.Provider value={{ loading, approve, deposit, withdraw, claim, userPools }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -298,7 +301,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const { approve, deposit, withdraw, claim, userPools } = context;
+  const { loading, approve, deposit, withdraw, claim, userPools } = context;
 
-  return { approve, deposit, withdraw, claim, userPools };
+  return { loading, approve, deposit, withdraw, claim, userPools };
 }

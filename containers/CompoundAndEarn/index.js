@@ -52,7 +52,7 @@ const CompoundAndEarn = () => {
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
-  const { userPools } = useCompoundAndEarnContract();
+  const { userPools, loading: loadingUserPools } = useCompoundAndEarnContract();
 
   const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
   const { library, account } = useWeb3React();
@@ -158,7 +158,7 @@ const CompoundAndEarn = () => {
           PAIRS
         </Typography>
 
-        {loading ? (
+        {loading || loadingUserPools ? (
           <CompoundAndEarnSkeleton />
         ) : (
           <ListView poolsInfo={lastSnowballInfo} />
