@@ -36,6 +36,17 @@ const useStyles = makeStyles(theme => ({
     '&::-ms-input-placeholder': {
       lineHeight: 'normal',
       color: theme.palette.text.primary
+    },
+    '&[type=number]': {
+      '&::-webkit-outer-spin-button': {
+        WebkitAppearance: 'none',
+        margin: 0
+      },
+      '&::-webkit-inner-spin-button': {
+        WebkitAppearance: 'none',
+        margin: 0
+      },
+      MozAppearance: 'textfield'
     }
   },
   multiline: {

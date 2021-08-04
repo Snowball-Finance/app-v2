@@ -61,6 +61,17 @@ const useStyles = makeStyles(theme => {
       textAlign: 'right',
       padding: theme.spacing(0),
       color: theme.palette.text.primary,
+      '&[type=number]': {
+        '&::-webkit-outer-spin-button': {
+          WebkitAppearance: 'none',
+          margin: 0
+        },
+        '&::-webkit-inner-spin-button': {
+          WebkitAppearance: 'none',
+          margin: 0
+        },
+        MozAppearance: 'textfield'
+      }
     },
     notchedOutline: {
       border: 'none'
@@ -156,7 +167,6 @@ const TokenTextField = React.forwardRef(({
             input: classes.input,
             notchedOutline: classes.notchedOutline
           }}
-          inputProps={{ min: 0 }}
           onKeyDown={e => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
           onChange={onChange}
           {...rest}
