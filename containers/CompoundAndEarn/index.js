@@ -42,9 +42,11 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     width: '60%',
+    boxShadow: theme.custom.utils.boxShadow,
   },
   selectBox: {
     width: '15%',
+    boxShadow: theme.custom.utils.boxShadow,
   },
 }));
 

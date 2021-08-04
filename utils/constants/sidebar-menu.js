@@ -1,7 +1,9 @@
 import LINKS from 'utils/constants/links'
 
-import { Home, Layers, Anchor, ShoppingCart, BookOpen, GitHub, Send, Link, Archive} from 'react-feather';
+import { Home, BookOpen, GitHub, Send, Link, Download, Archive} from 'react-feather';
 import StableVaultIcon from 'components/Icons/StableVaultIcon'
+import CompoundAndEarnIcon from 'components/Icons/CompoundAndEarnIcon'
+import NftMarketplaceIcon from 'components/Icons/NftMarketplaceIcon'
 
 const SIDEBAR_MENU = [
   {
@@ -18,15 +20,15 @@ const SIDEBAR_MENU = [
     ]
   },
   {
-    ICON: Layers,
+    ICON: CompoundAndEarnIcon,
     ...LINKS.COMPOUND_AND_EARN
   },
   {
-    ICON: Anchor,
+    ICON: Download,
     ...LINKS.STAKING
   },
   {
-    ICON: ShoppingCart,
+    ICON: NftMarketplaceIcon,
     ...LINKS.NFT_MARKETPLACE
   },
   {

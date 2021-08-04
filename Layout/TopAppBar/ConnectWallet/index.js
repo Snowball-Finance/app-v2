@@ -11,11 +11,18 @@ import useInactiveListener from 'utils/hooks/useInactiveListener'
 import getEllipsis from 'utils/helpers/getEllipsis'
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: '10px 16px 16px 10px',
+    backgroundColor: 'rgba(40, 162, 255, 0.12)',
+  },
   account: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
-    padding: theme.spacing(0, 1)
+    padding: theme.spacing(0, 1),
+    fontSize: '14px',
   },
   connect: {
     margin: theme.spacing(0, 1)
@@ -57,16 +64,18 @@ const ConnectWallet = () => {
     (active || error)
       ? (
         <div
-          className={classes.account}
+          className={classes.root}
           onClick={walletHandler}
         >
-          <SnowIdenticon value={account} />
           <Typography
             variant='caption'
             color='textPrimary'
+            className={classes.account}
           >
             {getEllipsis(account || '')}
           </Typography>
+          <SnowIdenticon value={account} />
+         
         </div>
       ) : (
         <ContainedButton
