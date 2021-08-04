@@ -54,7 +54,8 @@ export function CompoundAndEarnProvider({ children }) {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
-        const snowglobeRatio = await snowglobeContract.getRatio();
+        //make sure that the gauge approval will not overflow
+        const snowglobeRatio = await snowglobeContract.getRatio()+ethers.utils.parseUnits("0.1");
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
