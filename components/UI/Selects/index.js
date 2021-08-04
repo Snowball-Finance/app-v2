@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: theme.spacing(0, 0.5),
   },
   selectBox: {
     width: '100%',
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Selects = React.forwardRef(
-  ({ error, className, value, onChange, style, options }, ref) => {
+  ({ error, className, value, onChange, style, options, startIcon }, ref) => {
     const classes = useStyles();
 
     const renderOptions = () => {
@@ -40,9 +41,11 @@ const Selects = React.forwardRef(
         style={style}
         elevation={0}
       >
+        {startIcon}
         <Select
           ref={ref}
           className={classes.selectBox}
+          style={{ width: startIcon ? '80%' : '100%' }}
           value={value}
           onChange={onChange}
           disableUnderline

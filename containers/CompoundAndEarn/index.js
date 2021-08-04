@@ -1,6 +1,10 @@
 import { memo, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import {
+  FilterList as FilterListIcon,
+  Sort as SortIcon,
+} from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
 
@@ -12,6 +16,7 @@ import PageHeader from 'parts/PageHeader';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
 import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
+import getProperAction from 'utils/helpers/getProperAction';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -110,7 +115,17 @@ const CompoundAndEarn = () => {
       ? [...lastSnowballModifiedInfo]
       : [...data?.LastSnowballInfo?.poolsInfo];
 
-    if (event.target.value !== 'all') {
+    if (event.target.value === 'myPools') {
+      filteredData = filteredData.filter((item) => {
+        const [actionType] = getProperAction(
+          item,
+          null,
+          item.userLPBalance,
+          item.userDepositedLP
+        );
+        return actionType === 'Deposit';
+      });
+    } else if (event.target.value !== 'all') {
       filteredData = filteredData.filter((item) =>
         item.source.toLowerCase().includes(event.target.value)
       );
@@ -145,12 +160,14 @@ const CompoundAndEarn = () => {
             value={type}
             options={TYPES}
             onChange={handleSorting}
+            startIcon={<SortIcon />}
           />
           <Selects
             className={classes.selectBox}
             value={userPool}
             options={POOLS}
             onChange={handleUserPoolChange}
+            startIcon={<FilterListIcon />}
           />
         </div>
 
