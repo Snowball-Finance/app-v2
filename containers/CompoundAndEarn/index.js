@@ -116,7 +116,7 @@ const CompoundAndEarn = () => {
       : [...data?.LastSnowballInfo?.poolsInfo];
 
     if (event.target.value === 'myPools') {
-      filteredData = filteredData.filter((item) => {
+      const filteredDataWithTokensToInvested = filteredData.filter((item) => {
         const [actionType] = getProperAction(
           item,
           null,
@@ -125,6 +125,13 @@ const CompoundAndEarn = () => {
         );
         return actionType === 'Deposit';
       });
+      const filteredDataWithDepositLP = filteredData.filter(
+        (item) => item.userDepositedLP > 0
+      );
+      filteredData = [
+        ...filteredDataWithDepositLP,
+        ...filteredDataWithTokensToInvested,
+      ];
     } else if (event.target.value !== 'all') {
       filteredData = filteredData.filter((item) =>
         item.source.toLowerCase().includes(event.target.value)
