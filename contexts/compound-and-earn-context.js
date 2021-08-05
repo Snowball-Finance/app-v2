@@ -55,7 +55,14 @@ export function CompoundAndEarnProvider({ children }) {
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
         //make sure that the gauge approval will not overflow
-        const snowglobeRatio = await snowglobeContract.getRatio()+ethers.utils.parseUnits("0.1");
+        var snowglobeRatio;
+        try{
+          snowglobeRatio = await snowglobeContract.getRatio()+ethers.utils.parseUnits("0.1");
+        }catch(error){
+          //fix to safemath if snowglobe is empty
+          snowglobeRatio = 1;
+        }
+
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
