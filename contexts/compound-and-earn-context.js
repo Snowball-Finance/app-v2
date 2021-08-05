@@ -57,7 +57,7 @@ export function CompoundAndEarnProvider({ children }) {
         //make sure that the gauge approval will not overflow
         var snowglobeRatio;
         try{
-          snowglobeRatio = await snowglobeContract.getRatio().add(ethers.utils.parseUnits("0.1"));
+          snowglobeRatio = (await snowglobeContract.getRatio()).add(ethers.utils.parseUnits("0.1"));
         }catch(error){
           //fix to safemath if snowglobe is empty
           snowglobeRatio = ethers.utils.parseUnits("1.1");
@@ -89,8 +89,8 @@ export function CompoundAndEarnProvider({ children }) {
           });
           reject(false);
         }
-        resolve(true)
       }
+      resolve(true)
     })
   }
 
