@@ -80,6 +80,7 @@ const AdvancedTransactionOption = ({
             endAdornment={'%'}
             className={classes.input}
             value={value}
+            inputProps={{ max: 50 }}
             onChange={inputHandler}
             onKeyDown={e => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
           />
