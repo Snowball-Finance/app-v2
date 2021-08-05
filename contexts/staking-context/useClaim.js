@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import detectEthereumProvider from '@metamask/detect-provider';
-import Web3 from 'web3';
 
-import { isEmpty, delay } from 'utils/helpers/utility'
+import { isEmpty } from 'utils/helpers/utility'
 
 const useClaim = ({
   setLoading,
   feeDistributorContract
 }) => {
   const { account } = useWeb3React();
-
   const [userClaimable, setUserClaimable] = useState(0);
 
   useEffect(() => {
@@ -22,39 +19,21 @@ const useClaim = ({
 
   const getFeeDistributorInfo = async () => {
     try {
-      const [
-        userClaimable
-      ] = await Promise.all([
-        feeDistributorContract.callStatic['claim(address)'](account, { gasLimit: 1000000 }),
-      ]);
- 
+      const userClaimable = await feeDistributorContract.callStatic['claim(address)'](account, { gasLimit: 1000000 })
       setUserClaimable(userClaimable.toString() ? userClaimable : null);
     } catch (error) {
-      console.log('[Error] getSnowconeInfo => ', error)
+      console.log('[Error] getFeeDistributorInfo => ', error)
     }
   }
 
   const claim = async () => {
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       const gasLimit = await feeDistributorContract.estimateGas['claim()']();
-      const { hash } = await feeDistributorContract['claim()']({ gasLimit });
+      const tokenClaim = await feeDistributorContract['claim()']({ gasLimit });
+      const transactionClaim = await tokenClaim.wait(1)
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(hash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionClaim.status) {
         await getFeeDistributorInfo();
       }
     } catch (error) {

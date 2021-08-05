@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useEffect, useState } from 'react'
+import { createContext, useContext, useMemo, useEffect, useState, useCallback } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 
@@ -14,9 +14,10 @@ import { isEmpty } from 'utils/helpers/utility'
 const ContractContext = createContext(null)
 
 export function ContractProvider({ children }) {
-  const [loading, setLoading] = useState(false);
-  const { setPopUp } = usePopup();
   const { account, library, chainId } = useWeb3React();
+  const { setPopUp } = usePopup();
+
+  const [loading, setLoading] = useState(false);
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [snowconeBalance, setSnowconeBalance] = useState(0);
   const [totalSnowcone, setTotalSnowcone] = useState(0);
@@ -38,20 +39,7 @@ export function ContractProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
 
-  useEffect(() => {
-    if (!isEmpty(snowballContract) && !isEmpty(snowconeContract)) {
-      getBalanceInfo()
-    }
-
-    if(isEmpty(account)) {
-      setSnowballBalance(0)
-      setSnowconeBalance(0)
-      setTotalSnowcone(0)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snowballContract, snowconeContract, account])
-
-  const getBalanceInfo = async () => {
+  const getBalanceInfo = useCallback(async () => {
     try {
       const [
         snowballBalance,
@@ -64,14 +52,26 @@ export function ContractProvider({ children }) {
       ]);
       const snowballBalanceValue = parseFloat(ethers.utils.formatUnits(snowballBalance, 18));
       const snowconeBalanceValue = parseFloat(ethers.utils.formatUnits(snowconeBalance, 18));
-      
+
       setSnowballBalance(snowballBalanceValue);
       setSnowconeBalance(snowconeBalanceValue);
       setTotalSnowcone(totalSnowconeValue);
     } catch (error) {
       console.log('[Error] getBalanceInfo => ', error)
     }
-  }
+  }, [account, snowballContract, snowconeContract])
+
+  useEffect(() => {
+    if (!isEmpty(snowballContract) && !isEmpty(snowconeContract)) {
+      getBalanceInfo()
+    }
+
+    if (isEmpty(account)) {
+      setSnowballBalance(0)
+      setSnowconeBalance(0)
+      setTotalSnowcone(0)
+    }
+  }, [snowballContract, snowconeContract, account, getBalanceInfo])
 
   const { gauges } = useGauge({
     prices,
