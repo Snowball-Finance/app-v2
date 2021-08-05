@@ -60,7 +60,7 @@ export function CompoundAndEarnProvider({ children }) {
           snowglobeRatio = await snowglobeContract.getRatio()+ethers.utils.parseUnits("0.1");
         }catch(error){
           //fix to safemath if snowglobe is empty
-          snowglobeRatio = 1;
+          snowglobeRatio = ethers.utils.parseUnits("1.1");
         }
 
         await _approve(lpContract, snowglobeContract.address, amount);
