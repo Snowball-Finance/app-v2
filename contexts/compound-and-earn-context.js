@@ -54,7 +54,15 @@ export function CompoundAndEarnProvider({ children }) {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
-        const snowglobeRatio = await snowglobeContract.getRatio();
+        //make sure that the gauge approval will not overflow
+        var snowglobeRatio;
+        try{
+          snowglobeRatio = (await snowglobeContract.getRatio()).add(ethers.utils.parseUnits("0.1"));
+        }catch(error){
+          //fix to safemath if snowglobe is empty
+          snowglobeRatio = ethers.utils.parseUnits("1.1");
+        }
+
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
@@ -81,8 +89,8 @@ export function CompoundAndEarnProvider({ children }) {
           });
           reject(false);
         }
-        resolve(true)
       }
+      resolve(true)
     })
   }
 
@@ -253,7 +261,16 @@ export function CompoundAndEarnProvider({ children }) {
           SNOWGLOBE_ABI, library.getSigner());
 
         totalSupply = await snowglobeContract.totalSupply();
-        const snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
+
+        var snowglobeRatio;
+        //avoid safemath error
+        try {
+          snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
+        } catch (error) {
+          snowglobeRatio = 1;
+          console.log('Snowglobe with no stake')
+        }
+
         let balanceSnowglobe = await snowglobeContract.balanceOf(account) /1e18;
         if (gauge) {
           balanceSnowglobe += gauge.staked/1e18;
