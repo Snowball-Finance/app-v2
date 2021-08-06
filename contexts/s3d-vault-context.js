@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 
@@ -14,11 +14,11 @@ import { usePopup } from 'contexts/popup-context'
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
 
-const unsignedS3dContract = provider ? new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider) : null
-const unsignedUsdtContract = provider ? new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider) : null
-const unsignedBusdContract = provider ? new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider) : null
-const unsignedDaiContract = provider ? new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider) : null
-const unsignedVaultContract = provider ? new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider) : null
+const unsignedS3dContract = new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider)
+const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider)
+const unsignedBusdContract = new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider)
+const unsignedDaiContract = new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider)
+const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider)
 
 const tokenArray = [
   { index: 0, name: 'USDT', priceId: 'usdt', decimal: 6 },
@@ -54,31 +54,29 @@ export function S3dVaultContractProvider({ children }) {
     }
   }, [usdtToken, busdToken, daiToken]);
 
-  const getTokenContract = (token) => {
+  const getTokenContract = useCallback((token) => {
     switch (token.name) {
       case 'USDT': return usdtContract;
       case 'BUSD': return busdContract;
       case 'DAI': return daiContract;
       default: return usdtContract;
     }
-  }
+  }, [usdtContract, busdContract, daiContract])
 
-  const getTokenById = (id) => {
+  const getTokenById = useCallback((id) => {
     switch (parseInt(id, 10)) {
       case 0: return usdtToken;
       case 1: return busdToken;
       case 2: return daiToken;
       default: return usdtToken;
     }
-  }
+  }, [usdtToken, busdToken, daiToken])
 
   useEffect(() => {
-    if (unsignedS3dContract && unsignedUsdtContract && unsignedBusdContract && unsignedDaiContract) {
-      getSupply();
-      getTransactions();
-    }
+    getSupply();
+    getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unsignedS3dContract, unsignedUsdtContract, unsignedBusdContract, unsignedDaiContract]);
+  }, []);
 
   const getSupply = async () => {
     try {

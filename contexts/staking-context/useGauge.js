@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3'
 
 import { CONTRACTS } from 'config'
 import { usePoolContract } from 'contexts/pool-context'
 import GAUGE_TOKEN_ABI from 'libs/abis/gauge-token.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { isEmpty, delay } from 'utils/helpers/utility'
+import { isEmpty } from 'utils/helpers/utility'
 import getPairDataPrefill from 'utils/helpers/getPairDataPrefill'
 
 const useGauge = ({
@@ -16,7 +14,7 @@ const useGauge = ({
   gaugeProxyContract,
   setLoading
 }) => {
-  const { library,account } = useWeb3React()
+  const { library, account } = useWeb3React()
   const [gauges, setGauges] = useState([])
   const { pools, getGaugeInfo } = usePoolContract();
 
@@ -25,7 +23,7 @@ const useGauge = ({
       getGaugeProxyInfo()
     }
 
-    if(isEmpty(account)) {
+    if (isEmpty(account)) {
       setGauges([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,10 +33,10 @@ const useGauge = ({
     try {
       const totalWeight = await gaugeProxyContract.totalWeight();
 
-      const gaugeAddresses =[];
+      const gaugeAddresses = [];
       const poolAddresses = [];
       pools.forEach((item) => {
-        if(item?.gaugeInfo.address != '0x0000000000000000000000000000000000000000'){
+        if (item?.gaugeInfo.address != '0x0000000000000000000000000000000000000000') {
           gaugeAddresses.push(item.gaugeInfo.address);
           poolAddresses.push(item.address);
         }
@@ -114,9 +112,9 @@ const useGauge = ({
           balance,
           staked,
           harvestable,
-          depositTokenName: `${gauge?.kind === 'Snowglobe' ? gauge?.symbol+'-' : ''}`+
+          depositTokenName: `${gauge?.kind === 'Snowglobe' ? gauge?.symbol + '-' : ''}` +
             `${gauge?.name}` || 'No Name',
-          poolName: `${gauge?.kind === 'Snowglobe' ? gauge?.symbol+'-' : ''}`+
+          poolName: `${gauge?.kind === 'Snowglobe' ? gauge?.symbol + '-' : ''}` +
             `${gauge?.name || 'No Name'} Pool`,
           rewardRatePerYear,
           fullApy,
@@ -136,32 +134,12 @@ const useGauge = ({
   const voteFarms = async (tokens, weights) => {
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider()
-      const web3 = new Web3(ethereumProvider)
-
       const weightsData = weights.map((weight) => ethers.BigNumber.from(weight))
-      const gasLimit = await gaugeProxyContract.estimateGas.vote(
-        tokens,
-        weightsData,
-      )
-      const { hash } = await gaugeProxyContract.vote(
-        tokens,
-        weightsData,
-        { gasLimit },
-      )
+      const gasLimit = await gaugeProxyContract.estimateGas.vote(tokens, weightsData)
+      const tokenVote = await gaugeProxyContract.vote(tokens, weightsData, { gasLimit })
+      const transactionVote = await tokenVote.wait(1)
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(hash)
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionVote.status) {
         await getGaugeProxyInfo()
       }
     } catch (error) {
