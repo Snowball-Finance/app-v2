@@ -15,6 +15,10 @@ export const POOLS = [
     label: 'All Pools',
   },
   {
+    value: 'myPools',
+    label: 'My Pools',
+  },
+  {
     value: 'pangolin',
     label: 'Pangolin Pools',
   },

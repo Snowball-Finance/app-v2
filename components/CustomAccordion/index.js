@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Accordion = withStyles({
   root: {
-    boxShadow: 'none !important',
+    boxShadow: '0 4px 24px 0 rgb(34 41 47 / 10%)',
     borderRadius: '10px !important',
   },
 })(MuiAccordion);

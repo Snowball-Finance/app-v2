@@ -1,6 +1,10 @@
 import { memo, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
+import {
+  FilterList as FilterListIcon,
+  Sort as SortIcon,
+} from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
 
@@ -12,6 +16,7 @@ import PageHeader from 'parts/PageHeader';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
 import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
+import getProperAction from 'utils/helpers/getProperAction';
 import ListView from './ListView';
 
 const useStyles = makeStyles((theme) => ({
@@ -37,9 +42,11 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     width: '60%',
+    boxShadow: theme.custom.utils.boxShadow,
   },
   selectBox: {
     width: '15%',
+    boxShadow: theme.custom.utils.boxShadow,
   },
 }));
 
@@ -52,7 +59,7 @@ const CompoundAndEarn = () => {
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
-  const { userPools } = useCompoundAndEarnContract();
+  const { userPools, loading: loadingUserPools } = useCompoundAndEarnContract();
 
   const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
   const { library, account } = useWeb3React();
@@ -110,7 +117,24 @@ const CompoundAndEarn = () => {
       ? [...lastSnowballModifiedInfo]
       : [...data?.LastSnowballInfo?.poolsInfo];
 
-    if (event.target.value !== 'all') {
+    if (event.target.value === 'myPools') {
+      const filteredDataWithTokensToInvested = filteredData.filter((item) => {
+        const [actionType] = getProperAction(
+          item,
+          null,
+          item.userLPBalance,
+          item.userDepositedLP
+        );
+        return actionType === 'Deposit';
+      });
+      const filteredDataWithDepositLP = filteredData.filter(
+        (item) => item.userDepositedLP > 0
+      );
+      filteredData = [
+        ...filteredDataWithDepositLP,
+        ...filteredDataWithTokensToInvested,
+      ];
+    } else if (event.target.value !== 'all') {
       filteredData = filteredData.filter((item) =>
         item.source.toLowerCase().includes(event.target.value)
       );
@@ -145,12 +169,14 @@ const CompoundAndEarn = () => {
             value={type}
             options={TYPES}
             onChange={handleSorting}
+            startIcon={<SortIcon />}
           />
           <Selects
             className={classes.selectBox}
             value={userPool}
             options={POOLS}
             onChange={handleUserPoolChange}
+            startIcon={<FilterListIcon />}
           />
         </div>
 
@@ -158,7 +184,7 @@ const CompoundAndEarn = () => {
           PAIRS
         </Typography>
 
-        {loading ? (
+        {loading || loadingUserPools ? (
           <CompoundAndEarnSkeleton />
         ) : (
           <ListView poolsInfo={lastSnowballInfo} />
