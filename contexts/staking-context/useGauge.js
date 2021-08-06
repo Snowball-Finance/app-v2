@@ -114,8 +114,10 @@ const useGauge = ({
           balance,
           staked,
           harvestable,
-          depositTokenName: gauge?.name || 'No Name',
-          poolName: `${gauge?.name || 'No Name'} Pool`,
+          depositTokenName: `${gauge?.kind === 'Snowglobe' ? gauge?.symbol+'-' : ''}`+
+            `${gauge?.name}` || 'No Name',
+          poolName: `${gauge?.kind === 'Snowglobe' ? gauge?.symbol+'-' : ''}`+
+            `${gauge?.name || 'No Name'} Pool`,
           rewardRatePerYear,
           fullApy,
           usdPerToken: pricePerToken,
