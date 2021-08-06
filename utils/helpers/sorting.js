@@ -16,11 +16,15 @@ export const sortingByUserPool = (type, data) => {
     sortedData = sortedData.sort(
       (a, b) =>
         b.userDepositedLP - a.userDepositedLP ||
+        b.userLPBalance - a.userLPBalance ||
         b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
     );
   } else {
     sortedData = sortedData.sort(
-      (a, b) => b.userDepositedLP - a.userDepositedLP || b.tvlStaked - a.tvlStaked
+      (a, b) =>
+        b.userDepositedLP - a.userDepositedLP ||
+        b.userLPBalance - a.userLPBalance ||
+        b.tvlStaked - a.tvlStaked
     );
   }
   return sortedData;
