@@ -46,11 +46,7 @@ const ListItem = ({
         key={pool.address}
         expandMoreIcon={<CompoundActionButton type={actionType} action={action} />}
         summary={<DetailItem item={pool} userBoost={userBoost} totalAPY={totalAPY} />}
-        details={
-          (actionType === "Details")
-            ? <CompoundListDetail item={pool} userBoost={userBoost} totalAPY={totalAPY} />
-            : null
-        }
+        details={ <CompoundListDetail item={pool} userBoost={userBoost} totalAPY={totalAPY} /> }
       />
       {modal.open && (
         <CompoundDialogs

@@ -123,12 +123,12 @@ const CompoundAndEarn = () => {
           item,
           null,
           item.userLPBalance,
-          item.userDepositedLP
+          item.usdValue
         );
         return actionType === 'Deposit';
       });
       const filteredDataWithDepositLP = filteredData.filter(
-        (item) => item.userDepositedLP > 0
+        (item) => item.usdValue > 0
       );
       filteredData = [
         ...filteredDataWithDepositLP,

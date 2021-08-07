@@ -74,6 +74,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
       <div className={classes.button}>
         <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
+          disabled={(item.userDepositedLP == 0)}
           onClick={() => {withdraw(item)}}
         >
           Withdraw
