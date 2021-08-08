@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { formatNumber } from 'utils/helpers/format';
+import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +44,7 @@ const Total = ({ item }) => {
     totalSupply: 0,
     valueEarned: 0,
     SNOBHarvestable: 0,
-    SNOBValue: 0
+    SNOBValue: 0,
   };
 
   if (userPools) {
@@ -54,12 +55,8 @@ const Total = ({ item }) => {
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
-          <Typography variant="h6">SNOB</Typography>
-          <Typography variant="h5">{formatNumber(userPool?.SNOBHarvestable || 0.00,3)}</Typography>
-        </div>
-        <div className={classes.container}>
-          <Typography variant="caption">Claimable</Typography>
-          <Typography variant="caption">(${formatNumber(userPool?.SNOBValue || 0.00,3)})</Typography>
+          <Typography variant="m6">SNOB (Claimable)</Typography>
+          <Typography variant="m5"><b>{formatNumber(userPool?.SNOBHarvestable || 0.00,3)}</b> (${formatNumber(userPool?.SNOBValue || 0.00,3)})</Typography>
         </div>
       </div>
 
@@ -73,6 +70,12 @@ const Total = ({ item }) => {
           <Typography variant="subtitle2">{formatNumber(
             (userPool?.userDepositedLP / (userPool?.totalSupply/1e18)) * 100 || 0.00,5)}%</Typography>
         </div>
+        {userPool?.underlyingTokens?<div className={classes.container}>
+          <Typography variant="body2">{userPool.underlyingTokens ? `Underlying tokens` : ``}</Typography> 
+           <Typography variant="subtitle2"> <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token0.address]} size={25} /> 
+             {formatNumber(userPool?.underlyingTokens?.token0.reserveOwned,3,true)} | <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token1.address]} size={25} />  
+             {formatNumber(userPool?.underlyingTokens?.token1.reserveOwned,3,true)} </Typography>
+        </div> : null}
         <div className={classes.container}>
         {/*  <Typography variant="body2" className={classes.boldSubtitle}>
             Total earned

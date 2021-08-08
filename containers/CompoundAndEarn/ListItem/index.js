@@ -9,6 +9,7 @@ import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
 import getUserBoost from 'utils/helpers/getUserBoost';
 import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
+import { formatNumber } from 'utils/helpers/format';
 
 const ListItem = ({
   pool
@@ -36,7 +37,10 @@ const ListItem = ({
     return boost;
   }, [selectedGauge, snowconeBalance, totalSnowcone]);
 
-  const totalAPY = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+  let totalAPY = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+  //limit APY to 1mil
+  totalAPY = totalAPY > 999999 ? 999999 : totalAPY;
+
   const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
 
   const [ actionType, action ] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
@@ -46,11 +50,7 @@ const ListItem = ({
         key={pool.address}
         expandMoreIcon={<CompoundActionButton type={actionType} action={action} />}
         summary={<DetailItem item={pool} userBoost={userBoost} totalAPY={totalAPY} />}
-        details={
-          (actionType === "Details")
-            ? <CompoundListDetail item={pool} userBoost={userBoost} totalAPY={totalAPY} />
-            : null
-        }
+        details={ <CompoundListDetail item={pool} userBoost={userBoost} totalAPY={totalAPY} /> }
       />
       {modal.open && (
         <CompoundDialogs
