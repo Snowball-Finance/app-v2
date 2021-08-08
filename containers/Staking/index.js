@@ -15,6 +15,7 @@ import SnowVote from './SnowVote'
 import SnowClaim from './SnowClaim'
 import VoteDistribution from './VoteDistribution'
 import { STAKING_TABS, STAKING_TABS_ARRAY } from 'utils/constants/staking-tabs'
+import BoostCalculator from './BoostCalculator'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,6 +79,9 @@ const Staking = () => {
                   <Grid item xs={12}>
                     <SnowClaim />
                   </Grid>
+                  <Grid item xs={12}>
+                    <BoostCalculator />
+                  </Grid>
                 </>
               )}
           </Grid>
@@ -112,7 +116,7 @@ const Staking = () => {
                   <VoteDistribution />
                 </Grid>
               )}
-          </Grid>
+        </Grid>
         }
       </div>
     </main>
