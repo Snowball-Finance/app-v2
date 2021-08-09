@@ -121,7 +121,7 @@ export function VoteContractProvider({ children }) {
       })
     }
     setLoading(false)
-  }, [account, library, governanceV2Contract, setPopUp])
+  }, [account, snowconeBalance, governanceV2Contract, setPopUp])
 
   return (
     <ContractContext.Provider

@@ -31,7 +31,7 @@ const maxDate = getDayOffset(new Date(), 365 * 2);
 const IncreaseTime = () => {
   const classes = useStyles();
   const { lockEndDate, increaseTime } = useStakingContract();
-  const today = new Date();
+  const today = useMemo(new Date(), []);
   const lockEndDateValue = dateFromEpoch(+(lockEndDate?.toString() || 0));
   const dateAfter = getDayOffset(today, 7);
 
@@ -131,7 +131,7 @@ const IncreaseTime = () => {
             type='submit'
           >
             {watchAllFields?.date < lockEndDateValue ? `Can't decrease your lockout` :
-             `Extend your lockout`}
+              `Extend your lockout`}
           </ContainedButton>
         </Grid>
       </Grid>
