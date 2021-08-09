@@ -9,7 +9,6 @@ import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
 import getUserBoost from 'utils/helpers/getUserBoost';
 import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
-import { formatNumber } from 'utils/helpers/format';
 
 const ListItem = ({
   pool
