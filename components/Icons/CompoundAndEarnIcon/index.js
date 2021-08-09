@@ -19,7 +19,7 @@ const CompoundAndEarnIcon = ({ className, viewBox, ...rest }) => {
       {...rest}
       className={clsx(classes.root, className)}
     >
-      <g clip-path="url(#clip0)">
+      <g clipPath="url(#clip0)">
         <path
           d="M3 6.92758C4.93828 1.99702 10.5271 -0.421619 15.4829 1.52541C18.5107 2.71493 20.6017 5.25872 21.3285 8.18237"
           stroke="#55535d"
@@ -71,11 +71,6 @@ const CompoundAndEarnIcon = ({ className, viewBox, ...rest }) => {
           strokeLinejoin="round"
         ></path>
       </g>
-      <defs>
-        <clipPath id="clip0">
-          <rect width="24" height="24" fill="white" />
-        </clipPath>
-      </defs>
     </SvgIcon>
   )
 }

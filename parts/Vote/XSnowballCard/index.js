@@ -4,6 +4,7 @@ import { Card, Typography } from '@material-ui/core'
 
 import CoinIcon from 'components/Icons/CoinIcon'
 import { useContracts } from 'contexts/contract-context'
+import { VOTE_POWER_BACKGROUND_IMAGE_PATH } from 'utils/constants/image-paths'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -11,6 +12,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     height: '100%',
     padding: theme.spacing(2),
+    backgroundImage: `url(${VOTE_POWER_BACKGROUND_IMAGE_PATH})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPositionX: 'right',
+    backgroundPositionY: 'bottom',
     backgroundColor: theme.custom.palette.blue
   },
   icon: {
