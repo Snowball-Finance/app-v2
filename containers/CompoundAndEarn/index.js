@@ -87,11 +87,14 @@ const CompoundAndEarn = () => {
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
       ? [...lastSnowballModifiedInfo]
-      : [...lastSnowballInfo];
+      : [...data?.LastSnowballInfo?.poolsInfo];
 
-    filterData = filterData.filter(
-      (item) => item.name.search(value.toUpperCase()) != -1
-    );
+    const splittedValue = value.split(' ');
+    splittedValue.forEach((spiltItem) => {
+      filterData = filterData.filter(
+        (item) => item.name.search(spiltItem.toUpperCase()) != -1
+      );
+    });
     setLastSnowballInfo(filterData);
     setSearch(value);
   };
