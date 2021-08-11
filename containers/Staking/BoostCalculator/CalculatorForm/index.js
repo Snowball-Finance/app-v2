@@ -1,7 +1,6 @@
 
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Grid } from '@material-ui/core'
-import { formatEther } from 'ethers/lib/utils'
 
 import { useStakingContract } from 'contexts/staking-context'
 import SnowSelect from 'components/UI/SnowSelect'
