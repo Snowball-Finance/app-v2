@@ -6,7 +6,7 @@ const JoePoolURL = 'https://www.traderjoexyz.com/#/pool/';
 
 const getProperAction = (item, setModal, balance, deposit = 0) => {
 	const token1 = item.token0.address == WAVAX ? "AVAX" : item.token0.address.toLowerCase();
-	const token2 = item.token1.address == WAVAX ? "AVAX" : item.token1.address.toLowerCase();
+	const token2 = item.token1.address == WAVAX ? "AVAX" : item.token1.address?.toLowerCase();
 
 	let action = [];
 	if (deposit > 0) {
@@ -16,8 +16,9 @@ const getProperAction = (item, setModal, balance, deposit = 0) => {
 	} else {
 		if (item.source == "Pangolin") {
 			action = ["Get_PGL", () => { window.open(`${PangolinPoolURL}${token1}/${token2}`) }];
-		} else if (item.source == "Trader Joe") {
-			if (item.name == "xJoe") {
+		} 
+		else if (item.source == "Trader Joe") {
+			if (item.name == "xJOE") {
 				action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
 			}
 			else {

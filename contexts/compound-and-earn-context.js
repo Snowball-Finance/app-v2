@@ -272,7 +272,6 @@ export function CompoundAndEarnProvider({ children }) {
           snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
         } else {
           snowglobeRatio = 1;
-          console.error(`Snowglobe ${item.address} has no stake`)
         }
 
         let balanceSnowglobe = await snowglobeContract.balanceOf(account) /1e18;
