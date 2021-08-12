@@ -56,7 +56,7 @@ const CompoundDialogs = ({
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
  
-  const { approve, deposit } = useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting } = useCompoundAndEarnContract();
 
   const calculatePercentage = (amount) => {
     return amount / (item?.userLPBalance/1e18) * 100;
@@ -102,6 +102,7 @@ const CompoundDialogs = ({
                 disableElevation
                 fullWidth
                 disabled={(approved) || (amount == 0)}
+                loading={isTransacting}
                 onClick={() => {setApproved(approve(item, amount))}}
               >
                 Approve

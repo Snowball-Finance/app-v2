@@ -20,6 +20,7 @@ const CompoundAndEarnContext = createContext(null);
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const [loading, setLoading] = useState(false);
+  const [isTransacting, setIsTransacting] = useState(false)
 
   const [userPools, setUserPools] = useState([]);
   const { gauges } = useContracts();
@@ -47,7 +48,6 @@ export function CompoundAndEarnProvider({ children }) {
       if (item.kind === "Stablevault") {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-
         return await _approve(vaultContract, gauge.address, amount)
       }
       else {
@@ -79,6 +79,7 @@ export function CompoundAndEarnProvider({ children }) {
 
   const _approve = (contract, spender, amount) => {
     return new Promise(async (resolve, reject) => {
+      setIsTransacting(true);
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
         const approval = await contract.approve(spender, amount);
@@ -88,9 +89,11 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Transaction Error',
             text: `Error Approving`
           });
+          setIsTransacting(false);
           reject(false);
         }
       }
+      setIsTransacting(false);
       resolve(true)
     })
   }
@@ -149,6 +152,8 @@ export function CompoundAndEarnProvider({ children }) {
         title: 'Transaction Error',
         text: `Error Depositing: ${error.message}`
       })
+    } finally {
+      setIsTransacting(false);
     }
   }
 
@@ -335,7 +340,7 @@ export function CompoundAndEarnProvider({ children }) {
   };
 
   return (
-    <CompoundAndEarnContext.Provider value={{ loading, approve, deposit, withdraw, claim, userPools }}>
+    <CompoundAndEarnContext.Provider value={{ loading, isTransacting, approve, deposit, withdraw, claim, userPools }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -347,7 +352,7 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const { loading, approve, deposit, withdraw, claim, userPools } = context;
+  const { loading, isTransacting, approve, deposit, withdraw, claim, userPools } = context;
 
-  return { loading, approve, deposit, withdraw, claim, userPools };
+  return { loading, isTransacting, approve, deposit, withdraw, claim, userPools };
 }
