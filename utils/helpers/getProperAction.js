@@ -17,7 +17,12 @@ const getProperAction = (item, setModal, balance, deposit = 0) => {
 		if (item.source == "Pangolin") {
 			action = ["Get_PGL", () => { window.open(`${PangolinPoolURL}${token1}/${token2}`) }];
 		} else if (item.source == "Trader Joe") {
-			action = ["Get_JLP", () => { window.open(`${JoePoolURL}${token1}/${token2}`) }];
+			if (item.name == "xJoe") {
+				action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
+			}
+			else {
+				action = ["Get_JLP", () => { window.open(`${JoePoolURL}${token1}/${token2}`) }];
+			}
 		} else if (item.name == "S3D (USDT-BUSD-DAI)") {
 			action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];
 		} else if (item.name == "S3F (FRAX-TUSD-USDT)") {

@@ -105,7 +105,7 @@ export function CompoundAndEarnProvider({ children }) {
     } 
 
     try {
-      if (item.kind !== "Stablevault") {
+      if (item.kind === "Snowglobe") {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const balance = await lpContract.balanceOf(account);
 
@@ -184,7 +184,7 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
 
-      if (item.kind !== "Stablevault") {
+      if (item.kind === "Snowglobe") {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
         if (snowglobeBalance.gt(0x00)) {
@@ -265,12 +265,14 @@ export function CompoundAndEarnProvider({ children }) {
         totalSupply = await snowglobeContract.totalSupply();
 
         var snowglobeRatio;
+
         //avoid safemath error
-        try {
+        let snowglobeTotalBalance = await snowglobeContract.balance();
+        if(snowglobeTotalBalance > 0) {
           snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
-        } catch (error) {
+        } else {
           snowglobeRatio = 1;
-          console.log('Snowglobe with no stake')
+          console.error(`Snowglobe ${item.address} has no stake`)
         }
 
         let balanceSnowglobe = await snowglobeContract.balanceOf(account) /1e18;
@@ -281,7 +283,13 @@ export function CompoundAndEarnProvider({ children }) {
         }
 
         userDepositedLP = (balanceSnowglobe * snowglobeRatio);
-        if(userDepositedLP > 0){
+        
+        
+        // WAMPA
+        if (item.name === "xJoe" && userDepositedLP > 0) {
+
+        } 
+        else if(userDepositedLP > 0){
           let reserves = await lpContract.getReserves();
           let totalSupplyPGL = await lpContract.totalSupply() /1e18;
           const r0 = reserves._reserve0 / 10 ** item.token0.decimals;

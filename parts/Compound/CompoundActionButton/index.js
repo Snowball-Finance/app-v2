@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
   Get_JLP: {
     backgroundColor: theme.custom.palette.joe_red
   },
+  Get_xJoe: {
+    backgroundColor: theme.custom.palette.joe_red
+  },
   Get_s3D: {
     backgroundColor: theme.custom.palette.s3d_blue
   },
@@ -34,7 +37,7 @@ const getIcon = (type) => {
   if (type == "Details") {
     return (<ArrowDropDownCircleIcon />);
   }
-  if (type == "Get_PGL" || type == "Get_JLP" || type == "Get_s3D" || type == "Get_s3F") {
+  if (type == "Get_PGL" || type == "Get_JLP" || type == "Get_xJoe" || type == "Get_s3D" || type == "Get_s3F") {
     return (<LaunchIcon />);
   }
   if (type == "Deposit") {
