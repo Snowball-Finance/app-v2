@@ -283,12 +283,7 @@ export function CompoundAndEarnProvider({ children }) {
 
         userDepositedLP = (balanceSnowglobe * snowglobeRatio);
         
-        
-        // WAMPA
-        if (item.name === "xJoe" && userDepositedLP > 0) {
-
-        } 
-        else if(userDepositedLP > 0){
+        if(userDepositedLP > 0 && item.name !== "xJoe"){
           let reserves = await lpContract.getReserves();
           let totalSupplyPGL = await lpContract.totalSupply() /1e18;
           const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
