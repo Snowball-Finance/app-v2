@@ -8,7 +8,6 @@ import GradientButton from 'components/UI/Buttons/GradientButton'
 import TokenTextField from 'components/UI/TextFields/TokenTextField'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
-import VaultAddLiquidityDialog from './VaultAddLiquidityDialog'
 import { useFormStyles } from 'styles/use-styles'
 import getVaultInfo from 'utils/helpers/getVaultInfo'
 
@@ -24,10 +23,6 @@ const AddLiquidityForm = ({
 
   const vaultInfo = getVaultInfo(vault)
   const [maxSlippage, setMaxSlippage] = useState(0.1);
-  const [liquidityData, setLiquidityData] = useState([]);
-  const [receivingValue, setReceivingValue] = useState({});
-  const [discount, setDiscount] = useState(0);
-  const [liquidityDialog, setLiquidityDialog] = useState(false);
 
   const { control, handleSubmit, setValue } = useForm();
 
@@ -56,20 +51,12 @@ const AddLiquidityForm = ({
       ]
     }
 
-    const { minToMintValue, discount } = await getDepositReview(liquidityData)
+    const { minToMintValue } = await getDepositReview(liquidityData)
     const receivingValue = {
       token: vault,
       value: minToMintValue
     }
 
-    setLiquidityData(liquidityData)
-    setReceivingValue(receivingValue)
-    setDiscount(discount)
-    setLiquidityDialog(true)
-  }
-
-  const addLiquidityHandler = async () => {
-    setLiquidityDialog(false)
     await addLiquidity(liquidityData, maxSlippage, receivingValue)
     for (const token of tokenArray) {
       setValue(`input${token.index}`, '')
@@ -120,17 +107,6 @@ const AddLiquidityForm = ({
           </Grid>
         </Grid>
       </form>
-      {liquidityDialog &&
-        <VaultAddLiquidityDialog
-          discount={discount}
-          liquidityData={liquidityData}
-          receivingValue={receivingValue}
-          maxSlippage={maxSlippage}
-          open={liquidityDialog}
-          setOpen={setLiquidityDialog}
-          onConfirm={addLiquidityHandler}
-        />
-      }
     </CardFormWrapper>
   )
 }
