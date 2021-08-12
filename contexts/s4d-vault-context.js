@@ -22,13 +22,13 @@ const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, 
 const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, provider)
 
 const tokenArray = [
-  { index: 0, name: 'DAI', priceId: 'dai', decimal: 18 },
+  { index: 0, name: 'DAI.e', priceId: 'dai', decimal: 18 },
   { index: 1, name: 'FRAX', priceId: 'frax', decimal: 18 },
   { index: 2, name: 'TUSD', priceId: 'tusd', decimal: 18 },
-  { index: 3, name: 'USDT', priceId: 'usdt', decimal: 6 }
+  { index: 3, name: 'USDT.e', priceId: 'usdt', decimal: 6 }
 ]
 
-const pairNames = 'DAI + FRAX + TUSD + USDT'
+const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
@@ -53,19 +53,19 @@ export function S4dVaultContractProvider({ children }) {
   const gaugeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.S4D.GAUGE, GAUGE_ABI, library.getSigner()) : null, [library])
   const tokenValues = useMemo(() => {
     return {
-      DAI: daiToken,
-      FRAX: fraxToken,
-      TUSD: tusdToken,
-      USDT: usdtToken
+      'DAI.e': daiToken,
+      'FRAX': fraxToken,
+      'TUSD': tusdToken,
+      'USDT.e': usdtToken
     }
   }, [daiToken, fraxToken, tusdToken, usdtToken]);
 
   const getTokenContract = (token) => {
     switch (token.name) {
-      case 'DAI': return daiContract;
+      case 'DAI.e': return daiContract;
       case 'FRAX': return fraxContract;
       case 'TUSD': return tusdContract;
-      case 'USDT': return usdtContract;
+      case 'USDT.e': return usdtContract;
       default: return daiContract;
     }
   }

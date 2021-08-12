@@ -20,6 +20,8 @@ const LP_ICONS = Object.freeze({
   VSO: '/assets/images/lp-icons/VSO.png',
   SPORE: '/assets/images/lp-icons/SPORE.png',
   JOE: '/assets/images/lp-icons/JOE.png',
+  'DAI.e': '/assets/images/lp-icons/DAI.png',
+  'USDT.e': '/assets/images/lp-icons/USDT.png',
   NoIcon: '/assets/images/no-image.png'
 })
 
