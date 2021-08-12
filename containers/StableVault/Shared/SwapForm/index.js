@@ -9,7 +9,6 @@ import GradientButton from 'components/UI/Buttons/GradientButton'
 import TokenTextField from 'components/UI/TextFields/TokenTextField'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
-import VaultSwapDialog from './VaultSwapDialog'
 import { BALANCE_VALID } from 'utils/constants/validations'
 import { isEmpty } from 'utils/helpers/utility'
 import getVaultInfo from 'utils/helpers/getVaultInfo'
@@ -35,7 +34,6 @@ const SwapForm = ({
   const [toToken, setToToken] = useState({});
   const [toSwap, setToSwap] = useState(0);
   const [maxSlippage, setMaxSlippage] = useState(0.1)
-  const [swapDialog, setSwapDialog] = useState(false);
 
   useEffect(() => {
     setFromToken(tokenArray[0])
@@ -71,7 +69,7 @@ const SwapForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromToken, toToken, fromSwap])
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (fromToken.name === toToken.name) {
       setPopUp({
         title: 'Alert',
@@ -79,18 +77,7 @@ const SwapForm = ({
       })
       return
     }
-    setSwapDialog(true)
-  }
 
-  const swapIconHandler = () => {
-    const newFromToken = toToken;
-    const newToToken = fromToken;
-    setFromToken(newFromToken)
-    setToToken(newToToken)
-  }
-
-  const onSwapHandler = async () => {
-    setSwapDialog(false)
     const params = {
       fromToken,
       toToken,
@@ -100,6 +87,13 @@ const SwapForm = ({
     }
     await onSwap(params)
     setValue('fromSwap', '')
+  }
+
+  const swapIconHandler = () => {
+    const newFromToken = toToken;
+    const newToToken = fromToken;
+    setFromToken(newFromToken)
+    setToToken(newToToken)
   }
 
   return (
@@ -162,16 +156,6 @@ const SwapForm = ({
           </Grid>
         </Grid>
       </form>
-      {swapDialog &&
-        <VaultSwapDialog
-          open={swapDialog}
-          setOpen={setSwapDialog}
-          onConfirm={onSwapHandler}
-          token={toToken}
-          value={toSwap}
-          maxSlippage={maxSlippage}
-        />
-      }
     </CardFormWrapper>
   )
 }
