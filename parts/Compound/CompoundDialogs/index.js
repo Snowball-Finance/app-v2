@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import clsx from 'clsx'
@@ -12,6 +12,9 @@ import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { ethers } from 'ethers';
 import { roundDown } from 'utils/helpers/utility';
+import { toast, ToastContainer } from 'react-toastify';
+import Toast from 'components/Toast';
+import SnowStepBox from 'components/SnowStepBox';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -56,7 +59,13 @@ const CompoundDialogs = ({
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
  
-  const { approve, deposit } = useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting, transactionStatus } = useCompoundAndEarnContract();
+
+  useEffect(() =>{
+    if(!isTransacting.deposit && !isTransacting.approve){
+      toast.dismiss();
+    }
+  }),[isTransacting];
 
   const calculatePercentage = (amount) => {
     return amount / (item?.userLPBalance/1e18) * 100;
@@ -65,6 +74,11 @@ const CompoundDialogs = ({
   const calculatedBalance = (value) => {
     return item?.userLPBalance.mul(value).div(100);
   };
+
+  const enabledHandler = (isApproved = false) => {
+    return (isApproved? approved : !approved) || (amount == 0) ||
+      isTransacting.approve || isTransacting.deposit;
+  }
 
   const inputHandler = (event) => {
     if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
@@ -101,8 +115,12 @@ const CompoundDialogs = ({
                 className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                disabled={(approved) || (amount == 0)}
-                onClick={() => {setApproved(approve(item, amount))}}
+                disabled={enabledHandler(true)}
+                loading={isTransacting.approve}
+                onClick={() => {
+                  toast(<Toast message={'Checking for approval...'}/>)
+                  setApproved(approve(item, amount))
+                }}
               >
                 Approve
               </ContainedButton>
@@ -112,11 +130,17 @@ const CompoundDialogs = ({
                 className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                disabled={!(approved) || (amount == 0)}
-                onClick={() => deposit(item, amount)}
+                disabled={enabledHandler(false)}
+                loading={isTransacting.deposit}
+                onClick={() => {
+                    toast(<Toast message={'Depositing your Tokens...'}/>)
+                    deposit(item, amount)
+                  }
+                }
               >
                 Deposit
               </GradientButton>
+              <ToastContainer position='top-right'/>
             </Grid>
           </>
         );
@@ -145,11 +169,11 @@ const CompoundDialogs = ({
         />
 
         <CompoundSlider value={slider} onChange={handleSliderChange} />
-
         <Grid container spacing={1} className={classes.buttonContainer}>
           {renderButton()}
         </Grid>
       </div>
+      <SnowStepBox transactionStatus={transactionStatus}/>
     </SnowDialog>
   );
 };

@@ -14,6 +14,9 @@ import SnowWeb3Provider from 'utils/hocs/SnowWeb3Provider'
 import ThemeProvider from 'utils/hocs/ThemeProvider'
 import * as COMMON_CONSTANTS from 'utils/constants/common'
 import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+  
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -61,6 +64,7 @@ function MyApp({ Component, pageProps }) {
                       <Layout>
                         <Component {...pageProps} />
                       </Layout>
+                      <ToastContainer />
                     </ContractProvider>
                   </PoolContractProvider>
                 </PriceProvider>
