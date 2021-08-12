@@ -15,7 +15,15 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const provider = new ethers.providers.getDefaultProvider('https://api.avax.network/ext/bc/C/rpc')
 
-const roundDown = (number, decimals = 18) => (Math.floor(parseFloat(number) * Math.pow(10, decimals)) / Math.pow(10, decimals))
+const roundDown = (value, decimals = 18) => {
+  const valueString = value.toString();
+  const integerString = valueString.split('.')[0];
+  const decimalsString = valueString.split('.')[1];
+  if (!decimalsString) {
+    return integerString
+  }
+  return `${integerString}.${decimalsString.slice(0, decimals)}`;
+}
 
 export {
   isServer,

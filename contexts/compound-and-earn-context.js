@@ -7,6 +7,7 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
+import LP_ABI from 'libs/abis/lp-token.json';
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
@@ -253,9 +254,10 @@ export function CompoundAndEarnProvider({ children }) {
     }
     setLoading(true);
     const dataWithPoolBalance = await Promise.all(pools.map(async (item) => {
+      const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
-      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue;
+      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens;
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address,
           SNOWGLOBE_ABI, library.getSigner());
@@ -277,7 +279,28 @@ export function CompoundAndEarnProvider({ children }) {
           SNOBHarvestable = gauge.harvestable / 1e18;
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
+
         userDepositedLP = (balanceSnowglobe * snowglobeRatio);
+        if(userDepositedLP > 0){
+          let reserves = await lpContract.getReserves();
+          let totalSupplyPGL = await lpContract.totalSupply() /1e18;
+          const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
+          const r1 = reserves._reserve1 / 10 ** item.token1.decimals;
+          let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
+          let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
+          underlyingTokens = {
+            token0:{
+              address:item.token0.address,
+              symbol:item.token0.symbol,
+              reserveOwned:reserve0Owned,
+            },
+            token1:{
+              address:item.token1.address,
+              symbol:item.token1.symbol,
+              reserveOwned:reserve1Owned,
+            }
+          }
+        }
       } else {
         if (gauge) {
           userDepositedLP = gauge.staked/1e18;
@@ -286,8 +309,6 @@ export function CompoundAndEarnProvider({ children }) {
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
       }
-
-      const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
       const userLPBalance =  BigNumber.from(await lpContract.balanceOf(account));
 
       return {
@@ -298,7 +319,8 @@ export function CompoundAndEarnProvider({ children }) {
         usdValue: (userDepositedLP) * item.pricePoolToken,
         totalSupply, 
         SNOBHarvestable,
-        SNOBValue
+        SNOBValue,
+        underlyingTokens
       };
     }));
     setLoading(false);

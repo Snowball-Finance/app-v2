@@ -60,8 +60,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
     <div className={classes.root}>
       <div className={classes.details}>
         <ApyCalculation
-          dailyAPR={item.dailyAPR}
-          yearlyAPY={item.yearlyAPY}
+          dailyAPR={item.dailyAPR > 999999?999999:item.dailyAPR}
+          yearlyAPY={item.yearlyAPY > 999999?999999:item.yearlyAPY}
           performanceFees={item.performanceFees}
         />
         <SnobAbyCalculation
@@ -74,6 +74,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
       <div className={classes.button}>
         <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
+          disabled={(item.userDepositedLP == 0)}
           onClick={() => {withdraw(item)}}
         >
           Withdraw

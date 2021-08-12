@@ -31,9 +31,9 @@ const maxDate = getDayOffset(new Date(), 365 * 2);
 const IncreaseTime = () => {
   const classes = useStyles();
   const { lockEndDate, increaseTime } = useStakingContract();
-  const today = new Date();
+  const now = new Date();
   const lockEndDateValue = dateFromEpoch(+(lockEndDate?.toString() || 0));
-  const dateAfter = getDayOffset(today, 7);
+  const dateAfter = getDayOffset(now, 7);
 
   const schema = yup.object().shape({
     date: DATE_VALID.test('date',
@@ -62,19 +62,19 @@ const IncreaseTime = () => {
     let newDate;
     switch (watchAllFields.duration) {
       case '1':
-        newDate = getDayOffset(today, 7);
+        newDate = getDayOffset(now, 7);
         break;
       case '2':
-        newDate = getDayOffset(today, 30);
+        newDate = getDayOffset(now, 30);
         break;
       case '3':
-        newDate = getDayOffset(today, 364);
+        newDate = getDayOffset(now, 364);
         break;
       case '4':
-        newDate = getDayOffset(today, 365 * 2);
+        newDate = getDayOffset(now, 365 * 2);
         break;
       default:
-        newDate = getDayOffset(today, 7);
+        newDate = getDayOffset(now, 7);
         break;
     }
     setValue('date', newDate > maxDate ? maxDate : newDate);
@@ -82,6 +82,7 @@ const IncreaseTime = () => {
   }, [watchAllFields.duration]);
 
   const displayLockTime = useMemo(() => {
+    const today = new Date();
     const lockingWeeks = getWeekDiff(today, (watchAllFields?.date || dateAfter));
     let resultStr;
 
@@ -94,7 +95,7 @@ const IncreaseTime = () => {
       resultStr = `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
     }
     return resultStr;
-  }, [watchAllFields?.date, today, dateAfter])
+  }, [watchAllFields?.date, dateAfter])
 
   return (
     <form
@@ -131,7 +132,7 @@ const IncreaseTime = () => {
             type='submit'
           >
             {watchAllFields?.date < lockEndDateValue ? `Can't decrease your lockout` :
-             `Extend your lockout`}
+              `Extend your lockout`}
           </ContainedButton>
         </Grid>
       </Grid>

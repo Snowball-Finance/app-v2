@@ -1,7 +1,6 @@
 
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Grid } from '@material-ui/core'
-import { formatEther } from 'ethers/lib/utils'
 
 import { useStakingContract } from 'contexts/staking-context'
 import SnowSelect from 'components/UI/SnowSelect'
@@ -10,45 +9,51 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton'
 
 const CalculatorForm = ({
   setBoostFactor,
-  setXSnobRequired,
-  setSelectedGauge
+  setXSnobRequired
 }) => {
   const { snowconeBalance, totalSupply, gauges } = useStakingContract();
 
-  const [token, setToken] = useState('')
-  const [balance, setBalance] = useState(0)
-  const [totalBalance, setTotalBalance] = useState(0)
-
-  const xSnobValue = useMemo(() => formatEther(snowconeBalance?.toString() || '0'), [snowconeBalance]);
+  const [token, setToken] = useState('');
+  const [balance, setBalance] = useState(0);
+  const [supplyGauge, setSupplyGauge] = useState(0);
+  const [userxSNOB, setUserxSNOB] = useState(0);
+  const [selectedGauge, setSelectedGauge] = useState(undefined);
 
   useEffect(() => {
     if (token) {
-      const selectedGauge = gauges.find((item) => item.token === token);
-      setSelectedGauge(selectedGauge)
+      const gauge = gauges.find((item) => item.token === token);
+      if (gauge) {
+        setSelectedGauge(gauge);
 
-      const balance = +formatEther(selectedGauge.balance.add(selectedGauge.staked));
-      const balanceUSD = (balance * selectedGauge.usdPerToken);
-      setBalance(balanceUSD);
-
-      const totalBalance = parseFloat(selectedGauge.totalSupply * selectedGauge.usdPerToken);
-      console.log(totalBalance)
-      setTotalBalance(totalBalance)
+        setBalance(gauge.staked / 1e18);
+        setSupplyGauge(gauge.totalSupply / 1e18);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [token]);
+
+  useEffect(() => {
+    setUserxSNOB(snowconeBalance/1e18);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snowconeBalance]);
 
   const onCalculate = async () => {
     try {
-      const xSnobTotalSupply = parseFloat(formatEther(totalSupply || 0));
-      const xSnobRatio = xSnobTotalSupply ? +snowconeBalance / (xSnobTotalSupply || 1) : 0;
+      if(balance > 0 && userxSNOB > 0){
+        const xSnobTotalSupply = totalSupply / 1e18;
 
-      const _derived = balance * 0.4;
-      const _adjusted = +totalBalance * xSnobRatio * 0.6;
-      const boostFactor = balance ? Math.min(balance, _derived + _adjusted) / (balance * 0.4) : 0;
-      const xSnobRequired = totalBalance ? ((balance - _derived) * xSnobTotalSupply) / (+totalBalance * 0.6) : 0;
+        const DB = balance * 0.4;
+        const AB = ((supplyGauge * userxSNOB) / (totalSupply / 1e18)) * 0.6;
+        const boostFactor = Math.min(DB + AB, balance) / DB;
 
-      setBoostFactor(boostFactor);
-      setXSnobRequired(xSnobRequired);
+        const xSnobRequired = supplyGauge ? ((balance - DB) * xSnobTotalSupply) / (+supplyGauge * 0.6) : 0;
+
+        setBoostFactor(boostFactor);
+        setXSnobRequired(xSnobRequired);
+      }else{
+        setBoostFactor(1);
+        setXSnobRequired(0);
+      }
     } catch (error) {
       console.log(error)
     }
@@ -59,8 +64,8 @@ const CalculatorForm = ({
       <Grid item xs={12}>
         <SnowSelect
           name='token'
-          label='Token'
-          placeholder='Select Token'
+          label='Gauge'
+          placeholder='Select Gauge'
           items={gauges}
           value={token}
           onChange={(e) => setToken(e.target.value)}
@@ -78,25 +83,18 @@ const CalculatorForm = ({
       </Grid>
       <Grid item xs={12}>
         <SnowTextField
-          readOnly
-          name='total'
-          label='Total'
-          placeholder='Total'
-          value={totalBalance}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <SnowTextField
           type='number'
           name='xSnob'
           label='xSNOB'
           placeholder='xSNOB'
-          value={xSnobValue}
+          value={userxSNOB}
+          onChange={(e) => setUserxSNOB(e.target.value)}
         />
       </Grid>
       <Grid item xs={12}>
         <ContainedButton
           fullWidth
+          disabled={!selectedGauge || balance <= 0 || userxSNOB <= 0}
           onClick={onCalculate}
         >
           Calculate

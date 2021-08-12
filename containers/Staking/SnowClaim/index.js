@@ -15,7 +15,7 @@ const SnowClaim = () => {
     userClaimable
   } = useStakingContract();
 
-  const {loading,error,data} = useQuery(CURRENT_DISTRIBUTION_PHASE);
+  const { data } = useQuery(CURRENT_DISTRIBUTION_PHASE);
 
   const claimable = useMemo(() =>
     userClaimable ? parseFloat(formatEther(userClaimable)) : null
