@@ -46,7 +46,7 @@ const useGauge = ({
           const { token0 = {}, token1 = {} } = getGaugeInfo(token);
           const gaugeTokenContract = new ethers.Contract(token, GAUGE_TOKEN_ABI, library.getSigner())
           const aTokenContract = new ethers.Contract(token0.address, GAUGE_TOKEN_ABI, library.getSigner())
-          const bTokenContract = new ethers.Contract(token1.address, GAUGE_TOKEN_ABI, library.getSigner())
+          const bTokenContract = token.address ? new ethers.Contract(token1.address, GAUGE_TOKEN_ABI, library.getSigner()) : null
           const gaugeContract = new ethers.Contract(gaugeAddresses[index], GAUGE_ABI, library.getSigner())
           return [
             gaugeProxyContract.weights(token),
@@ -59,7 +59,7 @@ const useGauge = ({
             gaugeProxyContract.votes(account, token),
             gaugeProxyContract.usedWeights(account),
             aTokenContract.balanceOf(token),
-            bTokenContract.balanceOf(token),
+            bTokenContract?.balanceOf(token),
             gaugeTokenContract.totalSupply(),
             gaugeTokenContract.balanceOf(CONTRACTS.ICE_QUEEN),
           ]
@@ -85,13 +85,13 @@ const useGauge = ({
           ? (rewardRate / derivedSupply) * 3600 * 24 * 365
           : Number.POSITIVE_INFINITY
         const gauge = getGaugeInfo(token);
-        const { totalValueOfPair, pricePerToken } = getPairDataPrefill(
+        const { totalValueOfPair, pricePerToken } = numBInPair ? getPairDataPrefill(
           prices,
           gauge,
           numAInPairBN,
           numBInPair,
           totalSupplyBN
-        )
+        ) : () => { return (null, null) }
 
         const numTokensInPool = parseFloat(ethers.utils.formatEther(iceQueenPairSupply))
         const valueStakedInGauge = pricePerToken * numTokensInPool

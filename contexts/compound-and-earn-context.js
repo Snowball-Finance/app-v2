@@ -63,7 +63,6 @@ export function CompoundAndEarnProvider({ children }) {
           //fix to safemath if snowglobe is empty
           snowglobeRatio = ethers.utils.parseUnits("1.1");
         }
-
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
@@ -257,10 +256,10 @@ export function CompoundAndEarnProvider({ children }) {
       const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
-      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens;
+      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens, userLPBalance;
+      userLPBalance = await lpContract.balanceOf(account) / 1e18
       if (item.kind === 'Snowglobe') {
-        const snowglobeContract = new ethers.Contract(item.address,
-          SNOWGLOBE_ABI, library.getSigner());
+        const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
 
         totalSupply = await snowglobeContract.totalSupply();
 
@@ -282,6 +281,7 @@ export function CompoundAndEarnProvider({ children }) {
         }
 
         userDepositedLP = (balanceSnowglobe * snowglobeRatio);
+        userLPBalance += userDepositedLP;
         
         if(userDepositedLP > 0 && item.name !== "xJoe"){
           let reserves = await lpContract.getReserves();
@@ -311,7 +311,7 @@ export function CompoundAndEarnProvider({ children }) {
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
       }
-      const userLPBalance =  BigNumber.from(await lpContract.balanceOf(account));
+      
 
       return {
         ...item,
