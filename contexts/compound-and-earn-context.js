@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { BigNumber, ethers } from 'ethers';
+import {  ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 
 import { IS_MAINNET } from 'config';
@@ -63,6 +63,7 @@ export function CompoundAndEarnProvider({ children }) {
           //fix to safemath if snowglobe is empty
           snowglobeRatio = ethers.utils.parseUnits("1.1");
         }
+        amount = ethers.utils.parseUnits(amount.toString());
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
@@ -107,7 +108,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (item.kind === "Snowglobe") {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const balance = await lpContract.balanceOf(account);
-
+        amount = ethers.utils.parseUnits(amount.toString());
         amount = amount.gt(balance) ? balance : amount
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
         const snowglobeDeposit = await snowglobeContract.deposit(amount);
