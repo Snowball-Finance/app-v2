@@ -111,14 +111,16 @@ export function CompoundAndEarnProvider({ children }) {
         amount = ethers.utils.parseUnits(amount.toString());
         amount = amount.gt(balance) ? balance : amount
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-        const snowglobeDeposit = await snowglobeContract.deposit(amount);
-        const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
-        if (!transactionSnowglobeDeposit.status) {
-          setPopUp({
-            title: 'Transaction Error',
-            text: `Error depositing into Snowglobe`
-          });
-          return;
+        if (amount > 0) {
+          const snowglobeDeposit = await snowglobeContract.deposit(amount);
+          const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
+          if (!transactionSnowglobeDeposit.status) {
+            setPopUp({
+              title: 'Transaction Error',
+              text: `Error depositing into Snowglobe`
+            });
+            return;
+          }
         }
 
         amount = await snowglobeContract.balanceOf(account);
@@ -259,6 +261,7 @@ export function CompoundAndEarnProvider({ children }) {
         item.gaugeInfo.address.toLowerCase());
       let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens, userLPBalance;
       userLPBalance = await lpContract.balanceOf(account) / 1e18
+
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
 
@@ -274,16 +277,17 @@ export function CompoundAndEarnProvider({ children }) {
           snowglobeRatio = 1;
         }
 
-        let balanceSnowglobe = await snowglobeContract.balanceOf(account) /1e18;
+        let balanceSnowglobe = await snowglobeContract.balanceOf(account) / 1e18;
+
+        userLPBalance += (balanceSnowglobe * snowglobeRatio);
+
+        userDepositedLP = balanceSnowglobe * snowglobeRatio;
         if (gauge) {
-          balanceSnowglobe += gauge.staked/1e18;
+          userDepositedLP += (gauge.staked / 1e18) * snowglobeRatio;
           SNOBHarvestable = gauge.harvestable / 1e18;
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
 
-        userDepositedLP = (balanceSnowglobe * snowglobeRatio);
-        userLPBalance += userDepositedLP;
-        
         if(userDepositedLP > 0 && item.name !== "xJOE"){
           let reserves = await lpContract.getReserves();
           let totalSupplyPGL = await lpContract.totalSupply() /1e18;
