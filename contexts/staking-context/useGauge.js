@@ -46,7 +46,7 @@ const useGauge = ({
           const { token0 = {}, token1 = {} } = getGaugeInfo(token);
           const gaugeTokenContract = new ethers.Contract(token, GAUGE_TOKEN_ABI, library.getSigner())
           const aTokenContract = new ethers.Contract(token0.address, GAUGE_TOKEN_ABI, library.getSigner())
-          const bTokenContract = token.address ? new ethers.Contract(token1.address, GAUGE_TOKEN_ABI, library.getSigner()) : null
+          const bTokenContract = token1.address ? new ethers.Contract(token1.address, GAUGE_TOKEN_ABI, library.getSigner()) : null
           const gaugeContract = new ethers.Contract(gaugeAddresses[index], GAUGE_ABI, library.getSigner())
           return [
             gaugeProxyContract.weights(token),
