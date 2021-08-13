@@ -69,6 +69,7 @@ const VoteForAction = ({
           className={classes.voteButton}
           size='small'
           disableElevation
+          disabled={proposal.state !== 'Active'}
           endIcon={<VoteForIcon />}
           onClick={() => voteProposal(proposal, true)}
         >

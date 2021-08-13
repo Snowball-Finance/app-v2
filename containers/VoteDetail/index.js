@@ -14,6 +14,7 @@ import VoteForAction from './VoteForAction'
 import VoteAgainstAction from './VoteAgainstAction'
 import VoteDetailInfo from './VoteDetailInfo'
 import VoteChange from './VoteChange'
+import VoteMetaInfo from './VoteMetaInfo'
 import { isEmpty } from 'utils/helpers/utility'
 import LINKS from 'utils/constants/links'
 
@@ -65,9 +66,11 @@ const VoteDetail = () => {
             <Grid item xs={12} md={4}>
               <XSnowballCard />
             </Grid>
-            <Grid item xs={12}>
-              <VoteChange proposal={proposal} />
-            </Grid>
+            {proposal.state === 'Active' &&
+              <Grid item xs={12}>
+                <VoteChange proposal={proposal} />
+              </Grid>
+            }
             <Grid item xs={12} md={6}>
               <VoteForAction proposal={proposal} />
             </Grid>
@@ -76,6 +79,9 @@ const VoteDetail = () => {
             </Grid>
             <Grid item xs={12} md={8}>
               <VoteDetailInfo proposal={proposal} />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <VoteMetaInfo proposal={proposal} />
             </Grid>
           </>
         }

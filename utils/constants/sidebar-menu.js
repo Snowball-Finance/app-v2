@@ -27,10 +27,10 @@ const SIDEBAR_MENU = [
     ICON: Download,
     ...LINKS.STAKING
   },
-  //{
-  //  ICON: VoteIcon,
-  //  ...LINKS.VOTE
-  //},
+  {
+    ICON: VoteIcon,
+    ...LINKS.VOTE
+  },
   {
     ICON: NftMarketplaceIcon,
     ...LINKS.NFT_MARKETPLACE
