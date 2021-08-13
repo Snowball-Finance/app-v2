@@ -10,6 +10,8 @@ import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
 
 import Details from './Details';
+import { ethers } from 'ethers';
+import { roundDown } from 'utils/helpers/utility';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -50,27 +52,34 @@ const CompoundDialogs = ({
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
+  const [inputAmount, setinputAmount] = useState(0);
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
  
   const { approve, deposit } = useCompoundAndEarnContract();
 
   const calculatePercentage = (amount) => {
-    return (amount / item?.userLPBalance) * 100;
+    return amount / (item?.userLPBalance/1e18) * 100;
   };
 
   const calculatedBalance = (value) => {
-    return (item?.userLPBalance * value) / 100;
+    return item?.userLPBalance.mul(value).div(100);
   };
 
   const inputHandler = (event) => {
-    const percentage = calculatePercentage(event.target.value);
-    if (item?.userLPBalance >= event.target.value) {
-      setAmount(event.target.value);
-      setSlider(percentage);
-      setError(null);
-    } else {
-      setError(`Can't exceed the max limit`);
+    if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
+      const percentage = calculatePercentage(event.target.value);
+      if (item?.userLPBalance/1e18 >= event.target.value) {
+        setinputAmount(event.target.value);
+        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
+        setSlider(percentage);
+        setError(null);
+      } else {
+        setError(`Can't exceed the max limit`);
+      }
+    }else{
+      setAmount(ethers.BigNumber.from(0));
+      setinputAmount(0);
     }
   };
 
@@ -78,6 +87,7 @@ const CompoundDialogs = ({
     const usedBalance = calculatedBalance(value);
     setSlider(value);
     setAmount(usedBalance);
+    setinputAmount(usedBalance/1e18);
   };
 
   const renderButton = () => {
@@ -90,7 +100,7 @@ const CompoundDialogs = ({
                 className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                disabled={(approved)}
+                disabled={(approved) || (amount == 0)}
                 onClick={() => {setApproved(approve(item, amount))}}
               >
                 Approve
@@ -101,7 +111,7 @@ const CompoundDialogs = ({
                 className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                disabled={!(approved)}
+                disabled={!(approved) || (amount == 0)}
                 onClick={() => deposit(item, amount)}
               >
                 Deposit
@@ -128,7 +138,7 @@ const CompoundDialogs = ({
       <div className={classes.container}>
         <Details
           item={item}
-          amount={amount}
+          amount={inputAmount}
           inputHandler={inputHandler}
           error={error}
         />
