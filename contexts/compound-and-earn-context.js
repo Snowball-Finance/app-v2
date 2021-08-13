@@ -284,7 +284,7 @@ export function CompoundAndEarnProvider({ children }) {
         userDepositedLP = (balanceSnowglobe * snowglobeRatio);
         userLPBalance += userDepositedLP;
         
-        if(userDepositedLP > 0 && item.name !== "xJoe"){
+        if(userDepositedLP > 0 && item.name !== "xJOE"){
           let reserves = await lpContract.getReserves();
           let totalSupplyPGL = await lpContract.totalSupply() /1e18;
           const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
