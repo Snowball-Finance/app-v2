@@ -63,7 +63,7 @@ export function CompoundAndEarnProvider({ children }) {
           //fix to safemath if snowglobe is empty
           snowglobeRatio = ethers.utils.parseUnits("1.1");
         }
-        amount = ethers.utils.parseUnits(amount.toString());
+        
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
@@ -108,7 +108,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (item.kind === "Snowglobe") {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const balance = await lpContract.balanceOf(account);
-        amount = ethers.utils.parseUnits(amount.toString());
+        
         amount = amount.gt(balance) ? balance : amount
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
         if (amount > 0) {
@@ -128,7 +128,7 @@ export function CompoundAndEarnProvider({ children }) {
       else {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const balance = await vaultContract.balanceOf(account);
-        amount = ethers.utils.parseEther(amount.toString());
+        
         amount = amount.gt(balance) ? balance : amount
       }
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
@@ -260,7 +260,7 @@ export function CompoundAndEarnProvider({ children }) {
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
       let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens, userLPBalance;
-      userLPBalance = await lpContract.balanceOf(account) / 1e18
+      userLPBalance = await lpContract.balanceOf(account);
 
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
@@ -272,18 +272,18 @@ export function CompoundAndEarnProvider({ children }) {
         //avoid safemath error
         let snowglobeTotalBalance = await snowglobeContract.balance();
         if(snowglobeTotalBalance > 0) {
-          snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
+          snowglobeRatio = (await snowglobeContract.getRatio());
         } else {
-          snowglobeRatio = 1;
+          snowglobeRatio = ethers.utils.parseUnits("1");
         }
 
-        let balanceSnowglobe = await snowglobeContract.balanceOf(account) / 1e18;
+        let balanceSnowglobe = await snowglobeContract.balanceOf(account);
 
-        userLPBalance += (balanceSnowglobe * snowglobeRatio);
+        userLPBalance.add(balanceSnowglobe.mul(snowglobeRatio));
 
-        userDepositedLP = balanceSnowglobe * snowglobeRatio;
+        userDepositedLP = (balanceSnowglobe/1e18) * (snowglobeRatio/1e18);
         if (gauge) {
-          userDepositedLP += (gauge.staked / 1e18) * snowglobeRatio;
+          userDepositedLP += (gauge.staked / 1e18) * (snowglobeRatio/1e18);
           SNOBHarvestable = gauge.harvestable / 1e18;
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
@@ -321,7 +321,7 @@ export function CompoundAndEarnProvider({ children }) {
       return {
         ...item,
         address: item.address,
-        userLPBalance: userLPBalance,
+        userLPBalance,
         userDepositedLP: userDepositedLP,
         usdValue: (userDepositedLP) * item.pricePoolToken,
         totalSupply, 
