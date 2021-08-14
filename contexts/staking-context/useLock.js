@@ -2,11 +2,9 @@ import { useState, useEffect, useMemo } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { parseEther } from 'ethers/lib/utils'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3'
 
 import { CONTRACTS } from 'config'
-import { isEmpty, delay } from 'utils/helpers/utility'
+import { isEmpty } from 'utils/helpers/utility'
 import { getEpochSecondForDay } from 'utils/helpers/date'
 
 const useLock = ({
@@ -84,50 +82,21 @@ const useLock = ({
   const createLock = async (data) => {
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
-      const amount = parseEther((data.balance).toString());
-      const { hash: snowballHash } = await snowballContract.approve(CONTRACTS.SNOWCONE, amount);
-
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(snowballHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (!tx.status) {
+      const { balance, date } = data
+      const amount = parseEther((balance).toString());
+      const tokenApprove = await snowballContract.approve(CONTRACTS.SNOWCONE, amount);
+      const transactionApprove = await tokenApprove.wait(1)
+      if (!transactionApprove.status) {
         setLoading(false)
         return;
       }
 
-      const gasLimit = await snowconeContract.estimateGas.create_lock(
-        amount,
-        getEpochSecondForDay(new Date(data.date)),
-      );
-      const { hash: snowconeHash } = await snowconeContract.create_lock(
-        amount,
-        getEpochSecondForDay(new Date(data.date)),
-        { gasLimit },
-      );
+      const lockedDate = getEpochSecondForDay(new Date(date))
+      const gasLimit = await snowconeContract.estimateGas.create_lock(amount, lockedDate);
+      const tokenLock = await snowconeContract.create_lock(amount, lockedDate, { gasLimit });
+      const transactionLock = await tokenLock.wait(1)
 
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(snowconeHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionLock.status) {
         await getSnowballInfo();
         await getSnowconeInfo();
       }
@@ -140,46 +109,19 @@ const useLock = ({
   const increaseAmount = async (data) => {
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       const amount = parseEther((data.balance).toString());
-      const { hash: snowballHash } = await snowballContract.approve(CONTRACTS.SNOWCONE, amount);
-
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(snowballHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (!tx.status) {
+      const tokenApprove = await snowballContract.approve(CONTRACTS.SNOWCONE, amount);
+      const transactionApprove = await tokenApprove.wait(1)
+      if (!transactionApprove.status) {
         setLoading(false)
         return;
       }
 
       const gasLimit = await snowconeContract.estimateGas.increase_amount(amount);
-      const { hash: snowconeHash } = await snowconeContract.increase_amount(
-        amount,
-        { gasLimit },
-      );
+      const tokenIncrease = await snowconeContract.increase_amount(amount, { gasLimit });
+      const transactionIncrease = await tokenIncrease.wait(1)
 
-      loop = true;
-      tx = null;
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(snowconeHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionIncrease.status) {
         await getSnowballInfo();
         await getSnowconeInfo();
       }
@@ -192,29 +134,12 @@ const useLock = ({
   const increaseTime = async (data) => {
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
+      const lockedDate = getEpochSecondForDay(new Date(data.date))
+      const gasLimit = await snowconeContract.estimateGas.increase_unlock_time(lockedDate);
+      const tokenIncrease = await snowconeContract.increase_unlock_time(lockedDate, { gasLimit });
+      const transactionIncrease = await tokenIncrease.wait(1)
 
-      const gasLimit = await snowconeContract.estimateGas.increase_unlock_time(
-        getEpochSecondForDay(new Date(data.date))
-      );
-      const { hash: snowconeHash } = await snowconeContract.increase_unlock_time(
-        getEpochSecondForDay(new Date(data.date)),
-        { gasLimit },
-      );
-
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(snowconeHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionIncrease.status) {
         await getSnowballInfo();
         await getSnowconeInfo();
       }
@@ -227,26 +152,11 @@ const useLock = ({
   const withdraw = async () => {
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider();
-      const web3 = new Web3(ethereumProvider);
-
       const gasLimit = await snowconeContract.estimateGas.withdraw();
-      const { hash: snowconeHash } = await snowconeContract.withdraw(
-        { gasLimit }
-      );
+      const tokenWithdraw = await snowconeContract.withdraw({ gasLimit });
+      const transactionWithdraw = await tokenWithdraw.wait(1)
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(snowconeHash);
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionWithdraw.status) {
         await getSnowballInfo();
         await getSnowconeInfo();
       }

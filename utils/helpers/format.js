@@ -8,10 +8,14 @@ export const formatAPY = (apy) => {
   return apy.toFixed(2) + "%";
 };
 
-export const formatNumber = (num, precision) =>
-  num &&
-  (num.toLocaleString(undefined, {
-    minimumFractionDigits: precision || 2,
-    maximumFractionDigits: precision || 2,
-  }) ||
-    0);
+export const formatNumber = (num, precision, exponencial = false) =>
+ num ?
+    //exponencial for numbers too big/too small
+    (exponencial && (num > 10 ** 5 || num < 1e-3)) ?
+      Number(num).toExponential(5)
+    :
+      num.toLocaleString(undefined, {
+        minimumFractionDigits: precision || 2,
+        maximumFractionDigits: precision || 2})
+  :
+    0;

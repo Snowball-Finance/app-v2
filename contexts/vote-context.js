@@ -1,8 +1,6 @@
-import { createContext, useState, useContext, useMemo } from 'react'
+import { createContext, useState, useContext, useMemo, useCallback } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3'
 import { useQuery } from '@apollo/client'
 
 import { CONTRACTS } from 'config'
@@ -27,7 +25,7 @@ export function VoteContractProvider({ children }) {
     return activeArray || []
   }, [proposals]);
 
-  const voteProposal = async (proposal, isFor = true) => {
+  const voteProposal = useCallback(async (proposal, isFor = true) => {
     if (proposal.state !== 'Active') {
       setPopUp({
         title: 'Proposal Error',
@@ -54,25 +52,12 @@ export function VoteContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider()
-      const web3 = new Web3(ethereumProvider)
-
       const { origin } = proposal;
       const governanceContract = new ethers.Contract(origin, GOVERNANCE_ABI, library.getSigner())
-      const { hash } = await governanceContract.vote(proposal.offset, isFor)
+      const proposalVote = await governanceContract.vote(proposal.offset, isFor)
+      const transactionVote = await proposalVote.wait(1)
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(hash)
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionVote.status) {
         setPopUp({
           title: 'Success',
           text: `You vote this proposal successfully`
@@ -85,9 +70,9 @@ export function VoteContractProvider({ children }) {
       })
     }
     setLoading(false)
-  }
+  }, [account, library, snowconeBalance, setPopUp])
 
-  const createProposal = async ({
+  const createProposal = useCallback(async ({
     title,
     metadata,
     votingPeriod,
@@ -113,12 +98,7 @@ export function VoteContractProvider({ children }) {
 
     setLoading(true)
     try {
-      let loop = true
-      let tx = null
-      const ethereumProvider = await detectEthereumProvider()
-      const web3 = new Web3(ethereumProvider)
-
-      const { hash } = await governanceV2Contract.propose(
+      const votePropose = await governanceV2Contract.propose(
         title,
         metadata,
         votingPeriod,
@@ -126,17 +106,9 @@ export function VoteContractProvider({ children }) {
         value,
         data
       )
+      const transactionPropose = await votePropose.wait(1)
 
-      while (loop) {
-        tx = await web3.eth.getTransactionReceipt(hash)
-        if (isEmpty(tx)) {
-          await delay(300)
-        } else {
-          loop = false
-        }
-      }
-
-      if (tx.status) {
+      if (transactionPropose.status) {
         setPopUp({
           title: 'Success',
           text: `You vote this proposal successfully`
@@ -149,7 +121,7 @@ export function VoteContractProvider({ children }) {
       })
     }
     setLoading(false)
-  }
+  }, [account, snowconeBalance, governanceV2Contract, setPopUp])
 
   return (
     <ContractContext.Provider

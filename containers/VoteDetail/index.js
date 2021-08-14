@@ -1,17 +1,21 @@
 
 import { memo, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Grid, Typography } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { useRouter } from 'next/router'
+import { ArrowLeft } from 'react-feather'
 
 import { useVoteContract } from 'contexts/vote-context'
+import LinkButton from 'components/UI/Buttons/LinkButton'
 import PageHeader from 'parts/PageHeader'
 import XSnowballCard from 'parts/Vote/XSnowballCard'
 import VoteDetailHeader from './VoteDetailHeader'
 import VoteForAction from './VoteForAction'
 import VoteAgainstAction from './VoteAgainstAction'
 import VoteDetailInfo from './VoteDetailInfo'
+import VoteChange from './VoteChange'
 import { isEmpty } from 'utils/helpers/utility'
+import LINKS from 'utils/constants/links'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,6 +28,12 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: theme.custom.layout.maxDesktopWidth,
     marginTop: theme.spacing(2)
+  },
+  backLink: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    textDecoration: 'unset'
   }
 }));
 
@@ -43,9 +53,9 @@ const VoteDetail = () => {
       />
       <Grid container spacing={2} className={classes.container}>
         <Grid item xs={12}>
-          <Typography variant='body1'>
-            {`Proposal #${router?.query?.proposal || 0} details`}
-          </Typography>
+          <LinkButton className={classes.backLink} href={LINKS.VOTE.HREF}>
+            <ArrowLeft size={20} /> Go back to all proposals
+          </LinkButton>
         </Grid>
         {!isEmpty(proposal) &&
           <>
@@ -54,6 +64,9 @@ const VoteDetail = () => {
             </Grid>
             <Grid item xs={12} md={4}>
               <XSnowballCard />
+            </Grid>
+            <Grid item xs={12}>
+              <VoteChange proposal={proposal} />
             </Grid>
             <Grid item xs={12} md={6}>
               <VoteForAction proposal={proposal} />

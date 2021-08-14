@@ -47,7 +47,7 @@ const SingleSideItem = ({
         className={clsx(classes.menuHover, { [classes.selected]: isSelect })}
       >
         <ListItemIcon className={classes.itemIcon}>
-          <sidebar.ICON color="black" size={18}/>
+          <sidebar.ICON size={18} />
         </ListItemIcon>
         <ListItemText primary={sidebar.TITLE} />
       </ListItemLink>

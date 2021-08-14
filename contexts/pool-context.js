@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, useCallback, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { LAST_SNOWBALL_INFO } from 'api/init/queries'
@@ -8,10 +8,10 @@ const ContractContext = createContext(null)
 export function PoolContractProvider({ children }) {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = useQuery(LAST_SNOWBALL_INFO);
 
-  const getGaugeInfo = (address) => {
+  const getGaugeInfo = useCallback((address) => {
     const gauge = pools.find((pool) => pool.address.toLowerCase() === address.toLowerCase());
     return gauge;
-  }
+  }, [pools])
 
   return (
     <ContractContext.Provider

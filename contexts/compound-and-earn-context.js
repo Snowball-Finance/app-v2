@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { BigNumber, ethers } from 'ethers';
+import {  ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 
 import { IS_MAINNET } from 'config';
@@ -7,6 +7,7 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
+import LP_ABI from 'libs/abis/lp-token.json';
 import { useQuery } from '@apollo/client';
 import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import { usePopup } from 'contexts/popup-context'
@@ -62,7 +63,7 @@ export function CompoundAndEarnProvider({ children }) {
           //fix to safemath if snowglobe is empty
           snowglobeRatio = ethers.utils.parseUnits("1.1");
         }
-
+        
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       }
@@ -104,20 +105,22 @@ export function CompoundAndEarnProvider({ children }) {
     } 
 
     try {
-      if (item.kind !== "Stablevault") {
+      if (item.kind === "Snowglobe") {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const balance = await lpContract.balanceOf(account);
-
+        
         amount = amount.gt(balance) ? balance : amount
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-        const snowglobeDeposit = await snowglobeContract.deposit(amount);
-        const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
-        if (!transactionSnowglobeDeposit.status) {
-          setPopUp({
-            title: 'Transaction Error',
-            text: `Error depositing into Snowglobe`
-          });
-          return;
+        if (amount > 0) {
+          const snowglobeDeposit = await snowglobeContract.deposit(amount);
+          const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
+          if (!transactionSnowglobeDeposit.status) {
+            setPopUp({
+              title: 'Transaction Error',
+              text: `Error depositing into Snowglobe`
+            });
+            return;
+          }
         }
 
         amount = await snowglobeContract.balanceOf(account);
@@ -125,7 +128,7 @@ export function CompoundAndEarnProvider({ children }) {
       else {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const balance = await vaultContract.balanceOf(account);
-        amount = ethers.utils.parseEther(amount.toString());
+        
         amount = amount.gt(balance) ? balance : amount
       }
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
@@ -183,7 +186,7 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
 
-      if (item.kind !== "Stablevault") {
+      if (item.kind === "Snowglobe") {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
         if (snowglobeBalance.gt(0x00)) {
@@ -253,31 +256,58 @@ export function CompoundAndEarnProvider({ children }) {
     }
     setLoading(true);
     const dataWithPoolBalance = await Promise.all(pools.map(async (item) => {
+      const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
-      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue;
+      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens, userLPBalance;
+      userLPBalance = await lpContract.balanceOf(account);
+
       if (item.kind === 'Snowglobe') {
-        const snowglobeContract = new ethers.Contract(item.address,
-          SNOWGLOBE_ABI, library.getSigner());
+        const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
 
         totalSupply = await snowglobeContract.totalSupply();
 
         var snowglobeRatio;
+
         //avoid safemath error
-        try {
-          snowglobeRatio = (await snowglobeContract.getRatio()) / 1e18;
-        } catch (error) {
-          snowglobeRatio = 1;
-          console.log('Snowglobe with no stake')
+        let snowglobeTotalBalance = await snowglobeContract.balance();
+        if(snowglobeTotalBalance > 0) {
+          snowglobeRatio = (await snowglobeContract.getRatio());
+        } else {
+          snowglobeRatio = ethers.utils.parseUnits("1");
         }
 
-        let balanceSnowglobe = await snowglobeContract.balanceOf(account) /1e18;
+        let balanceSnowglobe = await snowglobeContract.balanceOf(account);
+
+        userLPBalance.add(balanceSnowglobe.mul(snowglobeRatio));
+
+        userDepositedLP = (balanceSnowglobe/1e18) * (snowglobeRatio/1e18);
         if (gauge) {
-          balanceSnowglobe += gauge.staked/1e18;
+          userDepositedLP += (gauge.staked / 1e18) * (snowglobeRatio/1e18);
           SNOBHarvestable = gauge.harvestable / 1e18;
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
-        userDepositedLP = (balanceSnowglobe * snowglobeRatio);
+
+        if(userDepositedLP > 0 && item.name !== "xJOE"){
+          let reserves = await lpContract.getReserves();
+          let totalSupplyPGL = await lpContract.totalSupply() /1e18;
+          const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
+          const r1 = reserves._reserve1 / 10 ** item.token1.decimals;
+          let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
+          let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
+          underlyingTokens = {
+            token0:{
+              address:item.token0.address,
+              symbol:item.token0.symbol,
+              reserveOwned:reserve0Owned,
+            },
+            token1:{
+              address:item.token1.address,
+              symbol:item.token1.symbol,
+              reserveOwned:reserve1Owned,
+            }
+          }
+        }
       } else {
         if (gauge) {
           userDepositedLP = gauge.staked/1e18;
@@ -286,19 +316,18 @@ export function CompoundAndEarnProvider({ children }) {
           SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
       }
-
-      const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
-      const userLPBalance =  BigNumber.from(await lpContract.balanceOf(account));
+      
 
       return {
         ...item,
         address: item.address,
-        userLPBalance: userLPBalance,
+        userLPBalance,
         userDepositedLP: userDepositedLP,
         usdValue: (userDepositedLP) * item.pricePoolToken,
         totalSupply, 
         SNOBHarvestable,
-        SNOBValue
+        SNOBValue,
+        underlyingTokens
       };
     }));
     setLoading(false);

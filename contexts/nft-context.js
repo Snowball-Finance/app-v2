@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useMemo, useEffect } from 'react'
+import { createContext, useState, useContext, useMemo, useEffect, useCallback } from 'react'
 import { useQuery } from '@apollo/client'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
@@ -25,14 +25,7 @@ export function NFTContractProvider({ children }) {
   const { data: { NFTsList: nftsList = [] } = {} } = useQuery(NFTS_LIST);
   const governanceContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GOVERNANCE, GOVERNANCE_ABI, library.getSigner()) : null, [library])
 
-  useEffect(() => {
-    if (!isEmpty(nftsList)) {
-      getNFTData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, nftsList])
-
-  const getNFTData = async () => {
+  const getNFTData = useCallback(async () => {
     let claimNFTs = []
     let shopNFTs = []
     let purchasedNFTs = []
@@ -121,9 +114,15 @@ export function NFTContractProvider({ children }) {
     setShopNFTs(shopNFTs)
     setPurchasedNFTs(purchasedNFTs)
     setLoading(false)
-  }
+  }, [account, library, governanceContract, nftsList])
 
-  const claimNFT = async (item) => {
+  useEffect(() => {
+    if (!isEmpty(nftsList)) {
+      getNFTData();
+    }
+  }, [nftsList, getNFTData])
+
+  const claimNFT = useCallback(async (item) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -171,9 +170,9 @@ export function NFTContractProvider({ children }) {
       console.log('[Error] claimNFT => ', error)
     }
     setLoading(false)
-  }
+  }, [account, library, getNFTData, setLoading, setPopUp])
 
-  const purchaseNFT = async (item) => {
+  const purchaseNFT = useCallback(async (item) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -206,7 +205,7 @@ export function NFTContractProvider({ children }) {
       console.log('[Error] purchaseNFT => ', error)
     }
     setLoading(false)
-  }
+  }, [account, library, setLoading, setPopUp, getNFTData])
 
   return (
     <ContractContext.Provider
