@@ -11,11 +11,11 @@ const LINKS = Object.freeze({
     TITLE: 's3F Vault',
     HREF: '/s3f-vault',
   },
-  S4D_VAULT: {
-    TITLE: 's4D Vault',
-    HREF: '/s4d-vault',
-    IS_NEW: true
-  },
+  //S4D_VAULT: {
+  //  TITLE: 's4D Vault',
+  //  HREF: '/s4d-vault',
+  //  IS_NEW: true
+  //},
   STAKING: {
     TITLE: 'Staking',
     HREF: '/staking'
