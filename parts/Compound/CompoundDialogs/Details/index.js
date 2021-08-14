@@ -67,7 +67,7 @@ const Details = ({ item, amount, error, inputHandler }) => {
           onChange={inputHandler}
         />
         <Typography variant="caption" className={classes.balanceText}>
-          Available: {item.userLPBalance / 1e18}{item.symbol}
+          Available: {item.userLPBalance}{item.symbol}
         </Typography>
       </div>
     </>

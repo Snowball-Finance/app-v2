@@ -81,7 +81,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </ContainedButton>
         <ContainedButton
           onClick={() => {claim(item)}}
-          disabled={(item.SNOBHarvestable == 0)}
+          disabled={(!item.SNOBHarvestable)}
         >
           Claim
         </ContainedButton>
