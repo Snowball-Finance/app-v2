@@ -37,7 +37,7 @@ export function PriceProvider({ children }) {
     };
 
     getPrices();
-    setInterval(() => getPrices(), 120000);
+    //setInterval(() => getPrices(), 120000);
   }, []);
 
   return (

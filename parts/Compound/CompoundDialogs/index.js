@@ -59,17 +59,17 @@ const CompoundDialogs = ({
   const { approve, deposit } = useCompoundAndEarnContract();
 
   const calculatePercentage = (amount) => {
-    return amount / (item?.userLPBalance) * 100;
+    return amount / (item?.userLPBalance/1e18) * 100;
   };
 
   const calculatedBalance = (value) => {
-    return item?.userLPBalance * value / 100;
+    return item?.userLPBalance.mul(value).div(100);
   };
 
   const inputHandler = (event) => {
     if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
       const percentage = calculatePercentage(event.target.value);
-      if (item?.userLPBalance >= event.target.value) {
+      if (item?.userLPBalance/1e18 >= event.target.value) {
         setinputAmount(event.target.value);
         setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
         setSlider(percentage);
@@ -85,9 +85,10 @@ const CompoundDialogs = ({
 
   const handleSliderChange = (value) => {
     const usedBalance = calculatedBalance(value);
+    const inputAmount = (usedBalance/1e18);
     setSlider(value);
     setAmount(usedBalance);
-    setinputAmount(usedBalance);
+    setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
   };
 
   const renderButton = () => {

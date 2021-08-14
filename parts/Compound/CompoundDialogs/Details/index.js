@@ -67,7 +67,8 @@ const Details = ({ item, amount, error, inputHandler }) => {
           onChange={inputHandler}
         />
         <Typography variant="caption" className={classes.balanceText}>
-          Available: {item.userLPBalance}{item.symbol}
+          Available: {(item.userLPBalance / 1e18).toLocaleString(
+            undefined,{ maximumSignificantDigits: 18 })}{item.symbol}
         </Typography>
       </div>
     </>
