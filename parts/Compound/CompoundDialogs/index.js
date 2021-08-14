@@ -85,9 +85,10 @@ const CompoundDialogs = ({
 
   const handleSliderChange = (value) => {
     const usedBalance = calculatedBalance(value);
+    const inputAmount = (usedBalance/1e18);
     setSlider(value);
     setAmount(usedBalance);
-    setinputAmount(usedBalance/1e18);
+    setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
   };
 
   const renderButton = () => {
