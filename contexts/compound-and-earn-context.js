@@ -20,7 +20,7 @@ const CompoundAndEarnContext = createContext(null);
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const [loading, setLoading] = useState(false);
-  const [isTransacting, setIsTransacting] = useState(false)
+  const [isTransacting, setIsTransacting] = useState({approve:false,deposit:false})
 
   const [userPools, setUserPools] = useState([]);
   const { gauges } = useContracts();
@@ -79,7 +79,7 @@ export function CompoundAndEarnProvider({ children }) {
 
   const _approve = (contract, spender, amount) => {
     return new Promise(async (resolve, reject) => {
-      setIsTransacting(true);
+      setIsTransacting({approve:true});
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
         const approval = await contract.approve(spender, amount);
@@ -89,11 +89,11 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Transaction Error',
             text: `Error Approving`
           });
-          setIsTransacting(false);
+          setIsTransacting({approve:false});
           reject(false);
         }
       }
-      setIsTransacting(false);
+      setIsTransacting({approve:false});
       resolve(true)
     })
   }
@@ -108,6 +108,7 @@ export function CompoundAndEarnProvider({ children }) {
     } 
 
     try {
+      setIsTransacting({deposit:true});
       if (item.kind === "Snowglobe") {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const balance = await lpContract.balanceOf(account);
@@ -153,7 +154,7 @@ export function CompoundAndEarnProvider({ children }) {
         text: `Error Depositing: ${error.message}`
       })
     } finally {
-      setIsTransacting(false);
+      setIsTransacting({deposit:false});
     }
   }
 

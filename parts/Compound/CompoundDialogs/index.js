@@ -66,6 +66,11 @@ const CompoundDialogs = ({
     return item?.userLPBalance.mul(value).div(100);
   };
 
+  const enabledHandler = (isApproved = false) => {
+    return (isApproved? approved : !approved) || (amount == 0) ||
+      isTransacting.approve || isTransacting.deposit;
+  }
+
   const inputHandler = (event) => {
     if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
       const percentage = calculatePercentage(event.target.value);
@@ -101,8 +106,8 @@ const CompoundDialogs = ({
                 className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                disabled={(approved) || (amount == 0)}
-                loading={isTransacting}
+                disabled={enabledHandler(true)}
+                loading={isTransacting.approve}
                 onClick={() => {setApproved(approve(item, amount))}}
               >
                 Approve
@@ -113,7 +118,8 @@ const CompoundDialogs = ({
                 className={clsx(classes.modalButton)}
                 disableElevation
                 fullWidth
-                disabled={!(approved) || (amount == 0)}
+                disabled={enabledHandler(false)}
+                loading={isTransacting.deposit}
                 onClick={() => deposit(item, amount)}
               >
                 Deposit
