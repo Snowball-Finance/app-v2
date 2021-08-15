@@ -45,6 +45,7 @@ export function CompoundAndEarnProvider({ children }) {
     } 
     
     try {
+      setIsTransacting({approve:true});
       if (item.kind === "Stablevault") {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
@@ -66,12 +67,14 @@ export function CompoundAndEarnProvider({ children }) {
         
         await _approve(lpContract, snowglobeContract.address, amount);
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
+        setIsTransacting({approve:false});
       }
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
         text: `Error Approving: ${error.message}`
       });
+      setIsTransacting({approve:false});
       console.log(error)
     }
   }
@@ -79,7 +82,6 @@ export function CompoundAndEarnProvider({ children }) {
 
   const _approve = (contract, spender, amount) => {
     return new Promise(async (resolve, reject) => {
-      setIsTransacting({approve:true});
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
         const approval = await contract.approve(spender, amount);
@@ -89,7 +91,6 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Transaction Error',
             text: `Error Approving`
           });
-          setIsTransacting({approve:false});
           reject(false);
         }
       }
