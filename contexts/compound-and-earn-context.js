@@ -94,7 +94,6 @@ export function CompoundAndEarnProvider({ children }) {
           reject(false);
         }
       }
-      setIsTransacting({approve:false});
       resolve(true)
     })
   }
@@ -169,7 +168,7 @@ export function CompoundAndEarnProvider({ children }) {
     }
   
     try {
-      
+      setIsTransacting({pageview:true});
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
       const gaugeBalance = await gaugeContract.balanceOf(account);
@@ -182,6 +181,7 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Transaction Error',
             text: `Error withdrawing from Gauge`
           });
+          setIsTransacting({pageview:false});
           return;
         }
         if (item.kind === "Stablevault") {
@@ -189,6 +189,7 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Withdraw Complete',
             text: `Gauge Receipt: ${transactionGaugeWithdraw.transactionHash}\n`
           });
+          setIsTransacting({pageview:false});
           setTimeout(() => { window.location.reload(); }, 2000);
         }
       }
@@ -215,10 +216,12 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
     } catch (error) {
+      
       setPopUp({
         title: 'Transaction Error',
         text: `Error withdrawing`
       });
+      setIsTransacting({pageview:false});
       console.log(error)
     }
   }
@@ -229,32 +232,35 @@ export function CompoundAndEarnProvider({ children }) {
         title: 'Network Error',
         text: `Please Switch to Avalanche Chain and connect metamask`
       })
-      return false; 
+      return false;
     }
+    setIsTransacting({ pageview: true });
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
     const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
-
     gaugeContract.getReward().then((t) => {
       t.wait().then((receipt) => {
         setPopUp({
           title: 'Claim Complete',
           text: `Claim Receipt: ${receipt.transactionHash}\n`
         });
+        setIsTransacting({pageview: false });
         setTimeout(() => {
           window.location.reload();
         }, 2000);
       }).catch((error) => {
+        setIsTransacting({pageview:false});
         setPopUp({
           title: 'Transaction Error',
-          text: `Error claiming from Gauge ${error}`
-        });         
-      }); 
+          text: `Error claiming from Gauge ${error.message}`
+        });
+      });
     }).catch((error) => {
+      setIsTransacting({pageview:false});
       setPopUp({
         title: 'Claim Error',
-        text: `Error claiming from Gauge ${error}`
+        text: `Error claiming from Gauge ${error.message}`
       });
-    }); 
+    });
   }
 
   const getBalanceInfosByPool = async () => {

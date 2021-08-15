@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import clsx from 'clsx'
@@ -12,6 +12,8 @@ import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { ethers } from 'ethers';
 import { roundDown } from 'utils/helpers/utility';
+import { toast, ToastContainer } from 'react-toastify';
+import Toast from 'components/Toast';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -57,6 +59,12 @@ const CompoundDialogs = ({
   const [error, setError] = useState(null);
  
   const { approve, deposit, isTransacting } = useCompoundAndEarnContract();
+
+  useEffect(() =>{
+    if(!isTransacting.deposit && !isTransacting.approve){
+      toast.dismiss();
+    }
+  }),[isTransacting];
 
   const calculatePercentage = (amount) => {
     return amount / (item?.userLPBalance/1e18) * 100;
@@ -108,7 +116,10 @@ const CompoundDialogs = ({
                 fullWidth
                 disabled={enabledHandler(true)}
                 loading={isTransacting.approve}
-                onClick={() => {setApproved(approve(item, amount))}}
+                onClick={() => {
+                  toast(<Toast message={'Checking for approval...'}/>)
+                  setApproved(approve(item, amount))
+                }}
               >
                 Approve
               </ContainedButton>
@@ -120,10 +131,15 @@ const CompoundDialogs = ({
                 fullWidth
                 disabled={enabledHandler(false)}
                 loading={isTransacting.deposit}
-                onClick={() => deposit(item, amount)}
+                onClick={() => {
+                    toast(<Toast message={'Depositing your Tokens...'}/>)
+                    deposit(item, amount)
+                  }
+                }
               >
                 Deposit
               </GradientButton>
+              <ToastContainer position='top-right'/>
             </Grid>
           </>
         );

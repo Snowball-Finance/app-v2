@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Toast = (props) => {
+const Toast = ({message}) => {
   const classes = useStyles();
 
   return (
@@ -39,7 +39,7 @@ const Toast = (props) => {
           Processing operation
         </Typography>
         <Typography variant="caption" className={classes.subtitle}>
-          Please wait, the transaction is being submitting
+          {message}
         </Typography>
       </Grid>
     </Grid>
