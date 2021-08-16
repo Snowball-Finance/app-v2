@@ -12,7 +12,7 @@ import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { ethers } from 'ethers';
 import { roundDown } from 'utils/helpers/utility';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import SnowStepBox from 'components/SnowStepBox';
 
@@ -140,7 +140,6 @@ const CompoundDialogs = ({
               >
                 Deposit
               </GradientButton>
-              <ToastContainer position='top-right'/>
             </Grid>
           </>
         );

@@ -38,7 +38,8 @@ const getIcon = (type) => {
   if (type == "Details") {
     return (<ArrowDropDownCircleIcon />);
   }
-  if (type == "Get_PGL" || type == "Get_JLP" || type == "Get_xJoe" || type == "Get_s3D" || type == "Get_s3F") {
+  if (type == "Get_PGL" || type == "Get_JLP" || type == "Get_xJoe" || 
+      type == "Get_s3D" || type == "Get_s3F" || type == "Get_s4D") {
     return (<LaunchIcon />);
   }
   if (type == "Deposit") {
