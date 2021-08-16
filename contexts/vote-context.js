@@ -25,7 +25,6 @@ export function VoteContractProvider({ children }) {
     return activeArray || []
   }, [proposals]);
 
-  console.log(proposals)
   const voteProposal = useCallback(async (proposal, isFor = true) => {
     if (proposal.state !== 'Active') {
       setPopUp({
@@ -85,10 +84,10 @@ export function VoteContractProvider({ children }) {
     try {
       const proposalIdValue = ethers.utils.parseUnits(proposalId.toString(), 0)
       const proposalReceipt = await governanceV2Contract.getReceipt(proposalIdValue, account)
-      const votes = parseFloat(ethers.utils.formatUnits(proposalReceipt[2], 18)) 
+      const votes = parseFloat(ethers.utils.formatUnits(proposalReceipt[2], 18))
       return {
-        hasVoted: proposalReceipt[0] || false, 
-        support:  proposalReceipt[1] || false, 
+        hasVoted: proposalReceipt[0] || false,
+        support: proposalReceipt[1] || false,
         votes
       }
     } catch (error) {

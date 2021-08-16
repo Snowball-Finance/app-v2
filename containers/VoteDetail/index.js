@@ -80,7 +80,10 @@ const VoteDetail = () => {
             </Grid>
             {proposal.state === 'Active' && (proposalReceipt?.hasVoted || false) &&
               <Grid item xs={12}>
-                <VoteChange proposalReceipt={proposalReceipt} />
+                <VoteChange
+                  proposal={proposal}
+                  proposalReceipt={proposalReceipt}
+                />
               </Grid>
             }
             <Grid item xs={12} md={6}>
