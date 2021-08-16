@@ -30,16 +30,15 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const VoteChange = ({
-  proposal,
-  isFor = false
+  proposalReceipt
 }) => {
+  const isFor = proposalReceipt?.support || false
   const classes = useStyles({ isFor })
-  console.log(proposal)
 
   return (
     <Card className={classes.root}>
       <Typography variant='body1' className={classes.label}>
-        {`Your vote history: 56.99 votes "${isFor ? 'For' : 'Against'}"`}
+        {`Your vote history: ${(proposalReceipt?.votes || 0).toFixed(3)} votes "${isFor ? 'For' : 'Against'}"`}
       </Typography>
       <ContainedButton
         className={classes.subHeaderButton}

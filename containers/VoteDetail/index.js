@@ -1,5 +1,5 @@
 
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid } from '@material-ui/core'
 import { useRouter } from 'next/router'
@@ -41,10 +41,22 @@ const useStyles = makeStyles((theme) => ({
 const VoteDetail = () => {
   const classes = useStyles();
   const router = useRouter();
-  const { proposals } = useVoteContract();
+  const { proposals, getProposalReceipt } = useVoteContract();
+  const [proposalReceipt, setProposalReceipt] = useState({});
 
   const proposal = useMemo(() => proposals.find((proposal) => proposal.index === parseInt(router.query.proposal, 10))
     , [router.query.proposal, proposals]);
+
+  useEffect(() => {
+    const getReceipt = async () => {
+      const proposalReceipt = await getProposalReceipt(proposal.offset)
+      setProposalReceipt(proposalReceipt);
+    }
+
+    if (!isEmpty(proposal)) {
+      getReceipt()
+    }
+  }, [proposal, getProposalReceipt, setProposalReceipt]);
 
   return (
     <main className={classes.root}>
@@ -66,9 +78,9 @@ const VoteDetail = () => {
             <Grid item xs={12} md={4}>
               <XSnowballCard />
             </Grid>
-            {proposal.state === 'Active' &&
+            {proposal.state === 'Active' && (proposalReceipt?.hasVoted || false) &&
               <Grid item xs={12}>
-                <VoteChange proposal={proposal} />
+                <VoteChange proposalReceipt={proposalReceipt} />
               </Grid>
             }
             <Grid item xs={12} md={6}>
