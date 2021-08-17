@@ -29,6 +29,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const token0 = item.token0.address;
   const token1 = item.token1.address;
   const token2 = item.token2.address;
+  const token3 = item.token3.address;
   const dexTokenName = item.source == "Pangolin" ? "PNG" : item.source == "Trader Joe" ? "JOE" : "SNOB";
 
   return (
@@ -40,7 +41,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
       spacing={4}
     >
       <Grid item xs={3}>
-        <SnowPairsIcon pairsIcon={[token0, token1, token2]} size={50} />
+        <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
       </Grid>
 
       <Grid item xs={2}>

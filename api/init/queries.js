@@ -41,6 +41,14 @@ const LAST_SNOWBALL_INFO = gql`
           supply
           decimals
         }
+        token3{
+          address
+          name
+          symbol
+          pangolinPrice
+          supply
+          decimals
+        }
         gaugeInfo{
           address
           tvlStaked

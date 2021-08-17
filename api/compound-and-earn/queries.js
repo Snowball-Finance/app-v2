@@ -28,6 +28,9 @@ const LAST_SNOWBALL_INFO = gql`
         token2 {
           address
         }
+        token3 {
+          address
+        }
         gaugeInfo {
           address
           fullYearlyAPY
