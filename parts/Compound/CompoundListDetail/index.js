@@ -76,7 +76,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
       <div className={classes.button}>
         <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
-          disabled={(item.userDepositedLP == 0)}
+          disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}
           loading={isTransacting.pageview}
           onClick={() => {
             toast(<Toast message={'Withdrawing your Tokens...'} />)

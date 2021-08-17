@@ -50,7 +50,9 @@ export function CompoundAndEarnProvider({ children }) {
       if (item.kind === "Stablevault") {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-        return await _approve(vaultContract, gauge.address, amount)
+        await _approve(vaultContract, gauge.address, amount);
+        setIsTransacting({approve:false});
+        setTransactionStatus({approvalStep:2,depositStep:0});
       }
       else {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());

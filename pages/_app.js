@@ -64,7 +64,7 @@ function MyApp({ Component, pageProps }) {
                       <Layout>
                         <Component {...pageProps} />
                       </Layout>
-                      <ToastContainer />
+                      <ToastContainer position={'bottom-right'} />
                     </ContractProvider>
                   </PoolContractProvider>
                 </PriceProvider>

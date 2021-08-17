@@ -47,16 +47,23 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const enumDeposit = {
+  approval1: 0,
+  approval2: 1,
+  deposit1: 2,
+  deposit2: 3
+};
+
 
 const SnowStepBox = ({
     transactionStatus
 }) => {
-    const [colors, setColors] = useState({
-      deposit1:'#DBEDFF',
-      deposit2:'#DBEDFF',
-      approval1:'#DBEDFF',
-      approval2:'#DBEDFF',
-    });
+    const [colors, setColors] = useState([
+      '#DBEDFF',
+      '#DBEDFF',
+      '#DBEDFF',
+      '#DBEDFF',
+    ]);
   const classes = useStyles();
 
   const color = {
@@ -65,37 +72,14 @@ const SnowStepBox = ({
   }
 
   useEffect(() =>{
-    var newStatus = new Object();
-    switch(transactionStatus.approvalStep){
-      case 0:
-        newStatus.approval1 = color.disabled; 
-        newStatus.approval2 = color.disabled; 
-      break;
-      case 1:
-        newStatus.approval1 = color.enabled; 
-        newStatus.approval2 = color.disabled; 
-      break;
-      case 2:
-        newStatus.approval1 = color.enabled; 
-        newStatus.approval2 = color.enabled; 
-      break;
-    }
-    switch(transactionStatus.depositStep){
-      case 0:
-        newStatus.deposit1 = color.disabled; 
-        newStatus.deposit2 = color.disabled; 
-        break;
-      case 1:
-        newStatus.deposit1 = color.enabled; 
-        newStatus.deposit2 = color.disabled; 
-      break;
-      case 2:
-        newStatus.deposit1 = color.enabled; 
-        newStatus.deposit2 = color.enabled; 
-      break;
-    }
-    setColors(newStatus);
-  }),[transactionStatus];
+    var newStatus = [];
+    newStatus.push(transactionStatus.approvalStep > 0 ? color.enabled : color.disabled);
+    newStatus.push(transactionStatus.approvalStep > 1 ? color.enabled : color.disabled);
+    newStatus.push(transactionStatus.depositStep > 0 ? color.enabled : color.disabled);
+    newStatus.push(transactionStatus.depositStep > 1 ? color.enabled : color.disabled);
+    
+    setColors(newStatus); 
+  },[transactionStatus,color.disabled,color.enabled]);
 
   return (
     <div className={classes.root}>
@@ -107,13 +91,13 @@ const SnowStepBox = ({
         <div className={classes.lower}>
           <div className={classes.container}>
             <Box className={classes.ellipse} 
-              style={{background:colors?.approval1}} borderRadius="50%"/>
+              style={{background:colors[enumDeposit.approval1]}} borderRadius="50%"/>
             <Box className={classes.ellipse} 
-              style={{background:colors?.approval2}} borderRadius="50%"/>
+              style={{background:colors[enumDeposit.approval2]}} borderRadius="50%"/>
             <Box className={classes.ellipse} 
-              style={{background:colors?.deposit1}} borderRadius="50%"/>
+              style={{background:colors[enumDeposit.deposit1]}} borderRadius="50%"/>
             <Box className={classes.ellipse} 
-              style={{background:colors?.deposit2}} borderRadius="50%"/>
+              style={{background:colors[enumDeposit.deposit2]}} borderRadius="50%"/>
           </div>
         </div>
         <div className={classes.lower}>
