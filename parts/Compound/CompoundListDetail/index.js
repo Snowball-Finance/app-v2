@@ -9,6 +9,8 @@ import CompoundDialogs from '../CompoundDialogs';
 import getProperAction from 'utils/helpers/getProperAction';
 import CompoundActionButton from '../CompoundActionButton';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { toast } from 'react-toastify';
+import Toast from 'components/Toast';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,7 +50,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
 
-  const { withdraw, claim } = useCompoundAndEarnContract();
+  const { withdraw, claim , isTransacting } = useCompoundAndEarnContract();
 
   const [ actionType, action ] = getProperAction(item, setModal, item.userLPBalance); 
   
@@ -74,14 +76,21 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
       <div className={classes.button}>
         <CompoundActionButton type={actionType} action={action} endIcon={false} />
         <ContainedButton
-          disabled={(item.userDepositedLP == 0)}
-          onClick={() => {withdraw(item)}}
+          disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}
+          loading={isTransacting.pageview}
+          onClick={() => {
+            toast(<Toast message={'Withdrawing your Tokens...'} />)
+            withdraw(item)}}
         >
           Withdraw
         </ContainedButton>
         <ContainedButton
-          onClick={() => {claim(item)}}
           disabled={(!item.SNOBHarvestable)}
+          loading={isTransacting.pageview}
+          onClick={() => {
+            toast(<Toast message={'Claiming your Tokens...'} />)
+            claim(item)
+          }}
         >
           Claim
         </ContainedButton>

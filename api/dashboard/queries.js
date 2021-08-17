@@ -88,6 +88,12 @@ const MULTIPLE_PAIRS_INFO = gql`
           symbol
           pangolinPrice
         }
+        token3 {
+          address
+          name
+          symbol
+          pangolinPrice
+        }
       }
     }
   }

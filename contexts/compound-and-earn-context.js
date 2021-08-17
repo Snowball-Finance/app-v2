@@ -20,6 +20,8 @@ const CompoundAndEarnContext = createContext(null);
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const [loading, setLoading] = useState(false);
+  const [isTransacting, setIsTransacting] = useState({approve:false,deposit:false});
+  const [transactionStatus, setTransactionStatus] = useState({approvalStep:0,depositStep:0})
 
   const [userPools, setUserPools] = useState([]);
   const { gauges } = useContracts();
@@ -44,11 +46,13 @@ export function CompoundAndEarnProvider({ children }) {
     } 
     
     try {
+      setIsTransacting({approve:true});
       if (item.kind === "Stablevault") {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-
-        return await _approve(vaultContract, gauge.address, amount)
+        await _approve(vaultContract, gauge.address, amount);
+        setIsTransacting({approve:false});
+        setTransactionStatus({approvalStep:2,depositStep:0});
       }
       else {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
@@ -65,13 +69,17 @@ export function CompoundAndEarnProvider({ children }) {
         }
         
         await _approve(lpContract, snowglobeContract.address, amount);
+        setTransactionStatus({approvalStep:1,depositStep:0});
         await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
+        setTransactionStatus({approvalStep:2,depositStep:0});
+        setIsTransacting({approve:false});
       }
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
         text: `Error Approving: ${error.message}`
       });
+      setIsTransacting({approve:false});
       console.log(error)
     }
   }
@@ -105,6 +113,7 @@ export function CompoundAndEarnProvider({ children }) {
     } 
 
     try {
+      setIsTransacting({deposit:true});
       if (item.kind === "Snowglobe") {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const balance = await lpContract.balanceOf(account);
@@ -122,7 +131,7 @@ export function CompoundAndEarnProvider({ children }) {
             return;
           }
         }
-
+        setTransactionStatus({approvalStep:2,depositStep:1});
         amount = await snowglobeContract.balanceOf(account);
       }
       else {
@@ -143,12 +152,15 @@ export function CompoundAndEarnProvider({ children }) {
         });
         return;
       }
+      setTransactionStatus({approvalStep:2,depositStep:2});
       setTimeout(() => { window.location.reload(); }, 2000);
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
         text: `Error Depositing: ${error.message}`
       })
+    } finally {
+      setIsTransacting({deposit:false});
     }
   }
 
@@ -162,7 +174,7 @@ export function CompoundAndEarnProvider({ children }) {
     }
   
     try {
-      
+      setIsTransacting({pageview:true});
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
       const gaugeBalance = await gaugeContract.balanceOf(account);
@@ -175,6 +187,7 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Transaction Error',
             text: `Error withdrawing from Gauge`
           });
+          setIsTransacting({pageview:false});
           return;
         }
         if (item.kind === "Stablevault") {
@@ -182,6 +195,7 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Withdraw Complete',
             text: `Gauge Receipt: ${transactionGaugeWithdraw.transactionHash}\n`
           });
+          setIsTransacting({pageview:false});
           setTimeout(() => { window.location.reload(); }, 2000);
         }
       }
@@ -208,10 +222,12 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
     } catch (error) {
+      
       setPopUp({
         title: 'Transaction Error',
         text: `Error withdrawing`
       });
+      setIsTransacting({pageview:false});
       console.log(error)
     }
   }
@@ -222,32 +238,35 @@ export function CompoundAndEarnProvider({ children }) {
         title: 'Network Error',
         text: `Please Switch to Avalanche Chain and connect metamask`
       })
-      return false; 
+      return false;
     }
+    setIsTransacting({ pageview: true });
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
     const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
-
     gaugeContract.getReward().then((t) => {
       t.wait().then((receipt) => {
         setPopUp({
           title: 'Claim Complete',
           text: `Claim Receipt: ${receipt.transactionHash}\n`
         });
+        setIsTransacting({pageview: false });
         setTimeout(() => {
           window.location.reload();
         }, 2000);
       }).catch((error) => {
+        setIsTransacting({pageview:false});
         setPopUp({
           title: 'Transaction Error',
-          text: `Error claiming from Gauge ${error}`
-        });         
-      }); 
+          text: `Error claiming from Gauge ${error.message}`
+        });
+      });
     }).catch((error) => {
+      setIsTransacting({pageview:false});
       setPopUp({
         title: 'Claim Error',
-        text: `Error claiming from Gauge ${error}`
+        text: `Error claiming from Gauge ${error.message}`
       });
-    }); 
+    });
   }
 
   const getBalanceInfosByPool = async () => {
@@ -335,7 +354,8 @@ export function CompoundAndEarnProvider({ children }) {
   };
 
   return (
-    <CompoundAndEarnContext.Provider value={{ loading, approve, deposit, withdraw, claim, userPools }}>
+    <CompoundAndEarnContext.Provider value={{ loading, isTransacting, approve, deposit,
+     withdraw, claim, userPools, transactionStatus, setTransactionStatus }}>
       {children}
     </CompoundAndEarnContext.Provider>
   );
@@ -347,7 +367,9 @@ export function useCompoundAndEarnContract() {
     throw new Error('Missing stats context');
   }
 
-  const { loading, approve, deposit, withdraw, claim, userPools } = context;
+  const { loading, isTransacting, approve, deposit, withdraw, 
+    claim, userPools, transactionStatus,setTransactionStatus } = context;
 
-  return { loading, approve, deposit, withdraw, claim, userPools };
+  return { loading, isTransacting, approve, deposit, withdraw, 
+    claim, userPools, transactionStatus, setTransactionStatus };
 }

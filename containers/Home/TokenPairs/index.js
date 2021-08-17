@@ -85,9 +85,9 @@ const TokenPairs = () => {
     return data.map((pair) => (
       <TableRow key={pair.name}>
         <TableCell component="th" scope="row" className={classes.cell}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             {pair.token0.address && (
-              <Grid item xs={4} className={classes.tokenContainer}>
+              <Grid item xs={3} className={classes.tokenContainer}>
                 <SnowPairsIcon size={50} pairsIcon={[pair.token0.address]} />
                 <Typography color="textPrimary" className={classes.token}>
                   <span>{pair.token0.name}</span>
@@ -97,7 +97,7 @@ const TokenPairs = () => {
               </Grid>
             )}
             {pair.token1.address && (
-              <Grid item xs={4} className={classes.tokenContainer}>
+              <Grid item xs={3} className={classes.tokenContainer}>
                 <SnowPairsIcon size={50} pairsIcon={[pair.token1.address]} />
                 <Typography color="textPrimary" className={classes.token}>
                   <span>{pair.token1.name}</span>
@@ -107,12 +107,22 @@ const TokenPairs = () => {
               </Grid>
             )}
             {pair.token2.address && (
-              <Grid item xs={4} className={classes.tokenContainer}>
+              <Grid item xs={3} className={classes.tokenContainer}>
                 <SnowPairsIcon size={50} pairsIcon={[pair.token2.address]} />
                 <Typography color="textPrimary" className={classes.token}>
                   <span>{pair.token2.name}</span>
                   <br />
                   {`${pair.token2.pangolinPrice?.toLocaleString()}USD`}
+                </Typography>
+              </Grid>
+            )}
+            {pair.token3.address && (
+              <Grid item xs={3} className={classes.tokenContainer}>
+                <SnowPairsIcon size={50} pairsIcon={[pair.token3.address]} />
+                <Typography color="textPrimary" className={classes.token}>
+                  <span>{pair.token3.name}</span>
+                  <br />
+                  {`${pair.token3.pangolinPrice?.toLocaleString()}USD`}
                 </Typography>
               </Grid>
             )}
