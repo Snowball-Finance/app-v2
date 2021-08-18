@@ -1,10 +1,8 @@
 import { createContext, useState, useContext, useMemo, useCallback } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
-import { useQuery } from '@apollo/client'
 
 import { CONTRACTS } from 'config'
-import { PROPOSAL_LIST } from 'api/vote/queries'
 import { useContracts } from 'contexts/contract-context'
 import GOVERNANCE_ABI from 'libs/abis/vote-governance.json'
 import { usePopup } from 'contexts/popup-context'
