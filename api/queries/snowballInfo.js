@@ -1,8 +1,20 @@
 import { gql } from '@apollo/client';
 
+
 const LAST_SNOWBALL_INFO = gql`
   query {
     LastSnowballInfo{
+      createdAt
+      snowballTVL
+      blocksPast24hrs
+      snowballTVL
+      snobPerBlock
+      blockHeight
+      snobNextPhase
+      snowballToken {
+        supply
+        pangolinPrice
+      }
       poolsInfo{
         address
         lpAddress
@@ -65,16 +77,23 @@ const LAST_SNOWBALL_INFO = gql`
   }
 `;
 
-const CURRENT_DISTRIBUTION_PHASE = gql`
+
+const GET_TVL_INFO_LAST_SNOWBALL = gql`
   query {
-    CurrentDistributionPhase{
-      startDate
-      nextDate
-      snobDistributed
+    LastSnowballInfo {
+      createdAt
+      snowballTVL
+      blocksPast24hrs
+      snowballTVL
+      snobPerBlock
+      blockHeight
+      snobNextPhase
+      snowballToken {
+        supply
+        pangolinPrice
+      }
     }
   }
 `;
 
-export {
-  LAST_SNOWBALL_INFO, CURRENT_DISTRIBUTION_PHASE
-};
+export { LAST_SNOWBALL_INFO,GET_TVL_INFO_LAST_SNOWBALL };
