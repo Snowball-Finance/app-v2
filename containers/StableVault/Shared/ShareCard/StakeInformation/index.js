@@ -14,10 +14,16 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 1.5),
     borderRadius: 8,
     border: `1px solid ${theme.custom.palette.border}`,
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column'
+    }
   },
   infoContainer: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      marginBottom: theme.spacing(1)
+    }
   },
   icon: {
     width: 36,
@@ -31,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     fontWeight: 400,
     textTransform: 'unset',
-    borderRadius: 6,
+    borderRadius: 6
   },
 }));
 

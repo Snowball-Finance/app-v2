@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     width: '100%',
     height: 200,
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
+    [theme.breakpoints.down('xs')]: {
+      height: 116,
+    }
   },
   s3D: {
     background: theme.custom.gradient.blue,
@@ -40,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     objectFit: 'contain',
     height: 130,
+    marginBottom: theme.spacing(1),
+    [theme.breakpoints.down('xs')]: {
+      height: 46,
+    }
   },
   ellipse: {
     position: 'absolute',

@@ -7,7 +7,7 @@ import clsx from 'clsx'
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(0.5, 1),
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(2)
   },
   button: {
     fontSize: 16,
