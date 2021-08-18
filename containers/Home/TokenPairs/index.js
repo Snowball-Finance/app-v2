@@ -2,14 +2,13 @@ import { memo } from 'react';
 import { Card, Grid, Typography, TableCell, TableRow } from '@material-ui/core';
 import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import { makeStyles } from '@material-ui/core/styles';
-import { useQuery } from '@apollo/client';
+import TableContainer from './TableContainer';
 
 import ChartUpIcon from 'components/Icons/ChartUpIcon';
 import ChartDownIcon from 'components/Icons/ChartDownIcon';
 import DashboardTokenPairsSkeleton from 'components/Skeletons/DashboardTokenPairs';
-import { MULTIPLE_PAIRS_INFO } from 'api/dashboard/queries';
-import TableContainer from './TableContainer';
 import SnowPairsIcon from 'components/SnowPairsIcon';
+import { useAPIContext } from 'contexts/api-context';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -50,11 +49,10 @@ const useStyles = makeStyles((theme) => ({
 
 const TokenPairs = () => {
   const classes = useStyles();
-  const { data, loading, error } = useQuery(MULTIPLE_PAIRS_INFO, {
-    variables: { first: 1, grouped: true },
-  });
+  const { getPairsInfo } = useAPIContext();
+  const pairsInfoQuery = getPairsInfo();
 
-  if (error) {
+  if (pairsInfoQuery.error) {
     return <div>Something went wrong...</div>;
   }
 
@@ -143,9 +141,9 @@ const TokenPairs = () => {
   return (
     <Card className={classes.card}>
       <TableContainer>
-        {loading
+        {pairsInfoQuery.loading
           ? loadingTable()
-          : renderTableData(data?.MultiplePairsInfo[0].pairs)}
+          : renderTableData(pairsInfoQuery.data?.MultiplePairsInfo[0].pairs)}
       </TableContainer>
     </Card>
   );

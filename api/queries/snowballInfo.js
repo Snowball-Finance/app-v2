@@ -4,6 +4,17 @@ import { gql } from '@apollo/client';
 const LAST_SNOWBALL_INFO = gql`
   query {
     LastSnowballInfo{
+      createdAt
+      snowballTVL
+      blocksPast24hrs
+      snowballTVL
+      snobPerBlock
+      blockHeight
+      snobNextPhase
+      snowballToken {
+        supply
+        pangolinPrice
+      }
       poolsInfo{
         address
         lpAddress

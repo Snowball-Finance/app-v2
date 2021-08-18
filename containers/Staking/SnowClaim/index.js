@@ -6,8 +6,7 @@ import { useStakingContract } from 'contexts/staking-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import CardWrapper from '../CardWrapper'
 import { formatNumber } from 'utils/helpers/format'
-import { useQuery } from '@apollo/client'
-import { CURRENT_DISTRIBUTION_PHASE } from 'api/init/queries'
+import { useAPIContext } from 'contexts/api-context'
 
 const SnowClaim = () => {
   const {
@@ -15,7 +14,8 @@ const SnowClaim = () => {
     userClaimable
   } = useStakingContract();
 
-  const { data } = useQuery(CURRENT_DISTRIBUTION_PHASE);
+  const { getCurrentDistributionPhase } = useAPIContext();
+  const currentDistributionPhaseQuery = getCurrentDistributionPhase();
 
   const claimable = useMemo(() =>
     userClaimable ? parseFloat(formatEther(userClaimable)) : null
@@ -26,14 +26,14 @@ const SnowClaim = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography color='textPrimary' variant='body1'>
-            {`Current distribution amount: ${formatNumber(data?.CurrentDistributionPhase.snobDistributed)}`}
+            {`Current distribution amount: ${formatNumber(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.snobDistributed)}`}
           </Typography>
           <Typography color='textPrimary' variant='body1'>
-            {`Current distribution date: ${new Date(data?.CurrentDistributionPhase.startDate).toLocaleDateString()}`}
+            {`Current distribution date: ${new Date(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.startDate).toLocaleDateString()}`}
           </Typography>
           <br />
           <Typography color='textPrimary' variant='body1'>
-            {`Next distribution: ${new Date(data?.CurrentDistributionPhase.nextDate).toLocaleDateString()}`}
+            {`Next distribution: ${new Date(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.nextDate).toLocaleDateString()}`}
           </Typography>
         </Grid>
         <Grid item xs={12}>

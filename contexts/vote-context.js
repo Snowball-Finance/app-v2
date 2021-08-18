@@ -8,6 +8,7 @@ import { PROPOSAL_LIST } from 'api/vote/queries'
 import { useContracts } from 'contexts/contract-context'
 import GOVERNANCE_ABI from 'libs/abis/vote-governance.json'
 import { usePopup } from 'contexts/popup-context'
+import { useAPIContext } from './api-context'
 
 const ContractContext = createContext(null)
 
@@ -17,7 +18,8 @@ export function VoteContractProvider({ children }) {
   const { snowconeBalance } = useContracts()
   const [loading, setLoading] = useState(false);
 
-  const { data: { ProposalList: { proposals = [], proposalCount = 0, quorumVotes = 0 } = {} } = {} } = useQuery(PROPOSAL_LIST);
+  const { getProposalList } = useAPIContext();
+  const { data: { ProposalList: { proposals = [], proposalCount = 0, quorumVotes = 0 } = {} } = {} } = getProposalList();
   const governanceV2Contract = useMemo(() => library ? new ethers.Contract(CONTRACTS.VOTE.GOVERNANCE_V2, GOVERNANCE_ABI, library.getSigner()) : null, [library])
 
   const activeProposals = useMemo(() => {

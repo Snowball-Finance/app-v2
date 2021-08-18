@@ -8,7 +8,6 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
 
-import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
 import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
@@ -18,6 +17,7 @@ import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
 import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
 import getProperAction from 'utils/helpers/getProperAction';
 import ListView from './ListView';
+import { useAPIContext } from 'contexts/api-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,12 +61,14 @@ const CompoundAndEarn = () => {
 
   const { userPools, loading: loadingUserPools } = useCompoundAndEarnContract();
 
-  const { data, loading, error } = useQuery(LAST_SNOWBALL_INFO);
+  const { getLastSnowballInfo } = useAPIContext();
+  const snowballInfoQuery = getLastSnowballInfo();
+
   const { library, account } = useWeb3React();
   useEffect(() => {
-    if (data && !loading) {
+    if (snowballInfoQuery.data && !snowballInfoQuery.loading) {
       if (!(library && account)) {
-        let clonedData = [...data?.LastSnowballInfo?.poolsInfo];
+        let clonedData = [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
         const sortedData = clonedData.sort(
           (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
         );
@@ -80,14 +82,14 @@ const CompoundAndEarn = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading, userPools]);
+  }, [snowballInfoQuery.data, snowballInfoQuery.loading, userPools]);
 
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
       ? [...lastSnowballModifiedInfo]
-      : [...data?.LastSnowballInfo?.poolsInfo];
+      : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
     const splittedValue = value.split(' ');
     splittedValue.forEach((spiltItem) => {
@@ -118,7 +120,7 @@ const CompoundAndEarn = () => {
   const handleUserPoolChange = (event) => {
     let filteredData = lastSnowballModifiedInfo.length
       ? [...lastSnowballModifiedInfo]
-      : [...data?.LastSnowballInfo?.poolsInfo];
+      : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
     if (event.target.value === 'myPools') {
       const filteredDataWithTokensToInvested = filteredData.filter((item) => {
@@ -148,7 +150,7 @@ const CompoundAndEarn = () => {
     setPool(event.target.value);
   };
 
-  if (error) {
+  if (snowballInfoQuery.error) {
     return <div>Something went wrong!!</div>;
   }
 
@@ -187,7 +189,7 @@ const CompoundAndEarn = () => {
           PAIRS
         </Typography>
 
-        {loading || loadingUserPools ? (
+        {snowballInfoQuery.loading || loadingUserPools ? (
           <CompoundAndEarnSkeleton />
         ) : (
           <ListView poolsInfo={lastSnowballInfo} />
