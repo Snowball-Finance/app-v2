@@ -24,7 +24,7 @@ const LiquidityPanel = ({
 
   return (
     <PanelLayout>
-      <Grid item sm={12} md={6} className={classes.leftCard}>
+      <Grid item xs={12} md={6} className={classes.leftCard}>
         <AddLiquidityForm
           vault={vault}
           tokenValues={tokenValues}
@@ -33,9 +33,9 @@ const LiquidityPanel = ({
           addLiquidity={addLiquidity}
         />
       </Grid>
-      <Grid item sm={12} md={6} className={classes.rightCard}>
+      <Grid item xs={12} md={6}>
         <Grid container spacing={3}>
-          <Grid item sm={12}>
+          <Grid item xs={12} className={classes.rightCard}>
             <ShareCard
               vault={vault}
               staked={svToken.balance}
@@ -44,7 +44,7 @@ const LiquidityPanel = ({
               removeLiquidity={removeLiquidity}
             />
           </Grid>
-          <Grid item sm={12}>
+          <Grid item xs={12} className={classes.rightCard}>
             <CurrencyReserves
               tokenArray={tokenArray}
               tokenValues={tokenValues}

@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => {
       padding: theme.spacing(3, 2.5),
       borderRadius: 5,
       border: `1px solid ${theme.custom.palette.border}`,
+      [theme.breakpoints.down('xs')]: {
+        padding: theme.spacing(1, 1.5),
+      }
     },
     errorInput: {
       border: `1px solid ${theme.palette.danger.main}`
@@ -31,7 +34,11 @@ const useStyles = makeStyles(theme => {
       marginRight: theme.spacing(1)
     },
     tokenIcon: {
-      marginRight: theme.spacing(1)
+      marginRight: theme.spacing(1),
+      [theme.breakpoints.down('xs')]: {
+        width: 40,
+        height: 40,
+      }
     },
     select: {
       fontSize: 26,
@@ -40,6 +47,9 @@ const useStyles = makeStyles(theme => {
       '&::before': {
         borderBottom: 0
       },
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 18,
+      }
     },
     selectInput: {
       paddingTop: 0,
@@ -71,6 +81,9 @@ const useStyles = makeStyles(theme => {
           margin: 0
         },
         MozAppearance: 'textfield'
+      },
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 18,
       }
     },
     notchedOutline: {

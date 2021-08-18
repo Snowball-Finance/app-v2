@@ -20,7 +20,10 @@ const useStyles = makeStyles((theme) => ({
   },
   token: {
     fontSize: 18,
-    margin: theme.spacing(0, 1)
+    margin: theme.spacing(0, 1),
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 14,
+    }
   },
   percent: {
     fontSize: 12,
@@ -28,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.custom.palette.white,
     backgroundColor: theme.custom.palette.green,
     borderRadius: 8,
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 10,
+    }
   },
 }));
 
@@ -40,7 +46,7 @@ const CurrencyItem = ({
   return (
     <div className={classes.container}>
       <div className={classes.infoContainer}>
-        <SnowTokenIcon token={token.name} />
+        <SnowTokenIcon token={token.name} size={35} />
         <Typography className={classes.token}>
           {token.name}
         </Typography>
