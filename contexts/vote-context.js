@@ -72,6 +72,29 @@ export function VoteContractProvider({ children }) {
     setLoading(false)
   }, [account, library, snowconeBalance, setPopUp])
 
+  const getProposalReceipt = useCallback(async (proposalId) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        text: `Please Switch to Avalanche Chain and connect metamask`
+      })
+      return;
+    }
+
+    try {
+      const proposalIdValue = ethers.utils.parseUnits(proposalId.toString(), 0)
+      const proposalReceipt = await governanceV2Contract.getReceipt(proposalIdValue, account)
+      const votes = parseFloat(ethers.utils.formatUnits(proposalReceipt[2], 18))
+      return {
+        hasVoted: proposalReceipt[0] || false,
+        support: proposalReceipt[1] || false,
+        votes
+      }
+    } catch (error) {
+      console.log('error => ', error)
+    }
+  }, [account, governanceV2Contract, setPopUp])
+
   const createProposal = useCallback(async ({
     title,
     metadata,
@@ -131,6 +154,7 @@ export function VoteContractProvider({ children }) {
         activeProposals,
         proposalCount,
         quorumVotes,
+        getProposalReceipt,
         voteProposal,
         createProposal
       }}
@@ -152,6 +176,7 @@ export function useVoteContract() {
     activeProposals,
     proposalCount,
     quorumVotes,
+    getProposalReceipt,
     voteProposal,
     createProposal
   } = context
@@ -162,6 +187,7 @@ export function useVoteContract() {
     activeProposals,
     proposalCount,
     quorumVotes,
+    getProposalReceipt,
     voteProposal,
     createProposal
   }

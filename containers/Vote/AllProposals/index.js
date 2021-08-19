@@ -28,15 +28,13 @@ const AllProposals = () => {
       <Grid item xs={12} md={4}>
         <XSnowballCard />
       </Grid>
-      {isEmpty(proposals)
-        ? (
-          <Grid item xs={12}>
-            <Typography variant='h6' align='center'>
-              No Proposals
-            </Typography>
-          </Grid>
-        )
-        : proposals.map((proposal, index) => (
+      <Grid item xs={12}>
+        <Typography variant='h6'>
+          All Proposals
+        </Typography>
+      </Grid>
+      {!isEmpty(proposals) &&
+        proposals.map((proposal, index) => (
           <Grid key={index} item xs={12}>
             <ProposalItem proposal={proposal} />
           </Grid>

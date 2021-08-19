@@ -28,7 +28,7 @@ const ProposalStatus = ({
         value={forValue}
       />
       <StateProgressBar
-        state='Failed'
+        state='Defeated'
         header={`Against: ${proposal.againstVotes.toLocaleString()}`}
         value={againstValue}
       />

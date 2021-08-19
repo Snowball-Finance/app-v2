@@ -8,7 +8,7 @@ import SnowProgressBar from 'components/SnowProgressBar'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import getStatusColor from 'utils/helpers/getStatusColor'
 
-const colors = getStatusColor('Failed')
+const colors = getStatusColor('Defeated')
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -68,6 +68,7 @@ const VoteAgainstAction = ({
           className={classes.voteButton}
           size='small'
           disableElevation
+          disabled={proposal.state !== 'Active'}
           endIcon={<VoteAgainstIcon />}
           onClick={() => voteProposal(proposal, false)}
         >
