@@ -9,6 +9,7 @@ import { usePopup } from 'contexts/popup-context'
 import { isEmpty } from 'utils/helpers/utility'
 import NFT_STATUS from 'utils/constants/nft-status'
 import { useAPIContext } from './api-context'
+import { BNToFloat, floatToBN } from 'utils/helpers/format'
 
 const ContractContext = createContext(null)
 
@@ -87,7 +88,7 @@ export function NFTContractProvider({ children }) {
         } else {
           shopNFTs = [...shopNFTs, item]
           const mintNFTBalance = await nftContract.balanceOf(account)
-          const mintNFTBalanceValue = parseFloat(ethers.utils.formatUnits(mintNFTBalance, 18));
+          const mintNFTBalanceValue = BNToFloat(mintNFTBalance, 18);
 
           if (mintNFTBalanceValue > 0) {
             purchasedNFTs = [
@@ -187,7 +188,7 @@ export function NFTContractProvider({ children }) {
       const { abi } = getNFTABI(address);
       const nftContract = new ethers.Contract(address, abi, library.getSigner())
 
-      const overrides = { value: ethers.utils.parseEther((baseCost || 0).toString()) }
+      const overrides = { value: floatToBN(baseCost || 0) }
       const nftMint = await nftContract.mint(account, overrides);
       const transactionMint = await nftMint.wait(1);
 

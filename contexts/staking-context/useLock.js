@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
-import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { parseEther } from 'ethers/lib/utils'
 
 import { CONTRACTS } from 'config'
 import { isEmpty } from 'utils/helpers/utility'
 import { getEpochSecondForDay } from 'utils/helpers/date'
+import { BNToFloat, BNToString } from 'utils/helpers/format'
 
 const useLock = ({
   prices,
@@ -22,8 +22,8 @@ const useLock = ({
   const [totalSupply, setTotalSupply] = useState(0);
   const [totalLocked, setTotalLocked] = useState(0);
 
-  const lockedValue = useMemo(() => prices.SNOB * parseFloat(ethers.utils.formatEther(totalSupply)), [prices?.SNOB, totalSupply])
-  const totalSnowballValue = useMemo(() => prices.SNOB * parseFloat(ethers.utils.formatEther(totalLocked)), [prices?.SNOB, totalLocked])
+  const lockedValue = useMemo(() => prices.SNOB * BNToFloat(totalSupply), [prices?.SNOB, totalSupply])
+  const totalSnowballValue = useMemo(() => prices.SNOB *BNToFloat(totalLocked), [prices?.SNOB, totalLocked])
   const unlockTime = useMemo(() => {
     const date = new Date()
     return date.setTime(+(lockEndDate?.toString() || 0) * 1000)
@@ -41,7 +41,7 @@ const useLock = ({
   const getSnowballInfo = async () => {
     try {
       const latestSnowballBalance = await snowballContract.balanceOf(account);
-      const snowballBalance = ethers.utils.formatUnits(latestSnowballBalance, 18);
+      const snowballBalance = BNToString(latestSnowballBalance, 18);
       setSnowballBalance(snowballBalance);
     } catch (error) {
       console.log('[Error] snowballContract => ', error)
