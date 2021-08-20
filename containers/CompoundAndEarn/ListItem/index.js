@@ -14,13 +14,13 @@ const ListItem = ({
   pool
 }) => {
   const { gauges, snowconeBalance, totalSnowcone } = useContracts();
-  const [modal, setModal] = useState({ open: false, title: '' });
 
-  const selectedGauge = useMemo(() => gauges.find((gauge) => gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase()), [gauges, pool])
+  const [modal, setModal] = useState({ open: false, title: '' })
+  const [actionType, action] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
 
-  const handleClose = () => {
-    setModal({ open: false, title: '' })
-  }
+  const selectedGauge = useMemo(() => gauges.find((gauge) =>
+    gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase())
+    , [gauges, pool])
 
   const boost = useMemo(() => {
     if (isEmpty(selectedGauge) || (selectedGauge?.staked || 0) <= 0) {
@@ -36,27 +36,46 @@ const ListItem = ({
     return boost;
   }, [selectedGauge, snowconeBalance, totalSnowcone]);
 
-  let totalAPY = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
-  //limit APY to 1mil
-  totalAPY = totalAPY > 999999 ? 999999 : totalAPY;
+  const totalAPY = useMemo(() => {
+    let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+    total = total > 999999 ? 999999 : total
+    return total
+  }, [boost, pool])
 
   const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
 
-  const [ actionType, action ] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
   return (
     <>
       <CustomAccordion
         key={pool.address}
-        expandMoreIcon={<CompoundActionButton type={actionType} action={action} />}
-        summary={<DetailItem item={pool} userBoost={userBoost} totalAPY={totalAPY} />}
-        details={ <CompoundListDetail item={pool} userBoost={userBoost} totalAPY={totalAPY} /> }
+        expandMoreIcon={
+          <CompoundActionButton
+            type={actionType}
+            action={action}
+            disabled={actionType !== 'Details' && pool.deprecated}
+          />
+        }
+        summary={
+          <DetailItem
+            item={pool}
+            userBoost={userBoost}
+            totalAPY={totalAPY}
+          />
+        }
+        details={
+          <CompoundListDetail
+            item={pool}
+            userBoost={userBoost}
+            totalAPY={totalAPY}
+          />
+        }
       />
       {modal.open && (
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
           item={pool}
-          handleClose={handleClose}
+          handleClose={() => setModal({ open: false, title: '' })}
         />
       )}
     </>

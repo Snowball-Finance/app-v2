@@ -55,29 +55,29 @@ const Total = ({ item }) => {
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
-          <Typography variant="m6">SNOB (Claimable)</Typography>
-          <Typography variant="m5"><b>{formatNumber(userPool?.SNOBHarvestable || 0.00,3)}</b> (${formatNumber(userPool?.SNOBValue || 0.00,3)})</Typography>
+          <Typography>SNOB (Claimable)</Typography>
+          <Typography><b>{formatNumber(userPool?.SNOBHarvestable || 0.00, 3)}</b> (${formatNumber(userPool?.SNOBValue || 0.00, 3)})</Typography>
         </div>
       </div>
 
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP  || 0.00,5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
+          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP || 0.00, 5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-            (userPool?.userDepositedLP / (userPool?.totalSupply/1e18)) * 100 || 0.00,5)}%</Typography>
+            (userPool?.userDepositedLP / (userPool?.totalSupply / 1e18)) * 100 || 0.00, 5)}%</Typography>
         </div>
-        {userPool?.underlyingTokens?<div className={classes.container}>
-          <Typography variant="body2">{userPool.underlyingTokens ? `Underlying tokens` : ``}</Typography> 
-           <Typography variant="subtitle2"> <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token0.address]} size={25} /> 
-             {formatNumber(userPool?.underlyingTokens?.token0.reserveOwned,3,true)} | <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token1.address]} size={25} />  
-             {formatNumber(userPool?.underlyingTokens?.token1.reserveOwned,3,true)} </Typography>
+        {userPool?.underlyingTokens ? <div className={classes.container}>
+          <Typography variant="body2">{userPool.underlyingTokens ? `Underlying tokens` : ``}</Typography>
+          <Typography variant="subtitle2"> <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token0.address]} size={25} />
+            {formatNumber(userPool?.underlyingTokens?.token0.reserveOwned, 3, true)} | <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token1.address]} size={25} />
+            {formatNumber(userPool?.underlyingTokens?.token1.reserveOwned, 3, true)} </Typography>
         </div> : null}
         <div className={classes.container}>
-        {/*  <Typography variant="body2" className={classes.boldSubtitle}>
+          {/*  <Typography variant="body2" className={classes.boldSubtitle}>
             Total earned
           </Typography>
           <Typography variant="subtitle2" className={classes.boldSubtitle}>

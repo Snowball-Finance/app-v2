@@ -29,6 +29,7 @@ const LAST_SNOWBALL_INFO = gql`
         yearlyAPY
         pricePoolToken
         performanceFees
+        deprecated
         token0{
           address
           name

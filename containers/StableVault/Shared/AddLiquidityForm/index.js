@@ -102,6 +102,7 @@ const AddLiquidityForm = ({
               type='submit'
               color={vaultInfo.color}
               className={classes.button}
+              disabled={vault==='s3D' || vault==='s3F' }
             >
               Add Liquidity
             </GradientButton>

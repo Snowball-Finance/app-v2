@@ -57,7 +57,7 @@ export function StakingContractProvider({ children }) {
     feeDistributorContract,
   })
 
-  const { gauges, voteFarms } = useGauge({
+  const { gauges, voteFarms, retrieveGauge, setGauges} = useGauge({
     prices,
     gaugeProxyContract,
     setLoading
@@ -87,7 +87,9 @@ export function StakingContractProvider({ children }) {
         increaseAmount,
         increaseTime,
         withdraw,
-        voteFarms
+        voteFarms,
+        retrieveGauge,
+        setGauges
       }}
     >
       {children}
@@ -123,7 +125,9 @@ export function useStakingContract() {
     increaseAmount,
     increaseTime,
     withdraw,
-    voteFarms
+    voteFarms,
+    retrieveGauge,
+    setGauges
   } = context
 
   return {
@@ -148,6 +152,8 @@ export function useStakingContract() {
     increaseAmount,
     increaseTime,
     withdraw,
-    voteFarms
+    voteFarms,
+    retrieveGauge,
+    setGauges
   }
 }

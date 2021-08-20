@@ -1,15 +1,16 @@
+import { memo, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import LaunchIcon from '@material-ui/icons/Launch';
+import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import SystemUpdateAltRoundedIcon from '@material-ui/icons/SystemUpdateAltRounded';
 import clsx from 'clsx';
-import ContainedButton from 'components/UI/Buttons/ContainedButton';
+
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
-import { useRouter } from 'next/router';
-import { memo } from 'react';
+import ContainedButton from 'components/UI/Buttons/ContainedButton';
 
 const useStyles = makeStyles((theme) => ({
-  button: { 
+  button: {
     textTransform: 'none'
   },
   Details: {
@@ -34,42 +35,53 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.s3f_green
   }
 }));
+
 const getIcon = (type) => {
-  if (type == "Details") {
-    return (<ArrowDropDownCircleIcon />);
-  }
-  if (type == "Get_PGL" || type == "Get_JLP" || type == "Get_xJoe" || 
-      type == "Get_s3D" || type == "Get_s3F" || type == "Get_s4D" || type == "Get_Token") {
-    return (<LaunchIcon />);
-  }
-  if (type == "Deposit") {
-    return (<SystemUpdateAltRoundedIcon />);
+  switch (type) {
+    case 'Details':
+      return <ArrowDropDownCircleIcon />
+    case 'Deposit':
+      return <SystemUpdateAltRoundedIcon />
+    case 'Get_PGL':
+    case 'Get_JLP':
+    case 'Get_xJoe':
+    case 'Get_s3D':
+    case 'Get_s3F':
+    case 'Get_s4D':
+    case 'Get_Token':
+      return <LaunchIcon />
+    default:
+      return null
   }
 }
 
 const CompoundActionButton = ({
-  type, 
+  type,
   action,
-  endIcon = true
+  endIcon = true,
+  disabled
 }) => {
   const classes = useStyles();
   const router = useRouter();
-  const { setTransactionStatus} = useCompoundAndEarnContract();
+  const { setTransactionStatus } = useCompoundAndEarnContract();
+
+  const buttonHandler = useCallback(() => {
+    action(router);
+    if (type === 'Deposit') {
+      setTransactionStatus({ approvalStep: 0, depositStep: 0 });
+    }
+  }, [type, action, router, setTransactionStatus])
 
   return (
     <ContainedButton
-      className={clsx({[classes.button]: endIcon}, classes[type])}
-      size={endIcon ? 'small' : ''}
-      disableElevation = {endIcon ? true : false}
-      endIcon={endIcon ? getIcon(type) : null}
-      onClick={() => {
-        action(router);
-        if(type == "Deposit"){
-          setTransactionStatus({approvalStep:0,depositStep:0});
-        }
-      }}
+      className={clsx({ [classes.button]: endIcon }, classes[type])}
+      size={endIcon ? 'small' : 'medium'}
+      disableElevation={endIcon}
+      endIcon={getIcon(type)}
+      onClick={buttonHandler}
+      disabled={disabled}
     >
-    {type.replace("_", " ")}
+      {type.replace('_', ' ')}
     </ContainedButton>
   );
 };
