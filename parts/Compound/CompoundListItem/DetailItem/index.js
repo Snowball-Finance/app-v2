@@ -30,7 +30,8 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const token1 = item.token1.address;
   const token2 = item.token2.address;
   const token3 = item.token3.address;
-  const dexTokenName = item.source == "Pangolin" ? "PNG" : item.source == "Trader Joe" ? "JOE" : "SNOB";
+  const dexTokenName = item.source == "Pangolin" ? "PNG" : item.source == "Trader Joe" ? "JOE" :
+  item.source == "BENQI" ? "BENQI" : "SNOB";
 
   return (
     <Grid
@@ -65,14 +66,14 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           APY{' '}
           <CustomPopover contentClassName={classes.popover}>
             <APYTooltip
-              dailyAPY={item.dailyAPY}
-              weeklyAPY={item.weeklyAPY}
-              yearlyAPY={item.yearlyAPY}
+              dailyAPY={item.source !== "BENQI" ? item.dailyAPY : 'TBD'}
+              weeklyAPY={item.source !== "BENQI" ? item.weeklyAPY : 'TBD'}
+              yearlyAPY={item.source !== "BENQI" ? item.yearlyAPY : 'TBD'}
             />
           </CustomPopover>
         </Typography>
         <Typography variant="subtitle1">
-          {totalAPY?.toFixed(2)}%
+          {typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%
         </Typography>
       </Grid>
 

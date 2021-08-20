@@ -26,4 +26,8 @@ export const POOLS = [
     value: 'trader',
     label: 'Trader Joe Pools',
   },
+  {
+    value: 'BENQI',
+    label: 'BENQI Pools',
+  },
 ];

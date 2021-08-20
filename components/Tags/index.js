@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
   JOE: {
     backgroundColor: theme.custom.palette.transparent.joe_red,
     color: theme.custom.palette.joe_red
+  },
+  BENQI: {
+    backgroundColor: theme.custom.palette.transparent.snob_blue,
+    color: theme.custom.palette.snob_blue
   }
 }));
 

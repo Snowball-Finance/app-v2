@@ -38,13 +38,13 @@ const APYTooltip = ({ dailyAPY, weeklyAPY, yearlyAPY }) => {
         </div>
         <div className={classes.right}>
           <Typography variant="subtitle2" className={classes.title}>
-            {parseFloat(dailyAPY).toFixed(2)}% (Daily)
+            {typeof(dailyAPY) === 'number' ? dailyAPY.toFixed(2) : dailyAPY}% (Daily)
           </Typography>
           <Typography variant="subtitle2" className={classes.title}>
-            {parseFloat(weeklyAPY).toFixed(2)}% (Weekly)
+            {typeof(weeklyAPY) === 'number' ? weeklyAPY.toFixed(2) : weeklyAPY}% (Weekly)
           </Typography>
           <Typography variant="subtitle2" className={classes.title}>
-            {parseFloat(yearlyAPY).toFixed(2)}% (Yearly)
+            {typeof(yearlyAPY) === 'number' ? yearlyAPY.toFixed(2) : yearlyAPY}% (Yearly)
           </Typography>
         </div>
       </div>
