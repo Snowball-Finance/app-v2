@@ -7,6 +7,7 @@ import { useContracts } from 'contexts/contract-context'
 import GOVERNANCE_ABI from 'libs/abis/vote-governance.json'
 import { usePopup } from 'contexts/popup-context'
 import { useAPIContext } from './api-context'
+import { BNToFloat } from 'utils/helpers/format'
 
 const ContractContext = createContext(null)
 
@@ -84,7 +85,7 @@ export function VoteContractProvider({ children }) {
     try {
       const proposalIdValue = ethers.utils.parseUnits(proposalId.toString(), 0)
       const proposalReceipt = await governanceV2Contract.getReceipt(proposalIdValue, account)
-      const votes = parseFloat(ethers.utils.formatUnits(proposalReceipt[2], 18))
+      const votes = BNToFloat(proposalReceipt[2], 18)
       return {
         hasVoted: proposalReceipt[0] || false,
         support: proposalReceipt[1] || false,
