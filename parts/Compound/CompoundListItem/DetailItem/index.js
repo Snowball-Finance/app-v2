@@ -30,8 +30,10 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const token1 = item.token1.address;
   const token2 = item.token2.address;
   const token3 = item.token3.address;
-  const dexTokenName = item.source == "Pangolin" ? "PNG" : item.source == "Trader Joe" ? "JOE" :
-  item.source == "BENQI" ? "BENQI" : "SNOB";
+  const dexTokenName = item.source == "Pangolin" ? "PNG"
+    : item.source == "Trader Joe" ? "JOE" 
+    : item.source == "BENQI" ? "BENQI" 
+    : "SNOB";
 
   return (
     <Grid
