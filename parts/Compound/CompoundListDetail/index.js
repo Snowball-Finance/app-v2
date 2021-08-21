@@ -57,13 +57,19 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   const handleClose = () => {
     setModal({ open: false, title: '' });
   };
+  let dailyAPR = item.dailyAPR > 999999?999999:item.dailyAPR;
+  let yearlyAPY = item.yearlyAPY > 999999?999999:item.yearlyAPY;
+  if(item.source == 'BENQI'){
+    dailyAPR = 'TBD';
+    yearlyAPY = 'TBD';
+  }
 
   return (
     <div className={classes.root}>
       <div className={classes.details}>
         <ApyCalculation
-          dailyAPR={item.dailyAPR > 999999?999999:item.dailyAPR}
-          yearlyAPY={item.yearlyAPY > 999999?999999:item.yearlyAPY}
+          dailyAPR={dailyAPR}
+          yearlyAPY={yearlyAPY}
           performanceFees={item.performanceFees}
         />
         <SnobAbyCalculation

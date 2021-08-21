@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 
+import { useVoteContract } from 'contexts/vote-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 
 const useStyles = makeStyles((theme) => ({
@@ -31,20 +32,22 @@ const useStyles = makeStyles((theme) => ({
 
 const VoteChange = ({
   proposal,
-  isFor = false
+  proposalReceipt
 }) => {
+  const isFor = proposalReceipt?.support || false
   const classes = useStyles({ isFor })
-  console.log(proposal)
+  const { voteProposal } = useVoteContract();
 
   return (
     <Card className={classes.root}>
       <Typography variant='body1' className={classes.label}>
-        {`Your vote history: 56.99 votes "${isFor ? 'For' : 'Against'}"`}
+        {`Your vote history: ${(proposalReceipt?.votes || 0).toFixed(3)} votes "${isFor ? 'For' : 'Against'}"`}
       </Typography>
       <ContainedButton
         className={classes.subHeaderButton}
         size='small'
         disableElevation
+        onClick={() => voteProposal(proposal, !isFor)}
       >
         Change Vote
       </ContainedButton>

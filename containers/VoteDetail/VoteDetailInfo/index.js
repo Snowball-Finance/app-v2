@@ -22,7 +22,7 @@ const VoteDetailInfo = ({
   return (
     <Card className={classes.root}>
       <Typography variant='caption' className={classes.info}>
-        {proposal?.detail || 'No detail'}
+        {proposal?.details || 'No detail'}
       </Typography>
     </Card>
   )

@@ -10,6 +10,7 @@ import { usePopup } from 'contexts/popup-context'
 import useGauge from 'contexts/staking-context/useGauge'
 import { usePrices } from 'contexts/price-context'
 import { isEmpty } from 'utils/helpers/utility'
+import { BNToFloat } from 'utils/helpers/format'
 
 const ContractContext = createContext(null)
 
@@ -50,8 +51,8 @@ export function ContractProvider({ children }) {
         snowconeContract['balanceOf(address)'](account),
         snowconeContract['totalSupply()'](),
       ]);
-      const snowballBalanceValue = parseFloat(ethers.utils.formatUnits(snowballBalance, 18));
-      const snowconeBalanceValue = parseFloat(ethers.utils.formatUnits(snowconeBalance, 18));
+      const snowballBalanceValue = BNToFloat(snowballBalance, 18);
+      const snowconeBalanceValue = BNToFloat(snowconeBalance, 18);
 
       setSnowballBalance(snowballBalanceValue);
       setSnowconeBalance(snowconeBalanceValue);
