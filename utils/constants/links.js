@@ -24,10 +24,10 @@ const LINKS = Object.freeze({
     TITLE: 'Compound & Earn',
     HREF: '/compound-and-earn'
   },
-  //VOTE: {
-  //  TITLE: 'Vote',
-  //  HREF: '/vote'
-  //},
+  VOTE: {
+   TITLE: 'Vote',
+   HREF: '/vote'
+  },
   VOTE_DETAIL: {
     TITLE: 'Vote Detail',
     HREF: '/vote/detail/[proposal]'

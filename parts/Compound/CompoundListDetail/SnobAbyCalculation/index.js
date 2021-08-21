@@ -38,7 +38,7 @@ const SnobApyCalculation = ({ totalAPY, snobAPR, userBoost }) => {
       </div>
       <div className={classes.container}>
         <Typography variant="body2">Total APY</Typography>
-        <Typography variant="subtitle2">{totalAPY?.toFixed(2)}%</Typography>
+        <Typography variant="subtitle2">{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
       </div>
     </div>
   );

@@ -40,9 +40,15 @@ const ProposalTime = ({
     switch (proposal.state) {
       case 'Active':
         return 'Voting finish at'
+      case 'Defeated':
+        return 'Defeated'
+      case 'Pending Execution':
+        return 'Pending Execution'
+      case 'Ready For Execution':
+        return 'Ready For Execution'
       case 'Executed':
         return 'Executed'
-      case 'Failed':
+      case 'Vetoed':
         return 'Canceled'
       default:
         return 'Voting finish at'

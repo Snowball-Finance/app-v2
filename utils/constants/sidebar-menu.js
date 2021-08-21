@@ -4,6 +4,7 @@ import { Home, BookOpen, GitHub, Send, Link, Download, Archive } from 'react-fea
 import StableVaultIcon from 'components/Icons/StableVaultIcon'
 import CompoundAndEarnIcon from 'components/Icons/CompoundAndEarnIcon'
 import NftMarketplaceIcon from 'components/Icons/NftMarketplaceIcon'
+// import VoteIcon from 'components/Icons/VoteIcon'
 
 const SIDEBAR_MENU = [
   {
@@ -27,10 +28,10 @@ const SIDEBAR_MENU = [
     ICON: Download,
     ...LINKS.STAKING
   },
-  //{
-  //  ICON: VoteIcon,
-  //  ...LINKS.VOTE
-  //},
+  // {
+  //   ICON: VoteIcon,
+  //   ...LINKS.VOTE
+  // },
   {
     ICON: NftMarketplaceIcon,
     ...LINKS.NFT_MARKETPLACE

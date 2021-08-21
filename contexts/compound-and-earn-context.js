@@ -8,11 +8,11 @@ import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import LP_ABI from 'libs/abis/lp-token.json';
-import { useQuery } from '@apollo/client';
-import { LAST_SNOWBALL_INFO } from 'api/compound-and-earn/queries';
+
 import { usePopup } from 'contexts/popup-context'
 import { usePoolContract } from './pool-context';
 import { useContracts } from './contract-context';
+import { useAPIContext } from './api-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -26,14 +26,15 @@ export function CompoundAndEarnProvider({ children }) {
   const [userPools, setUserPools] = useState([]);
   const { gauges } = useContracts();
   const { pools } = usePoolContract();
-  const { data } = useQuery(LAST_SNOWBALL_INFO);
+  const { getLastSnowballInfo } = useAPIContext();
+  const snowballInfoQuery = getLastSnowballInfo();
 
   useEffect(() => {
     {
       getBalanceInfosByPool();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps   
-  }, [data, pools, gauges, account]);
+  }, [snowballInfoQuery, pools, gauges, account]);
 
   const { setPopUp } = usePopup();
 
@@ -304,10 +305,10 @@ export function CompoundAndEarnProvider({ children }) {
         if (gauge) {
           userDepositedLP += (gauge.staked / 1e18) * (snowglobeRatio/1e18);
           SNOBHarvestable = gauge.harvestable / 1e18;
-          SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
+          SNOBValue = SNOBHarvestable * snowballInfoQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
 
-        if(userDepositedLP > 0 && item.name !== "xJOE"){
+        if(userDepositedLP > 0 && item.name !== "xJOE" && item.name !== "DAI.e"){
           let reserves = await lpContract.getReserves();
           let totalSupplyPGL = await lpContract.totalSupply() /1e18;
           const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
@@ -332,7 +333,7 @@ export function CompoundAndEarnProvider({ children }) {
           userDepositedLP = gauge.staked/1e18;
           totalSupply = gauge.totalSupply;
           SNOBHarvestable = gauge.harvestable / 1e18;
-          SNOBValue = SNOBHarvestable * data?.LastSnowballInfo?.snowballToken.pangolinPrice;
+          SNOBValue = SNOBHarvestable * snowballInfoQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
       }
       

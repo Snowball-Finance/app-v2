@@ -16,7 +16,8 @@ import * as COMMON_CONSTANTS from 'utils/constants/common'
 import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-  
+import { APIProvider } from 'contexts/api-context'
+
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -57,17 +58,19 @@ function MyApp({ Component, pageProps }) {
           <DarkModeProvider>
             <ThemeProvider>
               <PopupProvider>
-                <PriceProvider>
-                  <PoolContractProvider>
-                    <ContractProvider>
-                      <CssBaseline />
-                      <Layout>
-                        <Component {...pageProps} />
-                      </Layout>
-                      <ToastContainer position={'bottom-right'} />
-                    </ContractProvider>
-                  </PoolContractProvider>
-                </PriceProvider>
+                <APIProvider>
+                  <PriceProvider>
+                    <PoolContractProvider>
+                      <ContractProvider>
+                        <CssBaseline />
+                        <Layout>
+                          <Component {...pageProps} />
+                        </Layout>
+                        <ToastContainer position={'bottom-right'} />
+                      </ContractProvider>
+                    </PoolContractProvider>
+                  </PriceProvider>
+                </APIProvider>
               </PopupProvider>
             </ThemeProvider>
           </DarkModeProvider>

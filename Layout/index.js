@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
-    padding: '1rem 2rem',
+    padding: theme.spacing(2),
     marginLeft: theme.custom.layout.closedDrawerWidth,
     [theme.breakpoints.down('xs')]: {
       minWidth: `calc(100vw - ${theme.custom.layout.closedDrawerWidth + 16}px)`,

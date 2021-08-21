@@ -7,11 +7,10 @@ import {
   LinearProgress,
 } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { useQuery } from '@apollo/client';
 
 import { DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH } from 'utils/constants/image-paths';
-import { GET_TVL_INFO_LAST_SNOWBALL } from 'api/dashboard/queries';
 import DashboardTVLSkeletons from 'components/Skeletons/DashboardTVL';
+import { useAPIContext } from 'contexts/api-context';
 
 const BorderLinearProgress = withStyles((theme) => ({
   root: {
@@ -61,13 +60,14 @@ const useStyles = makeStyles((theme) => ({
 
 const TotalLockedValue = () => {
   const classes = useStyles();
-  const { data, loading, error } = useQuery(GET_TVL_INFO_LAST_SNOWBALL);
+  const { getLastSnowballInfo } = useAPIContext();
+  const snowballTVLQuery = getLastSnowballInfo();
 
-  if (error) {
+  if (snowballTVLQuery.error) {
     return <div>Something went wrong...</div>;
   }
 
-  if (loading) {
+  if (snowballTVLQuery.loading) {
     return <DashboardTVLSkeletons />;
   }
 
@@ -77,7 +77,7 @@ const TotalLockedValue = () => {
         Total Value Locked
       </Typography>
       <Typography variant="h3" color="textPrimary" className={classes.snob}>
-        ${data?.LastSnowballInfo?.snowballTVL.toLocaleString()}
+        ${snowballTVLQuery.data?.LastSnowballInfo?.snowballTVL.toLocaleString()}
       </Typography>
 
       <div>
@@ -89,8 +89,8 @@ const TotalLockedValue = () => {
             <Typography variant="subtitle1" color="textPrimary">
               $
               {(
-                data?.LastSnowballInfo?.snowballToken.supply *
-                data?.LastSnowballInfo?.snowballToken.pangolinPrice
+                snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply *
+                snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice
               ).toLocaleString()}
             </Typography>
           </Grid>
@@ -99,12 +99,12 @@ const TotalLockedValue = () => {
               Circulating Supply
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {`${(data?.LastSnowballInfo?.snowballToken.supply).toLocaleString()} - Max: 18,000,000`}
+              {`${(snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply).toLocaleString()} - Max: 18,000,000`}
             </Typography>
             <BorderLinearProgress
               variant="determinate"
               value={
-                (+data?.LastSnowballInfo?.snowballToken.supply / 18000000) * 100
+                (+snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply / 18000000) * 100
               }
             />
           </Grid>
@@ -120,9 +120,9 @@ const TotalLockedValue = () => {
               SNOB per Block / Day
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {(data?.LastSnowballInfo?.snobPerBlock).toLocaleString()} / ~
-              {(data?.LastSnowballInfo?.blocksPast24hrs *
-                data?.LastSnowballInfo?.snobPerBlock).toLocaleString()}
+              {(snowballTVLQuery.data?.LastSnowballInfo?.snobPerBlock).toLocaleString()} / ~
+              {(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs *
+                snowballTVLQuery.data?.LastSnowballInfo?.snobPerBlock).toLocaleString()}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -130,7 +130,7 @@ const TotalLockedValue = () => {
               Blocks Past 24hrs
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {(data?.LastSnowballInfo?.blocksPast24hrs).toLocaleString()}
+              {(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs).toLocaleString()}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -138,8 +138,8 @@ const TotalLockedValue = () => {
               Current Distribution Phase
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {(data?.LastSnowballInfo?.blockHeight).toLocaleString()}/
-              {(data?.LastSnowballInfo?.snobNextPhase).toLocaleString()}
+              {(snowballTVLQuery.data?.LastSnowballInfo?.blockHeight).toLocaleString()}/
+              {(snowballTVLQuery.data?.LastSnowballInfo?.snobNextPhase).toLocaleString()}
               {/* <small>(1,610,242 blocks left)</small> */}
             </Typography>
           </Grid>

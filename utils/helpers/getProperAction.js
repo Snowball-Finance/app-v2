@@ -13,25 +13,25 @@ const getProperAction = (item, setModal, balance, deposit = 0) => {
 		action = ["Details", () => {}]
 	} else if (balance > 0) {
 		action = ["Deposit", () => setModal({ open: true, title: 'Deposit' })];
-	} else {
-		if (item.source == "Pangolin") {
+	} else if (item.source == "Pangolin") {
 			action = ["Get_PGL", () => { window.open(`${PangolinPoolURL}${token1}/${token2}`) }];
-		} 
-		else if (item.source == "Trader Joe") {
-			if (item.name == "xJOE") {
-				action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
-			}
-			else {
-				action = ["Get_JLP", () => { window.open(`${JoePoolURL}${token1}/${token2}`) }];
-			}
-		} else if (item.name == "S3D (USDT-BUSD-DAI)") {
-			action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];
-		} else if (item.name == "S3F (FRAX-TUSD-USDT)") {
-			action = ["Get_s3F", (router) => { router.push(LINKS.S3F_VAULT.HREF) }];
-		} else if (item.name == "S4D (DAI.e-FRAX-TUSD-USDT.e)") {
-			action = ["Get_s4D", (router) => { router.push(LINKS.S4D_VAULT.HREF) }];
+	} else if (item.source == "BENQI"){
+      if(item.name == 'DAI.e'){
+        action = ["Get_DAI.e", () => { window.open(`https://app.pangolin.exchange/#/swap/${token1}`) }]; 
+      }
+  } else if (item.source == "Trader Joe") {
+		if (item.name == "xJOE") {
+			action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
+		} else {
+			action = ["Get_JLP", () => { window.open(`${JoePoolURL}${token1}/${token2}`) }];
 		}
-	}
+	} else if (item.name == "S3D (USDT-BUSD-DAI)") {
+		action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];
+	} else if (item.name == "S3F (FRAX-TUSD-USDT)") {
+		action = ["Get_s3F", (router) => { router.push(LINKS.S3F_VAULT.HREF) }];
+	} else if (item.name == "S4D (DAI.e-FRAX-TUSD-USDT.e)") {
+		action = ["Get_s4D", (router) => { router.push(LINKS.S4D_VAULT.HREF) }];
+}
 
 	return action;
 }

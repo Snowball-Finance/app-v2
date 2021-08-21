@@ -7,9 +7,10 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S3D_VAULT_ABI from 'libs/abis/s3d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { provider, roundDown } from 'utils/helpers/utility'
+import { provider } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
+import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
@@ -86,16 +87,16 @@ export function S3dVaultContractProvider({ children }) {
         busdSupply,
         daiSupply
       ] = await Promise.all([
-        unsignedS3dContract.totalSupply({ gasLimit: 1000000 }),
-        unsignedUsdtContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        unsignedBusdContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
-        unsignedDaiContract.balanceOf(CONTRACTS.S3D.VAULT, { gasLimit: 1000000 }),
+        unsignedS3dContract.totalSupply(),
+        unsignedUsdtContract.balanceOf(CONTRACTS.S3D.VAULT),
+        unsignedBusdContract.balanceOf(CONTRACTS.S3D.VAULT),
+        unsignedDaiContract.balanceOf(CONTRACTS.S3D.VAULT),
       ]);
 
-      const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, svToken.decimal))
-      const usdtSupplyValue = parseFloat(ethers.utils.formatUnits(usdtSupply, usdtToken.decimal))
-      const busdSupplyValue = parseFloat(ethers.utils.formatUnits(busdSupply, busdToken.decimal))
-      const daiSupplyValue = parseFloat(ethers.utils.formatUnits(daiSupply, daiToken.decimal))
+      const s3dSupplyValue = BNToFloat(s3dSupply, svToken.decimal)
+      const usdtSupplyValue = BNToFloat(usdtSupply, usdtToken.decimal)
+      const busdSupplyValue = BNToFloat(busdSupply, busdToken.decimal)
+      const daiSupplyValue = BNToFloat(daiSupply, daiToken.decimal)
       const totalSupply = usdtSupplyValue + busdSupplyValue + daiSupplyValue
       const usdtPercentage = totalSupply ? usdtSupplyValue / totalSupply : 0
       const busdPercentage = totalSupply ? busdSupplyValue / totalSupply : 0
@@ -129,20 +130,20 @@ export function S3dVaultContractProvider({ children }) {
         s3dSupply,
         stakedBalance
       ] = await Promise.all([
-        s3dContract.balanceOf(account, { gasLimit: 1000000 }),
-        usdtContract.balanceOf(account, { gasLimit: 1000000 }),
-        busdContract.balanceOf(account, { gasLimit: 1000000 }),
-        daiContract.balanceOf(account, { gasLimit: 1000000 }),
-        s3dContract.totalSupply({ gasLimit: 1000000 }),
-        gaugeContract.balanceOf(account, { gasLimit: 1000000 })
+        s3dContract.balanceOf(account),
+        usdtContract.balanceOf(account),
+        busdContract.balanceOf(account),
+        daiContract.balanceOf(account),
+        s3dContract.totalSupply(),
+        gaugeContract.balanceOf(account)
       ]);
 
-      const s3dBalanceValue = ethers.utils.formatUnits(s3dBalance, svToken.decimal)
-      const usdtBalanceValue = ethers.utils.formatUnits(usdtBalance, usdtToken.decimal)
-      const busdBalanceValue = ethers.utils.formatUnits(busdBalance, busdToken.decimal)
-      const daiBalanceValue = ethers.utils.formatUnits(daiBalance, daiToken.decimal)
-      const s3dSupplyValue = parseFloat(ethers.utils.formatUnits(s3dSupply, svToken.decimal))
-      const stakedValue = parseFloat(ethers.utils.formatUnits(stakedBalance, 18))
+      const s3dBalanceValue = BNToString(s3dBalance, svToken.decimal);
+      const usdtBalanceValue = BNToString(usdtBalance, usdtToken.decimal); 
+      const busdBalanceValue = BNToString(busdBalance, busdToken.decimal); 
+      const daiBalanceValue = BNToString(daiBalance, daiToken.decimal); 
+      const s3dSupplyValue = BNToFloat(s3dSupply, svToken.decimal);
+      const stakedValue = BNToFloat(stakedBalance, 18);
       const s3dPercentage = s3dSupplyValue ? parseFloat(s3dBalanceValue) / s3dSupplyValue : 0
       setStaked(stakedValue)
       setSVToken((prev) => ({ ...prev, balance: s3dBalanceValue, percentage: s3dPercentage, supply: s3dSupplyValue }))
@@ -183,7 +184,7 @@ export function S3dVaultContractProvider({ children }) {
                 type: 'swap',
                 token: `${soldToken.name} - ${boughtToken.name}`,
                 time: item.timestamp,
-                balance: ethers.utils.formatUnits(item.args.tokensSold, soldToken.decimal)
+                balance: BNToString(item.args.tokensSold, soldToken.decimal)
               }
             ]
             break;
@@ -197,7 +198,7 @@ export function S3dVaultContractProvider({ children }) {
                   type: 'remove',
                   token: removedToken.name,
                   time: item.timestamp,
-                  balance: -ethers.utils.formatUnits(removeTokenAmounts[i], removedToken.decimal)
+                  balance: -BNToString(removeTokenAmounts[i], removedToken.decimal)
                 }
               ]
             }
@@ -210,7 +211,7 @@ export function S3dVaultContractProvider({ children }) {
                 type: 'remove',
                 token: removeToken.name,
                 time: item.timestamp,
-                balance: -ethers.utils.formatUnits(item.args.tokensBought, removeToken.decimal)
+                balance: -BNToString(item.args.tokensBought, removeToken.decimal)
               }
             ]
             break;
@@ -224,7 +225,7 @@ export function S3dVaultContractProvider({ children }) {
                   type: 'add',
                   token: addedToken.name,
                   time: item.timestamp,
-                  balance: ethers.utils.formatUnits(addTokenAmounts[i], addedToken.decimal)
+                  balance: BNToString(addTokenAmounts[i], addedToken.decimal)
                 }
               ]
             }
@@ -240,12 +241,11 @@ export function S3dVaultContractProvider({ children }) {
 
   const getToSwapAmount = async (fromToken, toToken, fromAmount) => {
     try {
-      if (fromAmount === '' || !unsignedVaultContract) { return 0; }
+      if (fromAmount < 0 || !unsignedVaultContract) { return 0; }
       if (fromToken.name === toToken.name) { return fromAmount }
 
-      const fromAmountValue = ethers.utils.parseUnits(roundDown(fromAmount, fromToken.decimal), fromToken.decimal);
-      const toAmount = await unsignedVaultContract.calculateSwap(fromToken.index, toToken.index, fromAmountValue)
-      const toAmountValue = ethers.utils.formatUnits(toAmount, toToken.decimal)
+      const toAmount = await unsignedVaultContract.calculateSwap(fromToken.index, toToken.index, fromAmount)
+      const toAmountValue = BNToString(toAmount, toToken.decimal)
       return toAmountValue || 0;
     } catch (error) {
       console.log('[Error] getToSwapAmount => ', error)
@@ -267,19 +267,19 @@ export function S3dVaultContractProvider({ children }) {
     }
 
     try {
-      const calculatedWithdraw = ethers.utils.parseUnits(roundDown(svToken.balance), 18)
+      const calculatedWithdraw = floatToBN(svToken.balance, 18);
       const calculatedWithdrawValue = calculatedWithdraw.mul(withdrawPercentage).div(100);
 
       if (checkedValue === -1) {
         const removeAmounts = await unsignedVaultContract.calculateRemoveLiquidity(account, calculatedWithdrawValue);
         for (let i = 0; i < 3; i++) {
           const token = getTokenById(i);
-          withdrawAmount[i] = parseFloat(ethers.utils.formatUnits(removeAmounts[i], token.decimal))
+          withdrawAmount[i] = BNToFloat(removeAmounts[i], token.decimal)
         }
       } else {
         const removeAmount = await unsignedVaultContract.calculateRemoveLiquidityOneToken(account, calculatedWithdrawValue, checkedValue);
         const token = getTokenById(checkedValue);
-        withdrawAmount[checkedValue] = parseFloat(ethers.utils.formatUnits(removeAmount, token.decimal));
+        withdrawAmount[checkedValue] = BNToFloat(removeAmount, token.decimal);
       }
       return withdrawAmount;
     } catch (error) {
@@ -297,13 +297,13 @@ export function S3dVaultContractProvider({ children }) {
       return { minToMintValue: 0, discount: 0 };
     }
 
-    const usdtAmount = ethers.utils.parseUnits(roundDown(data[0].value, data[0].token.decimal), data[0].token.decimal)
-    const busdAmount = ethers.utils.parseUnits(roundDown(data[1].value, data[1].token.decimal), data[1].token.decimal)
-    const daiAmount = ethers.utils.parseUnits(roundDown(data[2].value, data[2].token.decimal), data[2].token.decimal)
-    const totalAmount = data[0].value + data[1].value + data[2].value
+    const usdtAmount = data[0].value;
+    const busdAmount = data[1].value
+    const daiAmount = data[2].value;
+    const totalAmount = data[0].value + data[1].value + data[2].value;
 
     const minToMint = await unsignedVaultContract.calculateTokenAmount(account, [usdtAmount, busdAmount, daiAmount], true)
-    const minToMintValue = parseFloat(ethers.utils.formatUnits(minToMint, 18))
+    const minToMintValue = BNToFloat(minToMint, 18);
     const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
     const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
 
@@ -325,10 +325,9 @@ export function S3dVaultContractProvider({ children }) {
     setLoading(true)
     try {
       const tokenContract = getTokenContract(fromToken);
-      const tokenBalance = await tokenContract.balanceOf(account, { gasLimit: 1000000 });
-      const fromAmountValue = ethers.utils.parseUnits(roundDown(fromAmount, fromToken.decimal), fromToken.decimal)
+      const tokenBalance = await tokenContract.balanceOf(account);
 
-      if (tokenBalance.lt(fromAmountValue)) {
+      if (tokenBalance.lt(fromAmount)) {
         setPopUp({
           title: 'Balance Error',
           text: `Please check balance of ${fromToken.name} token on your wallet.`
@@ -338,8 +337,8 @@ export function S3dVaultContractProvider({ children }) {
       }
 
       const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S3D.VAULT);
-      if (tokenAllowance.lt(fromAmountValue)) {
-        const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, fromAmountValue);
+      if (tokenAllowance.lt(fromAmount)) {
+        const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, fromAmount);
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
@@ -350,13 +349,13 @@ export function S3dVaultContractProvider({ children }) {
 
       const slippageMultiplier = 1000 - (maxSlippage * 10);
       const minAmount = toAmount * slippageMultiplier / 1000;
-      const minAmountValue = ethers.utils.parseUnits(roundDown(minAmount, toToken.decimal), toToken.decimal)
+      const minAmountValue = floatToBN(minAmount, toToken.decimal);
       const deadline = Date.now() + 180;
 
       const tokenSwap = await vaultContract.swap(
         fromToken.index,
         toToken.index,
-        fromAmountValue,
+        fromAmount,
         minAmountValue,
         deadline
       );
@@ -386,10 +385,9 @@ export function S3dVaultContractProvider({ children }) {
         const { token, value } = item;
         if (value) {
           const tokenContract = getTokenContract(token);
-          const tokenBalance = await tokenContract.balanceOf(account, { gasLimit: 1000000 });
-          const tokenAmount = ethers.utils.parseUnits(roundDown(value, token.decimal), token.decimal)
+          const tokenBalance = await tokenContract.balanceOf(account);
 
-          if (tokenBalance.lt(tokenAmount)) {
+          if (tokenBalance.lt(value)) {
             setPopUp({
               title: 'Balance Error',
               text: `Please check balance of ${token.name} token on your wallet.`
@@ -399,8 +397,8 @@ export function S3dVaultContractProvider({ children }) {
           }
 
           const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S3D.VAULT);
-          if (tokenAllowance.lt(tokenAmount)) {
-            const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, tokenAmount);
+          if (tokenAllowance.lt(value)) {
+            const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, value);
             const transactionApprove = await tokenApprove.wait(1)
 
             if (!transactionApprove.status) {
@@ -411,12 +409,12 @@ export function S3dVaultContractProvider({ children }) {
         }
       }
 
-      const usdtAmount = ethers.utils.parseUnits(roundDown(liquidityData[0].value, liquidityData[0].token.decimal), liquidityData[0].token.decimal)
-      const busdAmount = ethers.utils.parseUnits(roundDown(liquidityData[1].value, liquidityData[1].token.decimal), liquidityData[1].token.decimal)
-      const daiAmount = ethers.utils.parseUnits(roundDown(liquidityData[2].value, liquidityData[2].token.decimal), liquidityData[2].token.decimal)
+      const usdtAmount =liquidityData[0].value;
+      const busdAmount = liquidityData[1].value;
+      const daiAmount = liquidityData[2].value;
       const slippageMultiplier = 1000 - (maxSlippage * 10);
       const minToMint = receivingValue.value * slippageMultiplier / 1000;
-      const minToMintAmount = ethers.utils.parseUnits(roundDown(minToMint), 18)
+      const minToMintAmount = floatToBN(minToMint, 18);
       const deadline = Date.now() + 180;
 
       const addLiquidity = await vaultContract.addLiquidity([usdtAmount, busdAmount, daiAmount], minToMintAmount, deadline);
@@ -442,7 +440,7 @@ export function S3dVaultContractProvider({ children }) {
 
     setLoading(true)
     try {
-      const calculatedWithdraw = ethers.utils.parseUnits(roundDown(svToken.balance), 18)
+      const calculatedWithdraw = floatToBN(svToken.balance,18)
       const calculatedWithdrawValue = calculatedWithdraw.mul(withdrawPercentage).div(100);
 
       const tokenAllowance = await s3dContract.allowance(account, CONTRACTS.S3D.VAULT);
@@ -462,14 +460,14 @@ export function S3dVaultContractProvider({ children }) {
         const minToRemoveAmount = [];
         for (let i = 0; i < 3; i++) {
           const { token, value } = liquidityData[i];
-          minToRemoveAmount[i] = ethers.utils.parseUnits(roundDown(value * maxSlippage, token.decimal), token.decimal)
+          minToRemoveAmount[i] = floatToBN(value * maxSlippage, token.decimal);
         }
 
         const removeLiquidity = await vaultContract.removeLiquidity(calculatedWithdrawValue, minToRemoveAmount, deadline);
         transactionRemoveLiquidity = await removeLiquidity.wait(1)
       } else {
         const { token, value } = liquidityData[selectedToken];
-        const minToRemoveAmount = ethers.utils.parseUnits(roundDown(value * maxSlippage, token.decimal), token.decimal)
+        const minToRemoveAmount = floatToBN(value * maxSlippage, token.decimal);
 
         const removeLiquidityOneToken = await vaultContract.removeLiquidityOneToken(calculatedWithdrawValue, selectedToken, minToRemoveAmount, deadline);
         transactionRemoveLiquidity = await removeLiquidityOneToken.wait(1)

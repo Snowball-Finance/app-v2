@@ -18,7 +18,7 @@ const SwapPanel = ({ vault }) => {
 
   return (
     <PanelLayout>
-      <Grid item sm={12} md={6} className={classes.leftCard}>
+      <Grid item xs={12} md={6} className={classes.leftCard}>
         <SwapForm
           vault={vault}
           tokenArray={tokenArray}
@@ -27,7 +27,7 @@ const SwapPanel = ({ vault }) => {
           onSwap={onSwap}
         />
       </Grid>
-      <Grid item sm={12} md={6} className={classes.rightCard}>
+      <Grid item xs={12} md={6} className={classes.rightCard}>
         <TransactionsHistory
           vault={vault}
           transactions={transactions}

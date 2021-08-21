@@ -3,10 +3,6 @@ import { Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 const usePanelStyles = makeStyles((theme) => ({
-  container: {
-    margin: 0,
-    width: '100%'
-  },
   leftCard: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -28,10 +24,8 @@ const usePanelStyles = makeStyles((theme) => ({
 const PanelLayout = ({
   children
 }) => {
-  const classes = usePanelStyles();
-
   return (
-    <Grid container spacing={3} className={classes.container}>
+    <Grid container spacing={3}>
       {children}
     </Grid>
   )

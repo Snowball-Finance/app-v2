@@ -10,6 +10,7 @@ import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import { useFormStyles } from 'styles/use-styles'
 import getVaultInfo from 'utils/helpers/getVaultInfo'
+import { floatToBN } from 'utils/helpers/format'
 
 const AddLiquidityForm = ({
   vault,
@@ -46,7 +47,7 @@ const AddLiquidityForm = ({
         ...liquidityData,
         {
           token,
-          value: data[`input${token.index}`] || 0
+          value: floatToBN(data[`input${token.index}`],token.decimal) || 0
         }
       ]
     }

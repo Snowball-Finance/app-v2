@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BNToFloat } from './format';
 
 const getPairDataPrefill = (
   prices,
@@ -9,12 +9,8 @@ const getPairDataPrefill = (
 ) => {
   const { token0 = {}, token1 = {} } = gauge;
 
-  const numAInPair = parseFloat(
-    ethers.utils.formatUnits(numAInPairBN, token0.decimals),
-  );
-  const numBInPair = parseFloat(
-    ethers.utils.formatUnits(numBInPairBN, token1.decimals),
-  );
+  const numAInPair = BNToFloat(numAInPairBN, token0.decimals);
+  const numBInPair = BNToFloat(numBInPairBN, token1.decimals);
 
   const priceA = prices[token0.symbol];
   const priceB = prices[token1.symbol];
@@ -26,7 +22,7 @@ const getPairDataPrefill = (
   } else {
     totalValueOfPair = 2 * priceB * numBInPair;
   }
-  const totalSupply = parseFloat(ethers.utils.formatEther(totalSupplyBN)); // Uniswap LP tokens are always 18 decimals
+  const totalSupply = BNToFloat(totalSupplyBN); // Uniswap LP tokens are always 18 decimals
   const pricePerToken = totalValueOfPair / totalSupply;
 
   return { totalValueOfPair, totalSupply, pricePerToken };

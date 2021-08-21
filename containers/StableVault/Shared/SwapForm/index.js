@@ -14,6 +14,7 @@ import { isEmpty } from 'utils/helpers/utility'
 import getVaultInfo from 'utils/helpers/getVaultInfo'
 import { usePopup } from 'contexts/popup-context'
 import { useFormStyles } from 'styles/use-styles'
+import { floatToBN } from 'utils/helpers/format'
 
 const schema = yup.object().shape({
   fromSwap: BALANCE_VALID
@@ -58,12 +59,15 @@ const SwapForm = ({
     resolver: yupResolver(schema)
   });
 
-  const fromSwap = watch('fromSwap')
+  const fromSwap = watch('fromSwap');
 
   useEffect(() => {
     const calculateToSwap = async () => {
-      const toSwap = await getToSwapAmount(fromToken, toToken, fromSwap);
-      setToSwap(toSwap)
+      if(fromSwap > 0){
+        const toSwap = await getToSwapAmount(fromToken, toToken, 
+          floatToBN(fromSwap,fromToken.decimal));
+        setToSwap(toSwap)
+      }
     }
     calculateToSwap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +85,7 @@ const SwapForm = ({
     const params = {
       fromToken,
       toToken,
-      fromAmount: fromSwap,
+      fromAmount: floatToBN(fromSwap,fromToken.decimal),
       toAmount: toSwap,
       maxSlippage
     }

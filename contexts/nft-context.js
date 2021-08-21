@@ -1,15 +1,15 @@
 import { createContext, useState, useContext, useMemo, useEffect, useCallback } from 'react'
-import { useQuery } from '@apollo/client'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 
 import { CONTRACTS } from 'config'
-import { NFTS_LIST } from 'api/nft-marketplace/queries'
 import getNFTABI from 'libs/abis/nft'
 import GOVERNANCE_ABI from 'libs/abis/governance.json'
 import { usePopup } from 'contexts/popup-context'
 import { isEmpty } from 'utils/helpers/utility'
 import NFT_STATUS from 'utils/constants/nft-status'
+import { useAPIContext } from './api-context'
+import { BNToFloat, floatToBN } from 'utils/helpers/format'
 
 const ContractContext = createContext(null)
 
@@ -22,7 +22,9 @@ export function NFTContractProvider({ children }) {
   const [shopNFTs, setShopNFTs] = useState([]);
   const [purchasedNFTs, setPurchasedNFTs] = useState([]);
 
-  const { data: { NFTsList: nftsList = [] } = {} } = useQuery(NFTS_LIST);
+  const { getNFTsList } = useAPIContext();
+
+  const { data: { NFTsList: nftsList = [] } = {} } = getNFTsList();
   const governanceContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GOVERNANCE, GOVERNANCE_ABI, library.getSigner()) : null, [library])
 
   const getNFTData = useCallback(async () => {
@@ -86,7 +88,7 @@ export function NFTContractProvider({ children }) {
         } else {
           shopNFTs = [...shopNFTs, item]
           const mintNFTBalance = await nftContract.balanceOf(account)
-          const mintNFTBalanceValue = parseFloat(ethers.utils.formatUnits(mintNFTBalance, 18));
+          const mintNFTBalanceValue = BNToFloat(mintNFTBalance, 18);
 
           if (mintNFTBalanceValue > 0) {
             purchasedNFTs = [
@@ -186,7 +188,7 @@ export function NFTContractProvider({ children }) {
       const { abi } = getNFTABI(address);
       const nftContract = new ethers.Contract(address, abi, library.getSigner())
 
-      const overrides = { value: ethers.utils.parseEther((baseCost || 0).toString()) }
+      const overrides = { value: floatToBN(baseCost || 0) }
       const nftMint = await nftContract.mint(account, overrides);
       const transactionMint = await nftMint.wait(1);
 

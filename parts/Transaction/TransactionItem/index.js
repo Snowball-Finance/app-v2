@@ -47,8 +47,8 @@ const TransactionItem = ({
   return (
     <div className={classes.container}>
       <typeInfo.icon />
-      <Grid container spacing={2} className={classes.infoContainer}>
-        <Grid item xs={12} sm={4}>
+      <Grid container spacing={1} className={classes.infoContainer}>
+        <Grid item xs={4}>
           <Typography
             color='textPrimary'
             className={classes.header}
@@ -58,7 +58,7 @@ const TransactionItem = ({
             {transaction.token}
           </Typography>
         </Grid>
-        <Grid item xs={6} sm={4} >
+        <Grid item xs={4}>
           <Typography
             color='textPrimary'
             className={classes.time}
@@ -66,7 +66,7 @@ const TransactionItem = ({
             {transaction.time}
           </Typography>
         </Grid>
-        <Grid item xs={6} sm={4}>
+        <Grid item xs={4}>
           <Typography
             color='textPrimary'
             align='right'
