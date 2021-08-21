@@ -39,6 +39,9 @@ const ListItem = ({
   let totalAPY = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
   //limit APY to 1mil
   totalAPY = totalAPY > 999999 ? 999999 : totalAPY;
+  if(pool.source == 'BENQI'){
+    totalAPY = 'TBD';
+  }
 
   const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
 
