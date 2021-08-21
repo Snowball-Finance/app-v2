@@ -58,7 +58,7 @@ const LINKS = Object.freeze({
   },
   REGRESS: {
     TITLE: 'Use Old Website',
-    HREF: 'https://classic.snowball.network',
+    HREF: 'https://app.snowball.network',
     IS_EXT_LINK: true
   },
 });
