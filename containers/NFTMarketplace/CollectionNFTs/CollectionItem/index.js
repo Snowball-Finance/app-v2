@@ -26,10 +26,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontWeight: 'bold',
-  },
-  button: {
-    borderRadius: 0,
-    padding: theme.spacing(1.5)
   }
 }));
 
