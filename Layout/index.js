@@ -1,5 +1,5 @@
 
-import { memo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Grid, useMediaQuery } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import clsx from 'clsx'
@@ -44,6 +44,8 @@ const Layout = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'), { defaultMatches: true });
 
   const [openDrawer, setOpenDrawer] = useState(true)
+
+  useEffect(() => setOpenDrawer(!isMobile), [isMobile])
 
   const drawerHandler = () => {
     setOpenDrawer(prev => !prev);
