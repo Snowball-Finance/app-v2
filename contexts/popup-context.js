@@ -13,9 +13,15 @@ const PopupProvider = ({ children }) => {
 
   const [open, setOpen] = useState(false)
   const [popupInfo, setPopupInfo] = useState(initInfo)
+  const [confirmed, setConfirmed] = useState(false)
 
   const closePopUpHandler = useCallback(() => {
     setOpen(false)
+  }, [setOpen])
+
+  const closePopUpHandlerAndConfirm = useCallback(() => {
+    setOpen(false)
+    setConfirmed(true)
   }, [setOpen])
 
   return (
@@ -23,6 +29,7 @@ const PopupProvider = ({ children }) => {
       value={{
         setOpen,
         setPopupInfo,
+        confirmed
       }}
     >
       {open &&
@@ -31,7 +38,7 @@ const PopupProvider = ({ children }) => {
           title={popupInfo?.title}
           text={popupInfo?.text}
           confirmLabel={popupInfo?.cancelLabel}
-          onConfirm={closePopUpHandler}
+          onConfirm={closePopUpHandlerAndConfirm}
           onClose={closePopUpHandler}
         />
       }
@@ -43,7 +50,8 @@ const PopupProvider = ({ children }) => {
 const usePopup = () => {
   const {
     setOpen,
-    setPopupInfo
+    setPopupInfo,
+    confirmed
   } = useContext(PopupContext)
 
   const setPopUp = useCallback((data) => {
@@ -55,7 +63,8 @@ const usePopup = () => {
   }, [setPopupInfo, setOpen])
 
   return {
-    setPopUp
+    setPopUp,
+    confirmed
   }
 }
 

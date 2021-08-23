@@ -104,7 +104,7 @@ export function CompoundAndEarnProvider({ children }) {
     })
   }
 
-  const deposit = async (item, amount) => {
+  const deposit = async (item, amount, refresh = true) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -154,7 +154,7 @@ export function CompoundAndEarnProvider({ children }) {
         return;
       }
       setTransactionStatus({approvalStep:2,depositStep:2});
-      setTimeout(() => { window.location.reload(); }, 2000);
+      if(refresh){setTimeout(() => { window.location.reload(); }, 2000); } 
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
@@ -279,7 +279,8 @@ export function CompoundAndEarnProvider({ children }) {
       const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() ===
         item.gaugeInfo.address.toLowerCase());
-      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, underlyingTokens, userLPBalance;
+      let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, 
+        underlyingTokens, userLPBalance,userBalanceSnowglobe;
       userLPBalance = await lpContract.balanceOf(account);
 
       if (item.kind === 'Snowglobe') {
@@ -297,11 +298,11 @@ export function CompoundAndEarnProvider({ children }) {
           snowglobeRatio = ethers.utils.parseUnits("1");
         }
 
-        let balanceSnowglobe = await snowglobeContract.balanceOf(account);
+        userBalanceSnowglobe = await snowglobeContract.balanceOf(account);
 
-        userLPBalance.add(balanceSnowglobe.mul(snowglobeRatio));
+        userLPBalance.add(userBalanceSnowglobe.mul(snowglobeRatio));
 
-        userDepositedLP = (balanceSnowglobe/1e18) * (snowglobeRatio/1e18);
+        userDepositedLP = (userBalanceSnowglobe/1e18) * (snowglobeRatio/1e18);
         if (gauge) {
           userDepositedLP += (gauge.staked / 1e18) * (snowglobeRatio/1e18);
           SNOBHarvestable = gauge.harvestable / 1e18;
@@ -347,7 +348,8 @@ export function CompoundAndEarnProvider({ children }) {
         totalSupply, 
         SNOBHarvestable,
         SNOBValue,
-        underlyingTokens
+        underlyingTokens,
+        userBalanceSnowglobe
       };
     }));
     setLoading(false);
