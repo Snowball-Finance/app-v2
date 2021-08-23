@@ -68,9 +68,9 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           APY{' '}
           <CustomPopover contentClassName={classes.popover}>
             <APYTooltip
-              dailyAPY={item.source !== "BENQI" ? item.dailyAPY : 'TBD'}
-              weeklyAPY={item.source !== "BENQI" ? item.weeklyAPY : 'TBD'}
-              yearlyAPY={item.source !== "BENQI" ? item.yearlyAPY : 'TBD'}
+              dailyAPY={item.dailyAPY}
+              weeklyAPY={item.weeklyAPY}
+              yearlyAPY={item.yearlyAPY}
             />
           </CustomPopover>
         </Typography>

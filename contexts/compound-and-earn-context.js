@@ -308,7 +308,7 @@ export function CompoundAndEarnProvider({ children }) {
           SNOBValue = SNOBHarvestable * snowballInfoQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice;
         }
 
-        if(userDepositedLP > 0 && item.name !== "xJOE" && item.name !== "DAI.e"){
+        if(userDepositedLP > 0 && item.token1.address){
           let reserves = await lpContract.getReserves();
           let totalSupplyPGL = await lpContract.totalSupply() /1e18;
           const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
