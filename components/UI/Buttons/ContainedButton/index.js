@@ -22,14 +22,7 @@ const useStyles = makeStyles(theme => ({
     opacity: 0.6,
     backgroundColor: `${theme.custom.palette.lightGrey} !important`,
     color: `${theme.custom.palette.darkGrey} !important`,
-  },
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
+  }
 }));
 
 const ContainedButton = React.forwardRef(({
@@ -45,25 +38,23 @@ const ContainedButton = React.forwardRef(({
   const classes = useStyles();
 
   return (
-    <div className={classes.wrapper}>
-      <Button
-        ref={ref}
-        href={href}
-        component={href ? ButtonLink : 'button'}
-        className={clsx(className, classes.root)}
-        classes={{
-          ...propClasses,
-          disabled: classes.disabled
-        }}
-        color={color}
-        variant='contained'
-        disabled={loading || disabled}
-        {...rest}
-      >
-        {children}
-      </Button>
-      {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-    </div>
+    <Button
+      ref={ref}
+      href={href}
+      component={href ? ButtonLink : 'button'}
+      className={clsx(className, classes.root)}
+      classes={{
+        ...propClasses,
+        disabled: classes.disabled
+      }}
+      color={color}
+      variant='contained'
+      disabled={loading || disabled}
+      startIcon={loading && <CircularProgress size={24} />}
+      {...rest}
+    >
+      {children}
+    </Button>
   );
 });
 
