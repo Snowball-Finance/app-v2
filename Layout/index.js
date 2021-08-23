@@ -7,6 +7,7 @@ import clsx from 'clsx'
 import TopAppBar from './TopAppBar'
 import SideDrawer from './SideDrawer'
 import Footer from './Footer'
+import BottomAppBar from './BottomAppBar'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,11 +21,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     marginLeft: theme.custom.layout.closedDrawerWidth,
     [theme.breakpoints.down('xs')]: {
-      minWidth: `calc(100vw - ${theme.custom.layout.closedDrawerWidth + 16}px)`,
+      marginLeft: 0
     },
   },
   openContainer: {
     marginLeft: theme.custom.layout.openDrawerWidth,
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0
+    },
   },
   content: {
     flex: '1 0 auto',
@@ -69,6 +73,7 @@ const Layout = ({
         </div>
         <Footer />
       </div>
+      <BottomAppBar />
     </main>
   );
 };
