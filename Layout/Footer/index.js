@@ -13,7 +13,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
+      flexDirection: 'column'
+    },
+    [theme.breakpoints.down('xs')]: {
+      marginBottom: theme.spacing(7)
     }
   },
   rowContainer: {

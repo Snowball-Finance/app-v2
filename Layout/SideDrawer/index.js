@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
-import { Drawer, List, Typography } from '@material-ui/core'
+import { ClickAwayListener, Drawer, List, Typography } from '@material-ui/core'
 import clsx from 'clsx';
 
 import Logo from 'components/Logo'
@@ -43,7 +43,10 @@ const useStyles = makeStyles((theme) => ({
   logo: {
     display: 'flex',
     justifyContent: 'center',
-    padding: theme.spacing(2, 1, 1)
+    padding: theme.spacing(2, 1, 1),
+    [theme.breakpoints.down('xs')]: {
+      display: 'none'
+    }
   },
   subtitle: {
     fontSize: 14,
@@ -54,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
 
 const SideDrawer = ({
   openDrawer,
-  openDraw
+  openDraw,
+  onClickAway
 }) => {
   const classes = useStyles();
   const router = useRouter();
@@ -89,56 +93,58 @@ const SideDrawer = ({
   }
 
   return (
-    <Drawer
-      variant='permanent'
-      className={clsx(classes.drawer, {
-        [classes.drawerOpen]: openDrawer,
-        [classes.drawerClose]: !openDrawer,
-      })}
-      classes={{
-        paper: clsx(classes.drawerPaper, {
+    <ClickAwayListener onClickAway={onClickAway}>
+      <Drawer
+        variant='permanent'
+        className={clsx(classes.drawer, {
           [classes.drawerOpen]: openDrawer,
           [classes.drawerClose]: !openDrawer,
-        }),
-      }}
-    >
-      <div className={classes.logo}>
-        <Logo isLabel={openDrawer} />
-      </div>
-      <List>
-        {SIDEBAR_MENU.map((sidebar) => {
-
-          if (isEmpty(sidebar?.CHILDREN)) {
-            return (
-              <React.Fragment key={sidebar.TITLE}>
-                {sidebar.TITLE === LINKS.DOCS.TITLE && openDrawer &&
-                  <Typography
-                    color='textPrimary'
-                    className={classes.subtitle}>
-                    HELP
-                  </Typography>
-                }
-                <SingleSideItem
-                  sidebar={sidebar}
-                  isSelect={selectedItem === sidebar.TITLE}
-                  onTab={itemHandler}
-                />
-              </React.Fragment>
-            )
-          }
-
-          return (
-            <MultiSideItem
-              key={sidebar.TITLE}
-              isOpen={openDrawer && selectedItem === sidebar.TITLE}
-              isSelect={selectedItem === sidebar.TITLE}
-              sidebar={sidebar}
-              onTab={itemHandler}
-            />
-          )
         })}
-      </List>
-    </Drawer>
+        classes={{
+          paper: clsx(classes.drawerPaper, {
+            [classes.drawerOpen]: openDrawer,
+            [classes.drawerClose]: !openDrawer,
+          }),
+        }}
+      >
+        <div className={classes.logo}>
+          <Logo isLabel={openDrawer} />
+        </div>
+        <List>
+          {SIDEBAR_MENU.map((sidebar) => {
+
+            if (isEmpty(sidebar?.CHILDREN)) {
+              return (
+                <React.Fragment key={sidebar.TITLE}>
+                  {sidebar.TITLE === LINKS.DOCS.TITLE && openDrawer &&
+                    <Typography
+                      color='textPrimary'
+                      className={classes.subtitle}>
+                      HELP
+                    </Typography>
+                  }
+                  <SingleSideItem
+                    sidebar={sidebar}
+                    isSelect={selectedItem === sidebar.TITLE}
+                    onTab={itemHandler}
+                  />
+                </React.Fragment>
+              )
+            }
+
+            return (
+              <MultiSideItem
+                key={sidebar.TITLE}
+                isOpen={openDrawer && selectedItem === sidebar.TITLE}
+                isSelect={selectedItem === sidebar.TITLE}
+                sidebar={sidebar}
+                onTab={itemHandler}
+              />
+            )
+          })}
+        </List>
+      </Drawer>
+    </ClickAwayListener>
   );
 }
 
