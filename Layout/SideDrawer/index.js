@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
-import { Hidden, Drawer, List, Typography } from '@material-ui/core'
+import { ClickAwayListener, Drawer, List, Typography } from '@material-ui/core'
 import clsx from 'clsx';
 
 import Logo from 'components/Logo'
@@ -43,7 +43,10 @@ const useStyles = makeStyles((theme) => ({
   logo: {
     display: 'flex',
     justifyContent: 'center',
-    padding: theme.spacing(2, 1, 1)
+    padding: theme.spacing(2, 1, 1),
+    [theme.breakpoints.down('xs')]: {
+      display: 'none'
+    }
   },
   subtitle: {
     fontSize: 14,
@@ -54,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
 
 const SideDrawer = ({
   openDrawer,
-  openDraw
+  openDraw,
+  onClickAway
 }) => {
   const classes = useStyles();
   const router = useRouter();
@@ -89,7 +93,7 @@ const SideDrawer = ({
   }
 
   return (
-    <Hidden xsDown>
+    <ClickAwayListener onClickAway={onClickAway}>
       <Drawer
         variant='permanent'
         className={clsx(classes.drawer, {
@@ -140,7 +144,7 @@ const SideDrawer = ({
           })}
         </List>
       </Drawer>
-    </Hidden>
+    </ClickAwayListener>
   );
 }
 

@@ -1,7 +1,7 @@
 
 import { memo, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import { Grid } from '@material-ui/core'
+import { Grid, useMediaQuery } from '@material-ui/core'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
 import TopAppBar from './TopAppBar'
@@ -40,6 +40,8 @@ const Layout = ({
   children
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('xs'), { defaultMatches: true });
 
   const [openDrawer, setOpenDrawer] = useState(true)
 
@@ -51,17 +53,27 @@ const Layout = ({
     setOpenDrawer(true);
   }
 
+  const onClickAway = () => {
+    if (isMobile) {
+      setOpenDrawer(false);
+    }
+  }
+
   return (
     <main className={classes.root}>
-      <SideDrawer
-        openDrawer={openDrawer}
-        openDraw={openDrawerHandler}
-      />
+      {(openDrawer || !isMobile) &&
+        <SideDrawer
+          openDrawer={openDrawer}
+          openDraw={openDrawerHandler}
+          onClickAway={onClickAway}
+        />
+      }
       <div className={clsx(classes.container, { [classes.openContainer]: openDrawer })}>
         <div className={classes.content}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TopAppBar
+                isMobile={isMobile}
                 openDrawer={openDrawer}
                 onDraw={drawerHandler}
               />

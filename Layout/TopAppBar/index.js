@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const TopAppBar = ({
+  isMobile,
   openDrawer,
   onDraw
 }) => {
@@ -44,7 +45,7 @@ const TopAppBar = ({
           onClick={onDraw}
           className={classes.menuIcon}
         >
-          {openDrawer ? (
+          {openDrawer && !isMobile ? (
             <MenuOpenIcon color="primary" />
           ) : (
             <MenuIcon color="primary" />
