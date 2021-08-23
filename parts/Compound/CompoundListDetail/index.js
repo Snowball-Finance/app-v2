@@ -59,10 +59,6 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   };
   let dailyAPR = item.dailyAPR > 999999?999999:item.dailyAPR;
   let yearlyAPY = item.yearlyAPY > 999999?999999:item.yearlyAPY;
-  if(item.source == 'BENQI'){
-    dailyAPR = 'TBD';
-    yearlyAPY = 'TBD';
-  }
 
   return (
     <div className={classes.root}>
