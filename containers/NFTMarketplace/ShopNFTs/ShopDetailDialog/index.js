@@ -12,7 +12,10 @@ import { isEmpty } from 'utils/helpers/utility'
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
-    minWidth: 420
+    minWidth: 380,
+    [theme.breakpoints.down('xs')]: {
+      minWidth: 'unset'
+    }
   },
   title: {
     fontSize: 14,

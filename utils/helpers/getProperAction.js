@@ -16,9 +16,11 @@ const getProperAction = (item, setModal, balance, deposit = 0) => {
 	} else if (item.source == "Pangolin") {
 			action = ["Get_PGL", () => { window.open(`${PangolinPoolURL}${token1}/${token2}`) }];
 	} else if (item.source == "BENQI"){
-      if(item.name == 'DAI.e'){
-        action = ["Get_DAI.e", () => { window.open(`https://app.pangolin.exchange/#/swap/${token1}`) }]; 
-      }
+    if(!item.token1.address){
+      action = ["Get_Token", () => { window.open(`https://app.pangolin.exchange/#/swap/${token1}`) }]; 
+    }else{
+      action = ["Get_PGL", () => { window.open(`${PangolinPoolURL}${token1}/${token2}`) }];
+    }
   } else if (item.source == "Trader Joe") {
 		if (item.name == "xJOE") {
 			action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
