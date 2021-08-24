@@ -39,7 +39,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = ({ item, amount, error, inputHandler }) => {
+const Details = ({
+  item,
+  amount,
+  error,
+  inputHandler
+}) => {
   const classes = useStyles();
   const token0 = item.token0.address;
   const token1 = item.token1.address;
@@ -53,23 +58,23 @@ const Details = ({ item, amount, error, inputHandler }) => {
           <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
         </div>
         <div className={classes.pairText}>
-          <Typography variant="caption">Deposit</Typography>
-          <Typography variant="h6">{item.name}</Typography>
+          <Typography variant='caption'>Deposit</Typography>
+          <Typography variant='h6'>{item.name}</Typography>
         </div>
       </div>
 
       <div className={classes.inputContainer}>
         <SnowTextField
           className={classes.input}
-          type="number"
-          name="percent"
-          value={amount > 0 ? amount: 0}
+          type='number'
+          name='percent'
+          value={amount > 0 ? amount : 0}
           error={error}
           onChange={inputHandler}
         />
-        <Typography variant="caption" className={classes.balanceText}>
-          Available: {(item.userLPBalance / 1e18).toLocaleString(
-            undefined,{ maximumSignificantDigits: 18 })}{item.symbol}
+        <Typography variant='caption' className={classes.balanceText}>
+          Available: {(item.userLPBalance / 10**item.lpDecimals).toLocaleString(
+            undefined, { maximumSignificantDigits: 18 })}{item.symbol}
         </Typography>
       </div>
     </>

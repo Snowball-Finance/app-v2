@@ -4,9 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from 'components/Skeletons';
 import Shimmer from 'components/Skeletons/Shimmer';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    margin: '20px auto',
+    marginBottom: theme.spacing(3),
     padding: '10px 15px',
     borderRadius: 4,
     position: 'relative',

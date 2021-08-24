@@ -75,7 +75,7 @@ export function ContractProvider({ children }) {
     }
   }, [snowballContract, snowconeContract, account, getBalanceInfo])
 
-  const { gauges } = useGauge({
+  const { gauges, retrieveGauge, setGauges } = useGauge({
     prices,
     gaugeProxyContract,
     setLoading
@@ -86,6 +86,8 @@ export function ContractProvider({ children }) {
       value={{
         loading,
         gauges,
+        retrieveGauge,
+        setGauges,
         isWrongNetwork,
         snowballBalance,
         snowconeBalance,
@@ -107,6 +109,8 @@ export function useContracts() {
   const {
     loading,
     gauges,
+    retrieveGauge,
+    setGauges,
     isWrongNetwork,
     snowballBalance,
     snowconeBalance,
@@ -117,6 +121,8 @@ export function useContracts() {
   return {
     loading,
     gauges,
+    retrieveGauge,
+    setGauges,
     isWrongNetwork,
     snowballBalance,
     snowconeBalance,
