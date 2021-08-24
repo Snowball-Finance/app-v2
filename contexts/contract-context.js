@@ -9,7 +9,7 @@ import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import { usePopup } from 'contexts/popup-context'
 import useGauge from 'contexts/staking-context/useGauge'
 import { usePrices } from 'contexts/price-context'
-import { isEmpty } from 'utils/helpers/utility'
+import { isEmpty, mainnetRPC } from 'utils/helpers/utility'
 import { BNToFloat } from 'utils/helpers/format'
 
 const ContractContext = createContext(null)
@@ -30,7 +30,8 @@ export function ContractProvider({ children }) {
   const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXY, GAUGE_PROXY_ABI, library.getSigner()) : null, [library])
 
   useEffect(() => {
-    if (chainId && chainId !== C_CHAIN_ID) {
+    if (library && !(library?.provider?.host === mainnetRPC 
+        || chainId == C_CHAIN_ID)) {
       setPopUp({
         title: 'Network Error',
         text: `Switch to Avalanche Chain`
@@ -38,7 +39,7 @@ export function ContractProvider({ children }) {
       return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId]);
+  }, [library,chainId]);
 
   const getBalanceInfo = useCallback(async () => {
     try {
