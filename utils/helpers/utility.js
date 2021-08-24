@@ -13,7 +13,9 @@ const isEmpty = value => {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const provider = new ethers.providers.getDefaultProvider('https://api.avax.network/ext/bc/C/rpc')
+const mainnetRPC = 'https://api.avax.network/ext/bc/C/rpc';
+
+const provider = new ethers.providers.getDefaultProvider(mainnetRPC);
 
 const roundDown = (value, decimals = 18) => {
   const valueString = value.toString();
@@ -30,5 +32,6 @@ export {
   isEmpty,
   delay,
   roundDown,
-  provider
+  provider,
+  mainnetRPC
 }
