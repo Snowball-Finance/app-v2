@@ -56,9 +56,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SideDrawer = ({
+  isMobile,
   openDrawer,
-  openDraw,
-  onClickAway
+  setOpenDrawer
 }) => {
   const classes = useStyles();
   const router = useRouter();
@@ -87,8 +87,17 @@ const SideDrawer = ({
     } else {
       setSelectedItem(value)
     }
-    if (open) {
-      openDraw()
+
+    if (isMobile) {
+      setOpenDrawer(false)
+    } else if (open) {
+      setOpenDrawer(true)
+    }
+  }
+
+  const onClickAway = () => {
+    if (isMobile) {
+      setOpenDrawer(false);
     }
   }
 

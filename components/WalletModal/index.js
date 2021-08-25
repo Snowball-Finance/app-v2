@@ -9,7 +9,7 @@ import { useWeb3React } from '@web3-react/core'
 import SnowDialog from 'components/SnowDialog'
 import WalletCard from 'components/WalletModal/WalletCard'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
-import { walletlink, injected, trustWallet } from 'utils/constants/connectors'
+import { walletlink, injected } from 'utils/constants/connectors'
 import MESSAGES from 'utils/constants/messages'
 
 const DESKTOP_CONNECTORS = {

@@ -3,7 +3,7 @@ import { CURRENT_DISTRIBUTION_PHASE } from 'api/queries/distributionPhase';
 import { NFTS_LIST } from 'api/queries/nftsList';
 import { MULTIPLE_PAIRS_INFO } from 'api/queries/pairsInfo';
 import { PROPOSAL_LIST } from 'api/queries/proposalList';
-import { LAST_SNOWBALL_INFO, GET_TVL_INFO_LAST_SNOWBALL } from 'api/queries/snowballInfo';
+import { LAST_SNOWBALL_INFO } from 'api/queries/snowballInfo';
 import { MULTIPLE_TRANSACTION_INFO } from 'api/queries/transactionInfo';
 import { createContext, useContext } from 'react';
 
