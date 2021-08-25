@@ -1,13 +1,10 @@
-import { memo, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Popover } from '@material-ui/core';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import clsx from 'clsx';
+import { memo, useState, useRef, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import { Popper, Paper } from '@material-ui/core'
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import clsx from 'clsx'
 
 const useStyles = makeStyles((theme) => ({
-  popover: {
-    pointerEvents: 'none',
-  },
   paper: {
     overflowX: 'unset',
     overflowY: 'unset',
@@ -33,56 +30,68 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CustomPopover = ({
-  style,
-  anchorClassName,
   contentClassName,
   children,
 }) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const anchorRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [mouseOverPopover, setMouseOverPopover] = useState(false);
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleOpenActions = () => {
+    setOpen(true);
   };
 
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
+  const handleCloseActions = () => {
+    setOpen(false);
   };
 
-  const open = Boolean(anchorEl);
+  const handleClosePopover = event => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setMouseOverPopover(false);
+  };
+
+  const handleEnterPopover = () => {
+    setMouseOverPopover(true);
+  };
+
+  const prevOpen = useRef(open);
+  useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+
+    prevOpen.current = open;
+  }, [open]);
 
   return (
     <>
       <HelpOutlineIcon
-        style={style}
-        className={clsx(classes.icon, anchorClassName)}
-        aria-owns={open ? 'mouse-over-popover' : undefined}
+        className={classes.icon}
+        ref={anchorRef}
+        aria-controls={open ? 'menu-list-grow' : undefined}
         aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
+        onMouseEnter={handleOpenActions}
+        onMouseLeave={handleCloseActions}
       />
-      <Popover
-        id="mouse-over-popover"
-        className={classes.popover}
-        classes={{
-          paper: clsx(classes.paper, contentClassName),
-        }}
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-        elevation={0}
+      <Popper
+        placement='top'
+        open={open || mouseOverPopover}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        transition
       >
-        {children}
-      </Popover>
+        <Paper
+          className={clsx(classes.paper, contentClassName)}
+          onMouseEnter={handleEnterPopover}
+          onMouseLeave={handleClosePopover}
+        >
+          {children}
+        </Paper>
+      </Popper>
     </>
   );
 };

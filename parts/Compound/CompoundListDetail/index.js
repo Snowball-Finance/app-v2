@@ -50,10 +50,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   const classes = useStyles();
   const [modal, setModal] = useState({ open: false, title: '' });
 
-  const { withdraw, claim , isTransacting } = useCompoundAndEarnContract();
+  const { withdraw, claim, isTransacting } = useCompoundAndEarnContract();
 
-  const [ actionType, action ] = getProperAction(item, setModal, item.userLPBalance); 
-  
+  const [actionType, action] = getProperAction(item, setModal, item.userLPBalance);
+
   const handleClose = () => {
     setModal({ open: false, title: '' });
   };
@@ -76,13 +76,18 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         <Total item={item} />
       </div>
       <div className={classes.button}>
-        <CompoundActionButton type={actionType} action={action} endIcon={false} />
+        <CompoundActionButton 
+          type={actionType} 
+          action={action} 
+          endIcon={false} 
+          disabled={item.deprecated}/>
         <ContainedButton
           disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}
           loading={isTransacting.pageview}
           onClick={() => {
             toast(<Toast message={'Withdrawing your Tokens...'} />)
-            withdraw(item)}}
+            withdraw(item)
+          }}
         >
           Withdraw
         </ContainedButton>

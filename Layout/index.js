@@ -51,23 +51,13 @@ const Layout = ({
     setOpenDrawer(prev => !prev);
   };
 
-  const openDrawerHandler = () => {
-    setOpenDrawer(true);
-  }
-
-  const onClickAway = () => {
-    if (isMobile) {
-      setOpenDrawer(false);
-    }
-  }
-
   return (
     <main className={classes.root}>
       {(openDrawer || !isMobile) &&
         <SideDrawer
+          isMobile={isMobile}
           openDrawer={openDrawer}
-          openDraw={openDrawerHandler}
-          onClickAway={onClickAway}
+          setOpenDrawer={setOpenDrawer}
         />
       }
       <div className={clsx(classes.container, { [classes.openContainer]: openDrawer })}>

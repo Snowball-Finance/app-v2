@@ -30,9 +30,7 @@ const LastTransactions = () => {
   const [isFetchMore, setFetchMore] = useState(true);
 
   const { getMultipleTransactionsInfo } = useAPIContext();
-
   const multipleTransactionsQuery = getMultipleTransactionsInfo();
-  
 
   const loadMore = useCallback(() => {
     if (multipleTransactionsQuery.fetchMore === undefined) return;
@@ -56,7 +54,7 @@ const LastTransactions = () => {
         });
       },
     });
-  }, [multipleTransactionsQuery.data?.MultipleTransactionInfo.length, multipleTransactionsQuery.fetchMore]);
+  }, [multipleTransactionsQuery]);
 
   if (multipleTransactionsQuery.error) {
     return <div>Something went wrong...</div>;

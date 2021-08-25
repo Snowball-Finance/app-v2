@@ -1,13 +1,11 @@
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { injected } from 'libs/web3-connectors'
+import { useWallets } from 'contexts/wallet-context'
 import SnowIdenticon from 'components/SnowIdenticon'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
-import useEagerConnect from 'utils/hooks/useEagerConnect'
-import useInactiveListener from 'utils/hooks/useInactiveListener'
 import getEllipsis from 'utils/helpers/getEllipsis'
 
 const useStyles = makeStyles((theme) => ({
@@ -31,33 +29,15 @@ const useStyles = makeStyles((theme) => ({
 
 const ConnectWallet = () => {
   const classes = useStyles()
-  const [activatingConnector, setActivatingConnector] = useState();
-
-  const {
-    account,
-    connector,
-    activate,
-    deactivate,
-    active,
-    error
-  } = useWeb3React();
-
-  const triedEager = useEagerConnect();
-  useInactiveListener(!triedEager || !!activatingConnector);
-
-  useEffect(() => {
-    if (activatingConnector && activatingConnector === connector) {
-      setActivatingConnector(undefined);
-    }
-  }, [activatingConnector, connector]);
+  const { setIsWalletDialog } = useWallets()
+  const { account, active, error, deactivate } = useWeb3React();
 
   const walletHandler = () => {
     if ((active || error)) {
       deactivate();
       return
     }
-    setActivatingConnector(injected);
-    activate(injected);
+    setIsWalletDialog(true)
   }
 
   return (
@@ -75,7 +55,7 @@ const ConnectWallet = () => {
             {getEllipsis(account || '')}
           </Typography>
           <SnowIdenticon value={account} />
-         
+
         </div>
       ) : (
         <ContainedButton

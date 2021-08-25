@@ -16,10 +16,10 @@ const Home = () => {
       <Grid item xs={12} lg={6}>
         <TotalLockedValue />
       </Grid>
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12} lg={8}>
         <TokenPairs />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} lg={4}>
         <LastTransactions />
       </Grid>
     </Grid>

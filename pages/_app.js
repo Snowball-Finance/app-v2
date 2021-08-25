@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/client'
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
+import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
 import { ContractProvider } from 'contexts/contract-context'
@@ -57,21 +58,23 @@ function MyApp({ Component, pageProps }) {
         <ApolloProvider client={apolloClient}>
           <DarkModeProvider>
             <ThemeProvider>
-              <PopupProvider>
-                <APIProvider>
-                  <PriceProvider>
-                    <PoolContractProvider>
-                      <ContractProvider>
-                        <CssBaseline />
-                        <Layout>
-                          <Component {...pageProps} />
-                        </Layout>
-                        <ToastContainer position={'bottom-right'} />
-                      </ContractProvider>
-                    </PoolContractProvider>
-                  </PriceProvider>
-                </APIProvider>
-              </PopupProvider>
+              <WalletProvider>
+                <PopupProvider>
+                  <APIProvider>
+                    <PriceProvider>
+                      <PoolContractProvider>
+                        <ContractProvider>
+                          <CssBaseline />
+                          <Layout>
+                            <Component {...pageProps} />
+                          </Layout>
+                          <ToastContainer position={'bottom-right'} />
+                        </ContractProvider>
+                      </PoolContractProvider>
+                    </PriceProvider>
+                  </APIProvider>
+                </PopupProvider>
+              </WalletProvider>
             </ThemeProvider>
           </DarkModeProvider>
         </ApolloProvider>

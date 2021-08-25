@@ -6,9 +6,9 @@ import TableContainer from './TableContainer';
 
 import ChartUpIcon from 'components/Icons/ChartUpIcon';
 import ChartDownIcon from 'components/Icons/ChartDownIcon';
-import DashboardTokenPairsSkeleton from 'components/Skeletons/DashboardTokenPairs';
-import SnowPairsIcon from 'components/SnowPairsIcon';
 import { useAPIContext } from 'contexts/api-context';
+import TokenPairsSkeleton from './TokenPairsSkeleton'
+import TokenPairItem from './TokenPairItem'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -19,21 +19,6 @@ const useStyles = makeStyles((theme) => ({
   },
   cell: {
     padding: theme.spacing(1),
-  },
-  tokenContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  token: {
-    fontSize: 12,
-    marginLeft: theme.spacing(1),
-    '& span': {
-      fontSize: 14,
-      fontWeight: 'bold',
-    },
-    [theme.breakpoints.down('xs')]: {
-      display: 'none',
-    },
   },
   locked: {
     display: 'flex',
@@ -47,6 +32,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const renderChartIcon = (status) => {
+  switch (status) {
+    case 'gain':
+      return <ChartUpIcon />;
+    case 'loss':
+      return <ChartDownIcon />;
+    case 'even':
+      return <TrendingFlatIcon color="primary" />;
+    default:
+      return null;
+  }
+};
+
 const TokenPairs = () => {
   const classes = useStyles();
   const { getPairsInfo } = useAPIContext();
@@ -56,94 +54,32 @@ const TokenPairs = () => {
     return <div>Something went wrong...</div>;
   }
 
-  const loadingTable = () => {
-    return [1, 2, 3, 4].map((item) => (
-      <TableRow key={item}>
-        <TableCell>
-          <DashboardTokenPairsSkeleton />
-        </TableCell>
-      </TableRow>
-    ));
-  };
-
-  const renderChartIcon = (status) => {
-    switch (status) {
-      case 'gain':
-        return <ChartUpIcon />;
-      case 'loss':
-        return <ChartDownIcon />;
-      case 'even':
-        return <TrendingFlatIcon color="primary" />;
-      default:
-        return null;
-    }
-  };
-
-  const renderTableData = (data) => {
-    return data.map((pair) => (
-      <TableRow key={pair.name}>
-        <TableCell component="th" scope="row" className={classes.cell}>
-          <Grid container spacing={1}>
-            {pair.token0.address && (
-              <Grid item xs={3} className={classes.tokenContainer}>
-                <SnowPairsIcon size={50} pairsIcon={[pair.token0.address]} />
-                <Typography color="textPrimary" className={classes.token}>
-                  <span>{pair.token0.name}</span>
-                  <br />
-                  {`${pair.token0.pangolinPrice?.toLocaleString()}USD`}
-                </Typography>
-              </Grid>
-            )}
-            {pair.token1.address && (
-              <Grid item xs={3} className={classes.tokenContainer}>
-                <SnowPairsIcon size={50} pairsIcon={[pair.token1.address]} />
-                <Typography color="textPrimary" className={classes.token}>
-                  <span>{pair.token1.name}</span>
-                  <br />
-                  {`${pair.token1.pangolinPrice?.toLocaleString()}USD`}
-                </Typography>
-              </Grid>
-            )}
-            {pair.token2.address && (
-              <Grid item xs={3} className={classes.tokenContainer}>
-                <SnowPairsIcon size={50} pairsIcon={[pair.token2.address]} />
-                <Typography color="textPrimary" className={classes.token}>
-                  <span>{pair.token2.name}</span>
-                  <br />
-                  {`${pair.token2.pangolinPrice?.toLocaleString()}USD`}
-                </Typography>
-              </Grid>
-            )}
-            {pair.token3.address && (
-              <Grid item xs={3} className={classes.tokenContainer}>
-                <SnowPairsIcon size={50} pairsIcon={[pair.token3.address]} />
-                <Typography color="textPrimary" className={classes.token}>
-                  <span>{pair.token3.name}</span>
-                  <br />
-                  {`${pair.token3.pangolinPrice?.toLocaleString()}USD`}
-                </Typography>
-              </Grid>
-            )}
-          </Grid>
-        </TableCell>
-        <TableCell align="right" className={classes.cell}>
-          <div className={classes.locked}>
-            <Typography color="textPrimary" className={classes.balance}>
-              {`$${pair.tvlStaked.toLocaleString()}`}
-            </Typography>
-            {renderChartIcon(pair.status)}
-          </div>
-        </TableCell>
-      </TableRow>
-    ));
-  };
-
   return (
     <Card className={classes.card}>
       <TableContainer>
         {pairsInfoQuery.loading
-          ? loadingTable()
-          : renderTableData(pairsInfoQuery.data?.MultiplePairsInfo[0].pairs)}
+          ? <TokenPairsSkeleton />
+          : (pairsInfoQuery.data?.MultiplePairsInfo[0].pairs.map((pair) => (
+            <TableRow key={pair.name}>
+              <TableCell component="th" scope="row" className={classes.cell}>
+                <Grid container spacing={1}>
+                  {pair.token0.address && <TokenPairItem token={pair.token0} />}
+                  {pair.token1.address && <TokenPairItem token={pair.token1} />}
+                  {pair.token2.address && <TokenPairItem token={pair.token2} />}
+                  {pair.token3.address && <TokenPairItem token={pair.token3} />}
+                </Grid>
+              </TableCell>
+              <TableCell align="right" className={classes.cell}>
+                <div className={classes.locked}>
+                  <Typography color="textPrimary" className={classes.balance}>
+                    {`$${pair.tvlStaked.toLocaleString()}`}
+                  </Typography>
+                  {renderChartIcon(pair.status)}
+                </div>
+              </TableCell>
+            </TableRow>
+          )))
+        }
       </TableContainer>
     </Card>
   );
