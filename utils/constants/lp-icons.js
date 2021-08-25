@@ -20,9 +20,17 @@ const LP_ICONS = Object.freeze({
   VSO: '/assets/images/lp-icons/VSO.png',
   SPORE: '/assets/images/lp-icons/SPORE.png',
   JOE: '/assets/images/lp-icons/JOE.png',
+  QI: '/assets/images/lp-icons/BENQI.png',
   BENQI: '/assets/images/lp-icons/BENQI.png',
   'DAI.e': '/assets/images/lp-icons/DAI.png',
   'USDT.e': '/assets/images/lp-icons/USDT.png',
+  'ETH.e': '/assets/images/lp-icons/ETH.png',
+  'LINK.e': '/assets/images/lp-icons/LINK.png',
+  'SUSHI.e': '/assets/images/lp-icons/SUSHI.png',
+  'WBTC.e': '/assets/images/lp-icons/WBTC.png',
+  'AAVE.e': '/assets/images/lp-icons/AAVE.png',
+  'UNI.e': '/assets/images/lp-icons/AAVE.png',
+  'YFI.e': '/assets/images/lp-icons/AAVE.png',
   NoIcon: '/assets/images/no-image.png'
 })
 
