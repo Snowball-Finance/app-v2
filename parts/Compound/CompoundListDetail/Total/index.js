@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
-import { formatNumber } from 'utils/helpers/format';
+import { BNToFloat, formatNumber } from 'utils/helpers/format';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
@@ -63,12 +63,15 @@ const Total = ({ item }) => {
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP || 0.00, 5)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
+          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP || 0.00, 5, true)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-            (userPool?.userDepositedLP / (userPool?.totalSupply / 1e18)) * 100 || 0.00, 5)}%</Typography>
+              ((userPool?.userBalanceSnowglobe ? BNToFloat(userPool?.userBalanceSnowglobe,userPool?.lpDecimals) : 0) +
+              (userPool?.userBalanceGauge/10**userPool?.lpDecimals)) / 
+              BNToFloat(userPool?.totalSupply,userPool?.lpDecimals) * 100 || 0.00, 5)}
+            %</Typography>
         </div>
         {userPool?.underlyingTokens ? <div className={classes.container}>
           <Typography variant="body2">{userPool.underlyingTokens ? `Underlying tokens` : ``}</Typography>
