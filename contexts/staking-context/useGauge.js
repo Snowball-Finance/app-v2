@@ -59,7 +59,7 @@ const useGauge = ({
 
     return {
       allocPoint: gaugeWeight / totalWeight || 0,
-      pool,
+      token:pool.address,
       address,
       gaugeAddress: address,
       gaugeWeight,
