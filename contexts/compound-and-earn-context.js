@@ -14,6 +14,7 @@ import { useAPIContext } from 'contexts/api-context';
 import { isEmpty } from 'utils/helpers/utility';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
+import { BNToFloat } from 'utils/helpers/format';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -64,18 +65,19 @@ export function CompoundAndEarnProvider({ children }) {
       userBalanceSnowglobe = await snowglobeContract.balanceOf(account);
 
       userLPBalance.add(userBalanceSnowglobe.mul(snowglobeRatio));
-      userDepositedLP = (userBalanceSnowglobe / 10 ** lpDecimals) * (snowglobeRatio / 1e18);
+      userDepositedLP = BNToFloat(userBalanceSnowglobe,lpDecimals) * BNToFloat(snowglobeRatio,18);
       if (!isEmpty(gauge)) {
-        userDepositedLP += (gauge.staked / 10**lpDecimals) * (snowglobeRatio / 1e18);
+        userDepositedLP += (gauge.staked / 10**lpDecimals) * BNToFloat(snowglobeRatio,18);
         SNOBHarvestable = gauge.harvestable / 1e18;
         SNOBValue = SNOBHarvestable * snowballInfoQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice;
       }
 
       if (userDepositedLP > 0 && item.token1.address) {
         let reserves = await lpContract.getReserves();
-        let totalSupplyPGL = await lpContract.totalSupply() / 1e18;
-        const r0 = reserves._reserve0 / 10 ** item.token0.decimals;
-        const r1 = reserves._reserve1 / 10 ** item.token1.decimals;
+        let totalSupplyPGL = BNToFloat(await lpContract.totalSupply(),18);
+
+        const r0 = BNToFloat(reserves._reserve0,item.token0.decimals);
+        const r1 = BNToFloat(reserves._reserve1,item.token1.decimals);
         let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
         let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
         underlyingTokens = {
@@ -109,7 +111,8 @@ export function CompoundAndEarnProvider({ children }) {
       SNOBHarvestable,
       SNOBValue,
       underlyingTokens,
-      userBalanceSnowglobe
+      userBalanceSnowglobe,
+      userBalanceGauge: gauge ? gauge.staked: 0
     };
   }
 
