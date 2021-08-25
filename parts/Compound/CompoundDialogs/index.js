@@ -1,20 +1,19 @@
 import { memo, useEffect, useState } from 'react';
+import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import clsx from 'clsx'
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import Toast from 'components/Toast';
+import SnowStepBox from 'components/SnowStepBox';
 import SnowDialog from 'components/SnowDialog';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
-
 import Details from './Details';
-import { ethers } from 'ethers';
 import { roundDown } from 'utils/helpers/utility';
-import { toast } from 'react-toastify';
-import Toast from 'components/Toast';
-import SnowStepBox from 'components/SnowStepBox';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -67,8 +66,17 @@ const CompoundDialogs = ({
     }
   }),[isTransacting];
 
+  useEffect(() =>{
+    if(transactionStatus.depositStep === 2){
+      toast(<Toast message={'Deposit Successful!!'} processing={false}
+      tokens={[item.token0.address,item.token1?.address, 
+        item.token2?.address, item.token3?.address]}/>);
+      handleClose();
+    }
+  }),[transactionStatus];
+
   const calculatePercentage = (amount) => {
-    return amount / (item?.userLPBalance/1e18) * 100;
+    return amount / (item?.userLPBalance/10**item?.lpDecimals) * 100;
   };
 
   const calculatedBalance = (value) => {
@@ -83,7 +91,7 @@ const CompoundDialogs = ({
   const inputHandler = (event) => {
     if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
       const percentage = calculatePercentage(event.target.value);
-      if (item?.userLPBalance/1e18 >= event.target.value) {
+      if (item?.userLPBalance/10**item?.lpDecimals >= event.target.value) {
         setinputAmount(event.target.value);
         setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
         setSlider(percentage);
@@ -99,7 +107,7 @@ const CompoundDialogs = ({
 
   const handleSliderChange = (value) => {
     const usedBalance = calculatedBalance(value);
-    const inputAmount = (usedBalance/1e18);
+    const inputAmount = (usedBalance/10**item?.lpDecimals);
     setSlider(value);
     setAmount(usedBalance);
     setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
