@@ -26,9 +26,10 @@ export function DashboardProvider({ children }) {
             return pendingPools[idx].address.toLowerCase()
               === item.address.toLowerCase()
           });
-
-          await approve(pool, pendingPools[idx].userBalanceSnowglobe);
-          await deposit(pool, pendingPools[idx].userBalanceSnowglobe, false);
+          if(pool){
+            await approve(pool, pendingPools[idx].userBalanceSnowglobe);
+            await deposit(pool, pendingPools[idx].userBalanceSnowglobe, false);
+          }
         }
       }
     }
