@@ -1,12 +1,8 @@
-import { memo, useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { toast } from 'react-toastify';
+import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
 import clsx from 'clsx'
 
-import Toast from 'components/Toast';
-import SnowStepBox from 'components/SnowStepBox';
 import SnowDialog from 'components/SnowDialog';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import WarningIcon from 'components/Icons/WarningIcon';
@@ -48,9 +44,6 @@ const useStyles = makeStyles((theme) => ({
   modalButton: {
     padding: theme.spacing(2, 5),
     textTransform: 'none',
-  },
-  greyButton: {
-    background: '#BDBDBD',
   }
 }));
 

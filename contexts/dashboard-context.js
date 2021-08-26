@@ -14,21 +14,26 @@ export function DashboardProvider({ children }) {
   const { pools } = usePoolContract();
   const { userPools, deposit, approve } = useCompoundAndEarnContract();
 
-  useEffect(async () => {
-    if(confirmed && !deposited && pendingPools.length > 0 && pools.length > 0){
-      setDeposited(true);
-      for(const idx in pendingPools){
-        toast(<Toast 
-          title={`Step ${Number(idx)+1}/${pendingPools.length}`}
-          message={'Please Accept the transactions to fix your deposits!'}/>)
-        const pool = pools.find((item) => { return pendingPools[idx].address.toLowerCase()
-          === item.address.toLowerCase() });
-      
-        await approve(pool,pendingPools[idx].userBalanceSnowglobe);
-        await deposit(pool,pendingPools[idx].userBalanceSnowglobe,false);
+  useEffect(() => {
+    async function fixPools(){
+      if (confirmed && !deposited && pendingPools.length > 0 && pools.length > 0) {
+        setDeposited(true);
+        for (const idx in pendingPools) {
+          toast(<Toast
+            title={`Step ${Number(idx) + 1}/${pendingPools.length}`}
+            message={'Please Accept the transactions to fix your deposits!'} />)
+          const pool = pools.find((item) => {
+            return pendingPools[idx].address.toLowerCase()
+              === item.address.toLowerCase()
+          });
+
+          await approve(pool, pendingPools[idx].userBalanceSnowglobe);
+          await deposit(pool, pendingPools[idx].userBalanceSnowglobe, false);
+        }
       }
     }
-  },[confirmed,pendingPools,pools,deposited]); 
+    fixPools();
+  }, [confirmed, pendingPools, pools, deposited, approve, deposit]);
 
   const checkUserPools = () => {
     if (userPools.length > 0) {
@@ -46,8 +51,10 @@ export function DashboardProvider({ children }) {
   };
 
   return (
-    <DashboardContext.Provider value={{ checkUserPools, asked, setAsked, 
-      pendingPools, confirmed, setConfirmed }}>
+    <DashboardContext.Provider value={{
+      checkUserPools, asked, setAsked,
+      pendingPools, confirmed, setConfirmed
+    }}>
       {children}
     </DashboardContext.Provider>
   );

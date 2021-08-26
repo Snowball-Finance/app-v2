@@ -1,6 +1,6 @@
 
 import { memo, useEffect, useState } from 'react'
-import { Grid, Link, Typography } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
 
 import CompoundAndEarn from './CompoundAndEarn'
 import TotalLockedValue from './TotalLockedValue'
@@ -15,16 +15,6 @@ import Toast from 'components/Toast'
 import WarningDialogs from 'parts/WarningDialogs'
 
 const Home = () => {
-  const readMore = (
-  <>
-    <Typography>
-     Some of your investments are compounding, but not receiving the SNOB
-              rewards you&apos;re entitled to. Click below to resolve. 
-    </Typography>
-    <a target='_blank' rel="noreferrer" href="https://snowballs.gitbook.io/snowball-docs/products/compounding#the-benefits-of-compounding-with-snowball">
-        Read More.
-    </a>
-  </>);
   const { account } = useWeb3React();
   const { asked, checkUserPools, pendingPools, setConfirmed } =  useDashboardContext();
   const { userPools } =  useCompoundAndEarnContract();
@@ -34,10 +24,20 @@ const Home = () => {
     if(!asked && account && userPools.length > 0 && gauges.length > 0){
       checkUserPools();
     }
-  },[account,asked,userPools,gauges]);
+  },[account,asked,userPools,gauges,checkUserPools]);
 
   useEffect(() => {
     if (pendingPools.length > 0) {
+      const readMore = (
+        <>
+          <Typography>
+           Some of your investments are compounding, but not receiving the SNOB
+                    rewards you&apos;re entitled to. Click below to resolve. 
+          </Typography>
+          <a target='_blank' rel="noreferrer" href="https://snowballs.gitbook.io/snowball-docs/products/compounding#the-benefits-of-compounding-with-snowball">
+              Read More.
+          </a>
+        </>);
       toast(<Toast 
         message={'Please click here to understand why.'} 
         toastType={'warning'}
