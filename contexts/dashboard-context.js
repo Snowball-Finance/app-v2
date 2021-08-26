@@ -3,22 +3,24 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useCompoundAndEarnContract } from "./compound-and-earn-context";
 import { usePoolContract } from "./pool-context";
-import { usePopup } from "./popup-context";
 
 
 const DashboardContext = createContext(null);
 export function DashboardProvider({ children }) {
   const [asked, setAsked] = useState(false);
   const [deposited, setDeposited] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const [pendingPools, setPendingPools] = useState([]);
   const { pools } = usePoolContract();
   const { userPools, deposit, approve } = useCompoundAndEarnContract();
-  const { setPopUp, confirmed } = usePopup();
 
   useEffect(async () => {
     if(confirmed && !deposited && pendingPools.length > 0 && pools.length > 0){
       setDeposited(true);
       for(const idx in pendingPools){
+        toast(<Toast 
+          title={`Step ${Number(idx)+1}/${pendingPools.length}`}
+          message={'Please Accept the transactions to fix your deposits!'}/>)
         const pool = pools.find((item) => { return pendingPools[idx].address.toLowerCase()
           === item.address.toLowerCase() });
       
@@ -26,7 +28,7 @@ export function DashboardProvider({ children }) {
         await deposit(pool,pendingPools[idx].userBalanceSnowglobe,false);
       }
     }
-  },[confirmed,pendingPools,pools,deposited]);
+  },[confirmed,pendingPools,pools,deposited]); 
 
   const checkUserPools = () => {
     if (userPools.length > 0) {
@@ -39,19 +41,13 @@ export function DashboardProvider({ children }) {
       }
       setPendingPools(pending);
       setAsked(true);
-      if (pending.length > 0) {
-        toast(<Toast 
-          message={'Please click here to understand why.'} 
-          toastType={'warning'}
-          title={'You\'re leaving potential income'}
-          processing={false}/>,{onClick: () => window.alert('Called when I close')});
-      }
     }
 
   };
 
   return (
-    <DashboardContext.Provider value={{ checkUserPools, asked, setAsked }}>
+    <DashboardContext.Provider value={{ checkUserPools, asked, setAsked, 
+      pendingPools, confirmed, setConfirmed }}>
       {children}
     </DashboardContext.Provider>
   );
@@ -65,7 +61,7 @@ export function useDashboardContext() {
     throw new Error('Missing stats context');
   }
 
-  const { checkUserPools, asked, setAsked } = context;
+  const { checkUserPools, asked, setAsked, pendingPools, confirmed, setConfirmed } = context;
 
-  return { checkUserPools, asked, setAsked };
+  return { checkUserPools, asked, setAsked, pendingPools, confirmed, setConfirmed };
 }
