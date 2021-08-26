@@ -1,10 +1,9 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '30%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -28,7 +27,7 @@ const ApyCalculation = ({
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Grid className={classes.root}>
       <Typography variant="subtitle1" className={classes.boldSubtitle}>
         Compounded APY
       </Typography>
@@ -46,7 +45,7 @@ const ApyCalculation = ({
         <Typography variant="body2">Performance Fee</Typography>
         <Typography variant="subtitle2">{performanceFees}%</Typography>
       </div>
-    </div>
+    </Grid>
   );
 };
 

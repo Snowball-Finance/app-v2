@@ -19,11 +19,19 @@ const Accordion = withStyles({
   },
 })(MuiAccordion);
 
-const AccordionSummary = withStyles({
+const AccordionSummary = withStyles((theme) => ({
+  root: {
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    }
+  },
   expandIcon: {
     transform: 'none !important',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   },
-})(MuiAccordionSummary);
+}))(MuiAccordionSummary);
 
 const CustomAccordion = ({
   className,
