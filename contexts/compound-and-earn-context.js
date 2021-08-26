@@ -336,7 +336,7 @@ export function CompoundAndEarnProvider({ children }) {
           });
           setIsTransacting({ pageview: false });
           getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} processing={false}
+          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
         }
@@ -362,7 +362,7 @@ export function CompoundAndEarnProvider({ children }) {
             text: `Globe Receipt: ${transactionSnowglobeWithdraw.transactionHash}\n`
           });
           getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} processing={false} 
+          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'} 
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
         }
@@ -399,7 +399,7 @@ export function CompoundAndEarnProvider({ children }) {
           text: `Claim Receipt: ${transactionReward.transactionHash}\n`
         });
         getBalanceInfoSinglePool(item.address);
-        toast(<Toast message={'Claim Successful!!'} processing={false}
+        toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
       } else {
