@@ -1,4 +1,6 @@
+import Toast from "components/Toast";
 import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useCompoundAndEarnContract } from "./compound-and-earn-context";
 import { usePoolContract } from "./pool-context";
 import { usePopup } from "./popup-context";
@@ -38,11 +40,11 @@ export function DashboardProvider({ children }) {
       setPendingPools(pending);
       setAsked(true);
       if (pending.length > 0) {
-        setPopUp({
-          title: 'Earn SNOB!',
-          text: `Looks like you still have some pending Snowglobes to be deposited!`,
-          cancelLabel: 'Confirm Deposit'
-        });
+        toast(<Toast 
+          message={'Please click here to understand why.'} 
+          toastType={'warning'}
+          title={'You\'re leaving potential income'}
+          processing={false}/>,{onClick: () => window.alert('Called when I close')});
       }
     }
 
