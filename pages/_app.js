@@ -18,7 +18,7 @@ import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { APIProvider } from 'contexts/api-context'
-
+import GaugeProxyAlert from 'parts/GaugeProxyAlert'
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -67,6 +67,7 @@ function MyApp({ Component, pageProps }) {
                           <CssBaseline />
                           <Layout>
                             <Component {...pageProps} />
+                            <GaugeProxyAlert />
                           </Layout>
                           <ToastContainer position={'bottom-right'} />
                         </ContractProvider>
