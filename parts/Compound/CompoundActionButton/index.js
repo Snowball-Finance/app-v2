@@ -12,6 +12,9 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 const useStyles = makeStyles((theme) => ({
   button: {
     textTransform: 'none',
+    '&:hover': {
+      color: '#fff'
+    },
     [theme.breakpoints.down('sm')]: {
       width: '100%'
     }
