@@ -11,7 +11,13 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    textTransform: 'none'
+    textTransform: 'none',
+    '&:hover': {
+      color: '#fff'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   },
   Details: {
     backgroundColor: theme.palette.primary
@@ -59,7 +65,8 @@ const CompoundActionButton = ({
   type,
   action,
   endIcon = true,
-  disabled
+  disabled,
+  fullWidth
 }) => {
   const classes = useStyles();
   const router = useRouter();
@@ -80,6 +87,7 @@ const CompoundActionButton = ({
       endIcon={getIcon(type)}
       onClick={buttonHandler}
       disabled={disabled}
+      fullWidth={fullWidth}
     >
       {type.replace('_', ' ')}
     </ContainedButton>

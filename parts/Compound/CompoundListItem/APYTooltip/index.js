@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     width: 400,
     padding: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      width: 350
+    }
   },
   container: {
     display: 'flex',
