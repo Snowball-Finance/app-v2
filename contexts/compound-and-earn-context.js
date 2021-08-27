@@ -14,7 +14,7 @@ import { useAPIContext } from 'contexts/api-context';
 import { isEmpty } from 'utils/helpers/utility';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
-import { BNToFloat } from 'utils/helpers/format';
+import { BNToFloat, floatToBN } from 'utils/helpers/format';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -45,9 +45,9 @@ export function CompoundAndEarnProvider({ children }) {
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
     let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, 
-      underlyingTokens, userBalanceSnowglobe;
+      underlyingTokens, userBalanceSnowglobe,userLPBalance;
     const lpDecimals = await lpContract.decimals();
-    let userLPBalance = await lpContract.balanceOf(account);
+    userLPBalance  = await lpContract.balanceOf(account);
 
     if (item.kind === 'Snowglobe') {
       const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
@@ -59,12 +59,13 @@ export function CompoundAndEarnProvider({ children }) {
       if (snowglobeTotalBalance > 0) {
         snowglobeRatio = await snowglobeContract.getRatio();
       } else {
-        snowglobeRatio = ethers.utils.parseUnits('1');
+        snowglobeRatio = floatToBN(1,18);
       }
 
       userBalanceSnowglobe = await snowglobeContract.balanceOf(account);
-
-      userLPBalance.add(userBalanceSnowglobe.mul(snowglobeRatio));
+      if(userBalanceSnowglobe.gt('0x0') && userLPBalance.eq('0x0')){
+        userLPBalance = userLPBalance.add(userBalanceSnowglobe);
+      }
       userDepositedLP = BNToFloat(userBalanceSnowglobe,lpDecimals) * BNToFloat(snowglobeRatio,18);
       if (!isEmpty(gauge)) {
         userDepositedLP += (gauge.staked / 10**lpDecimals) * BNToFloat(snowglobeRatio,18);
@@ -197,7 +198,7 @@ export function CompoundAndEarnProvider({ children }) {
     })
   }
 
-  const approve = async (item, amount) => {
+  const approve = async (item, amount, onlyGauge = false) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -227,9 +228,11 @@ export function CompoundAndEarnProvider({ children }) {
       } catch (error) {
         snowglobeRatio = ethers.utils.parseUnits('1.1');
       }
-
-      await _approve(lpContract, snowglobeContract.address, amount);
+      if(!onlyGauge){
+        await _approve(lpContract, snowglobeContract.address, amount);
+      }
       setTransactionStatus({ approvalStep: 1, depositStep: 0 });
+      
       await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       setTransactionStatus({ approvalStep: 2, depositStep: 0 });
     } catch (error) {
@@ -242,7 +245,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ approve: false });
   }
 
-  const deposit = async (item, amount) => {
+  const deposit = async (item, amount, onlyGauge = false) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -260,7 +263,7 @@ export function CompoundAndEarnProvider({ children }) {
         const balance = await lpContract.balanceOf(account);
         amount = amount.gt(balance) ? balance : amount;
 
-        if (amount.gt(0x00)) {
+        if (amount.gt(0x00) && !onlyGauge) {
           const snowglobeDeposit = await snowglobeContract.deposit(amount);
           const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
           if (!transactionSnowglobeDeposit.status) {
@@ -336,7 +339,7 @@ export function CompoundAndEarnProvider({ children }) {
           });
           setIsTransacting({ pageview: false });
           getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} processing={false}
+          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
         }
@@ -362,7 +365,7 @@ export function CompoundAndEarnProvider({ children }) {
             text: `Globe Receipt: ${transactionSnowglobeWithdraw.transactionHash}\n`
           });
           getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} processing={false} 
+          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'} 
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
         }
@@ -399,7 +402,7 @@ export function CompoundAndEarnProvider({ children }) {
           text: `Claim Receipt: ${transactionReward.transactionHash}\n`
         });
         getBalanceInfoSinglePool(item.address);
-        toast(<Toast message={'Claim Successful!!'} processing={false}
+        toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
       } else {

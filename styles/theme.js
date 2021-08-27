@@ -82,6 +82,7 @@ const lightTheme = responsiveFontSizes(
         blue: '#1A93F2',
         darkBlue: '#1E2848',
         green: '#28C76F',
+        red_warning: '#EF4242',
         darkGreen: '#2A4428',
         png_orange: '#FF9F43',
         joe_red: '#F2716A',

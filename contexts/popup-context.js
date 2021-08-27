@@ -31,7 +31,7 @@ const PopupProvider = ({ children }) => {
           title={popupInfo?.title}
           text={popupInfo?.text}
           confirmLabel={popupInfo?.cancelLabel}
-          onConfirm={closePopUpHandler}
+          onConfirm={popupInfo.confirmAction ? popupInfo.confirmAction : closePopUpHandler}
           onClose={closePopUpHandler}
         />
       }
@@ -42,9 +42,8 @@ const PopupProvider = ({ children }) => {
 
 const usePopup = () => {
   const {
-    setOpen,
-    setPopupInfo
-  } = useContext(PopupContext)
+    setPopupInfo,setOpen
+  } = useContext(PopupContext);
 
   const setPopUp = useCallback((data) => {
     setPopupInfo({
@@ -55,7 +54,7 @@ const usePopup = () => {
   }, [setPopupInfo, setOpen])
 
   return {
-    setPopUp
+    setPopUp,setOpen
   }
 }
 
