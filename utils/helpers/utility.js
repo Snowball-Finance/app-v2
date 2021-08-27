@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { injected } from 'utils/constants/connectors';
+import { AVALANCHE_MAINNET_PARAMS, injected } from 'utils/constants/connectors';
 import MESSAGES from 'utils/constants/messages';
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { NoEthereumProviderError, UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector'
@@ -16,18 +16,6 @@ const isEmpty = value => {
 };
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-
-const AVALANCHE_MAINNET_PARAMS = {
-  chainId: '0xa86a',
-  chainName: 'Avalanche Mainnet C-Chain',
-  nativeCurrency: {
-      name: 'Avalanche',
-      symbol: 'AVAX',
-      decimals: 18
-  },
-  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-  blockExplorerUrls: ['https://cchain.explorer.avax.network/']
-}
 
 const addAvalancheNetwork = () => {
   injected.getProvider().then(provider => {

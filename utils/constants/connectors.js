@@ -1,7 +1,19 @@
 
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
-import { AVALANCHE_MAINNET_PARAMS } from 'utils/helpers/utility'
+
+const AVALANCHE_MAINNET_PARAMS = {
+  chainId: '0xa86a',
+  chainName: 'Avalanche Mainnet C-Chain',
+  nativeCurrency: {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+  },
+  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+  blockExplorerUrls: ['https://cchain.explorer.avax.network/']
+}
+
 
 const walletlink = new WalletLinkConnector({
   url: AVALANCHE_MAINNET_PARAMS.rpcUrls[0],
@@ -15,5 +27,6 @@ const trustWallet = new InjectedConnector({ supportedChainIds: [Number(AVALANCHE
 export {
   injected,
   trustWallet,
-  walletlink
+  walletlink,
+  AVALANCHE_MAINNET_PARAMS
 }
