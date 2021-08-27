@@ -30,7 +30,7 @@ const WalletModal = ({
   onClose,
   onConnectWallet
 }) => {
-  const { connector, error } = useWeb3React();
+  const { connector } = useWeb3React();
   const classes = useStyles();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'), { defaultMatches: true });

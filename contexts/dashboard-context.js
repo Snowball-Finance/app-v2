@@ -27,8 +27,8 @@ export function DashboardProvider({ children }) {
               === item.address.toLowerCase()
           });
           if(pool){
-            await approve(pool, pendingPools[idx].userBalanceSnowglobe);
-            await deposit(pool, pendingPools[idx].userBalanceSnowglobe, false);
+            await approve(pool, pendingPools[idx].userBalanceSnowglobe, true);
+            await deposit(pool, pendingPools[idx].userBalanceSnowglobe, true);
           }
         }
       }
