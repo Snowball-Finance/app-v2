@@ -32,7 +32,7 @@ const ApyCalculation = ({
         Compounded APY
       </Typography>
       <div className={classes.container}>
-        <Typography variant="body2">Base APY</Typography>
+        <Typography variant="body2">Base APR</Typography>
         <Typography variant="subtitle2">
           {typeof(dailyAPR) === 'number' ? (dailyAPR * 365)?.toFixed(2) : dailyAPR}%
         </Typography>

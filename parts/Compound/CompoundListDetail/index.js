@@ -111,7 +111,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}
             loading={isTransacting.pageview}
             onClick={() => {
-              toast(<Toast message={'Withdrawing your Tokens...'} />)
+              toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
               withdraw(item)
             }}
             fullWidth={isSm ? true : false}
@@ -124,7 +124,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             disabled={(!item.SNOBHarvestable)}
             loading={isTransacting.pageview}
             onClick={() => {
-              toast(<Toast message={'Claiming your Tokens...'} />)
+              toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
               claim(item)
             }}
             fullWidth={isSm ? true : false}

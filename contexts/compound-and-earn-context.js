@@ -21,7 +21,7 @@ const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
-  const { gauges, retrieveGauge, setGauges } = useContracts();
+  const { gauges, retrieveGauge, setGauges, getBalanceInfo } = useContracts();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
@@ -174,6 +174,8 @@ export function CompoundAndEarnProvider({ children }) {
         cloneUserPools.push(poolInfo);
       }
       setUserPools(cloneUserPools);
+
+      getBalanceInfo();
       
     } catch (error) {
       console.log('[Error] getBalanceInfosSinglePool => ', error)
