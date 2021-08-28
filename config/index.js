@@ -2,7 +2,7 @@
 const IS_MAINNET = process.env.NETWORK === 'mainnet'
 
 const C_CHAIN_ID = IS_MAINNET ? 43114 : 43113
-const PROXY_URL = 'http://cyberasilo.ddns.net:11008/graphql'
+const PROXY_URL = 'https://snob-backend-api.herokuapp.com/graphql'
 
 const CONTRACTS = IS_MAINNET
   ? {
