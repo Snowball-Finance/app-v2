@@ -243,7 +243,7 @@ const GeneralAlerts = () => {
         title: 'Success',
         text: 'Upgrade to GaugeProxyV2 completed!'
       });
-      setUpgradeGauge({upgrade:false,checked:true})
+      setTimeout(() => { window.location.reload(); }, 2000);
     } catch (error) {
       setUpgradeGauge({upgrade:false,checked:true})
       console.log('[upgradeGaugeProxy2] Error => ', error)
