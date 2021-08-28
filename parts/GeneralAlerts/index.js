@@ -127,11 +127,14 @@ const GeneralAlerts = () => {
     try {
       let userGauges = [];
       const gaugeProxyV1Contract = new ethers.Contract(CONTRACTS.GAUGE_PROXYV1, GAUGE_PROXY_ABI, library.getSigner());
+      const gaugeProxyV2Contract = new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, library.getSigner());
       await Promise.all(
         gauges.map(async (item) => {
           const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-          const oldGaugeAddress = await gaugeProxyV1Contract.getGauge(item.token)
-          if(oldGaugeAddress !== ZERO_ADDRESS){
+          const oldGaugeAddress = await gaugeProxyV1Contract.getGauge(item.token);
+          const newGaugeAddress = await gaugeProxyV2Contract.getGauge(item.token);
+          //ensure that we have a gauge
+          if(oldGaugeAddress !== ZERO_ADDRESS && newGaugeAddress !== ZERO_ADDRESS){
             const gaugeContract = new ethers.Contract(oldGaugeAddress, GAUGE_ABI, library.getSigner());
             const gaugeBalance = await gaugeContract.balanceOf(account);
             const gauge = {
