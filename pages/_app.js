@@ -18,7 +18,8 @@ import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { APIProvider } from 'contexts/api-context'
-import GaugeProxyAlert from 'parts/GaugeProxyAlert'
+import GeneralAlerts from 'parts/GeneralAlerts'
+import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -64,11 +65,13 @@ function MyApp({ Component, pageProps }) {
                     <PriceProvider>
                       <PoolContractProvider>
                         <ContractProvider>
+                          <CompoundAndEarnProvider>
                           <CssBaseline />
                           <Layout>
                             <Component {...pageProps} />
-                            <GaugeProxyAlert />
+                            <GeneralAlerts />
                           </Layout>
+                          </CompoundAndEarnProvider>
                           <ToastContainer position={'bottom-right'} />
                         </ContractProvider>
                       </PoolContractProvider>

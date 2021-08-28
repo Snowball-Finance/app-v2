@@ -22,7 +22,7 @@ const UpgradeGaugeSteps = ({
   return (
     <SnowDialog
       open={open}
-      title={`Your Guages: ${gaugesLength}`}
+      title={`Your Gauges: ${gaugesLength}`}
       onClose={() => handleClose()}
     >
       <Typography variant='h5' align='center' className={classes.header}>
