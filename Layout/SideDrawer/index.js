@@ -88,7 +88,7 @@ const SideDrawer = ({
       setSelectedItem(value)
     }
 
-    if (isMobile) {
+    if (isMobile && value !== 'StableVault') {
       setOpenDrawer(false)
     } else if (open) {
       setOpenDrawer(true)

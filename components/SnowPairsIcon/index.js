@@ -8,6 +8,9 @@ import orderBasePair from 'utils/helpers/orderBasePair';
 const useStyles = makeStyles((theme) => ({
   secondTokenIcon: {
     marginLeft: theme.spacing(-2),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: theme.spacing(-1),
+    }
   },
   tokenImage: (props) => ({
     width: props.size,

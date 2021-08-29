@@ -8,7 +8,9 @@ import TokenPairs from './TokenPairs'
 import LastTransactions from './LastTransactions'
 
 const Home = () => {
+
   return (
+    <>
     <Grid container spacing={3}>
       <Grid item xs={12} lg={6}>
         <CompoundAndEarn />
@@ -23,6 +25,8 @@ const Home = () => {
         <LastTransactions />
       </Grid>
     </Grid>
+    
+    </>
   )
 }
 

@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     width: 300,
     padding: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      width: 250
+    }
   },
   left: {
     width: '70%',
