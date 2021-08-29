@@ -74,7 +74,7 @@ const Details = ({
         />
         <Typography variant='caption' className={classes.balanceText}>
           Available: {(item.userLPBalance / 10**item.lpDecimals).toLocaleString(
-            undefined, { maximumSignificantDigits: 18 })}{item.symbol}
+            undefined, { maximumSignificantDigits: 18 })} {item.symbol}
         </Typography>
       </div>
     </>
