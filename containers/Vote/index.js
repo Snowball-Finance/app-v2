@@ -39,7 +39,9 @@ const Vote = () => {
       />
       {selectedTab === VOTE_TABS.active.VALUE && <ActiveProposals />}
       {selectedTab === VOTE_TABS.all.VALUE && <AllProposals />}
-      {selectedTab === VOTE_TABS.newProposal.VALUE && <NewProposal />}
+
+      
+      {/*TO-DO selectedTab === VOTE_TABS.newProposal.VALUE && <NewProposal />*/}
     </main>
   )
 }

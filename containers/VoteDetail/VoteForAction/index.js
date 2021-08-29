@@ -61,9 +61,6 @@ const VoteForAction = ({
         state='Active'
         value={forValue}
       />
-      <Typography variant='caption'>
-        Addresses votes for
-      </Typography>
       <div className={classes.buttonContainer}>
         <ContainedButton
           className={classes.voteButton}

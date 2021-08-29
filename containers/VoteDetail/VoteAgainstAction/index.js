@@ -60,9 +60,6 @@ const VoteAgainstAction = ({
         state='Failed'
         value={againstValue}
       />
-      <Typography variant='caption'>
-        Addresses votes against
-      </Typography>
       <div className={classes.buttonContainer}>
         <ContainedButton
           className={classes.voteButton}

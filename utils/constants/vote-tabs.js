@@ -7,16 +7,17 @@ const VOTE_TABS = Object.freeze({
     LABEL: 'All',
     VALUE: 'all'
   },
-  newProposal: {
+  /*TO-DO newProposal: {
     LABEL: 'New Proposal',
     VALUE: 'newProposal'
-  }
+  }*/
 })
 
 const VOTE_TABS_ARRAY = [
   VOTE_TABS.active,
   VOTE_TABS.all,
-  VOTE_TABS.newProposal
+  //TO-DO
+  //VOTE_TABS.newProposal
 ]
 
 export {
