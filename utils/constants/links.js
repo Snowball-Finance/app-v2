@@ -5,16 +5,17 @@ const LINKS = Object.freeze({
   },
   S3D_VAULT: {
     TITLE: 's3D Vault',
-    HREF: '/s3d-vault'
+    HREF: '/s3d-vault',
+    IS_DEPRECATED: true
   },
   S3F_VAULT: {
     TITLE: 's3F Vault',
     HREF: '/s3f-vault',
+    IS_DEPRECATED: true
   },
   S4D_VAULT: {
     TITLE: 's4D Vault',
-    HREF: '/s4d-vault',
-    IS_NEW: true
+    HREF: '/s4d-vault'
   },
   STAKING: {
     TITLE: 'Staking',
