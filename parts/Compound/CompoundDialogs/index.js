@@ -68,7 +68,7 @@ const CompoundDialogs = ({
 
   useEffect(() =>{
     if(transactionStatus.depositStep === 2){
-      toast(<Toast message={'Deposit Successful!!'} processing={false}
+      toast(<Toast message={'Deposit Successful!!'} toastType={'tokenOperation'}
       tokens={[item.token0.address,item.token1?.address, 
         item.token2?.address, item.token3?.address]}/>);
       handleClose();
@@ -126,7 +126,7 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(true)}
                 loading={isTransacting.approve}
                 onClick={() => {
-                  toast(<Toast message={'Checking for approval...'}/>)
+                  toast(<Toast message={'Checking for approval...'} toastType={'processing'}/>)
                   setApproved(approve(item, amount))
                 }}
               >
@@ -141,7 +141,7 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(false)}
                 loading={isTransacting.deposit}
                 onClick={() => {
-                    toast(<Toast message={'Depositing your Tokens...'}/>)
+                    toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'}/>)
                     deposit(item, amount)
                   }
                 }

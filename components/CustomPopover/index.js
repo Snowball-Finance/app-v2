@@ -1,6 +1,6 @@
 import { memo, useState, useRef, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Popper, Paper } from '@material-ui/core'
+import { Popper, Paper, ClickAwayListener } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import clsx from 'clsx'
 
@@ -21,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
       clipPath:
         'polygon(-5px -5px, calc(100% + 5px) -5px, calc(100% + 5px) calc(100% + 5px))',
     },
+    [theme.breakpoints.down('sm')]: {
+      '&::before': {
+        bottom: 0,
+        right: '75%',
+      },
+    }
   },
   icon: {
     fontSize: 14,
@@ -36,27 +42,28 @@ const CustomPopover = ({
   const classes = useStyles();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [mouseOverPopover, setMouseOverPopover] = useState(false);
+  // const [mouseOverPopover, setMouseOverPopover] = useState(false);
 
-  const handleOpenActions = () => {
+  const handleOpenActions = (event) => {
+    event.stopPropagation();
     setOpen(true);
   };
 
-  const handleCloseActions = () => {
-    setOpen(false);
-  };
+  // const handleCloseActions = () => {
+  //   setOpen(false);
+  // };
 
   const handleClosePopover = event => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
 
-    setMouseOverPopover(false);
+    setOpen(false);
   };
 
-  const handleEnterPopover = () => {
-    setMouseOverPopover(true);
-  };
+  // const handleEnterPopover = () => {
+  //   setMouseOverPopover(true);
+  // };
 
   const prevOpen = useRef(open);
   useEffect(() => {
@@ -74,24 +81,27 @@ const CustomPopover = ({
         ref={anchorRef}
         aria-controls={open ? 'menu-list-grow' : undefined}
         aria-haspopup="true"
-        onMouseEnter={handleOpenActions}
-        onMouseLeave={handleCloseActions}
+        onClick={handleOpenActions}
+        // onMouseEnter={handleOpenActions}
+        // onMouseLeave={handleCloseActions}
       />
+      <ClickAwayListener onClickAway={handleClosePopover}>
       <Popper
         placement='top'
-        open={open || mouseOverPopover}
+        open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
       >
         <Paper
           className={clsx(classes.paper, contentClassName)}
-          onMouseEnter={handleEnterPopover}
-          onMouseLeave={handleClosePopover}
+          // onMouseEnter={handleEnterPopover}
+          // onMouseLeave={handleClosePopover}
         >
           {children}
         </Paper>
       </Popper>
+      </ClickAwayListener>
     </>
   );
 };

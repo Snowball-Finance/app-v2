@@ -9,14 +9,14 @@ import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import { usePopup } from 'contexts/popup-context'
 import useGauge from 'contexts/staking-context/useGauge'
 import { usePrices } from 'contexts/price-context'
-import { isEmpty, mainnetRPC } from 'utils/helpers/utility'
+import { handleConnectionError, isEmpty } from 'utils/helpers/utility'
 import { BNToFloat } from 'utils/helpers/format'
 
 const ContractContext = createContext(null)
 
 export function ContractProvider({ children }) {
-  const { account, library, chainId } = useWeb3React();
-  const { setPopUp } = usePopup();
+  const { account, library, chainId, error } = useWeb3React();
+  const { setPopUp,setOpen } = usePopup();
 
   const [loading, setLoading] = useState(false);
   const [snowballBalance, setSnowballBalance] = useState(0);
@@ -27,19 +27,7 @@ export function ContractProvider({ children }) {
   const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
   const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner()) : null, [library])
   const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner()) : null, [library])
-  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXY, GAUGE_PROXY_ABI, library.getSigner()) : null, [library])
-
-  useEffect(() => {
-    if (library && !(library?.provider?.host === mainnetRPC 
-        || chainId == C_CHAIN_ID)) {
-      setPopUp({
-        title: 'Network Error',
-        text: `Switch to Avalanche Chain`
-      })
-      return;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [library,chainId]);
+  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, library.getSigner()) : null, [library])
 
   const getBalanceInfo = useCallback(async () => {
     try {
@@ -73,7 +61,23 @@ export function ContractProvider({ children }) {
       setSnowconeBalance(0)
       setTotalSnowcone(0)
     }
-  }, [snowballContract, snowconeContract, account, getBalanceInfo])
+  }, [snowballContract, snowconeContract, account, getBalanceInfo]);
+
+  useEffect(() =>{
+    if(error){
+      const connectionError = handleConnectionError(error);
+      setPopUp({
+        title: 'Error Connecting Wallet',
+        text: connectionError.message,
+        cancelLabel: connectionError.button,
+        confirmAction: connectionError.confirmAction
+      });
+      console.error(error);
+    }else{
+      setOpen(false);
+    }
+  
+  },[error,setPopUp,setOpen]);
 
   const { gauges, retrieveGauge, setGauges } = useGauge({
     prices,

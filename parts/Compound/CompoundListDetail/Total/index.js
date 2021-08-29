@@ -7,7 +7,6 @@ import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '33%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -29,6 +28,15 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
+  },
+  infoContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    }
   },
   boldSubtitle: {
     fontWeight: 600,
@@ -73,7 +81,7 @@ const Total = ({ item }) => {
               BNToFloat(userPool?.totalSupply,userPool?.lpDecimals) * 100 || 0.00, 5)}
             %</Typography>
         </div>
-        {userPool?.underlyingTokens ? <div className={classes.container}>
+        {userPool?.underlyingTokens ? <div className={classes.infoContainer}>
           <Typography variant="body2">{userPool.underlyingTokens ? `Underlying tokens` : ``}</Typography>
           <Typography variant="subtitle2"> <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token0.address]} size={25} />
             {formatNumber(userPool?.underlyingTokens?.token0.reserveOwned, 3, true)} | <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token1.address]} size={25} />
