@@ -21,6 +21,10 @@ const LINKS = Object.freeze({
     TITLE: 'Staking',
     HREF: '/staking'
   },
+  GOVERNANCE: {
+    TITLE: 'Governance',
+    HREF: 'https://app.snowball.network/governance_v2'
+  },
   COMPOUND_AND_EARN: {
     TITLE: 'Compound & Earn',
     HREF: '/compound-and-earn'
