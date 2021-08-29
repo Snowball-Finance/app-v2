@@ -34,6 +34,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     color: theme.custom.palette.white,
     backgroundColor: theme.custom.palette.green
+  },
+  deprecated: {
+    fontSize: 12,
+    borderRadius: 30,
+    padding: theme.spacing(0, 1),
+    color: theme.custom.palette.white,
+    backgroundColor: theme.custom.palette.joe_red
   }
 }));
 
@@ -73,6 +80,9 @@ const MultiSideItem = ({
               <ListItemText primary={item.TITLE} />
               {item?.IS_NEW &&
                 <Typography className={classes.new}>New</Typography>
+              }
+              {item?.IS_DEPRECATED &&
+                <Typography className={classes.deprecated}>Deprecated</Typography>
               }
             </ListItemLink>
           ))}
