@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import { AVALANCHE_MAINNET_PARAMS, injected } from 'utils/constants/connectors';
 import MESSAGES from 'utils/constants/messages';
 import { UnsupportedChainIdError } from '@web3-react/core'
@@ -62,8 +61,6 @@ const metaMaskInstallHandler = () => {
   window.open('https://metamask.io/download', '_blank');
 }
 
-const provider = new ethers.providers.getDefaultProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0]);
-
 const roundDown = (value, decimals = 18) => {
   const valueString = value.toString();
   const integerString = valueString.split('.')[0];
@@ -79,9 +76,8 @@ export {
   isEmpty,
   delay,
   roundDown,
-  provider,
   AVALANCHE_MAINNET_PARAMS,
   addAvalancheNetwork,
   handleConnectionError,
-  metaMaskInstallHandler
+  metaMaskInstallHandler,
 }

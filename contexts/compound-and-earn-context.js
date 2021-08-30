@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import MESSAGES from 'utils/constants/messages';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
+import { provider } from 'utils/constants/connectors';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -49,8 +50,10 @@ export function CompoundAndEarnProvider({ children }) {
       let deprecatedUserBalance = [];
       await Promise.all(
         deprecatedContractsQuery.data.DeprecatedContracts.map(async(pool)=>{
-          const gaugeContract = new ethers.Contract(pool.contractAddresses[1],GAUGE_ABI,library.getSigner());
-          const tokenContract = new ethers.Contract(pool.contractAddresses[0],ERC20_ABI,library.getSigner());
+          const gaugeContract = new ethers.Contract(
+            pool.contractAddresses[1],GAUGE_ABI,provider);
+          const tokenContract = new ethers.Contract(
+            pool.contractAddresses[0],ERC20_ABI,provider);
           let userDeposited = await gaugeContract.balanceOf(account)/1e18;
           const balanceInToken = await tokenContract.balanceOf(account)/1e18;
           if(pool.kind === 'Snowglobe'){
@@ -95,56 +98,56 @@ export function CompoundAndEarnProvider({ children }) {
   },[loading])
 
   const generatePoolInfo = async (item,gauges) => {
-    const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
+    const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, provider);
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
-    let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, 
-      underlyingTokens, userBalanceSnowglobe,userLPBalance;
+    let totalSupply = 0, userDepositedLP = 0, SNOBHarvestable = 0, SNOBValue = 0, 
+      underlyingTokens, userBalanceSnowglobe, userLPBalance;
     const lpDecimals = await lpContract.decimals();
     userLPBalance  = await lpContract.balanceOf(account);
 
     if (item.kind === 'Snowglobe') {
-      const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-      totalSupply = await snowglobeContract.totalSupply();
-
-      let snowglobeRatio;
-
-      const snowglobeTotalBalance = await snowglobeContract.balance();
-      if (snowglobeTotalBalance > 0) {
-        snowglobeRatio = await snowglobeContract.getRatio();
-      } else {
-        snowglobeRatio = floatToBN(1,18);
-      }
-
+      const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, provider);
       userBalanceSnowglobe = await snowglobeContract.balanceOf(account);
-      if(userBalanceSnowglobe.gt('0x0') && userLPBalance.eq('0x0')){
-        userLPBalance = userLPBalance.add(userBalanceSnowglobe);
-      }
-      userDepositedLP = BNToFloat(userBalanceSnowglobe,lpDecimals) * BNToFloat(snowglobeRatio,18);
-      if (!isEmpty(gauge)) {
-        userDepositedLP += (gauge.staked / 10**lpDecimals) * BNToFloat(snowglobeRatio,18);
-        SNOBHarvestable = gauge.harvestable / 1e18;
-        SNOBValue = SNOBHarvestable * snowballInfoQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice;
-      }
+      if(+userBalanceSnowglobe > 0 || gauge.staked > 0){
+        totalSupply = await snowglobeContract.totalSupply();
 
-      if (userDepositedLP > 0 && item.token1.address) {
-        let reserves = await lpContract.getReserves();
-        let totalSupplyPGL = BNToFloat(await lpContract.totalSupply(),18);
+        let snowglobeRatio;
+        const snowglobeTotalBalance = await snowglobeContract.balance();
+        if (snowglobeTotalBalance > 0) {
+          snowglobeRatio = await snowglobeContract.getRatio();
+        } else {
+          snowglobeRatio = floatToBN(1,18);
+        }
+        if(userBalanceSnowglobe.gt('0x0') && userLPBalance.eq('0x0')){
+          userLPBalance = userLPBalance.add(userBalanceSnowglobe);
+        }
+        userDepositedLP = BNToFloat(userBalanceSnowglobe,lpDecimals) * BNToFloat(snowglobeRatio,18);
+        if (!isEmpty(gauge)) {
+          userDepositedLP += (gauge.staked / 10**lpDecimals) * BNToFloat(snowglobeRatio,18);
+          SNOBHarvestable = gauge.harvestable / 1e18;
+          SNOBValue = SNOBHarvestable * snowballInfoQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice;
+        }
 
-        const r0 = BNToFloat(reserves._reserve0,item.token0.decimals);
-        const r1 = BNToFloat(reserves._reserve1,item.token1.decimals);
-        let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
-        let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
-        underlyingTokens = {
-          token0: {
-            address: item.token0.address,
-            symbol: item.token0.symbol,
-            reserveOwned: reserve0Owned,
-          },
-          token1: {
-            address: item.token1.address,
-            symbol: item.token1.symbol,
-            reserveOwned: reserve1Owned,
+        if (userDepositedLP > 0 && item.token1.address) {
+          let reserves = await lpContract.getReserves();
+          let totalSupplyPGL = BNToFloat(await lpContract.totalSupply(),18);
+
+          const r0 = BNToFloat(reserves._reserve0,item.token0.decimals);
+          const r1 = BNToFloat(reserves._reserve1,item.token1.decimals);
+          let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
+          let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
+          underlyingTokens = {
+            token0: {
+              address: item.token0.address,
+              symbol: item.token0.symbol,
+              reserveOwned: reserve0Owned,
+            },
+            token1: {
+              address: item.token1.address,
+              symbol: item.token1.symbol,
+              reserveOwned: reserve1Owned,
+            }
           }
         }
       }

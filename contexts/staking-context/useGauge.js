@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 
 import { CONTRACTS } from 'config'
+import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import GAUGE_TOKEN_ABI from 'libs/abis/gauge-token.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
 import { isEmpty } from 'utils/helpers/utility'
@@ -100,9 +101,10 @@ const useGauge = ({
   const voteFarms = async (tokens, weights) => {
     setLoading(true)
     try {
-      const weightsData = weights.map((weight) => ethers.BigNumber.from(weight))
-      const gasLimit = await gaugeProxyContract.estimateGas.vote(tokens, weightsData)
-      const tokenVote = await gaugeProxyContract.vote(tokens, weightsData, { gasLimit })
+      const weightsData = weights.map((weight) => ethers.BigNumber.from(weight));
+      const gaugeProxyVoteContract = new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, library.getSigner());
+      const gasLimit = await gaugeProxyVoteContract.estimateGas.vote(tokens, weightsData)
+      const tokenVote = await gaugeProxyVoteContract.vote(tokens, weightsData, { gasLimit })
       const transactionVote = await tokenVote.wait(1)
 
       if (transactionVote.status) {
