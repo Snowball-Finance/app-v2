@@ -82,6 +82,17 @@ const CompoundAndEarn = () => {
     setSearch(value);
   };
 
+  const handleCancelSearch = () => {
+    let filterData = filterDataByProtocol.length
+      ? [...filterDataByProtocol]
+      : lastSnowballModifiedInfo.length
+        ? [...lastSnowballModifiedInfo]
+        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+
+    setLastSnowballInfo(filterData);
+    setSearch('');
+  };
+
   const handleSorting = (event) => {
     const filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
@@ -143,7 +154,7 @@ const CompoundAndEarn = () => {
             value={search}
             placeholder='Search your favorite pairs'
             onChange={(newValue) => handleSearch(newValue)}
-            onCancelSearch={() => setSearch('')}
+            onCancelSearch={handleCancelSearch}
           />
         </Grid>
         <Grid item xs={6} md={2}>
