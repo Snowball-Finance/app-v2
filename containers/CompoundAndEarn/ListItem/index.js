@@ -42,7 +42,8 @@ const ListItem = ({
     return total
   }, [boost, pool])
 
-  const userBoost = `${(boost ? boost : 1.0).toFixed(1)}x`;
+  // Remove 1.5 after 1 week
+  const userBoost = `${(boost ? boost * 1.5 : 1.5).toFixed(2)}x`;
 
   return (
     <>
