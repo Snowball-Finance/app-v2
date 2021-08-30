@@ -83,7 +83,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         <Grid
           container
           direction={isSm ? 'row' : 'column'}
-          justify={isSm ? 'space-between' : 'start'}
+          justify={isSm ? 'space-between' : 'flex-start'}
         >
           <Grid item>
             <Typography variant="body2">
@@ -109,7 +109,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         <Grid
           container
           direction={isSm ? 'row' : 'column'}
-          justify={isSm ? 'space-between' : 'start'}
+          justify={isSm ? 'space-between' : 'flex-start'}
         >
           <Grid item>
             <Typography variant="body2">
@@ -131,7 +131,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         <Grid
           container
           direction={isSm ? 'row' : 'column'}
-          justify={isSm ? 'space-between' : 'start'}
+          justify={isSm ? 'space-between' : 'flex-start'}
         >
           <Grid item>
             <Typography variant="body2">

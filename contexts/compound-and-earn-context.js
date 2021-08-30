@@ -11,7 +11,7 @@ import LP_ABI from 'libs/abis/lp-token.json';
 import { usePopup } from 'contexts/popup-context'
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
-import { isEmpty } from 'utils/helpers/utility';
+import { isEmpty, provider } from 'utils/helpers/utility';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
@@ -41,7 +41,7 @@ export function CompoundAndEarnProvider({ children }) {
   }, [pools, gauges, account]);
 
   const generatePoolInfo = async (item,gauges) => {
-    const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
+    const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, provider);
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
     let totalSupply, userDepositedLP, SNOBHarvestable, SNOBValue, 
@@ -50,7 +50,7 @@ export function CompoundAndEarnProvider({ children }) {
     userLPBalance  = await lpContract.balanceOf(account);
 
     if (item.kind === 'Snowglobe') {
-      const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
+      const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, provider);
       totalSupply = await snowglobeContract.totalSupply();
 
       let snowglobeRatio;

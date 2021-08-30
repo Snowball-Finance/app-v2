@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { AVALANCHE_MAINNET_PARAMS, injected } from 'utils/constants/connectors';
+import { AVALANCHE_MAINNET_PARAMS, injected, PRIVATENODE } from 'utils/constants/connectors';
 import MESSAGES from 'utils/constants/messages';
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { NoEthereumProviderError, UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector'
@@ -62,7 +62,32 @@ const metaMaskInstallHandler = () => {
   window.open('https://metamask.io/download', '_blank');
 }
 
-const provider = new ethers.providers.getDefaultProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0]);
+const nodeIsHealthy = async (url) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  
+  var raw = JSON.stringify({"jsonrpc":"2.0","id":1,"method":"health.getLiveness"});
+  
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+  try{
+    const response = await fetch(`${url}/ext/health`, requestOptions);
+    const bodyResponse = await response.json(); 
+    return bodyResponse.result?.healthy;
+  }catch(error){
+    console.log(error);
+    return false;
+  }
+}
+
+const provider = new ethers.providers.getDefaultProvider(
+  nodeIsHealthy(PRIVATENODE) 
+  ? `${PRIVATENODE}/ext/bc/C/rpc` 
+    :  AVALANCHE_MAINNET_PARAMS.rpcUrls[0]);
 
 const roundDown = (value, decimals = 18) => {
   const valueString = value.toString();
@@ -83,5 +108,6 @@ export {
   AVALANCHE_MAINNET_PARAMS,
   addAvalancheNetwork,
   handleConnectionError,
-  metaMaskInstallHandler
+  metaMaskInstallHandler,
+  nodeIsHealthy
 }

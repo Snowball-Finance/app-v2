@@ -2,6 +2,8 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
+const PRIVATENODE = process.env.PRIVATENODE;
+
 const AVALANCHE_MAINNET_PARAMS = {
   chainId: '0xa86a',
   chainName: 'Avalanche Mainnet C-Chain',
@@ -28,5 +30,6 @@ export {
   injected,
   trustWallet,
   walletlink,
-  AVALANCHE_MAINNET_PARAMS
+  AVALANCHE_MAINNET_PARAMS,
+  PRIVATENODE
 }
