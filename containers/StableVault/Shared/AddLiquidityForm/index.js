@@ -76,7 +76,7 @@ const AddLiquidityForm = ({
                   as={<TokenTextField />}
                   name={`input${token.index}`}
                   label='Input:'
-                  placeholder='0.0'
+                  placeholder='0.00'
                   token={token}
                   balance={tokenBalance}
                   control={control}
@@ -102,7 +102,7 @@ const AddLiquidityForm = ({
               type='submit'
               color={vaultInfo.color}
               className={classes.button}
-              disabled={vault==='s3D' || vault==='s3F' }
+              disabled={ vault === 's3D' || vault === 's3F' }
             >
               Add Liquidity
             </GradientButton>

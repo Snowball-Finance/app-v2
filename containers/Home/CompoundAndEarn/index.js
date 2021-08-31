@@ -7,6 +7,8 @@ import { CONTRACTS } from 'config'
 import { useContracts } from 'contexts/contract-context'
 import { usePrices } from 'contexts/price-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
+import { formatNumber } from 'utils/helpers/format'
+
 import {
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
   METAMASK_IMAGE_PATH
@@ -140,7 +142,7 @@ const CompoundAndEarn = () => {
         variant='h6'
         color='textSecondary'
       >
-        ${parseFloat(pendingHarvest?.balanceUSD).toFixed(3)} USD
+        ${parseFloat(pendingHarvest?.balanceUSD).toFixed(2)} USD
       </Typography>
 
       <Divider
@@ -158,13 +160,13 @@ const CompoundAndEarn = () => {
             Wallet balance
           </Typography>
           <Typography className={classes.balance}>
-            {snowballBalance.toLocaleString()} SNOB<span>$ {snowballPrice.toFixed(3)}</span>
+            {formatNumber(snowballBalance, 2)} SNOB<span>$ {snowballPrice.toFixed(2)}</span>
           </Typography>
           <Typography
             className={classes.xSnobBalance}
             variant='body2'
           >
-            {snowconeBalance.toLocaleString()} xSNOB
+            {formatNumber(snowconeBalance, 2)} xSNOB
           </Typography>
         </div>
         

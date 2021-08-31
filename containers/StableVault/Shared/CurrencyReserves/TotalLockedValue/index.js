@@ -2,6 +2,7 @@
 import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +33,7 @@ const TotalLockedValue = ({
         Total Value Locked
       </Typography>
       <Typography className={classes.value}>
-        {`$ ${value}`}
+        {`$ ${formatNumber(value, 2)}`}
       </Typography>
     </div>
   )

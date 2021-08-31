@@ -21,8 +21,7 @@ const useStyles = makeStyles(() => ({
 
 const ApyCalculation = ({
   dailyAPR,
-  yearlyAPY,
-  performanceFees,
+  yearlyAPY
 }) => {
   const classes = useStyles();
 

@@ -26,10 +26,10 @@ const SnowClaim = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography color='textPrimary' variant='body1'>
-            {`Current distribution amount: ${formatNumber(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.snobDistributed)}`}
+            {`Last distribution amount: ${formatNumber(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.snobDistributed)}`}
           </Typography>
           <Typography color='textPrimary' variant='body1'>
-            {`Current distribution date: ${new Date(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.startDate).toLocaleDateString()}`}
+            {`Last distribution date: ${new Date(currentDistributionPhaseQuery.data?.CurrentDistributionPhase.startDate).toLocaleDateString()}`}
           </Typography>
           <br />
           <Typography color='textPrimary' variant='body1'>

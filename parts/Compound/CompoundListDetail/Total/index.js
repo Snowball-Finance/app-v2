@@ -64,7 +64,7 @@ const Total = ({ item }) => {
       <div className={classes.upper}>
         <div className={classes.container}>
           <Typography>SNOB (Claimable)</Typography>
-          <Typography><b>{formatNumber(userPool?.SNOBHarvestable || 0.00, 3)}</b> (${formatNumber(userPool?.SNOBValue || 0.00, 3)})</Typography>
+          <Typography><b>{formatNumber(userPool?.SNOBHarvestable || 0.00, 2)}</b> (${formatNumber(userPool?.SNOBValue || 0.00, 2)})</Typography>
         </div>
       </div>
 

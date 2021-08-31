@@ -14,6 +14,7 @@ import { useAPIContext } from 'contexts/api-context';
 import { isEmpty } from 'utils/helpers/utility';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
+import MESSAGES from 'utils/constants/messages';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
@@ -204,7 +205,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
     }
 
@@ -251,7 +252,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return false;
     }
@@ -311,7 +312,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       });
       return;
     }
@@ -386,7 +387,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account || !gauges) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
