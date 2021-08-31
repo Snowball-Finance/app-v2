@@ -28,7 +28,6 @@ const LAST_SNOWBALL_INFO = gql`
         weeklyAPY
         yearlyAPY
         pricePoolToken
-        performanceFees
         deprecated
         token0{
           address

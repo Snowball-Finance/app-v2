@@ -27,7 +27,7 @@ const CurrencyReserves = ({
         })}
 
         <Grid item xs={12}>
-          <TotalLockedValue value={totalSupply.toLocaleString()} />
+          <TotalLockedValue value={totalSupply} />
         </Grid>
       </Grid>
     </CardFormWrapper>

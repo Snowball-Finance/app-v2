@@ -11,6 +11,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH } from 'utils/constants/image-paths';
 import DashboardTVLSkeletons from 'components/Skeletons/DashboardTVL';
 import { useAPIContext } from 'contexts/api-context';
+import { formatNumber } from 'utils/helpers/format';
 
 const BorderLinearProgress = withStyles((theme) => ({
   root: {
@@ -77,7 +78,7 @@ const TotalLockedValue = () => {
         Total Value Locked
       </Typography>
       <Typography variant="h3" color="textPrimary" className={classes.snob}>
-        ${snowballTVLQuery.data?.LastSnowballInfo?.snowballTVL.toLocaleString()}
+        ${formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.snowballTVL, 2)}
       </Typography>
 
       <div>
@@ -88,10 +89,10 @@ const TotalLockedValue = () => {
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
               $
-              {(
+              {formatNumber(
                 snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply *
                 snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice
-              ).toLocaleString()}
+              , 2)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={7}>
@@ -99,7 +100,7 @@ const TotalLockedValue = () => {
               Circulating Supply
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {`${(snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply).toLocaleString()} - Max: 18,000,000`}
+              {`${formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply, 2)} - Max: 18,000,000`}
             </Typography>
             <BorderLinearProgress
               variant="determinate"
@@ -120,9 +121,9 @@ const TotalLockedValue = () => {
               SNOB per Block / Day
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {(snowballTVLQuery.data?.LastSnowballInfo?.snobPerBlock).toLocaleString()} / ~
-              {(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs *
-                snowballTVLQuery.data?.LastSnowballInfo?.snobPerBlock).toLocaleString()}
+              {formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.snobPerBlock, 2)} / ~
+              {formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs *
+                snowballTVLQuery.data?.LastSnowballInfo?.snobPerBlock, 2)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -130,7 +131,7 @@ const TotalLockedValue = () => {
               Blocks Past 24hrs
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs).toLocaleString()}
+              {formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs, 2)}
             </Typography>
           </Grid>
           <Grid item xs={12}>

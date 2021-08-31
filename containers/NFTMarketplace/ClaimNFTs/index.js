@@ -35,7 +35,7 @@ const ClaimNFTs = ({
         ? (
           <Grid item xs={12}>
             <Typography variant='h6' align='center'>
-              No NFT
+              Loading NFTs
             </Typography>
           </Grid>
         )

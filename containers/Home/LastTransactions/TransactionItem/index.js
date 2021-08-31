@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 
 import getTransactionInfo from 'utils/helpers/getTransactionInfo';
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -64,10 +65,7 @@ const TransactionItem = ({ transaction }) => {
         </Typography>
         <Typography color="textPrimary" align="right" className={classes.info}>
           <span style={{ color: typeInfo.color }}>
-            {`$ ${transaction.valueUSD.toLocaleString('en-US', {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2,
-            })}`}
+            {`$ ${formatNumber(transaction.valueUSD, 2)}`}
           </span>
           <br />
           {moment(transaction.createdAt).fromNow()}

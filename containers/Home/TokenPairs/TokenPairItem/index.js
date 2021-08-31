@@ -3,6 +3,7 @@ import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import SnowPairsIcon from 'components/SnowPairsIcon';
+import { formatNumber } from 'utils/helpers/format'
 
 const useStyles = makeStyles((theme) => ({
   tokenContainer: {
@@ -33,7 +34,7 @@ const TokenPairItem = ({
       <Typography color="textPrimary" className={classes.token}>
         <span>{token.name}</span>
         <br />
-        {`${token.pangolinPrice?.toLocaleString()} USD`}
+        {`${formatNumber(token.pangolinPrice, 2)} USD`}
       </Typography>
     </Grid>
   );

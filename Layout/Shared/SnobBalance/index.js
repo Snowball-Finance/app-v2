@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useContracts } from 'contexts/contract-context'
 import { usePrices } from 'contexts/price-context'
 import DollarIcon from 'components/Icons/DollarIcon'
+import { formatNumber } from 'utils/helpers/format'
 
 const useStyles = makeStyles((theme) => ({
   balanceContainer: {
@@ -31,8 +32,8 @@ const SnobBalance = () => {
     <div className={classes.balanceContainer}>
       <DollarIcon />
       <Typography variant="body2" className={classes.balance}>
-        {snowballBalance.toLocaleString()} SNOB
-        <small>(${snowballPrice.toFixed(3)})</small>
+        {formatNumber(snowballBalance, 2)} SNOB
+        <small>(${formatNumber(snowballPrice, 2)})</small>
       </Typography>
     </div>
   )

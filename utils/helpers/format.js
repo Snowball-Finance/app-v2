@@ -20,7 +20,7 @@ export const formatNumber = (num, precision, exponencial = false) =>
         minimumFractionDigits: precision || 2,
         maximumFractionDigits: precision || 2})
   :
-    0;
+    parseFloat("0").toFixed((precision || 0));
 
 //this function doesnt parse scientific notation floats, you need
 //to use toLocaleString if you want to avoid it

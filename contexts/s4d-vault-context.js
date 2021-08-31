@@ -7,7 +7,8 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json'
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S4D_VAULT_ABI from 'libs/abis/s4d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
-import { provider, roundDown } from 'utils/helpers/utility'
+import MESSAGES from 'utils/constants/messages';
+import { provider } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
@@ -278,7 +279,7 @@ export function S4dVaultContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return withdrawAmount;
     }
@@ -309,7 +310,7 @@ export function S4dVaultContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return { minToMintValue: 0, discount: 0 };
     }
@@ -340,7 +341,7 @@ export function S4dVaultContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
@@ -397,7 +398,7 @@ export function S4dVaultContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
@@ -457,7 +458,7 @@ export function S4dVaultContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }

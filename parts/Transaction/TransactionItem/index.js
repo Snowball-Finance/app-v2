@@ -7,6 +7,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 
 import getTransactionInfo from 'utils/helpers/getTransactionInfo'
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -73,7 +74,7 @@ const TransactionItem = ({
             className={classes.balance}
             style={{ color: typeInfo.color }}
           >
-            {`$${parseFloat(transaction.balance).toFixed(3).toLocaleString()}`}
+            {`$${formatNumber(parseFloat(transaction.balance), 2)}`}
           </Typography>
         </Grid>
       </Grid>

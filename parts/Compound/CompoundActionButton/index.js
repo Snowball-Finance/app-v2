@@ -44,20 +44,12 @@ const useStyles = makeStyles((theme) => ({
 
 const getIcon = (type) => {
   switch (type) {
-    case 'Details':
-      return <ArrowDropDownCircleIcon />
-    case 'Deposit':
-      return <SystemUpdateAltRoundedIcon />
-    case 'Get_PGL':
-    case 'Get_JLP':
-    case 'Get_xJoe':
-    case 'Get_s3D':
-    case 'Get_s3F':
-    case 'Get_s4D':
-    case 'Get_Token':
-      return <LaunchIcon />
+    case "Details":
+      return (<ArrowDropDownCircleIcon />);
+    case "Deposit":
+      return (<SystemUpdateAltRoundedIcon />);
     default:
-      return null
+      return (<LaunchIcon />);
   }
 }
 
@@ -84,7 +76,7 @@ const CompoundActionButton = ({
       className={clsx({ [classes.button]: endIcon }, classes[type])}
       size={endIcon ? 'small' : 'medium'}
       disableElevation={endIcon}
-      endIcon={getIcon(type)}
+      endIcon={endIcon ? getIcon(type) : null}
       onClick={buttonHandler}
       disabled={disabled}
       fullWidth={fullWidth}

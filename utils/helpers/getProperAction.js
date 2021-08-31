@@ -33,7 +33,7 @@ const getProperAction = (item, setModal, balance, deposit = 0) => {
 		action = ["Get_s3F", (router) => { router.push(LINKS.S3F_VAULT.HREF) }];
 	} else if (item.name == "S4D (DAI.e-FRAX-TUSD-USDT.e)") {
 		action = ["Get_s4D", (router) => { router.push(LINKS.S4D_VAULT.HREF) }];
-}
+	}
 
 	return action;
 }

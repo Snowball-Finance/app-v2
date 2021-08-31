@@ -75,7 +75,6 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           <ApyCalculation
             dailyAPR={dailyAPR}
             yearlyAPY={yearlyAPY}
-            performanceFees={item.performanceFees}
           />
         </Grid>
         <Grid item xs={12} lg={4}>

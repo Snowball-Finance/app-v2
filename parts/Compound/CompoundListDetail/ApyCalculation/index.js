@@ -21,8 +21,7 @@ const useStyles = makeStyles(() => ({
 
 const ApyCalculation = ({
   dailyAPR,
-  yearlyAPY,
-  performanceFees,
+  yearlyAPY
 }) => {
   const classes = useStyles();
 
@@ -40,10 +39,6 @@ const ApyCalculation = ({
       <div className={classes.container}>
         <Typography variant="body2">Compounded APY</Typography>
         <Typography variant="subtitle2">{typeof(yearlyAPY) === 'number' ? yearlyAPY?.toFixed(2): yearlyAPY}%</Typography>
-      </div>
-      <div className={classes.container}>
-        <Typography variant="body2">Performance Fee</Typography>
-        <Typography variant="subtitle2">{performanceFees}%</Typography>
       </div>
     </Grid>
   );

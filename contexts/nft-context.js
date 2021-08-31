@@ -8,6 +8,7 @@ import GOVERNANCE_ABI from 'libs/abis/governance.json'
 import { usePopup } from 'contexts/popup-context'
 import { isEmpty } from 'utils/helpers/utility'
 import NFT_STATUS from 'utils/constants/nft-status'
+import MESSAGES from 'utils/constants/messages';
 import { useAPIContext } from './api-context'
 import { BNToFloat, floatToBN } from 'utils/helpers/format'
 
@@ -128,7 +129,7 @@ export function NFTContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
@@ -178,7 +179,7 @@ export function NFTContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }

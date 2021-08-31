@@ -9,6 +9,7 @@ import SnowPairsIcon from 'components/SnowPairsIcon';
 import Info from '../Info';
 import TVLTooltip from '../TVLTooltip';
 import APYTooltip from '../APYTooltip';
+import { formatNumber } from 'utils/helpers/format';
 import {
   BOOST_INFO_IMAGE_PATH,
   SNOB_LOCK_IMAGE_PATH,
@@ -33,18 +34,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
     defaultMatches: true,
   });
-  const token0 = item.token0.address;
-  const token1 = item.token1.address;
-  const token2 = item.token2.address;
-  const token3 = item.token3.address;
-  const dexTokenName =
-    item.source == 'Pangolin'
-      ? 'PNG'
-      : item.source == 'Trader Joe'
-      ? 'JOE'
-      : item.source == 'BENQI'
-      ? 'BENQI'
-      : 'SNOB';
+  const dexTokenName = item.symbol == "S4D" ? "SNOB" : item.symbol;
 
   return (
     <Grid
@@ -56,7 +46,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
     >
       <Grid item xs={4} lg={3}>
         <SnowPairsIcon
-          pairsIcon={[token0, token1, token2, token3]}
+          pairsIcon={[item.token0.address, item.token1.address,  item.token2.address, item.token3.address]}
           size={isSm ? 30 : 50}
         />
       </Grid>
@@ -121,7 +111,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           </Grid>
           <Grid item>
             <Typography variant="subtitle1">
-              ${item.tvlStaked.toFixed(2)}
+              ${formatNumber(item.tvlStaked, 2)}
             </Typography>
           </Grid>
         </Grid>

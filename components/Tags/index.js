@@ -15,15 +15,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.snob_blue,
     color: theme.custom.palette.snob_blue
   },
-  PNG: {
+  PGL: {
     backgroundColor: theme.custom.palette.transparent.png_orange,
     color: theme.custom.palette.png_orange
   },
-  JOE: {
+  JLP: {
     backgroundColor: theme.custom.palette.transparent.joe_red,
     color: theme.custom.palette.joe_red
   },
-  BENQI: {
+  QLP: {
     backgroundColor: theme.custom.palette.transparent.snob_blue,
     color: theme.custom.palette.snob_blue
   }

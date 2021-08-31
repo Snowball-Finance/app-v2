@@ -13,14 +13,14 @@ const TransactionsHistory = ({
 }) => {
   return (
     <CardFormWrapper>
-      <LastTransactionsHeader title={`From Stablevault ${vault} Vault`} />
+      <LastTransactionsHeader title={`From ${vault} Vault`} />
       {isEmpty(transactions)
         ? (
           <Typography
             align='center'
             variant='h5'
           >
-            No Transaction
+            Loading Transactions
           </Typography>
         )
         : transactions.map((transaction, index) => (
