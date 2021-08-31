@@ -28,8 +28,8 @@ const BottomAppBar = () => {
     <Hidden smUp>
       <div className={classes.root}>
         <Paper className={classes.appBar} elevation={0}>
-          <SnobBalance />
-          <ConnectWallet />
+          <SnobBalance />    
+          <ConnectWallet />    
         </Paper>
       </div>
     </Hidden>

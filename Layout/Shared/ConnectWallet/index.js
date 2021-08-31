@@ -12,18 +12,19 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
-    borderRadius: '10px 16px 16px 10px',
-    backgroundColor: 'rgba(40, 162, 255, 0.12)',
+    borderRadius: '10px',
+    backgroundColor: '#E5F3FF',
   },
   account: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
-    padding: theme.spacing(0, 1),
-    fontSize: '14px',
+    padding: '7px 10px',
+    fontSize: 14,
+    fontWeight: '600'
   },
   connect: {
-    margin: theme.spacing(0, 1)
+    margin: '0px'
   }
 }));
 
@@ -48,7 +49,6 @@ const ConnectWallet = () => {
           onClick={walletHandler}
         >
           <Typography
-            variant='caption'
             color='textPrimary'
             className={classes.account}
           >

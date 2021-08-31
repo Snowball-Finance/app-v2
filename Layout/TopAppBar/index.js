@@ -7,6 +7,7 @@ import MenuOpenIcon from '@material-ui/icons/MenuOpen'
 import Logo from 'components/Logo'
 import ConnectWallet from '../Shared/ConnectWallet'
 import SnobBalance from '../Shared/SnobBalance'
+import SnobPrice from '../Shared/SnobPrice'
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -53,7 +54,7 @@ const TopAppBar = ({
         </IconButton>
 
         <Hidden xsDown>
-          <SnobBalance />
+          <SnobPrice />
         </Hidden>
       </div>
 
@@ -62,9 +63,12 @@ const TopAppBar = ({
         <div />
       </Hidden>
 
-      <Hidden xsDown>
-        <ConnectWallet />
-      </Hidden>
+      <div className={classes.rowContainer}>
+        <Hidden xsDown>
+          <SnobBalance />
+          <ConnectWallet />
+        </Hidden>
+      </div>
     </Paper>
   )
 }
