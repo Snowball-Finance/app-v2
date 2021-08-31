@@ -47,7 +47,7 @@ const SnobBalance = () => {
           className={classes.root}
         >
         <CoinIcon className={classes.coin} />
-        <Tooltip title={snowballPrice} arrow>
+        <Tooltip title='SNOB Price' arrow>
           <Typography
             color='textPrimary'
             className={classes.balance}

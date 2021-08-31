@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
-    padding: '7px 16px',
+    padding: '8px 16px',
     fontSize: 14,
     fontWeight: '600',
     color: '#28A2FF',
@@ -45,7 +45,7 @@ const SnobBalance = () => {
       <div
           className={classes.root}
         >
-        <Tooltip title={snowballPrice} arrow>
+        <Tooltip title='Amount of SNOB in your wallet' arrow>
           <Typography
             color='textPrimary'
             className={classes.balance}
