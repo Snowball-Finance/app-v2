@@ -361,7 +361,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   }
 
-  const withdraw = async (item,deprecated) => {
+  const withdraw = async (item) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -393,7 +393,7 @@ export function CompoundAndEarnProvider({ children }) {
             text: `Gauge Receipt: ${transactionGaugeWithdraw.transactionHash}\n`
           });
           setIsTransacting({ pageview: false });
-          if(deprecated){
+          if(item.deprecatedPool){
             item.withdrew = true;
             toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}/>);
           }else{
@@ -424,7 +424,7 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Withdraw Complete',
             text: `Globe Receipt: ${transactionSnowglobeWithdraw.transactionHash}\n`
           });
-          if(deprecated){
+          if(item.deprecatedPool){
             item.withdrew = true;
             toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}/>);
           }else{
@@ -445,7 +445,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ pageview: false });
   }
 
-  const claim = async (item,deprecated) => {
+  const claim = async (item) => {
     if (!account || !gauges) {
       setPopUp({
         title: 'Network Error',
@@ -465,7 +465,7 @@ export function CompoundAndEarnProvider({ children }) {
           title: 'Claim Complete',
           text: `Claim Receipt: ${transactionReward.transactionHash}\n`
         });
-      if(!deprecated){
+      if(item.deprecatedPool){
         item.claimed = true;
         toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}/>);
       }else{

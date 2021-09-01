@@ -112,11 +112,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={(item.userDepositedLP == 0) || !item.userDepositedLP || item.withdrew}
+            disabled={item.userDepositedLP === 0 || !item.userDepositedLP || item.withdrew}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-              withdraw(item,item.deprecatedPool)
+              withdraw(item)
             }}
             fullWidth={isSm ? true : false}
           >
@@ -129,7 +129,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
-              claim(item,item.deprecatedPool)
+              claim(item)
             }}
             fullWidth={isSm ? true : false}
           >
