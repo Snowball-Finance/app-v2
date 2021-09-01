@@ -51,13 +51,19 @@ export function CompoundAndEarnProvider({ children }) {
         deprecatedContractsQuery.data.DeprecatedContracts.map(async(pool)=>{
           const gaugeContract = new ethers.Contract(pool.contractAddresses[1],GAUGE_ABI,library.getSigner());
           const tokenContract = new ethers.Contract(pool.contractAddresses[0],ERC20_ABI,library.getSigner());
-          const userDepositedLP = await gaugeContract.balanceOf(account);
-          const balanceInToken = await tokenContract.balanceOf(account);
+          let userDeposited = await gaugeContract.balanceOf(account)/1e18;
+          const balanceInToken = await tokenContract.balanceOf(account)/1e18;
+          if(pool.kind === 'Snowglobe'){
+            userDeposited += balanceInToken;
+          }
+
           const SNOBHarvestable = await gaugeContract.earned(account);
-          if(userDepositedLP > 0 || balanceInToken > 0 || SNOBHarvestable > 0){
+          if(userDeposited > 0 || SNOBHarvestable > 0){
             deprecatedUserBalance.push({
               address:pool.contractAddresses[0],
-              gaugeAddress:pool.contractAddresses[1],
+              gaugeInfo:{
+                address:pool.contractAddresses[1]
+              },
               userBalanceSnowglobe:balanceInToken,
               name:pool.pair,
               kind:pool.kind,
@@ -67,10 +73,12 @@ export function CompoundAndEarnProvider({ children }) {
                 : pool.source === 'BENQI' ? 'QLP'
                 : pool.source === 'Pangolin' ? 'PGL'
                 : 'SNOB',
-              userDepositedLP,
-              balanceInToken,
-              SNOBHarvestable,
-              deprecated:true
+              userDepositedLP:userDeposited/1e18,
+              SNOBHarvestable:SNOBHarvestable/1e18,
+              deprecated:true,
+              claimed:(!SNOBHarvestable > 0),
+              withdrew:(!userDeposited > 0),
+              deprecatedPool:true
             })
           }
         }
@@ -353,7 +361,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   }
 
-  const withdraw = async (item) => {
+  const withdraw = async (item,deprecated) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -364,8 +372,7 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ pageview: true });
     try {
-      const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-      const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
+      const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
       const gaugeBalance = await gaugeContract.balanceOf(account);
       if (gaugeBalance.gt(0x00)) {
@@ -386,10 +393,15 @@ export function CompoundAndEarnProvider({ children }) {
             text: `Gauge Receipt: ${transactionGaugeWithdraw.transactionHash}\n`
           });
           setIsTransacting({ pageview: false });
-          getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
-          tokens={[item.token0.address,item.token1?.address, 
-            item.token2?.address, item.token3?.address]}/>);
+          if(deprecated){
+            item.withdrew = true;
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}/>);
+          }else{
+            getBalanceInfoSinglePool(item.address);
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
+            tokens={[item.token0.address,item.token1?.address, 
+              item.token2?.address, item.token3?.address]}/>);
+          }
         }
       }
 
@@ -412,10 +424,15 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Withdraw Complete',
             text: `Globe Receipt: ${transactionSnowglobeWithdraw.transactionHash}\n`
           });
-          getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'} 
-          tokens={[item.token0.address,item.token1?.address, 
-            item.token2?.address, item.token3?.address]}/>);
+          if(deprecated){
+            item.withdrew = true;
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}/>);
+          }else{
+            getBalanceInfoSinglePool(item.address);
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
+            tokens={[item.token0.address,item.token1?.address, 
+              item.token2?.address, item.token3?.address]}/>);
+          }
         }
       }
     } catch (error) {
@@ -428,7 +445,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ pageview: false });
   }
 
-  const claim = async (item) => {
+  const claim = async (item,deprecated) => {
     if (!account || !gauges) {
       setPopUp({
         title: 'Network Error',
@@ -439,8 +456,7 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ pageview: true });
     try {
-      const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-      const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
+      const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
@@ -449,10 +465,16 @@ export function CompoundAndEarnProvider({ children }) {
           title: 'Claim Complete',
           text: `Claim Receipt: ${transactionReward.transactionHash}\n`
         });
+      if(!deprecated){
+        item.claimed = true;
+        toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}/>);
+      }else{
         getBalanceInfoSinglePool(item.address);
         toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
+      }
+        
       } else {
         setPopUp({
           title: 'Claim Error',

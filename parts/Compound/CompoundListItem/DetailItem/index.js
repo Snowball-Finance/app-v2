@@ -40,7 +40,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
     <Grid container
       direction="column"
       display="flex">
-        {!item.token0 && <Typography align="center" color="error">
+        {item.deprecatedPool && <Typography align="center" color="error">
           This pool is deprecated and don{`'`}t receive anymore rewards, please withdraw from it.
         </Typography>}
       <Grid
@@ -50,7 +50,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         alignItems="center"
         spacing={isSm ? 1 : 4}
       >
-        {item.token0 && <Grid item xs={4} lg={3}>
+        {!item.deprecatedPool && <Grid item xs={4} lg={3}>
           <SnowPairsIcon
             pairsIcon={[item.token0.address, item.token1.address, item.token2.address, item.token3.address]}
             size={isSm ? 30 : 50}
@@ -75,7 +75,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         </Grid>
 
         <Grid item xs={12} lg={2}>
-          <Grid
+        {!item.deprecatedPool && <Grid
             container
             direction={isSm ? 'row' : 'column'}
             justify={isSm ? 'space-between' : 'flex-start'}
@@ -97,10 +97,10 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
                 {typeof totalAPY === 'number' ? totalAPY?.toFixed(2) : totalAPY}%
               </Typography>
             </Grid>
-          </Grid>
+          </Grid>}
         </Grid>
 
-        <Grid item xs={12} lg={2}>
+        {!item.deprecatedPool && <Grid item xs={12} lg={2}>
           <Grid
             container
             direction={isSm ? 'row' : 'column'}
@@ -120,9 +120,9 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
               </Typography>
             </Grid>
           </Grid>
-        </Grid>
+        </Grid>}
 
-        <Grid item xs={12} lg={2}>
+        {!item.deprecatedPool &&<Grid item xs={12} lg={2}>
           <Grid
             container
             direction={isSm ? 'row' : 'column'}
@@ -146,7 +146,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
               </Tags>
             </Grid>
           </Grid>
-        </Grid>
+        </Grid>}
       </Grid>
     </Grid>
   );

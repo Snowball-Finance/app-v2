@@ -74,22 +74,22 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         alignItems="flex-start"
         spacing={2}
       >
-        <Grid item xs={12} lg={4}>
+       {!item.deprecatedPool && <Grid item xs={12} lg={4}>
           <ApyCalculation
             dailyAPR={dailyAPR}
             yearlyAPY={yearlyAPY}
           />
-        </Grid>
-        <Grid item xs={12} lg={4}>
+        </Grid>}
+        {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
           <SnobAbyCalculation
             snobAPR={item.gaugeInfo?.snobYearlyAPR}
             totalAPY={totalAPY}
             userBoost={userBoost}
           />
-        </Grid>
-        <Grid item xs={12} lg={4}>
+        </Grid>}
+        {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
           <Total item={item} />
-        </Grid>
+        </Grid>}
       </Grid>
       <Grid 
         className={classes.button}
@@ -110,11 +110,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}
+            disabled={(item.userDepositedLP == 0) || !item.userDepositedLP || item.withdrew}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-              withdraw(item)
+              withdraw(item,item.deprecatedPool)
             }}
             fullWidth={isSm ? true : false}
           >
@@ -123,11 +123,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={(!item.SNOBHarvestable)}
+            disabled={(!item.SNOBHarvestable) || item.claimed}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
-              claim(item)
+              claim(item,item.deprecatedPool)
             }}
             fullWidth={isSm ? true : false}
           >

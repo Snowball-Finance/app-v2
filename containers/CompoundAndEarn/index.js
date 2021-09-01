@@ -45,17 +45,19 @@ const CompoundAndEarn = () => {
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
+  const [loadedDeprecated, setLoadedDeprecated] = useState(false);
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
   useEffect(() => {
-    if(userDeprecatedPools.length > 0){
+    if(userDeprecatedPools.length > 0 && !loadedDeprecated){
       let newArray = [...lastSnowballInfo];
       userDeprecatedPools.forEach((pool) => {
         newArray.unshift(pool);
       })
       setLastSnowballInfo(newArray);
+      setLoadedDeprecated(true);
     }
 
   },[userDeprecatedPools]);
@@ -199,7 +201,8 @@ const CompoundAndEarn = () => {
           ) : (
             lastSnowballInfo?.map((pool, index) => (
                 <Grid item key={index} xs={12}>
-                  <ListItem pool={pool} />
+                  {(!pool.deprecatedPool || (!pool.withdrew || !pool.claimed)) && 
+                    <ListItem pool={pool} />}
                 </Grid>
               ))
           )

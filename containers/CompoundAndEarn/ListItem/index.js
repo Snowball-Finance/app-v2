@@ -15,9 +15,18 @@ const ListItem = ({
 }) => {
   const { gauges, snowconeBalance, totalSnowcone } = useContracts();
 
-  const [modal, setModal] = useState({ open: false, title: '' })
-  const [actionType, action] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
+  const [modal, setModal] = useState({ open: false, title: '' });
 
+  let actionType,action;
+  if(pool.token0){
+    const arrayAction = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
+    actionType = arrayAction[0];
+    action = arrayAction[1];
+  }else{
+    actionType="Details";
+    action = ()=>{};
+  }
+  
   const selectedGauge = useMemo(() => gauges.find((gauge) =>
     {
       if(pool.gaugeInfo){
