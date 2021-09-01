@@ -51,7 +51,11 @@ const CompoundAndEarn = () => {
 
   useEffect(() => {
     if(userDeprecatedPools.length > 0){
-      setLastSnowballInfo(lastSnowballInfo.concat(userDeprecatedPools));
+      let newArray = [...lastSnowballInfo];
+      userDeprecatedPools.forEach((pool) => {
+        newArray.unshift(pool);
+      })
+      setLastSnowballInfo(newArray);
     }
 
   },[userDeprecatedPools]);

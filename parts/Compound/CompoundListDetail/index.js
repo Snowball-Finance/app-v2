@@ -53,7 +53,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
 
   const { withdraw, claim, isTransacting } = useCompoundAndEarnContract();
 
-  const [actionType, action] = getProperAction(item, setModal, item.userLPBalance);
+  let actionType, action;
+  if(item.token0){
+    [actionType, action] = getProperAction(item, setModal, item.userLPBalance);
+  }
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
@@ -96,7 +99,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         alignItems="flex-start"
         spacing={2}
       >
-        <Grid item xs={12} lg={4}>
+        {actionType && <Grid item xs={12} lg={4}>
           <CompoundActionButton 
             type={actionType} 
             action={action} 
@@ -104,7 +107,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             disabled={item.deprecated}
             fullWidth={isSm ? true : false}
           />
-        </Grid>
+        </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
             disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}

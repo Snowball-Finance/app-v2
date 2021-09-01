@@ -46,25 +46,32 @@ export function CompoundAndEarnProvider({ children }) {
   useEffect(()=>{
     async function loadDeprecatedPools(){
       //check for deprecated Pools
-      const deprecatedUserBalance = await Promise.all(
+      let deprecatedUserBalance = [];
+      await Promise.all(
         deprecatedContractsQuery.data.DeprecatedContracts.map(async(pool)=>{
           const gaugeContract = new ethers.Contract(pool.contractAddresses[1],GAUGE_ABI,library.getSigner());
           const tokenContract = new ethers.Contract(pool.contractAddresses[0],ERC20_ABI,library.getSigner());
           const userDepositedLP = await gaugeContract.balanceOf(account);
           const balanceInToken = await tokenContract.balanceOf(account);
           const SNOBHarvestable = await gaugeContract.earned(account);
-          if(userDepositedLP > 0 || balanceInToken > 0 || SNOBHarvestable){
-            return {
+          if(userDepositedLP > 0 || balanceInToken > 0 || SNOBHarvestable > 0){
+            deprecatedUserBalance.push({
               address:pool.contractAddresses[0],
               gaugeAddress:pool.contractAddresses[1],
               userBalanceSnowglobe:balanceInToken,
-              pair:pool.pair,
+              name:pool.pair,
               kind:pool.kind,
               source:pool.source,
+              symbol:
+                pool.source === 'Trader Joe'? 'JLP' 
+                : pool.source === 'BENQI' ? 'QLP'
+                : pool.source === 'Pangolin' ? 'PGL'
+                : 'SNOB',
               userDepositedLP,
               balanceInToken,
-              SNOBHarvestable
-            }
+              SNOBHarvestable,
+              deprecatedPool:true
+            })
           }
         }
       ));
