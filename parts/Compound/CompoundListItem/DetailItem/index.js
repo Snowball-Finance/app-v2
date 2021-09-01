@@ -44,13 +44,12 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
       alignItems="center"
       spacing={isSm ? 1 : 4}
     >
-      <Grid item xs={4} lg={3}>
-        <SnowPairsIcon
+      {item.token0 &&<Grid item xs={4} lg={3}>
+       <SnowPairsIcon
           pairsIcon={[item.token0.address, item.token1.address,  item.token2.address, item.token3.address]}
           size={isSm ? 30 : 50}
         />
-      </Grid>
-
+      </Grid>}
       <Grid item xs={8} lg={2}>
         <Grid container direction={isSm ? 'row' : 'column'}>
           <Grid item xs={6} xl={7} md={12} lg={12}>

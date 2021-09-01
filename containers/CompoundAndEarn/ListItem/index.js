@@ -19,8 +19,11 @@ const ListItem = ({
   const [actionType, action] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
 
   const selectedGauge = useMemo(() => gauges.find((gauge) =>
-    gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase())
-    , [gauges, pool])
+    {
+      if(pool.gaugeInfo){
+        return gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase();
+      }
+    }), [gauges, pool])
 
   const boost = useMemo(() => {
     if (isEmpty(selectedGauge) || (selectedGauge?.staked || 0) <= 0) {
@@ -37,9 +40,13 @@ const ListItem = ({
   }, [selectedGauge, snowconeBalance, totalSnowcone]);
 
   const totalAPY = useMemo(() => {
-    let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
-    total = total > 999999 ? 999999 : total
-    return total
+    if(pool.gaugeInfo){
+      let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+      total = total > 999999 ? 999999 : total
+      return total
+    }else{
+      return 0
+    }
   }, [boost, pool])
 
   // Remove 1.5 after 1 week

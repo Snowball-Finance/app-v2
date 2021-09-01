@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { DEPRECATED_CONTRACTS } from 'api/queries/contractList';
 import { CURRENT_DISTRIBUTION_PHASE } from 'api/queries/distributionPhase';
 import { NFTS_LIST } from 'api/queries/nftsList';
 import { MULTIPLE_PAIRS_INFO } from 'api/queries/pairsInfo';
@@ -40,6 +41,10 @@ export function APIProvider({ children }) {
     return useQuery(CURRENT_DISTRIBUTION_PHASE);
   }
 
+  const getDeprecatedContracts = () => {
+    return useQuery(DEPRECATED_CONTRACTS);
+  }
+
   const getNFTsList = () => {
     return useQuery(NFTS_LIST);
   };
@@ -50,7 +55,8 @@ export function APIProvider({ children }) {
 
   return (
     <APIContext.Provider value={{ getCurrentDistributionPhase,getLastSnowballInfo,
-      getMultipleTransactionsInfo, getNFTsList, getPairsInfo, getProposalList, }}>
+      getMultipleTransactionsInfo, getNFTsList, getPairsInfo, getProposalList,
+      getDeprecatedContracts }}>
       {children}
     </APIContext.Provider>
   );
@@ -59,12 +65,12 @@ export function APIProvider({ children }) {
 export function useAPIContext() {
   const context = useContext(APIContext);
   if (!context) {
-    throw new Error('Missing stats context');
+    throw new Error('Context not initialized yet.');
   }
 
   const { getCurrentDistributionPhase,getLastSnowballInfo, getMultipleTransactionsInfo,
-     getNFTsList, getPairsInfo, getProposalList } = context;
+     getNFTsList, getPairsInfo, getProposalList,getDeprecatedContracts } = context;
 
   return { getCurrentDistributionPhase,getLastSnowballInfo, getMultipleTransactionsInfo,
-    getNFTsList, getPairsInfo, getProposalList };
+    getNFTsList, getPairsInfo, getProposalList, getDeprecatedContracts };
 }

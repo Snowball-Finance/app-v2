@@ -79,7 +79,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>
         <Grid item xs={12} lg={4}>
           <SnobAbyCalculation
-            snobAPR={item.gaugeInfo.snobYearlyAPR}
+            snobAPR={item.gaugeInfo?.snobYearlyAPR}
             totalAPY={totalAPY}
             userBoost={userBoost}
           />

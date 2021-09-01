@@ -23,23 +23,61 @@ const CompoundAndEarnContext = createContext(null);
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, setGauges, getBalanceInfo } = useContracts();
-  const { getLastSnowballInfo } = useAPIContext();
+  const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+  const deprecatedContractsQuery = getDeprecatedContracts();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
 
   const { setPopUp } = usePopup();
 
   const [userPools, setUserPools] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false });
   const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0 })
 
   useEffect(() => {
-    if(userPools.length === 0){
+    if(loading){
       getBalanceInfosAllPools();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps   
-  }, [pools, gauges, account]);
+  }, [gauges, account]);
+
+  useEffect(()=>{
+    async function loadDeprecatedPools(){
+      //check for deprecated Pools
+      const deprecatedUserBalance = await Promise.all(
+        deprecatedContractsQuery.data.DeprecatedContracts.map(async(pool)=>{
+          const gaugeContract = new ethers.Contract(pool.contractAddresses[1],GAUGE_ABI,library.getSigner());
+          const tokenContract = new ethers.Contract(pool.contractAddresses[0],ERC20_ABI,library.getSigner());
+          const userDepositedLP = await gaugeContract.balanceOf(account);
+          const balanceInToken = await tokenContract.balanceOf(account);
+          const SNOBHarvestable = await gaugeContract.earned(account);
+          if(userDepositedLP > 0 || balanceInToken > 0 || SNOBHarvestable){
+            return {
+              address:pool.contractAddresses[0],
+              gaugeAddress:pool.contractAddresses[1],
+              userBalanceSnowglobe:balanceInToken,
+              pair:pool.pair,
+              kind:pool.kind,
+              source:pool.source,
+              userDepositedLP,
+              balanceInToken,
+              SNOBHarvestable
+            }
+          }
+        }
+      ));
+     
+      setUserDeprecatedPools(deprecatedUserBalance);
+    }
+
+    //after done loading, search for deprecated pools
+    if(!loading){
+      loadDeprecatedPools();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps   
+  },[loading])
 
   const generatePoolInfo = async (item,gauges) => {
     const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
@@ -433,7 +471,8 @@ export function CompoundAndEarnProvider({ children }) {
       deposit,
       withdraw,
       claim,
-      setTransactionStatus
+      setTransactionStatus,
+      userDeprecatedPools
     }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -455,7 +494,8 @@ export function useCompoundAndEarnContract() {
     deposit,
     withdraw,
     claim,
-    setTransactionStatus
+    setTransactionStatus,
+    userDeprecatedPools
   } = context;
 
   return {
@@ -467,6 +507,7 @@ export function useCompoundAndEarnContract() {
     deposit,
     withdraw,
     claim,
-    setTransactionStatus
+    setTransactionStatus,
+    userDeprecatedPools
   };
 }
