@@ -70,7 +70,7 @@ export function CompoundAndEarnProvider({ children }) {
               userDepositedLP,
               balanceInToken,
               SNOBHarvestable,
-              deprecatedPool:true
+              deprecated:true
             })
           }
         }
