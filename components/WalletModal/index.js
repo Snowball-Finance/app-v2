@@ -10,12 +10,12 @@ import { walletlink, injected } from 'utils/constants/connectors'
 
 const DESKTOP_CONNECTORS = {
   'MetaMask': injected,
-  'WalletLink': walletlink,
+  'Coinbase Wallet': walletlink,
 }
 
 const MOBILE_CONNECTORS = {
   'MetaMask': injected,
-  'WalletLink': walletlink,
+  'Coinbase Wallet': walletlink,
 }
 
 const useStyles = makeStyles(() => ({

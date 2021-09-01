@@ -23,23 +23,76 @@ const CompoundAndEarnContext = createContext(null);
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, setGauges, getBalanceInfo } = useContracts();
-  const { getLastSnowballInfo } = useAPIContext();
+  const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+  const deprecatedContractsQuery = getDeprecatedContracts();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
 
   const { setPopUp } = usePopup();
 
   const [userPools, setUserPools] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false });
   const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0 })
 
   useEffect(() => {
-    if(userPools.length === 0){
+    if(loading){
       getBalanceInfosAllPools();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps   
-  }, [pools, gauges, account]);
+  }, [gauges, account]);
+
+  useEffect(()=>{
+    async function loadDeprecatedPools(){
+      //check for deprecated Pools
+      let deprecatedUserBalance = [];
+      await Promise.all(
+        deprecatedContractsQuery.data.DeprecatedContracts.map(async(pool)=>{
+          const gaugeContract = new ethers.Contract(pool.contractAddresses[1],GAUGE_ABI,library.getSigner());
+          const tokenContract = new ethers.Contract(pool.contractAddresses[0],ERC20_ABI,library.getSigner());
+          let userDeposited = await gaugeContract.balanceOf(account)/1e18;
+          const balanceInToken = await tokenContract.balanceOf(account)/1e18;
+          if(pool.kind === 'Snowglobe'){
+            userDeposited += balanceInToken;
+          }
+
+          const SNOBHarvestable = await gaugeContract.earned(account);
+          if(userDeposited > 0 || SNOBHarvestable > 0){
+            deprecatedUserBalance.push({
+              address:pool.contractAddresses[0],
+              gaugeInfo:{
+                address:pool.contractAddresses[1]
+              },
+              userBalanceSnowglobe:balanceInToken,
+              name:pool.pair,
+              kind:pool.kind,
+              source:pool.source,
+              symbol:
+                pool.source === 'Trader Joe'? 'JLP' 
+                : pool.source === 'BENQI' ? 'QLP'
+                : pool.source === 'Pangolin' ? 'PGL'
+                : 'SNOB',
+              userDepositedLP:userDeposited/1e18,
+              SNOBHarvestable:SNOBHarvestable/1e18,
+              deprecated:true,
+              claimed:(!SNOBHarvestable > 0),
+              withdrew:(!userDeposited > 0),
+              deprecatedPool:true
+            })
+          }
+        }
+      ));
+     
+      setUserDeprecatedPools(deprecatedUserBalance);
+    }
+
+    //after done loading, search for deprecated pools
+    if(!loading){
+      loadDeprecatedPools();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps   
+  },[loading])
 
   const generatePoolInfo = async (item,gauges) => {
     const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, library.getSigner());
@@ -319,8 +372,7 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ pageview: true });
     try {
-      const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-      const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
+      const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
       const gaugeBalance = await gaugeContract.balanceOf(account);
       if (gaugeBalance.gt(0x00)) {
@@ -341,10 +393,15 @@ export function CompoundAndEarnProvider({ children }) {
             text: `Gauge Receipt: ${transactionGaugeWithdraw.transactionHash}\n`
           });
           setIsTransacting({ pageview: false });
-          getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
-          tokens={[item.token0.address,item.token1?.address, 
-            item.token2?.address, item.token3?.address]}/>);
+          if(item.deprecatedPool){
+            item.withdrew = true;
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}/>);
+          }else{
+            getBalanceInfoSinglePool(item.address);
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
+            tokens={[item.token0.address,item.token1?.address, 
+              item.token2?.address, item.token3?.address]}/>);
+          }
         }
       }
 
@@ -367,10 +424,15 @@ export function CompoundAndEarnProvider({ children }) {
             title: 'Withdraw Complete',
             text: `Globe Receipt: ${transactionSnowglobeWithdraw.transactionHash}\n`
           });
-          getBalanceInfoSinglePool(item.address);
-          toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'} 
-          tokens={[item.token0.address,item.token1?.address, 
-            item.token2?.address, item.token3?.address]}/>);
+          if(item.deprecatedPool){
+            item.withdrew = true;
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}/>);
+          }else{
+            getBalanceInfoSinglePool(item.address);
+            toast(<Toast message={'Withdraw Successful!!'} toastType={'tokenOperation'}
+            tokens={[item.token0.address,item.token1?.address, 
+              item.token2?.address, item.token3?.address]}/>);
+          }
         }
       }
     } catch (error) {
@@ -394,8 +456,7 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ pageview: true });
     try {
-      const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-      const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
+      const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
@@ -404,10 +465,16 @@ export function CompoundAndEarnProvider({ children }) {
           title: 'Claim Complete',
           text: `Claim Receipt: ${transactionReward.transactionHash}\n`
         });
+      if(item.deprecatedPool){
+        item.claimed = true;
+        toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}/>);
+      }else{
         getBalanceInfoSinglePool(item.address);
         toast(<Toast message={'Claim Successful!!'} toastType={'tokenOperation'}
           tokens={[item.token0.address,item.token1?.address, 
             item.token2?.address, item.token3?.address]}/>);
+      }
+        
       } else {
         setPopUp({
           title: 'Claim Error',
@@ -433,7 +500,8 @@ export function CompoundAndEarnProvider({ children }) {
       deposit,
       withdraw,
       claim,
-      setTransactionStatus
+      setTransactionStatus,
+      userDeprecatedPools
     }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -455,7 +523,8 @@ export function useCompoundAndEarnContract() {
     deposit,
     withdraw,
     claim,
-    setTransactionStatus
+    setTransactionStatus,
+    userDeprecatedPools
   } = context;
 
   return {
@@ -467,6 +536,7 @@ export function useCompoundAndEarnContract() {
     deposit,
     withdraw,
     claim,
-    setTransactionStatus
+    setTransactionStatus,
+    userDeprecatedPools
   };
 }

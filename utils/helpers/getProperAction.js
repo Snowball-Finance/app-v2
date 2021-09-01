@@ -5,10 +5,11 @@ const PangolinPoolURL = 'https://app.pangolin.exchange/#/add/';
 const JoePoolURL = 'https://www.traderjoexyz.com/#/pool/';
 
 const getProperAction = (item, setModal, balance, deposit = 0) => {
-	const token1 = item.token0.address == WAVAX ? "AVAX" : item.token0.address.toLowerCase();
-	const token2 = item.token1.address == WAVAX ? "AVAX" : item.token1.address?.toLowerCase();
+  let action = [];
 
-	let action = [];
+	const token1 = item.token0?.address == WAVAX ? "AVAX" : item.token0?.address?.toLowerCase();
+	const token2 = item.token1?.address == WAVAX ? "AVAX" : item.token1?.address?.toLowerCase();
+
 	if (deposit > 0) {
 		action = ["Details", () => {}]
 	} else if (balance > 0) {

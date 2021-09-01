@@ -53,7 +53,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
 
   const { withdraw, claim, isTransacting } = useCompoundAndEarnContract();
 
-  const [actionType, action] = getProperAction(item, setModal, item.userLPBalance);
+  let actionType, action;
+  if(item.token0){
+    [actionType, action] = getProperAction(item, setModal, item.userLPBalance);
+  }
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
@@ -71,22 +74,24 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         alignItems="flex-start"
         spacing={2}
       >
-        <Grid item xs={12} lg={4}>
+       {!item.deprecatedPool && <Grid item xs={12} lg={4}>
           <ApyCalculation
+            kind={item.kind}
             dailyAPR={dailyAPR}
             yearlyAPY={yearlyAPY}
           />
-        </Grid>
-        <Grid item xs={12} lg={4}>
+        </Grid>}
+        {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
           <SnobAbyCalculation
-            snobAPR={item.gaugeInfo.snobYearlyAPR}
+            kind={item.kind}
+            snobAPR={item.gaugeInfo?.snobYearlyAPR}
             totalAPY={totalAPY}
             userBoost={userBoost}
           />
-        </Grid>
-        <Grid item xs={12} lg={4}>
+        </Grid>}
+        {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
           <Total item={item} />
-        </Grid>
+        </Grid>}
       </Grid>
       <Grid 
         className={classes.button}
@@ -96,7 +101,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         alignItems="flex-start"
         spacing={2}
       >
-        <Grid item xs={12} lg={4}>
+        {actionType && <Grid item xs={12} lg={4}>
           <CompoundActionButton 
             type={actionType} 
             action={action} 
@@ -104,10 +109,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             disabled={item.deprecated}
             fullWidth={isSm ? true : false}
           />
-        </Grid>
+        </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={(item.userDepositedLP == 0) || !item.userDepositedLP}
+            disabled={item.userDepositedLP === 0 || !item.userDepositedLP || item.withdrew}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
@@ -120,7 +125,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={(!item.SNOBHarvestable)}
+            disabled={(!item.SNOBHarvestable) || item.claimed}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
