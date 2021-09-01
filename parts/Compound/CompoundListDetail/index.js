@@ -76,12 +76,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
       >
        {!item.deprecatedPool && <Grid item xs={12} lg={4}>
           <ApyCalculation
+            kind={item.kind}
             dailyAPR={dailyAPR}
             yearlyAPY={yearlyAPY}
           />
         </Grid>}
         {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
           <SnobAbyCalculation
+            kind={item.kind}
             snobAPR={item.gaugeInfo?.snobYearlyAPR}
             totalAPY={totalAPY}
             userBoost={userBoost}

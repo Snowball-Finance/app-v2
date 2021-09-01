@@ -82,7 +82,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           >
             <Grid item>
               <Typography variant="body2">
-                APY{' '}
+                {item.kind === 'Snowglobe' ? 'APY ' : 'APR '}
                 <CustomPopover contentClassName={classes.popover}>
                   <APYTooltip
                     dailyAPY={item.dailyAPY}
