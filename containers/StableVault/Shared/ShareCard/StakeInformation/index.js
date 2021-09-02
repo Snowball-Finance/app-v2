@@ -2,6 +2,7 @@
 import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
+import { formatNumber } from 'utils/helpers/format';
 
 import LP_ICONS from 'utils/constants/lp-icons'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
@@ -59,7 +60,7 @@ const StakeInformation = ({
           />
         }
         <Typography variant='body2' className={classes.value}>
-          {`${staked.toLocaleString()} ${vault}`}
+          {`${formatNumber(staked, 2)} ${vault}`}
         </Typography>
       </div>
       <ContainedButton

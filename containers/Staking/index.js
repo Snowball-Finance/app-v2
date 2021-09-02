@@ -44,7 +44,7 @@ const Staking = () => {
       {loading && <SnowLoading loading={loading} />}
       <PageHeader
         title='Staking'
-        subHeader='Stake your SNOB and earn xSnob to vote in Governance'
+        subHeader='Stake your SNOB and earn xSNOB to vote in Governance'
       />
       <SubMenuTabs
         tabs={STAKING_TABS_ARRAY}

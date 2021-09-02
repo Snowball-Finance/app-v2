@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Typography } from '@material-ui/core'
+import { Hidden, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { useWallets } from 'contexts/wallet-context'
@@ -12,18 +12,21 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
-    borderRadius: '10px 16px 16px 10px',
-    backgroundColor: 'rgba(40, 162, 255, 0.12)',
+    borderRadius: '10px',
+    backgroundColor: '#E5F3FF',
   },
   account: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
-    padding: theme.spacing(0, 1),
-    fontSize: '14px',
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  accountAddress: {
+    padding: theme.spacing(1, 1)
   },
   connect: {
-    margin: theme.spacing(0, 1)
+    margin: '0px'
   }
 }));
 
@@ -48,11 +51,15 @@ const ConnectWallet = () => {
           onClick={walletHandler}
         >
           <Typography
-            variant='caption'
             color='textPrimary'
             className={classes.account}
-          >
-            {getEllipsis(account || '')}
+          >  
+          <Hidden xsDown>
+            <span className={classes.accountAddress}>
+              {getEllipsis(account || '')}
+            </span>
+            
+          </Hidden>
           </Typography>
           <SnowIdenticon value={account} />
 
