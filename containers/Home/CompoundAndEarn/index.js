@@ -106,7 +106,7 @@ const CompoundAndEarn = () => {
 
   useEffect(() => {
     let total = 0;
-    gauges.map((gauge) => {
+    gauges?.map((gauge) => {
       total += parseFloat(gauge.harvestable / 1e18);
     });
     const balanceUSD = +(total * prices.SNOB).toFixed(2);
