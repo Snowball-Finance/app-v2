@@ -33,8 +33,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const SnobBalance = () => {
-  const classes = useStyles()
+  const classes = useStyles();
   const { prices } = usePrices();
+
+  
 
   return (
     <div className={classes.balanceContainer}>
