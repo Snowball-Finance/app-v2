@@ -22,14 +22,14 @@ const useStyles = makeStyles(() => ({
 const ApyCalculation = ({
   dailyAPR,
   yearlyAPY,
-  performanceFees,
+  kind
 }) => {
   const classes = useStyles();
 
   return (
     <Grid className={classes.root}>
       <Typography variant="subtitle1" className={classes.boldSubtitle}>
-        Compounded APY
+        {kind === 'Snowglobe' ? 'Compounded APY' : 'Fees APR'}
       </Typography>
       <div className={classes.container}>
         <Typography variant="body2">Base APR</Typography>
@@ -37,10 +37,10 @@ const ApyCalculation = ({
           {typeof(dailyAPR) === 'number' ? (dailyAPR * 365)?.toFixed(2) : dailyAPR}%
         </Typography>
       </div>
-      <div className={classes.container}>
+      {kind === 'Snowglobe' &&<div className={classes.container}>
         <Typography variant="body2">Compounded APY</Typography>
         <Typography variant="subtitle2">{typeof(yearlyAPY) === 'number' ? yearlyAPY?.toFixed(2): yearlyAPY}%</Typography>
-      </div>
+      </div>}
     </Grid>
   );
 };

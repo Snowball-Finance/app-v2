@@ -74,7 +74,7 @@ const ShopItem = ({
         <Grid item xs={12}>
           <ListItem
             title={nft.title}
-            value={`${nft.baseCost || 0}AVAX`}
+            value={`${nft.baseCost || 0} AVAX`}
             classes={{
               title: classes.title
             }}

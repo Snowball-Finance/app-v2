@@ -7,8 +7,9 @@ import TableContainer from './TableContainer';
 import ChartUpIcon from 'components/Icons/ChartUpIcon';
 import ChartDownIcon from 'components/Icons/ChartDownIcon';
 import { useAPIContext } from 'contexts/api-context';
-import TokenPairsSkeleton from './TokenPairsSkeleton'
-import TokenPairItem from './TokenPairItem'
+import TokenPairsSkeleton from './TokenPairsSkeleton';
+import TokenPairItem from './TokenPairItem';
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -72,7 +73,7 @@ const TokenPairs = () => {
               <TableCell align="right" className={classes.cell}>
                 <div className={classes.locked}>
                   <Typography color="textPrimary" className={classes.balance}>
-                    {`$${pair.tvlStaked.toLocaleString()}`}
+                    {`$${formatNumber(pair.tvlStaked, 2)}`}
                   </Typography>
                   {renderChartIcon(pair.status)}
                 </div>

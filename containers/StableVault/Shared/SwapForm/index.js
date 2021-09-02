@@ -110,7 +110,7 @@ const SwapForm = ({
               isTokenSelect
               name='fromSwap'
               label='Swap from:'
-              placeholder='0.0'
+              placeholder='0.00'
               disabledToken={toToken}
               token={fromToken}
               setToken={setFromToken}
@@ -133,7 +133,7 @@ const SwapForm = ({
               isTokenSelect
               disabledMax
               label='Swap to:'
-              placeholder='0.0'
+              placeholder='0.00'
               disabledToken={fromToken}
               token={toToken}
               setToken={setToToken}

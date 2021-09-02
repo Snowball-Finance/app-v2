@@ -8,6 +8,7 @@ import GOVERNANCE_ABI from 'libs/abis/vote-governance.json'
 import { usePopup } from 'contexts/popup-context'
 import { useAPIContext } from './api-context'
 import { BNToFloat } from 'utils/helpers/format'
+import MESSAGES from 'utils/constants/messages';
 
 const ContractContext = createContext(null)
 
@@ -30,7 +31,7 @@ export function VoteContractProvider({ children }) {
     if (proposal.state !== 'Active') {
       setPopUp({
         title: 'Proposal Error',
-        text: `This proposal is not active now. You cannot vote this proposal`
+        text: `This proposal is not active now. You cannot vote on this proposal`
       })
       return;
     }
@@ -38,15 +39,15 @@ export function VoteContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
 
     if (snowconeBalance === 0) {
       setPopUp({
-        title: 'Balance Error',
-        text: `Do you have no enough xSnob balance to vote`
+        title: 'Insufficient Balance',
+        text: `Not enough xSnob balance to vote`
       })
       return;
     }
@@ -61,12 +62,12 @@ export function VoteContractProvider({ children }) {
       if (transactionVote.status) {
         setPopUp({
           title: 'Success',
-          text: `You vote this proposal successfully`
+          text: `You voted on this proposal successfully`
         })
       }
     } catch (error) {
       setPopUp({
-        title: 'Error',
+        title: 'Insufficient Balance',
         text: `You don\'t have enough xSnob to vote`
       })
     }
@@ -77,7 +78,7 @@ export function VoteContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
@@ -107,15 +108,15 @@ export function VoteContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
-        text: `Please Switch to Avalanche Chain and connect metamask`
+        text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
     }
 
     if (snowconeBalance < 100000) {
       setPopUp({
-        title: 'Balance Error',
-        text: `Do you have no enough xSnob balance to vote`
+        title: 'Insufficient Balance',
+        text: `You do not have enough xSnob to create a proposal`
       })
       return;
     }
@@ -135,7 +136,7 @@ export function VoteContractProvider({ children }) {
       if (transactionPropose.status) {
         setPopUp({
           title: 'Success',
-          text: `You vote this proposal successfully`
+          text: `You voted on this proposal successfully`
         })
       }
     } catch (error) {

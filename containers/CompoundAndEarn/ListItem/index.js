@@ -15,12 +15,24 @@ const ListItem = ({
 }) => {
   const { gauges, snowconeBalance, totalSnowcone } = useContracts();
 
-  const [modal, setModal] = useState({ open: false, title: '' })
-  const [actionType, action] = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
+  const [modal, setModal] = useState({ open: false, title: '' });
 
+  let actionType,action;
+  if(pool.token0){
+    const arrayAction = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
+    actionType = arrayAction[0];
+    action = arrayAction[1];
+  }else{
+    actionType="Details";
+    action = ()=>{};
+  }
+  
   const selectedGauge = useMemo(() => gauges.find((gauge) =>
-    gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase())
-    , [gauges, pool])
+    {
+      if(pool.gaugeInfo){
+        return gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase();
+      }
+    }), [gauges, pool])
 
   const boost = useMemo(() => {
     if (isEmpty(selectedGauge) || (selectedGauge?.staked || 0) <= 0) {
@@ -37,9 +49,13 @@ const ListItem = ({
   }, [selectedGauge, snowconeBalance, totalSnowcone]);
 
   const totalAPY = useMemo(() => {
-    let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
-    total = total > 999999 ? 999999 : total
-    return total
+    if(pool.gaugeInfo){
+      let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+      total = total > 999999 ? 999999 : total
+      return total
+    }else{
+      return 0
+    }
   }, [boost, pool])
 
   // Remove 1.5 after 1 week
