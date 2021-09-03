@@ -25,7 +25,8 @@ export function StakingContractProvider({ children }) {
   const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner()) : null, [library])
   const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner()) : null, [library])
   const feeDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
-
+  const sherpaDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SHERPA_FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
+  
   const {
     snowballBalance,
     snowconeBalance,
@@ -57,6 +58,14 @@ export function StakingContractProvider({ children }) {
     feeDistributorContract,
   })
 
+  const {
+    sherpaClaim,
+    userSherpaClaimable
+  } = useClaim({
+    setLoading,
+    sherpaDistributorContract
+  })
+
   const { gauges, voteFarms, retrieveGauge, setGauges} = useGauge({
     prices,
     gaugeProxyContract,
@@ -81,8 +90,10 @@ export function StakingContractProvider({ children }) {
         isLocked,
         isExpired,
         gauges,
-        userClaimable,
+        userClaimable,        
         claim,
+        userSherpaClaimable,
+        sherpaClaim,
         createLock,
         increaseAmount,
         increaseTime,
@@ -121,6 +132,8 @@ export function useStakingContract() {
     gauges,
     userClaimable,
     claim,
+    userSherpaClaimable,
+    sherpaClaim,
     createLock,
     increaseAmount,
     increaseTime,
@@ -148,6 +161,8 @@ export function useStakingContract() {
     gauges,
     userClaimable,
     claim,
+    userSherpaClaimable,
+    sherpaClaim,
     createLock,
     increaseAmount,
     increaseTime,

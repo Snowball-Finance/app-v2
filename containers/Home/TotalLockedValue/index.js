@@ -134,16 +134,6 @@ const TotalLockedValue = () => {
               {formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs, 2)}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h6" color="secondary">
-              Current Distribution Phase
-            </Typography>
-            <Typography variant="subtitle1" color="textPrimary">
-              {(snowballTVLQuery.data?.LastSnowballInfo?.blockHeight).toLocaleString()}/
-              {(snowballTVLQuery.data?.LastSnowballInfo?.snobNextPhase).toLocaleString()}
-              {/* <small>(1,610,242 blocks left)</small> */}
-            </Typography>
-          </Grid>
         </Grid>
       </div>
     </Card>
