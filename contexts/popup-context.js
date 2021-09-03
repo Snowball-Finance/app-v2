@@ -5,6 +5,7 @@ import SnowConfirmDialog from 'parts/SnowConfirmDialog'
 const initInfo = {
   title: 'Alert',
   text: '',
+  icon: '',
   cancelLabel: 'Ok'
 }
 const PopupContext = createContext(null)
@@ -30,6 +31,7 @@ const PopupProvider = ({ children }) => {
           open={open}
           title={popupInfo?.title}
           text={popupInfo?.text}
+          icon={popupInfo?.icon}
           confirmLabel={popupInfo?.cancelLabel}
           onConfirm={popupInfo.confirmAction ? popupInfo.confirmAction : closePopUpHandler}
           onClose={closePopUpHandler}

@@ -1,5 +1,6 @@
 import { AVALANCHE_MAINNET_PARAMS, injected } from 'utils/constants/connectors';
 import MESSAGES from 'utils/constants/messages';
+import ANIMATIONS from 'utils/constants/animate-icons';
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { NoEthereumProviderError, UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector'
 
@@ -39,6 +40,7 @@ const handleConnectionError = (error) => {
   } else if (error instanceof UnsupportedChainIdError) {
     return {
       message: MESSAGES.CONNECT_UNSUPPORTED_CHAIN_ID_ERROR,
+      icon:  ANIMATIONS.WARNING.VALUE,
       button: 'Switch to Avalanche',
       confirmAction: addAvalancheNetwork
     }

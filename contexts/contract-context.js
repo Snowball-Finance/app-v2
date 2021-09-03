@@ -70,6 +70,7 @@ export function ContractProvider({ children }) {
       setPopUp({
         title: 'Error Connecting Wallet',
         text: connectionError.message,
+        icon: connectionError.icon,
         cancelLabel: connectionError.button,
         confirmAction: connectionError.confirmAction
       });

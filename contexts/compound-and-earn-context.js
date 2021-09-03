@@ -15,6 +15,7 @@ import { isEmpty } from 'utils/helpers/utility';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import MESSAGES from 'utils/constants/messages';
+import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
 import { provider } from 'utils/constants/connectors';
 
@@ -261,6 +262,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
+        icon: ANIMATIONS.WARNING.VALUE,
         text: MESSAGES.METAMASK_NOT_CONNECTED
       })
     }
@@ -297,6 +299,7 @@ export function CompoundAndEarnProvider({ children }) {
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
+        icon: ANIMATIONS.ERROR.VALUE,
         text: `Error Approving: ${error.message}`
       });
       console.log(error)
@@ -308,6 +311,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
+        icon: ANIMATIONS.WARNING.VALUE,
         text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return false;
@@ -328,6 +332,7 @@ export function CompoundAndEarnProvider({ children }) {
           if (!transactionSnowglobeDeposit.status) {
             setPopUp({
               title: 'Transaction Error',
+              icon: ANIMATIONS.ERROR.VALUE,
               text: `Error depositing into Snowglobe`
             });
             return;
@@ -349,6 +354,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (!transactionGaugeDeposit.status) {
         setPopUp({
           title: 'Transaction Error',
+          icon: ANIMATIONS.ERROR.VALUE,
           text: `Error depositing into Gauge`
         });
         return;
@@ -358,6 +364,7 @@ export function CompoundAndEarnProvider({ children }) {
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
+        icon: ANIMATIONS.ERROR.VALUE,
         text: `Error Depositing: ${error.message}`
       })
     }
@@ -368,6 +375,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
+        icon: ANIMATIONS.WARNING.VALUE,
         text: MESSAGES.METAMASK_NOT_CONNECTED
       });
       return;
@@ -384,6 +392,7 @@ export function CompoundAndEarnProvider({ children }) {
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
           setIsTransacting({ pageview: false });
@@ -393,6 +402,7 @@ export function CompoundAndEarnProvider({ children }) {
         if (item.kind === 'Stablevault') {
           setPopUp({
             title: 'Withdraw Complete',
+            icon: ANIMATIONS.SUCCESS.VALUE,
             text: `Gauge Receipt: ${transactionGaugeWithdraw.transactionHash}\n`
           });
           setIsTransacting({ pageview: false });
@@ -419,12 +429,14 @@ export function CompoundAndEarnProvider({ children }) {
           if (!transactionSnowglobeWithdraw.status) {
             setPopUp({
               title: 'Transaction Error',
+              icon: ANIMATIONS.ERROR.VALUE,
               text: `Error withdrawing from Snowglobe`
             });
             return;
           }
           setPopUp({
             title: 'Withdraw Complete',
+            icon: ANIMATIONS.SUCCESS.VALUE,
             text: `Globe Receipt: ${transactionSnowglobeWithdraw.transactionHash}\n`
           });
           if(item.deprecatedPool){
@@ -441,6 +453,7 @@ export function CompoundAndEarnProvider({ children }) {
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
+        icon: ANIMATIONS.ERROR.VALUE,
         text: `Error withdrawing`
       });
       console.log(error)
@@ -452,6 +465,7 @@ export function CompoundAndEarnProvider({ children }) {
     if (!account || !gauges) {
       setPopUp({
         title: 'Network Error',
+        icon: ANIMATIONS.WARNING.VALUE,
         text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
@@ -466,6 +480,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (transactionReward.status) {
         setPopUp({
           title: 'Claim Complete',
+          icon: ANIMATIONS.SUCCESS.VALUE,
           text: `Claim Receipt: ${transactionReward.transactionHash}\n`
         });
       if(item.deprecatedPool){
@@ -481,12 +496,14 @@ export function CompoundAndEarnProvider({ children }) {
       } else {
         setPopUp({
           title: 'Claim Error',
+          icon: ANIMATIONS.ERROR.VALUE,
           text: `Error claiming from Gauge ${error.message}`
         });
       }
     } catch (error) {
       setPopUp({
         title: 'Claim Error',
+        icon:  ANIMATIONS.ERROR.VALUE,
         text: `Error claiming from Gauge ${error.message}`
       });
     }
