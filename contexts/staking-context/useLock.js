@@ -6,6 +6,8 @@ import { CONTRACTS } from 'config'
 import { isEmpty } from 'utils/helpers/utility'
 import { getEpochSecondForDay } from 'utils/helpers/date'
 import { BNToFloat, BNToString } from 'utils/helpers/format'
+import SNOWCONE_ABI from 'libs/abis/snowcone.json'
+import SNOWBALL_ABI from 'libs/abis/snowball.json'
 
 const useLock = ({
   prices,
@@ -13,7 +15,7 @@ const useLock = ({
   snowballContract,
   snowconeContract
 }) => {
-  const { account } = useWeb3React();
+  const { account, library } = useWeb3React();
 
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [lockedAmount, setLockedAmount] = useState();
@@ -84,7 +86,8 @@ const useLock = ({
     try {
       const { balance, date } = data
       const amount = parseEther((balance).toString());
-      const tokenApprove = await snowballContract.approve(CONTRACTS.SNOWCONE, amount);
+      const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
+      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, amount);
       const transactionApprove = await tokenApprove.wait(1)
       if (!transactionApprove.status) {
         setLoading(false)
@@ -92,8 +95,9 @@ const useLock = ({
       }
 
       const lockedDate = getEpochSecondForDay(new Date(date))
-      const gasLimit = await snowconeContract.estimateGas.create_lock(amount, lockedDate);
-      const tokenLock = await snowconeContract.create_lock(amount, lockedDate, { gasLimit });
+      const snowconeContractLock = new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner());
+      const gasLimit = await snowconeContractLock.estimateGas.create_lock(amount, lockedDate);
+      const tokenLock = await snowconeContractLock.create_lock(amount, lockedDate, { gasLimit });
       const transactionLock = await tokenLock.wait(1)
 
       if (transactionLock.status) {
@@ -110,15 +114,17 @@ const useLock = ({
     setLoading(true)
     try {
       const amount = parseEther((data.balance).toString());
-      const tokenApprove = await snowballContract.approve(CONTRACTS.SNOWCONE, amount);
+      const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
+      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, amount);
       const transactionApprove = await tokenApprove.wait(1)
       if (!transactionApprove.status) {
         setLoading(false)
         return;
       }
 
-      const gasLimit = await snowconeContract.estimateGas.increase_amount(amount);
-      const tokenIncrease = await snowconeContract.increase_amount(amount, { gasLimit });
+      const snowconeContractIncrease = new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner());
+      const gasLimit = await snowconeContractIncrease.estimateGas.increase_amount(amount);
+      const tokenIncrease = await snowconeContractIncrease.increase_amount(amount, { gasLimit });
       const transactionIncrease = await tokenIncrease.wait(1)
 
       if (transactionIncrease.status) {
@@ -152,8 +158,9 @@ const useLock = ({
   const withdraw = async () => {
     setLoading(true)
     try {
-      const gasLimit = await snowconeContract.estimateGas.withdraw();
-      const tokenWithdraw = await snowconeContract.withdraw({ gasLimit });
+      const snowconeContractWithdraw = new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner());
+      const gasLimit = await snowconeContractWithdraw.estimateGas.withdraw();
+      const tokenWithdraw = await snowconeContractWithdraw.withdraw({ gasLimit });
       const transactionWithdraw = await tokenWithdraw.wait(1)
 
       if (transactionWithdraw.status) {

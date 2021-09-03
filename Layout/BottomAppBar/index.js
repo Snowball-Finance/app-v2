@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import ConnectWallet from '../Shared/ConnectWallet'
 import SnobBalance from '../Shared/SnobBalance'
-import SnobPrice from '../Shared/SnobPrice'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,11 +32,8 @@ const BottomAppBar = () => {
     <Hidden smUp>
       <div className={classes.root}>
         <Paper className={classes.appBar} elevation={0}>
-          <SnobPrice />  
-          <div className={classes.rowContainer}>
-            <SnobBalance />    
-            <ConnectWallet />  
-          </div>    
+          <SnobBalance />    
+          <ConnectWallet />  
         </Paper>
       </div>
     </Hidden>

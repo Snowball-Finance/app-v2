@@ -8,10 +8,10 @@ import TEST_ERC20_ABI from 'libs/abis/test/erc20.json'
 import S4D_VAULT_ABI from 'libs/abis/s4d-vault.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
 import MESSAGES from 'utils/constants/messages';
-import { provider } from 'utils/helpers/utility'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
+import { provider } from 'utils/constants/connectors'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
