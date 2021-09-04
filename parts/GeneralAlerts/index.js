@@ -15,13 +15,15 @@ import { isEmpty } from 'utils/helpers/utility'
 import Toast from 'components/Toast'
 import { toast } from 'react-toastify'
 import { Typography } from '@material-ui/core'
-import { usePoolContract } from 'contexts/pool-context'
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
+import { useAPIContext } from 'contexts/api-context'
 
 const GeneralAlerts = () => {
   const { account, library } = useWeb3React()
   const { gauges } = useContracts()
   const { setPopUp } = usePopup()
+  const { getLastSnowballInfo } = useAPIContext()
+  const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = getLastSnowballInfo()
 
   //upgrade gaugesv2
   const [openModal, setOpenModal] = useState(false)
@@ -35,7 +37,6 @@ const GeneralAlerts = () => {
   const [deposited, setDeposited] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [pendingPools, setPendingPools] = useState([]);
-  const { pools } = usePoolContract();
   const { userPools, deposit, approve } = useCompoundAndEarnContract();
   const [modal, setModal] = useState({ open: false, title: '', text: '', textButton: '' })
 

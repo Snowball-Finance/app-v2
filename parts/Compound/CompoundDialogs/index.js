@@ -68,9 +68,6 @@ const CompoundDialogs = ({
 
   useEffect(() =>{
     if(transactionStatus.depositStep === 2){
-      toast(<Toast message={'Deposit Successful!!'} toastType={'tokenOperation'}
-      tokens={[item.token0.address,item.token1?.address, 
-        item.token2?.address, item.token3?.address]}/>);
       handleClose();
     }
   }),[transactionStatus];

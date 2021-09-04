@@ -1,7 +1,6 @@
 import { memo, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-
-import { usePoolContract } from 'contexts/pool-context'
+import { useAPIContext } from 'contexts/api-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,8 +31,12 @@ const FarmIcon = ({
   token
 }) => {
   const classes = useStyles();
-  const { getGaugeInfo } = usePoolContract();
-  const { token0 = {}, token1 = {} } = useMemo(() => getGaugeInfo(token), [token, getGaugeInfo]);
+  const { getLastSnowballInfo } = useAPIContext();
+  const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = getLastSnowballInfo();
+  const { token0 = {}, token1 = {} } = useMemo(() => {
+      return pools?.find((pool) => pool.address.toLowerCase() === token.toLowerCase());
+    }
+  ,[token,pools]);
 
   return (
     <div className={classes.root}>

@@ -1,7 +1,6 @@
 import { memo } from 'react'
 import { Typography, Tooltip } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-
 import { usePrices } from 'contexts/price-context'
 import CoinIcon from 'components/Icons/CoinIcon'
 import { formatNumber } from 'utils/helpers/format'

@@ -46,12 +46,13 @@ const CompoundAndEarn = () => {
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
   const [loadedDeprecated, setLoadedDeprecated] = useState(false);
+  const [loadedUserPools, setLoadedUserPools] = useState(false);
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
   useEffect(() => {
-    if(userDeprecatedPools.length > 0 && !loadedDeprecated){
+    if(userDeprecatedPools.length > 0 && !loadedDeprecated && loadedUserPools){
       let newArray = [...lastSnowballInfo];
       userDeprecatedPools.forEach((pool) => {
         newArray.unshift(pool);
@@ -59,8 +60,8 @@ const CompoundAndEarn = () => {
       setLastSnowballInfo(newArray);
       setLoadedDeprecated(true);
     }
-
-  },[userDeprecatedPools]);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[userDeprecatedPools,loadedDeprecated,loadedUserPools]);
 
   useEffect(() => {
     const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } = snowballInfoQuery;
@@ -69,14 +70,17 @@ const CompoundAndEarn = () => {
       let sortedData = [...poolsInfo]
       sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
       setLastSnowballInfo(sortedData);
+      setLoadedUserPools(true);
       return
     }
 
     const sortedData = sortingByUserPool(type, userPools);
     setLastSnowballModifiedInfo(sortedData);
     setLastSnowballInfo(sortedData);
+    setLoadedUserPools(true);
+    setLoadedDeprecated(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snowballInfoQuery, userPools]);
+  }, [snowballInfoQuery, userPools, account]);
 
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length

@@ -7,11 +7,11 @@ import SNOWBALL_ABI from 'libs/abis/snowball.json'
 import SNOWCONE_ABI from 'libs/abis/snowcone.json'
 import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import { usePopup } from 'contexts/popup-context'
-import useGauge from 'contexts/staking-context/useGauge'
 import { usePrices } from 'contexts/price-context'
 import { handleConnectionError, isEmpty } from 'utils/helpers/utility'
 import { BNToFloat } from 'utils/helpers/format'
 import { provider } from 'utils/constants/connectors'
+import { useStakingContract } from './staking-context'
 
 const ContractContext = createContext(null)
 
@@ -81,7 +81,7 @@ export function ContractProvider({ children }) {
   
   },[error,setPopUp,setOpen]);
 
-  const { gauges, retrieveGauge, setGauges } = useGauge({
+  const { gauges, retrieveGauge, setGauges } = useStakingContract({
     prices,
     gaugeProxyContract,
     setLoading

@@ -59,7 +59,7 @@ const SnowClaim = () => {
           >
             {`Claim ${formatNumber(claimable, 3)} Snowballs`}
           </ContainedButton>
-          {sherpaClaimable && 
+          {sherpaClaimable > 0 && 
             <ContainedButton
               className = {classes.sherpaClaim}
               fullWidth

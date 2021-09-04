@@ -10,7 +10,6 @@ import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
 import { ContractProvider } from 'contexts/contract-context'
-import { PoolContractProvider } from 'contexts/pool-context'
 import SnowWeb3Provider from 'utils/hocs/SnowWeb3Provider'
 import ThemeProvider from 'utils/hocs/ThemeProvider'
 import * as COMMON_CONSTANTS from 'utils/constants/common'
@@ -20,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { APIProvider } from 'contexts/api-context'
 import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
+import { StakingContractProvider } from 'contexts/staking-context'
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -63,18 +63,18 @@ function MyApp({ Component, pageProps }) {
                 <PopupProvider>
                   <APIProvider>
                     <PriceProvider>
-                      <PoolContractProvider>
+                      <StakingContractProvider>
                         <ContractProvider>
                           <CompoundAndEarnProvider>
-                          <CssBaseline />
-                          <Layout>
-                            <Component {...pageProps} />
-                            <GeneralAlerts />
-                          </Layout>
+                            <CssBaseline />
+                            <Layout>
+                              <Component {...pageProps} />
+                              <GeneralAlerts />
+                            </Layout>
                           </CompoundAndEarnProvider>
                           <ToastContainer position={'bottom-right'} />
                         </ContractProvider>
-                      </PoolContractProvider>
+                      </StakingContractProvider>
                     </PriceProvider>
                   </APIProvider>
                 </PopupProvider>

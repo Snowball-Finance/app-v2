@@ -19,7 +19,7 @@ const dinamicLottie = ({ show, icon, size = 100 || size, ...rest }) => {
     <ReactLottie
       isPaused={false}
       isStopped={false}
-      options={{defaultOptions, animationData: Lotties[icon]}}
+      options={{...defaultOptions, animationData: Lotties[icon]}}
       style={{ width: size, height: size }}
       {...rest}
     />
