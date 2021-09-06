@@ -19,6 +19,12 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     color: theme.custom.palette.blue,
     textTransform: 'none',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    },
+    '&:hover': {
+      color: '#fff'
+    },
   }
 }))
 

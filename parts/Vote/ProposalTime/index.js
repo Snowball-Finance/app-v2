@@ -13,7 +13,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      alignItems: 'flex-end',
+    }
   },
   headerLabel: {
     display: 'flex',

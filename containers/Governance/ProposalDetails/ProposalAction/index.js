@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     color: props.colors.color,
     textTransform: 'none',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
   })
 }))
 

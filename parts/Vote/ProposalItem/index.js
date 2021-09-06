@@ -21,10 +21,10 @@ const ProposalItem = ({
   return (
     <Card className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={8} md={4}>
+        <Grid item xs={6} sm={8} md={4}>
           <ProposalInfo proposal={proposal} />
         </Grid>
-        <Grid item xs={12} sm={4} md={2}>
+        <Grid item xs={6} sm={4} md={2}>
           <ProposalTime proposal={proposal} />
         </Grid>
         <Grid item xs={12} sm={8} md={4}>
