@@ -12,6 +12,7 @@ import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
 import { provider } from 'utils/constants/connectors'
+import { useCompoundAndEarnContract } from './compound-and-earn-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
@@ -35,6 +36,7 @@ const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 export function S4dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
+  const { getBalanceInfoSinglePool } = useCompoundAndEarnContract();
 
   const [loading, setLoading] = useState(false)
   const [svToken, setSVToken] = useState({ name: 'S4D', priceId: 's4d', decimal: 18, balance: 0, supply: 0, percentage: 0, ratio: 0 })
@@ -446,6 +448,8 @@ export function S4dVaultContractProvider({ children }) {
       const transactionAddLiquidity = await addLiquidity.wait(1)
 
       if (transactionAddLiquidity.status) {
+        //refresh the pool status for the user be able to deposit
+        setTimeout(()=> getBalanceInfoSinglePool(CONTRACTS.S4D.TOKEN,true),2000);
         await getInit();
       }
     } catch (error) {

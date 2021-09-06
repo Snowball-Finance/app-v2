@@ -36,18 +36,27 @@ export function CompoundAndEarnProvider({ children }) {
   const [userPools, setUserPools] = useState([]);
   const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadedDeprecated, setLoadedDeprecated] = useState(false);
+  const [sortedUserPools, setSortedUserPools] = useState(false);
   const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false });
   const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0 })
 
   useEffect(() => {
-    setLoading(true);
-    if(account && !isEmpty(gauges)){
+    //only fetch total information when the userpools are empty
+    //otherwise we always want to update by single pool to have
+    //a more performatic approach
+    if(account && !isEmpty(gauges) && !isEmpty(prices) && userPools.length === 0){
+      setLoading(true);
       getBalanceInfosAllPools();
-    }else{
+    }
+    //reset state
+    if(!account){
+      setSortedUserPools(false);
+      setLoadedDeprecated(false);
       setUserPools([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps   
-  }, [gauges, account]);
+  }, [gauges, account, prices]);
 
   useEffect(()=>{
     async function loadDeprecatedPools(){
@@ -199,9 +208,6 @@ export function CompoundAndEarnProvider({ children }) {
   }
 
   const getBalanceInfosAllPools = async () => {
-    if (!account || isEmpty(gauges)) {
-      return
-    }
     setLoading(true);
     try {
       const dataWithPoolBalance = await Promise.all(
@@ -215,7 +221,7 @@ export function CompoundAndEarnProvider({ children }) {
     setLoading(false);
   };
 
-  const getBalanceInfoSinglePool = async (poolAddress) => {
+  const getBalanceInfoSinglePool = async (poolAddress,refreshSorting = false) => {
     if (!account || isEmpty(gauges)) {
       return
     }
@@ -257,6 +263,10 @@ export function CompoundAndEarnProvider({ children }) {
       setUserPools(cloneUserPools);
 
       getBalanceInfo();
+
+      if(refreshSorting){
+        setSortedUserPools(false);
+      }
       
     } catch (error) {
       console.log('[Error] getBalanceInfosSinglePool => ', error)
@@ -393,7 +403,8 @@ export function CompoundAndEarnProvider({ children }) {
         });
       }
       setTransactionStatus({ approvalStep: 2, depositStep: 2 });
-      getBalanceInfoSinglePool(item.address);
+      //refresh data only after 2sec to our node have time to catch up with network
+      setTimeout(()=> getBalanceInfoSinglePool(item.address,true),2000);
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
@@ -446,7 +457,8 @@ export function CompoundAndEarnProvider({ children }) {
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
-            getBalanceInfoSinglePool(item.address);
+            //refresh data only after 2sec to our node have time to catch up with network
+            setTimeout(()=> getBalanceInfoSinglePool(item.address,true),2000);
           }
         }
       }
@@ -479,7 +491,8 @@ export function CompoundAndEarnProvider({ children }) {
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
-            getBalanceInfoSinglePool(item.address);
+            //refresh data only after 2sec to our node have time to catch up with network
+            setTimeout(()=> getBalanceInfoSinglePool(item.address,true),2000);
           }
         }
       }
@@ -523,7 +536,8 @@ export function CompoundAndEarnProvider({ children }) {
       if(item.deprecatedPool){
         item.claimed = true;
       }else{
-        getBalanceInfoSinglePool(item.address);
+        //refresh data only after 2sec to our node have time to catch up with network
+        setTimeout(()=> getBalanceInfoSinglePool(item.address),2000);
       }
         
       } else {
@@ -554,7 +568,12 @@ export function CompoundAndEarnProvider({ children }) {
       withdraw,
       claim,
       setTransactionStatus,
-      userDeprecatedPools
+      userDeprecatedPools,
+      getBalanceInfoSinglePool,
+      loadedDeprecated,
+      sortedUserPools,
+      setLoadedDeprecated,
+      setSortedUserPools
     }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -577,7 +596,12 @@ export function useCompoundAndEarnContract() {
     withdraw,
     claim,
     setTransactionStatus,
-    userDeprecatedPools
+    userDeprecatedPools,
+    getBalanceInfoSinglePool,
+    loadedDeprecated,
+    sortedUserPools,
+    setLoadedDeprecated,
+    setSortedUserPools
   } = context;
 
   return {
@@ -590,6 +614,11 @@ export function useCompoundAndEarnContract() {
     withdraw,
     claim,
     setTransactionStatus,
-    userDeprecatedPools
+    userDeprecatedPools,
+    getBalanceInfoSinglePool,
+    loadedDeprecated,
+    sortedUserPools,
+    setLoadedDeprecated,
+    setSortedUserPools
   };
 }
