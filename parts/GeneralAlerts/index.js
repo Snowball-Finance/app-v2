@@ -269,8 +269,7 @@ const GeneralAlerts = () => {
               In order to better serve the community{"'"}s desire for more frequent
               changes in SNOB rewards, we have upgraded to GaugeProxyV2.
               This will allow us to have much more frequent SNOB reward distribution
-              changes. To celebrate this launch, we will be increasing emissions
-              by 1.5x for one week!
+              changes.
               <br /> <br />
               Please click the button below to upgrade to GaugeProxyV2 and
               continue receiving SNOB rewards.
