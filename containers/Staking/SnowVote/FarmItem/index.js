@@ -1,10 +1,11 @@
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Typography } from '@material-ui/core'
 
 import SnowTextField from 'components/UI/TextFields/SnowTextField'
 import FarmIcon from './FarmIcon'
 import { formatPercent, formatAPY } from 'utils/helpers/format'
+import { useStakingContract } from 'contexts/staking-context'
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
@@ -29,6 +30,16 @@ const FarmItem = ({
   onChange
 }) => {
   const classes = useStyles();
+  const {gaugeProxyContract} = useStakingContract();
+  const [allocPoint,setAllocPoint] = useState(0);
+
+  useEffect(()=>{
+    async function newAllocPoint() {
+      const gaugeWeight = await gaugeProxyContract.weights(item.token);
+      setAllocPoint(gaugeWeight / item.totalWeight || 0);
+    }
+    newAllocPoint();
+  },[item,gaugeProxyContract]);
 
   const pickleAPYMin = useMemo(() => item.fullApy * 100 * 0.4, [item.fullApy]);
   const pickleAPYMax = useMemo(() => item.fullApy * 100, [item.fullApy]);
@@ -57,7 +68,7 @@ const FarmItem = ({
       </Grid>
       <Grid item xs={12} sm={6} md={3} className={classes.labelContainer}>
         <Typography color='textPrimary' variant='body1'>
-          {`${formatPercent(item.allocPoint)}% -> ${newWeight ? formatPercent(newWeight) : 0}%`}
+          {`${formatPercent(allocPoint)}% -> ${newWeight ? formatPercent(newWeight) : 0}%`}
         </Typography>
         <Typography color='textPrimary' variant='body1'>
           Current reward weight

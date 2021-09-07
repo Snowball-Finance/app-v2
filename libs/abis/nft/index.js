@@ -16,11 +16,6 @@ const getNFTABI = (address) => {
         type: 'COVID_RELIEF',
         abi: COVID_RELIEF_ABI
       }
-    case '0x6a81866c94eFc097e75ABcbCddD3E8b63EbEBe93':
-      return {
-        type: 'SNOWBALL_HEAD',
-        abi: SNOWBALL_HEAD_ABI
-      }
     case '0x35F268DaC74f94785135aA134deDEf7e67Db8fe3':
     case '0xB954AE9a4374751CB3d578CfA3Db96e0E5881C00':
     case '0xD65e006644D417Af6A9385182C21733762b94E83':
@@ -31,10 +26,15 @@ const getNFTABI = (address) => {
         type: 'ROLLING',
         abi: ROLLING_ABI
       }
-    default:
+    case '0x7B097A18738cA9Fd524384Dab74c57CB12DAC724':
       return {
         type: 'EARLY_VOTER',
         abi: EARLY_VOTER_ABI
+      }
+    default:
+      return {
+        type: 'DEFAULT_NFT',
+        abi: SNOWBALL_HEAD_ABI
       }
   }
 }

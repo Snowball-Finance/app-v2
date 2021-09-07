@@ -1,6 +1,6 @@
-import { ethers } from 'ethers'
 import { AVALANCHE_MAINNET_PARAMS, injected } from 'utils/constants/connectors';
 import MESSAGES from 'utils/constants/messages';
+import ANIMATIONS from 'utils/constants/animate-icons';
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { NoEthereumProviderError, UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector'
 
@@ -40,6 +40,7 @@ const handleConnectionError = (error) => {
   } else if (error instanceof UnsupportedChainIdError) {
     return {
       message: MESSAGES.CONNECT_UNSUPPORTED_CHAIN_ID_ERROR,
+      icon:  ANIMATIONS.WARNING.VALUE,
       button: 'Switch to Avalanche',
       confirmAction: addAvalancheNetwork
     }
@@ -62,8 +63,6 @@ const metaMaskInstallHandler = () => {
   window.open('https://metamask.io/download', '_blank');
 }
 
-const provider = new ethers.providers.getDefaultProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0]);
-
 const roundDown = (value, decimals = 18) => {
   const valueString = value.toString();
   const integerString = valueString.split('.')[0];
@@ -79,9 +78,8 @@ export {
   isEmpty,
   delay,
   roundDown,
-  provider,
   AVALANCHE_MAINNET_PARAMS,
   addAvalancheNetwork,
   handleConnectionError,
-  metaMaskInstallHandler
+  metaMaskInstallHandler,
 }

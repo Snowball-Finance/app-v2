@@ -40,7 +40,12 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+<<<<<<< HEAD
   const { userPools, userDeprecatedPools } = useCompoundAndEarnContract();
+=======
+  const { userPools, userDeprecatedPools, loadedDeprecated,
+    sortedUserPools,setLoadedDeprecated,setSortedUserPools } = useCompoundAndEarnContract();
+>>>>>>> c7c76fef1fc65760e1725c84a675bf570fde0b3a
 
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
@@ -51,7 +56,11 @@ const CompoundAndEarn = () => {
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
 
   useEffect(() => {
+<<<<<<< HEAD
     if(userDeprecatedPools.length > 0 && !loadedDeprecated){
+=======
+    if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
+>>>>>>> c7c76fef1fc65760e1725c84a675bf570fde0b3a
       let newArray = [...lastSnowballInfo];
       userDeprecatedPools.forEach((pool) => {
         newArray.unshift(pool);
@@ -59,8 +68,13 @@ const CompoundAndEarn = () => {
       setLastSnowballInfo(newArray);
       setLoadedDeprecated(true);
     }
+<<<<<<< HEAD
 
   },[userDeprecatedPools]);
+=======
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[userDeprecatedPools,loadedDeprecated,sortedUserPools]);
+>>>>>>> c7c76fef1fc65760e1725c84a675bf570fde0b3a
 
   useEffect(() => {
     const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } = snowballInfoQuery;
@@ -72,11 +86,15 @@ const CompoundAndEarn = () => {
       return
     }
 
-    const sortedData = sortingByUserPool(type, userPools);
-    setLastSnowballModifiedInfo(sortedData);
-    setLastSnowballInfo(sortedData);
+    if(!sortedUserPools){
+      const sortedData = sortingByUserPool(type, userPools);
+      setLastSnowballModifiedInfo(sortedData);
+      setLastSnowballInfo(sortedData);
+      setSortedUserPools(true);
+      setLoadedDeprecated(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snowballInfoQuery, userPools]);
+  }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length

@@ -2,6 +2,7 @@
 module.exports = {
   env: {
     NETWORK: process.env.NETWORK,
+    PRIVATENODE: process.env.PRIVATENODE,
   },
   webpack: (config, { dev }) => {
     if (dev) {
