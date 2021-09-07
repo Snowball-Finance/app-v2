@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import ConnectWallet from '../Shared/ConnectWallet'
 import SnobBalance from '../Shared/SnobBalance'
-import SnobPrice from '../Shared/SnobPrice'
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
