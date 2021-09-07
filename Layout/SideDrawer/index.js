@@ -10,6 +10,7 @@ import MultiSideItem from './MultiSideItem'
 import LINKS from 'utils/constants/links'
 import SIDEBAR_MENU from 'utils/constants/sidebar-menu'
 import { isEmpty } from 'utils/helpers/utility'
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -63,6 +64,7 @@ const SideDrawer = ({
   const classes = useStyles();
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState('')
+  const { setSortedUserPools } = useCompoundAndEarnContract();
 
   useEffect(() => {
     for (const item of SIDEBAR_MENU) {
@@ -86,6 +88,12 @@ const SideDrawer = ({
       setSelectedItem('')
     } else {
       setSelectedItem(value)
+    }
+
+    //we need to reset the the filter in C&E when the page is closed otherwise the 
+    //cache at it`s context will lose the state
+    if(selectedItem !== 'Compound & Earn'){
+      setSortedUserPools(false);
     }
 
     if (isMobile && value !== 'StableVault') {

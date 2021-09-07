@@ -1,8 +1,6 @@
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import { Typography, Tooltip } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-
-import { useContracts } from 'contexts/contract-context'
 import { usePrices } from 'contexts/price-context'
 import CoinIcon from 'components/Icons/CoinIcon'
 import { formatNumber } from 'utils/helpers/format'
@@ -34,11 +32,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const SnobBalance = () => {
-  const classes = useStyles()
-  const { snowballBalance } = useContracts()
+  const classes = useStyles();
   const { prices } = usePrices();
 
-  const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
+  
 
   return (
     <div className={classes.balanceContainer}>

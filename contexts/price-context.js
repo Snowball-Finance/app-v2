@@ -4,6 +4,7 @@ import CoinGecko from 'coingecko-api'
 const ContractContext = createContext(null)
 
 export function PriceProvider({ children }) {
+  const [loading,setLoading] = useState(true);
   const [prices, setPrices] = useState({
     snowball: 0,
     png: 0,
@@ -24,21 +25,21 @@ export function PriceProvider({ children }) {
           'frax'
         ],
         vs_currencies: ['usd'],
+        include_24hr_change: [true]
       });
 
       const prices = {
         SNOB: response['snowball-token']?.usd || 0,
-        PNG: response['pangolin']?.usd || 0,
-        WAVAX: response['wrapped-avax']?.usd || 0,
-        BUSD: response['binance-usd']?.usd || 0,
-        FRAX: response['frax']?.usd || 0,
+        SNOB24HChange: response['snowball-token']?.usd_24h_change || 0,
       };
       setPrices(prices);
+      setLoading(false);
     };
-
-    getPrices();
+    if(loading){
+      getPrices();
+    }
     //setInterval(() => getPrices(), 120000);
-  }, []);
+  }, [loading]);
 
   return (
     <ContractContext.Provider value={{ prices }} >
