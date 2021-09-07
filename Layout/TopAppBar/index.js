@@ -8,10 +8,7 @@ import Logo from 'components/Logo'
 import ConnectWallet from '../Shared/ConnectWallet'
 import SnobBalance from '../Shared/SnobBalance'
 import SnobPrice from '../Shared/SnobPrice'
-<<<<<<< HEAD
-=======
 import SnobPriceChange from 'Layout/Shared/SnobPriceChange'
->>>>>>> origin/candidate
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -59,10 +56,7 @@ const TopAppBar = ({
 
         <Hidden xsDown>
           <SnobPrice />
-<<<<<<< HEAD
-=======
           <SnobPriceChange />  
->>>>>>> origin/candidate
         </Hidden>
       </div>
 
