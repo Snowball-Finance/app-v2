@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import ConnectWallet from '../Shared/ConnectWallet'
 import SnobBalance from '../Shared/SnobBalance'
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     position: 'fixed',
