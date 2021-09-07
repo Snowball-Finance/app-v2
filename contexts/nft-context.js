@@ -11,6 +11,7 @@ import NFT_STATUS from 'utils/constants/nft-status'
 import MESSAGES from 'utils/constants/messages';
 import { useAPIContext } from './api-context'
 import { BNToFloat, floatToBN } from 'utils/helpers/format'
+import ANIMATIONS from 'utils/constants/animate-icons'
 
 const ContractContext = createContext(null)
 
@@ -129,6 +130,7 @@ export function NFTContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
+        icon: ANIMATIONS.ERROR.VALUE,
         text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
@@ -137,6 +139,7 @@ export function NFTContractProvider({ children }) {
     if (item.status !== NFT_STATUS.ELIGIBLE.VALUE) {
       setPopUp({
         title: 'Claim Error',
+        icon: ANIMATIONS.WARNING.VALUE,
         text: `You cannot claim this NFT`
       })
       return;
@@ -161,6 +164,7 @@ export function NFTContractProvider({ children }) {
       if (transactionClaim.status) {
         setPopUp({
           title: 'Success',
+          icon: ANIMATIONS.SUCCESS.VALUE,
           text: `You claimed this NFT successfully`
         })
         getNFTData()
@@ -168,7 +172,8 @@ export function NFTContractProvider({ children }) {
     } catch (error) {
       setPopUp({
         title: 'Error',
-        text: `You don\'t have enough AVAX to buy this NFT`
+        icon: ANIMATIONS.ERROR.VALUE,
+        text: error.message
       })
       console.log('[Error] claimNFT => ', error)
     }
@@ -179,6 +184,7 @@ export function NFTContractProvider({ children }) {
     if (!account) {
       setPopUp({
         title: 'Network Error',
+        icon: ANIMATIONS.ERROR.VALUE,
         text: MESSAGES.METAMASK_NOT_CONNECTED
       })
       return;
@@ -196,6 +202,7 @@ export function NFTContractProvider({ children }) {
       if (transactionMint.status) {
         setPopUp({
           title: 'Success',
+          icon: ANIMATIONS.SUCCESS.VALUE,
           text: `You purchased this NFT successfully`
         })
         getNFTData()
@@ -203,7 +210,8 @@ export function NFTContractProvider({ children }) {
     } catch (error) {
       setPopUp({
         title: 'Error',
-        text: `You don\'t have enough AVAX to buy this NFT`
+        icon: ANIMATIONS.ERROR.VALUE,
+        text: error.message
       })
       console.log('[Error] purchaseNFT => ', error)
     }

@@ -1,6 +1,6 @@
 
-const LOGO_IMAGE_PATH = '/assets/images/logo.png'
-const LOGO_LABEL_IMAGE_PATH = '/assets/images/logo-label.png'
+const LOGO_IMAGE_PATH = '/assets/images/logo.svg'
+const LOGO_LABEL_IMAGE_PATH = '/assets/images/logo-label.svg'
 const BANNER_IMAGE_PATH = '/assets/images/banner.jpg'
 const FOOTER_POWER_BY_IMAGE_PATH = '/assets/images/icons/power-by.png'
 const METAMASK_IMAGE_PATH = '/assets/images/icons/metamask.png'

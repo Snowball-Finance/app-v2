@@ -1,6 +1,9 @@
 
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
+import { ethers } from 'ethers';
+
+const PRIVATENODE = process.env.PRIVATENODE;
 
 const AVALANCHE_MAINNET_PARAMS = {
   chainId: '0xa86a',
@@ -13,6 +16,33 @@ const AVALANCHE_MAINNET_PARAMS = {
   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
   blockExplorerUrls: ['https://cchain.explorer.avax.network/']
 }
+
+const nodeIsHealthy = async (url) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  
+  var raw = JSON.stringify({"jsonrpc":"2.0","id":1,"method":"health.getLiveness"});
+  
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+  try{
+    const response = await fetch(`${url}/ext/health`, requestOptions);
+    const bodyResponse = await response.json(); 
+    return bodyResponse.result?.healthy;
+  }catch(error){
+    console.log(error);
+    return false;
+  }
+}
+
+const provider = new ethers.providers.getDefaultProvider(
+  nodeIsHealthy(PRIVATENODE) 
+  ? `${PRIVATENODE}/ext/bc/C/rpc` 
+    :  AVALANCHE_MAINNET_PARAMS.rpcUrls[0]);
 
 
 const walletlink = new WalletLinkConnector({
@@ -28,5 +58,8 @@ export {
   injected,
   trustWallet,
   walletlink,
-  AVALANCHE_MAINNET_PARAMS
+  AVALANCHE_MAINNET_PARAMS,
+  PRIVATENODE,
+  provider,
+  nodeIsHealthy
 }

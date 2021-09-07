@@ -1,5 +1,5 @@
 
-import { memo, useMemo, useState, useCallback, useEffect } from 'react'
+import { memo, useMemo, useState, useEffect } from 'react'
 import { Card, Typography, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -104,18 +104,14 @@ const CompoundAndEarn = () => {
     }
   }
 
-  const getTotalPendingHarvest = useCallback(() => {
+  useEffect(() => {
     let total = 0;
-    gauges.map((gauge) => {
+    gauges?.map((gauge) => {
       total += parseFloat(gauge.harvestable / 1e18);
     });
     const balanceUSD = +(total * prices.SNOB).toFixed(2);
     setPendingHarvest({ amount: total.toFixed(2), balanceUSD });
-  }, [prices, gauges]);
-
-  useEffect(() => {
-    getTotalPendingHarvest();
-  }, [gauges, getTotalPendingHarvest]);
+  }, [gauges,prices]);
 
   return (
     <Card className={classes.card}>
