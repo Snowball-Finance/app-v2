@@ -8,6 +8,7 @@ import CardWrapper from '../CardWrapper'
 import FarmItem from './FarmItem'
 import FarmsSelect from './FarmsSelect'
 import { isEmpty } from 'utils/helpers/utility'
+import { useWeb3React } from '@web3-react/core'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -29,8 +30,11 @@ const SnowVote = () => {
   const {
     snowconeBalance,
     gauges,
-    voteFarms
+    voteFarms,
+    gaugeProxyContract
   } = useStakingContract();
+
+  const { account } = useWeb3React();
 
   const [selectedFarms, setSelectedFarms] = useState([]);
   const [newWeights, setNewWeights] = useState([]);
@@ -71,25 +75,28 @@ const SnowVote = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFarms]);
 
-  const calculateNewWeights = () => {
+  const calculateNewWeights = async () => {
     if (weightsValid) {
       const voteArray = Object.entries(voteWeights).map((e) => ({
         [e[0]]: e[1],
       }));
 
-      const newWeights = voteArray.map((x) => {
+      const newWeights = await Promise.all(voteArray.map(async(x) => {
         const gaugeAddress = Object.keys(x)[0];
         const gauge = gauges.find((gauge) => gauge.address === gaugeAddress);
         if (!isEmpty(gauge) && snowconeBalance) {
+          const gaugeWeight = await gaugeProxyContract.weights(gauge.token);
+          const userWeight = await gaugeProxyContract.votes(account,gauge.address);
+          const userCurrentWeights = await gaugeProxyContract.usedWeights(account);
           const xSnobBalance = +snowconeBalance.toString();
           const estimatedWeight =
-            (gauge.gaugeWeight - gauge.userWeight + (xSnobBalance * Object.values(x)[0]) / 100)
-            / (gauge.totalWeight - gauge.userCurrentWeights + xSnobBalance);
+            (gaugeWeight - userWeight + (xSnobBalance * Object.values(x)[0]) / 100)
+            / (gauge.totalWeight - userCurrentWeights + xSnobBalance);
           return { [gauge.address]: estimatedWeight };
         } else {
           return null;
         }
-      });
+      }));
       setNewWeights(newWeights);
     } else {
       setNewWeights([]);

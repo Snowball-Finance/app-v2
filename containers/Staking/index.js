@@ -3,7 +3,6 @@ import { memo, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Typography } from '@material-ui/core'
 
-import { useStakingContract } from 'contexts/staking-context'
 import SnowLoading from 'components/SnowLoading'
 import SubMenuTabs from 'parts/SubMenuTabs'
 import PageHeader from 'parts/PageHeader'
@@ -16,6 +15,7 @@ import SnowClaim from './SnowClaim'
 import VoteDistribution from './VoteDistribution'
 import { STAKING_TABS, STAKING_TABS_ARRAY } from 'utils/constants/staking-tabs'
 import BoostCalculator from './BoostCalculator'
+import { useContracts } from 'contexts/contract-context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Staking = () => {
   const classes = useStyles()
-  const { loading, isWrongNetwork } = useStakingContract();
+  const { loading, isWrongNetwork } = useContracts();
 
   const [selectedTab, setSelectedTab] = useState(STAKING_TABS.info.VALUE)
 

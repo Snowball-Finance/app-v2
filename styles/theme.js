@@ -86,7 +86,8 @@ const lightTheme = responsiveFontSizes(
         darkGreen: '#2A4428',
         png_orange: '#FF9F43',
         joe_red: '#F2716A',
-        snob_blue: '28A2FF',
+        sherpa_red: '#FC3D4A',
+        snob_blue: '#28A2FF',
         s3d_blue: '#1891FC',
         s3f_green: '#39CD33',
         border: '#D8D6DE',
@@ -94,6 +95,7 @@ const lightTheme = responsiveFontSizes(
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
           joe_red: 'rgba(242, 113, 106, 0.12)',
+          sherpa_red: 'rgba(252, 61, 74, 0.12)',
           green: 'rgba(40, 199, 111, 0.12)'
         }
       },

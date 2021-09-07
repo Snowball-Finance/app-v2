@@ -7,10 +7,11 @@ import SNOWBALL_ABI from 'libs/abis/snowball.json'
 import SNOWCONE_ABI from 'libs/abis/snowcone.json'
 import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import { usePopup } from 'contexts/popup-context'
-import useGauge from 'contexts/staking-context/useGauge'
 import { usePrices } from 'contexts/price-context'
 import { handleConnectionError, isEmpty } from 'utils/helpers/utility'
 import { BNToFloat } from 'utils/helpers/format'
+import { provider } from 'utils/constants/connectors'
+import { useStakingContract } from './staking-context'
 
 const ContractContext = createContext(null)
 
@@ -25,9 +26,9 @@ export function ContractProvider({ children }) {
   const { prices } = usePrices();
 
   const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
-  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner()) : null, [library])
-  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner()) : null, [library])
-  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, library.getSigner()) : null, [library])
+  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library])
+  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library])
+  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library])
 
   const getBalanceInfo = useCallback(async () => {
     try {
@@ -69,6 +70,7 @@ export function ContractProvider({ children }) {
       setPopUp({
         title: 'Error Connecting Wallet',
         text: connectionError.message,
+        icon: connectionError.icon,
         cancelLabel: connectionError.button,
         confirmAction: connectionError.confirmAction
       });
@@ -79,7 +81,7 @@ export function ContractProvider({ children }) {
   
   },[error,setPopUp,setOpen]);
 
-  const { gauges, retrieveGauge, setGauges } = useGauge({
+  const { gauges, retrieveGauge, setGauges } = useStakingContract({
     prices,
     gaugeProxyContract,
     setLoading
