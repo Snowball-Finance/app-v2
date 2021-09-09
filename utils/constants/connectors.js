@@ -17,33 +17,23 @@ const AVALANCHE_MAINNET_PARAMS = {
   blockExplorerUrls: ['https://cchain.explorer.avax.network/']
 }
 
-const nodeIsHealthy = async (url) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  
-  var raw = JSON.stringify({"jsonrpc":"2.0","id":1,"method":"health.getLiveness"});
-  
-  var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-  };
-  try{
-    const response = await fetch(`${url}/ext/health`, requestOptions);
-    const bodyResponse = await response.json(); 
-    return bodyResponse.result?.healthy;
-  }catch(error){
-    console.log(error);
-    return false;
-  }
-}
+//add fallback
+var providers = [
+  {
+    provider: new ethers.providers.StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0]),
+    priority: 2,
+    weight: 1,
+    stallTimeout: 500
+  },
+  {
+    provider: new ethers.providers.StaticJsonRpcProvider(`${PRIVATENODE}/ext/bc/C/rpc`),
+    priority: 1,
+    weight: 2,
+    stallTimeout: 500
+  },
+];
 
-const provider = new ethers.providers.getDefaultProvider(
-  nodeIsHealthy(PRIVATENODE) 
-  ? `${PRIVATENODE}/ext/bc/C/rpc` 
-    :  AVALANCHE_MAINNET_PARAMS.rpcUrls[0]);
-
+const provider = new ethers.providers.FallbackProvider(providers,1);
 
 const walletlink = new WalletLinkConnector({
   url: AVALANCHE_MAINNET_PARAMS.rpcUrls[0],
@@ -60,6 +50,5 @@ export {
   walletlink,
   AVALANCHE_MAINNET_PARAMS,
   PRIVATENODE,
-  provider,
-  nodeIsHealthy
+  provider
 }
