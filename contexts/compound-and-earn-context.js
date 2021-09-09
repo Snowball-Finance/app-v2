@@ -75,6 +75,7 @@ export function CompoundAndEarnProvider({ children }) {
           }
 
           const SNOBHarvestable = await gaugeContract.earned(account);
+          //return if it has nothing deposited
           if(+userDeposited === 0 && +SNOBHarvestable === 0){
             return;
           }
@@ -93,8 +94,9 @@ export function CompoundAndEarnProvider({ children }) {
                 : pool.source === 'BENQI' ? 'QLP'
                 : pool.source === 'Pangolin' ? 'PGL'
                 : 'SNOB',
-              userDepositedLP:userDeposited/1e18,
+              userDepositedLP:userDeposited,
               SNOBHarvestable:SNOBHarvestable/1e18,
+              SNOBValue:(SNOBHarvestable/1e18) * prices?.SNOB,
               claimed:(!SNOBHarvestable > 0),
               withdrew:(!userDeposited > 0),
               deprecatedPool:true
@@ -573,7 +575,8 @@ export function CompoundAndEarnProvider({ children }) {
       loadedDeprecated,
       sortedUserPools,
       setLoadedDeprecated,
-      setSortedUserPools
+      setSortedUserPools,
+      setUserPools
     }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -601,7 +604,8 @@ export function useCompoundAndEarnContract() {
     loadedDeprecated,
     sortedUserPools,
     setLoadedDeprecated,
-    setSortedUserPools
+    setSortedUserPools,
+    setUserPools
   } = context;
 
   return {
@@ -619,6 +623,7 @@ export function useCompoundAndEarnContract() {
     loadedDeprecated,
     sortedUserPools,
     setLoadedDeprecated,
-    setSortedUserPools
+    setSortedUserPools,
+    setUserPools
   };
 }
