@@ -89,9 +89,9 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             userBoost={userBoost}
           />
         </Grid>}
-        {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
+        <Grid item xs={12} lg={4}>
           <Total item={item} />
-        </Grid>}
+        </Grid>
       </Grid>
       <Grid 
         className={classes.button}

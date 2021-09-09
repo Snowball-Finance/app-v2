@@ -41,7 +41,8 @@ const CompoundAndEarn = () => {
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
   const { userPools, userDeprecatedPools, loadedDeprecated,
-    sortedUserPools,setLoadedDeprecated,setSortedUserPools } = useCompoundAndEarnContract();
+    sortedUserPools,setLoadedDeprecated,setSortedUserPools,
+    setUserPools } = useCompoundAndEarnContract();
 
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
@@ -49,17 +50,32 @@ const CompoundAndEarn = () => {
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
+  const [loadedSort, setLoadedSort] = useState(false);
+
+  //reset state when index opened
+  useEffect(()=>{
+    if(!loadedSort){
+      setSortedUserPools(false);
+      setLoadedSort(true);
+    }
+  },[loadedSort,setSortedUserPools])
 
   useEffect(() => {
     if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
-      let newArray = [...lastSnowballInfo];
+      let newArray = [...userPools];
       userDeprecatedPools.forEach((pool) => {
-        newArray.unshift(pool);
+        //check if it's not duplicated
+        if(userPools.indexOf(
+          (element)=> element.address.toLowerCase() === pool.address.toLowerCase()
+        ) === -1){
+          newArray.push(pool);
+        }
       })
-      setLastSnowballInfo(newArray);
       setLoadedDeprecated(true);
+      setSortedUserPools(false);
+      setUserPools(newArray);
     }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userDeprecatedPools,loadedDeprecated,sortedUserPools]);
 
   useEffect(() => {
@@ -77,7 +93,6 @@ const CompoundAndEarn = () => {
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
       setSortedUserPools(true);
-      setLoadedDeprecated(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);

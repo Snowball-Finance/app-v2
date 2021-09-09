@@ -90,12 +90,6 @@ const SideDrawer = ({
       setSelectedItem(value)
     }
 
-    //we need to reset the the filter in C&E when the page is closed otherwise the 
-    //cache at it`s context will lose the state
-    if(selectedItem !== 'Compound & Earn'){
-      setSortedUserPools(false);
-    }
-
     if (isMobile && value !== 'StableVault') {
       setOpenDrawer(false)
     } else if (open) {
