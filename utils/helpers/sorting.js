@@ -16,6 +16,7 @@ export const sortingByUserPool = (type, data) => {
     sortedData = sortedData.sort(
       (a, b) =>
         b.usdValue - a.usdValue ||
+        b.userDepositedLP - a.userDepositedLP ||
         b.userLPBalance - a.userLPBalance ||
         b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
     );

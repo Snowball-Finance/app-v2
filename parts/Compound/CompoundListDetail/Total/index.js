@@ -71,16 +71,17 @@ const Total = ({ item }) => {
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP || 0.00, 5, true)} LP (${formatNumber(userPool?.usdValue || 0.00)})</Typography>
+          <Typography variant="subtitle2">{formatNumber(userPool?.userDepositedLP || 0.00, 5, true)
+          } LP {!item.deprecatedPool &&('($'+formatNumber(userPool?.usdValue || 0.00)+')')}</Typography>
         </div>
-        <div className={classes.container}>
+        {!item.deprecatedPool &&<div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
               ((userPool?.userBalanceSnowglobe ? BNToFloat(userPool?.userBalanceSnowglobe,userPool?.lpDecimals) : 0) +
               (userPool?.userBalanceGauge/10**userPool?.lpDecimals)) / 
               BNToFloat(userPool?.totalSupply,userPool?.lpDecimals) * 100 || 0.00, 5)}
             %</Typography>
-        </div>
+        </div>}
         {userPool?.underlyingTokens ? <div className={classes.infoContainer}>
           <Typography variant="body2">{userPool.underlyingTokens ? `Underlying tokens` : ``}</Typography>
           <Typography variant="subtitle2"> <SnowPairsIcon pairsIcon={[userPool?.underlyingTokens?.token0.address]} size={25} />
