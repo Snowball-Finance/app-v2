@@ -85,7 +85,6 @@ const CompoundAndEarn = () => {
     let filterData = firstSnowballInfo.length
         ? [...firstSnowballInfo]
         : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
-
     const splittedValue = value.split(' ');
     splittedValue.forEach((spiltItem) => {
       filterData = filterData.filter(
@@ -93,7 +92,7 @@ const CompoundAndEarn = () => {
       );
     });
 
-    filterData = sortingByType(type, filterData);
+    filterData = sortingByType(type, filterData, userPools);
     if (account) {
       filterData = sortingByUserPool(type, filterData);
     }
@@ -126,7 +125,7 @@ const CompoundAndEarn = () => {
         ? [...firstSnowballInfo]
         : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
-    filterData = sortingByType(type, filterData);
+    filterData = sortingByType(type, filterData, userPools);
     if (account) {
       filterData = sortingByUserPool(type, filterData);
     }
@@ -159,7 +158,7 @@ const CompoundAndEarn = () => {
         ? [...firstSnowballInfo]
         : [...lastSnowballInfo];
 
-    filterData = sortingByType(event.target.value, filterData);
+    filterData = sortingByType(event.target.value, filterData, userPools);
     if (account) {
       filterData = sortingByUserPool(event.target.value, filterData);
     }

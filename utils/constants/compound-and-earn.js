@@ -7,6 +7,10 @@ export const TYPES = [
     value: 'tvl',
     label: 'TVL',
   },
+  {
+    value: 'claimable',
+    label: 'CLAIMABLE',
+  },
 ];
 
 export const POOLS = [
