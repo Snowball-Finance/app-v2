@@ -11,10 +11,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const UpgradeGaugeSteps = ({
+const UpgradeSteps = ({
   open,
   handleClose,
-  gaugesLength,
+  length,
+  totalSteps,
   step
 }) => {
   const classes = useStyles();
@@ -22,17 +23,17 @@ const UpgradeGaugeSteps = ({
   return (
     <SnowDialog
       open={open}
-      title={`Your Gauges: ${gaugesLength}`}
+      title={`Your Pools: ${length}`}
       onClose={() => handleClose()}
     >
       <Typography variant='h5' align='center' className={classes.header}>
         Current Status
       </Typography>
       <Typography variant='h6' align='center'>
-        {`${step} / ${gaugesLength * 4} steps`}
+        {`${step} / ${totalSteps} steps`}
       </Typography>
     </SnowDialog>
   );
 };
 
-export default memo(UpgradeGaugeSteps);
+export default memo(UpgradeSteps);

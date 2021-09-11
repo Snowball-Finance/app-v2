@@ -169,6 +169,7 @@ export function StakingContractProvider({ children }) {
         })
       );
       setGauges(gauges);
+      return gauges;
     } catch (error) {
       console.log('[Error] gaugeProxyContract => ', error)
     }
@@ -348,7 +349,8 @@ export function StakingContractProvider({ children }) {
         setGauges,
         userSherpaClaimable,
         sherpaClaim,
-        gaugeProxyContract
+        gaugeProxyContract,
+        getGaugeProxyInfo
       }}
     >
       {children}
@@ -388,7 +390,8 @@ export function useStakingContract() {
     setGauges,
     userSherpaClaimable,
     sherpaClaim,
-    gaugeProxyContract
+    gaugeProxyContract,
+    getGaugeProxyInfo
   } = context
 
   return {
@@ -417,6 +420,7 @@ export function useStakingContract() {
     setGauges,
     userSherpaClaimable,
     sherpaClaim,
-    gaugeProxyContract
+    gaugeProxyContract,
+    getGaugeProxyInfo
   }
 }

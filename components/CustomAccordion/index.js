@@ -39,12 +39,13 @@ const CustomAccordion = ({
   summary,
   details,
   expandMoreIcon,
+  onChanged
 }) => {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.root, className)} style={style}>
-      <Accordion defaultExpanded={false}>
+      <Accordion defaultExpanded={false} onChange={onChanged}>
         <AccordionSummary
           expandIcon={expandMoreIcon || <ExpandMoreIcon />}
           aria-controls="panel1c-content"

@@ -81,7 +81,7 @@ export function ContractProvider({ children }) {
   
   },[error,setPopUp,setOpen]);
 
-  const { gauges, retrieveGauge, setGauges } = useStakingContract({
+  const { gauges, retrieveGauge, setGauges, getGaugeProxyInfo } = useStakingContract({
     prices,
     gaugeProxyContract,
     setLoading
@@ -98,7 +98,8 @@ export function ContractProvider({ children }) {
         snowballBalance,
         snowconeBalance,
         totalSnowcone,
-        getBalanceInfo
+        getBalanceInfo,
+        getGaugeProxyInfo
       }}
     >
       {children}
@@ -121,7 +122,8 @@ export function useContracts() {
     snowballBalance,
     snowconeBalance,
     totalSnowcone,
-    getBalanceInfo
+    getBalanceInfo,
+    getGaugeProxyInfo
   } = context
 
   return {
@@ -133,6 +135,7 @@ export function useContracts() {
     snowballBalance,
     snowconeBalance,
     totalSnowcone,
-    getBalanceInfo
+    getBalanceInfo,
+    getGaugeProxyInfo
   }
 }
