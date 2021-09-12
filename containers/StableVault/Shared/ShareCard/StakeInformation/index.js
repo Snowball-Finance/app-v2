@@ -65,7 +65,7 @@ const StakeInformation = ({
       </div>
       <ContainedButton
         className={classes.removeLiquidity}
-        disabled={staked === 0}
+        // disabled={staked === 0}
         onClick={onRemove}
       >
         Remove Liquidity

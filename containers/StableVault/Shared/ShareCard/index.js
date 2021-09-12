@@ -3,6 +3,7 @@ import { memo, useState } from 'react'
 import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import StakeInformation from './StakeInformation'
 import VaultRemoveLiquidityDialog from './VaultRemoveLiquidityDialog'
+import RemoveLiquidityModal from './RemoveLiquidityModal'
 
 const ShareCard = ({
   vault,
@@ -26,7 +27,7 @@ const ShareCard = ({
         />
       </CardFormWrapper>
       {liquidityDialog &&
-        <VaultRemoveLiquidityDialog
+        <RemoveLiquidityModal
           tokenArray={tokenArray}
           getWithdrawAmount={getWithdrawAmount}
           removeLiquidity={removeLiquidity}
