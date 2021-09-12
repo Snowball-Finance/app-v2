@@ -279,7 +279,7 @@ export function CompoundAndEarnProvider({ children }) {
     return new Promise(async (resolve, reject) => {
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
-        const approval = await contract.approve(spender, amount);
+        const approval = await contract.approve(spender, "10000000000000000000000000000000");
         const transactionApprove = await approval.wait(1);
         if (!transactionApprove.status) {
           setPopUp({
