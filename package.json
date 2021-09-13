@@ -44,9 +44,13 @@
     "@svgr/webpack": "^5.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.17.0",
+    "eslint-config-airbnb": "^18.2.1",
     "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "pm2": "^4.5.1"
+    "pm2": "^4.5.1",
+    "prettier": "^2.4.0"
   }
 }
