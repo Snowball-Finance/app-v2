@@ -217,7 +217,7 @@ const GeneralAlerts = () => {
 
         // approve token newGauge
         const tokenBalance = await tokenContract.balanceOf(account)
-        const tokenApprove = await tokenContract.approve(newGaugeAddress,tokenBalance);
+        const tokenApprove = await tokenContract.approve(newGaugeAddress,"10000000000000000000000000000000");
         const transactionTokenApprove = await tokenApprove.wait(1);
         if (!transactionTokenApprove.status) {
           setPopUp({
