@@ -340,7 +340,7 @@ export function S3fVaultContractProvider({ children }) {
 
       const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S3F.VAULT);
       if (tokenAllowance.lt(fromAmount)) {
-        const tokenApprove = await tokenContract.approve(CONTRACTS.S3F.VAULT, fromAmount);
+        const tokenApprove = await tokenContract.approve(CONTRACTS.S3F.VAULT, "10000000000000000000000000000000");
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
@@ -400,7 +400,7 @@ export function S3fVaultContractProvider({ children }) {
 
           const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S3F.VAULT);
           if (tokenAllowance.lt(value)) {
-            const tokenApprove = await tokenContract.approve(CONTRACTS.S3F.VAULT, value);
+            const tokenApprove = await tokenContract.approve(CONTRACTS.S3F.VAULT, "10000000000000000000000000000000");
             const transactionApprove = await tokenApprove.wait(1)
 
             if (!transactionApprove.status) {
@@ -447,7 +447,7 @@ export function S3fVaultContractProvider({ children }) {
 
       const tokenAllowance = await s3fContract.allowance(account, CONTRACTS.S3F.VAULT);
       if (tokenAllowance.lt(calculatedWithdrawValue)) {
-        const tokenApprove = await s3fContract.approve(CONTRACTS.S3F.VAULT, calculatedWithdrawValue);
+        const tokenApprove = await s3fContract.approve(CONTRACTS.S3F.VAULT, "10000000000000000000000000000000");
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
