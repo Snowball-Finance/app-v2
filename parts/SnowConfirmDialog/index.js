@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import SnowDialog from 'components/SnowDialog'
 import SnowDynamicLottie from 'components/SnowDynamicLottie'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     overflowWrap: 'break-word'
   },

@@ -13,7 +13,7 @@ const getProperAction = (item, setModal, balance, deposit = 0) => {
 	if (deposit > 0) {
 		action = ["Details", () => {}]
 	} else if (balance > 0) {
-		action = ["Deposit", () => setModal({ open: true, title: 'Deposit' })];
+		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })];
   }else if (item.name == "xJOE") {
 		action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
   } else if (!item.token1?.address){
