@@ -107,7 +107,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         alignItems="flex-start"
         spacing={2}
       >
-        {action?.actionType && <Grid item xs={12} lg={4}>
+        {!item.deprecatedPool && action?.actionType && 
+        <Grid item xs={12} lg={4}>
           <CompoundActionButton 
             type={action.actionType} 
             action={action.func} 
