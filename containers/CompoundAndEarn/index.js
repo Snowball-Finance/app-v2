@@ -40,10 +40,12 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+  
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools,setLoadedDeprecated,setSortedUserPools,
     setUserPools } = useCompoundAndEarnContract();
 
+  const [modal, setModal] = useState({ open: false, title: '', address:'' });
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
@@ -221,7 +223,7 @@ const CompoundAndEarn = () => {
             lastSnowballInfo?.map((pool, index) => (
                 <Grid item key={index} xs={12}>
                   {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) && 
-                    <ListItem pool={pool} />}
+                    <ListItem pool={pool} modal={modal} setModal={setModal}/>}
                 </Grid>
               ))
           )

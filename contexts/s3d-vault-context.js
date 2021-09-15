@@ -11,17 +11,10 @@ import MESSAGES from 'utils/constants/messages';
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
-import { provider } from 'utils/constants/connectors'
+import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
-const ContractContext = createContext(null)
-
-const unsignedS3dContract = new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider)
-const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider)
-const unsignedBusdContract = new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider)
-const unsignedDaiContract = new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider)
-const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider)
-
+const ContractContext = createContext(null);
 const tokenArray = [
   { index: 0, name: 'USDT', priceId: 'usdt', decimal: 6 },
   { index: 1, name: 'BUSD', priceId: 'busd', decimal: 18 },
@@ -32,6 +25,14 @@ const pairNames = 'USDT + BUSD + DAI'
 export function S3dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
+  const { provider } = useProvider();
+
+  const unsignedS3dContract = new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider)
+  const unsignedBusdContract = new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider)
+  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider)
+
 
   const [loading, setLoading] = useState(false)
   const [svToken, setSVToken] = useState({ name: 'S3D', priceId: 's3d', decimal: 18, balance: 0, supply: 0, percentage: 0, ratio: 0 })
@@ -76,9 +77,9 @@ export function S3dVaultContractProvider({ children }) {
 
   useEffect(() => {
     getSupply();
-    getTransactions();
+    //getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [provider]);
 
   const getSupply = async () => {
     try {
@@ -339,7 +340,7 @@ export function S3dVaultContractProvider({ children }) {
 
       const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S3D.VAULT);
       if (tokenAllowance.lt(fromAmount)) {
-        const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, fromAmount);
+        const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, "10000000000000000000000000000000");
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
@@ -399,7 +400,7 @@ export function S3dVaultContractProvider({ children }) {
 
           const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S3D.VAULT);
           if (tokenAllowance.lt(value)) {
-            const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, value);
+            const tokenApprove = await tokenContract.approve(CONTRACTS.S3D.VAULT, "10000000000000000000000000000000");
             const transactionApprove = await tokenApprove.wait(1)
 
             if (!transactionApprove.status) {
@@ -446,7 +447,7 @@ export function S3dVaultContractProvider({ children }) {
 
       const tokenAllowance = await s3dContract.allowance(account, CONTRACTS.S3D.VAULT);
       if (tokenAllowance.lt(calculatedWithdrawValue)) {
-        const tokenApprove = await s3dContract.approve(CONTRACTS.S3D.VAULT, calculatedWithdrawValue);
+        const tokenApprove = await s3dContract.approve(CONTRACTS.S3D.VAULT, "10000000000000000000000000000000");
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
