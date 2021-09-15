@@ -15,9 +15,10 @@ import { isEmpty } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
-import { AVALANCHE_MAINNET_PARAMS, provider } from 'utils/constants/connectors';
+import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
+import { useProvider } from './provider-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -26,6 +27,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo  } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
+  const { provider } = useProvider();
   const { prices } = usePrices();
   const snowballInfoQuery = getLastSnowballInfo();
   const deprecatedContractsQuery = getDeprecatedContracts();
