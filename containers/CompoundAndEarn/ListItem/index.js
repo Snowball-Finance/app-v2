@@ -89,6 +89,8 @@ const ListItem = ({
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
     if(userPool){
       setUserData(userPool);
+    }else{
+      setUserData(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[pool,userPools]);
