@@ -11,18 +11,11 @@ import MESSAGES from 'utils/constants/messages';
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
-import { provider } from 'utils/constants/connectors'
 import { useCompoundAndEarnContract } from './compound-and-earn-context'
+import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
-
-const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
-const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
-const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, provider)
-const unsignedTusdContract = new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, provider)
-const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, provider)
-const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, provider)
 
 const tokenArray = [
   { index: 0, name: 'DAI.e', priceId: 'dai', decimal: 18 },
@@ -34,6 +27,14 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
+  const { provider } = useProvider();
+  const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
+  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
+  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, provider)
+  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, provider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, provider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, provider)
+
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
   const { getBalanceInfoSinglePool } = useCompoundAndEarnContract();
@@ -88,7 +89,7 @@ export function S4dVaultContractProvider({ children }) {
     getSupply();
     getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [provider]);
 
   const getSupply = async () => {
     try {
@@ -364,7 +365,7 @@ export function S4dVaultContractProvider({ children }) {
 
       const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S4D.VAULT);
       if (tokenAllowance.lt(fromAmount)) {
-        const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, fromAmount);
+        const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, "10000000000000000000000000000000");
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
@@ -424,7 +425,7 @@ export function S4dVaultContractProvider({ children }) {
 
           const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S4D.VAULT);
           if (tokenAllowance.lt(value)) {
-            const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, value);
+            const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, "10000000000000000000000000000000");
             const transactionApprove = await tokenApprove.wait(1)
 
             if (!transactionApprove.status) {
@@ -474,7 +475,7 @@ export function S4dVaultContractProvider({ children }) {
 
       const tokenAllowance = await s4dContract.allowance(account, CONTRACTS.S4D.VAULT);
       if (tokenAllowance.lt(calculatedWithdrawValue)) {
-        const tokenApprove = await s4dContract.approve(CONTRACTS.S4D.VAULT, calculatedWithdrawValue);
+        const tokenApprove = await s4dContract.approve(CONTRACTS.S4D.VAULT, "10000000000000000000000000000000");
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
