@@ -11,17 +11,10 @@ import MESSAGES from 'utils/constants/messages';
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
-import { provider } from 'utils/constants/connectors'
+import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const ContractContext = createContext(null);
-
-const unsignedS3fContract = new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, provider)
-const unsignedFraxContract = new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, provider)
-const unsignedTusdContract = new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, provider)
-const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, provider)
-const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, provider)
-
 const tokenArray = [
   { index: 0, name: 'FRAX', priceId: 'frax', decimal: 18 },
   { index: 1, name: 'TUSD', priceId: 'tusd', decimal: 18 },
@@ -32,6 +25,13 @@ const pairNames = 'FRAX + TUSD + USDT';
 export function S3fVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
+  const { provider } = useProvider();
+  const unsignedS3fContract = new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, provider)
+  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, provider)
+  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, provider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, provider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, provider)
+
 
   const [loading, setLoading] = useState(false);
   const [svToken, setSVToken] = useState({ name: 'S3F', priceId: 's3f', decimal: 18, balance: 0, supply: 0, percentage: 0, ratio: 0 });
@@ -76,9 +76,9 @@ export function S3fVaultContractProvider({ children }) {
 
   useEffect(() => {
     getSupply();
-    getTransactions();
+    //getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [provider]);
 
   const getSupply = async () => {
     try {

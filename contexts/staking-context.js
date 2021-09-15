@@ -15,11 +15,12 @@ import SNOWCONE_ABI from 'libs/abis/snowcone.json'
 import FEE_DISTRIBUTOR_ABI from 'libs/abis/fee-distributor.json'
 import { usePrices } from 'contexts/price-context'
 import { useAPIContext } from './api-context'
-import { provider } from 'utils/constants/connectors'
+import { useProvider } from './provider-context'
 
 const ContractContext = createContext(null)
 
 export function StakingContractProvider({ children }) {
+  const { provider } = useProvider();
   const { library,account } = useWeb3React();
   const { prices } = usePrices();
   const { getLastSnowballInfo } = useAPIContext();
@@ -36,9 +37,9 @@ export function StakingContractProvider({ children }) {
   const [userClaimable, setUserClaimable] = useState(0);
   const [userSherpaClaimable, setUserSherpaClaimable] = useState(0);
 
-  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library])
-  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library])
-  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library])
+  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library,provider])
+  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library,provider])
+  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library,provider])
   const feeDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
   const sherpaDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SHERPA_FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
   const lockedValue = useMemo(() => prices.SNOB * BNToFloat(totalSupply), [prices?.SNOB, totalSupply])
