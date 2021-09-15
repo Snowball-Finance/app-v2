@@ -70,6 +70,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
   let dailyAPR = item.dailyAPR > 999999?999999:item.dailyAPR;
   let yearlyAPY = item.yearlyAPY > 999999?999999:item.yearlyAPY;
 
+  const [withdraw_modal, setWithdraw] = useState(false);
+  const handleWithdraw = () => {
+    setWithdraw(false);
+  }
+
+  const { setTransactionStatus } = useCompoundAndEarnContract();
+
   return (
     <div className={classes.root}>
       <Grid 
@@ -119,11 +126,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.userDepositedLP === 0 || !item.userDepositedLP || item.withdrew}
-            loading={isTransacting.pageview}
+            disabled={userData.userDepositedLP === 0 || !userData.userDepositedLP}
             onClick={() => {
-              toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-              withdraw(item)
+              setTransactionStatus({ withdrawStep: 0 });
+              setWithdraw(true)
             }}
             fullWidth={isSm ? true : false}
           >
@@ -132,7 +138,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.SNOBHarvestable === 0 || item.claimed}
+            disabled={userData.SNOBHarvestable === 0 || userData.claimed}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
@@ -154,6 +160,15 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           title={modal.title}
           item={userData}
           handleClose={handleClose}
+        />
+      )}
+
+      {withdraw && (
+        <CompoundDialogs
+          open={withdraw_modal}
+          title="Withdraw"
+          handleClose={handleWithdraw}
+          item={item}
         />
       )}
     </div>
