@@ -20,6 +20,7 @@ import { APIProvider } from 'contexts/api-context'
 import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
+import { ProviderProvider } from 'contexts/provider-context'
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -59,26 +60,28 @@ function MyApp({ Component, pageProps }) {
         <ApolloProvider client={apolloClient}>
           <DarkModeProvider>
             <ThemeProvider>
-              <WalletProvider>
-                <PopupProvider>
-                  <APIProvider>
-                    <PriceProvider>
-                      <StakingContractProvider>
-                        <ContractProvider>
-                          <CompoundAndEarnProvider>
-                            <CssBaseline />
-                            <Layout>
-                              <Component {...pageProps} />
-                              <GeneralAlerts />
-                            </Layout>
-                          </CompoundAndEarnProvider>
-                          <ToastContainer position={'bottom-right'} />
-                        </ContractProvider>
-                      </StakingContractProvider>
-                    </PriceProvider>
-                  </APIProvider>
-                </PopupProvider>
-              </WalletProvider>
+              <ProviderProvider>
+                <WalletProvider>
+                  <PopupProvider>
+                    <APIProvider>
+                      <PriceProvider>
+                        <StakingContractProvider>
+                          <ContractProvider>
+                            <CompoundAndEarnProvider>
+                              <CssBaseline />
+                              <Layout>
+                                <Component {...pageProps} />
+                                <GeneralAlerts />
+                              </Layout>
+                            </CompoundAndEarnProvider>
+                            <ToastContainer position={'bottom-right'} />
+                          </ContractProvider>
+                        </StakingContractProvider>
+                      </PriceProvider>
+                    </APIProvider>
+                  </PopupProvider>
+                </WalletProvider>
+              </ProviderProvider>
             </ThemeProvider>
           </DarkModeProvider>
         </ApolloProvider>

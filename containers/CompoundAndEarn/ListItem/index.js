@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import { useContracts } from 'contexts/contract-context';
 import CustomAccordion from 'components/CustomAccordion';
@@ -9,24 +9,108 @@ import DetailItem from 'parts/Compound/CompoundListItem/DetailItem';
 import getUserBoost from 'utils/helpers/getUserBoost';
 import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { useWeb3React } from '@web3-react/core';
 
 const ListItem = ({
-  pool
+  pool,
+  modal,
+  setModal
 }) => {
   const { gauges, snowconeBalance, totalSnowcone } = useContracts();
+  const [timerRefresh, setTimerRefresh] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const [userData,setUserData] = useState();
+  const [expanded, setExpanded] = useState(false);
+  const [action, setAction] = useState({actionType:'Get_Token'});
+  const { account } = useWeb3React();
+  const {loading, getBalanceInfoSinglePool, isTransacting 
+    , userPools } = useCompoundAndEarnContract();
 
-  const [modal, setModal] = useState({ open: false, title: '' });
+  useEffect(()=>{
+    const refreshData = async () => {
+      if(refresh){
+        if(!loading && !modal.open && account && !isTransacting.pageview){
+          const balanceInfo = await getBalanceInfoSinglePool(pool.address);
+          setUserData(balanceInfo);
+        }
+        setRefresh(false);
+      }
+    }
+    refreshData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[refresh]);
 
-  let actionType,action;
-  if(pool.token0){
-    const arrayAction = getProperAction(pool, setModal, pool.userLPBalance, pool.userDepositedLP);
-    actionType = arrayAction[0];
-    action = arrayAction[1];
-  }else{
-    actionType="Details";
-    action = ()=>{};
+  //refresh LP data if the accordion is expanded
+  const onChangedExpanded = (event,expanded) => {
+    setExpanded(expanded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }
+
+  useEffect(() => {
+    if(modal.open || isTransacting.pageview){
+      setRefresh(false);
+      setTimerRefresh(clearInterval(timerRefresh));
+    }else if(expanded && !pool.deprecatedPool){
+      setTimerRefresh(setInterval(()=>{
+        setRefresh(true);
+      },30000));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[modal, isTransacting]);
+
+  useEffect(() => {
+    const addTimer = async () =>{
+      if (expanded && !pool.deprecatedPool) {
+        //reset state
+        if (timerRefresh) {
+          setRefresh(false);
+          setTimerRefresh(clearInterval(timerRefresh));
+        }
+        if(!modal.open && account && !isTransacting.pageview){
+          const balanceInfo = await getBalanceInfoSinglePool(pool.address);
+          setUserData(balanceInfo);
+        }
+        setTimerRefresh(setInterval(()=>{
+          setRefresh(true);
+        },30000));
+      } else {
+        if (timerRefresh) {
+          setTimerRefresh(clearInterval(timerRefresh));
+        }
+      }
+    }
+    addTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[expanded]);
   
+  useEffect(()=>{
+    const userPool = userPools.find(
+      (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
+    if(userPool){
+      setUserData(userPool);
+    }else{
+      setUserData(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[pool,userPools]);
+  
+  useEffect(()=> {
+    const evalPool = userData ? userData : pool;
+    let actionType,func;
+    if(pool.token0){
+      const arrayAction = getProperAction(pool, setModal, 
+        evalPool.userLPBalance, evalPool.userDepositedLP);
+      actionType = arrayAction[0];
+      func = arrayAction[1];
+    }else{
+      actionType="Details";
+      func = ()=>{};
+    }
+    setAction({actionType,func});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[userData,pool]);
+
   const selectedGauge = useMemo(() => gauges.find((gauge) =>
     {
       if(pool.gaugeInfo){
@@ -64,11 +148,12 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
+        onChanged={onChangedExpanded}
         expandMoreIcon={
           <CompoundActionButton
-            type={actionType}
-            action={action}
-            disabled={actionType !== 'Details' && pool.deprecated}
+            type={action?.actionType}
+            action={action?.func}
+            disabled={action?.actionType !== 'Details' && pool.deprecated}
           />
         }
         summary={
@@ -81,16 +166,20 @@ const ListItem = ({
         details={
           <CompoundListDetail
             item={pool}
+            userData={userData}
+            modal={modal}
+            setModal={setModal}
+            setUserData={setUserData}
             userBoost={userBoost}
             totalAPY={totalAPY}
           />
         }
       />
-      {modal.open && (
+      {modal.open && pool.address === modal.address && (
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
-          item={pool}
+          item={userData}
           handleClose={() => setModal({ open: false, title: '' })}
         />
       )}

@@ -10,13 +10,12 @@ import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json'
 import GAUGE_ABI from 'libs/abis/gauge.json'
 import GAUGE_TOKEN_ABI from 'libs/abis/gauge-token.json'
 import WarningDialogs from 'parts/WarningDialogs'
-import UpgradeGaugeSteps from './UpgradeGaugeSteps'
+import UpgradeSteps from './UpgradeSteps'
 import { isEmpty } from 'utils/helpers/utility'
-import Toast from 'components/Toast'
-import { toast } from 'react-toastify'
 import { Typography } from '@material-ui/core'
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
 import { useAPIContext } from 'contexts/api-context'
+import ANIMATIONS from 'utils/constants/animate-icons'
 
 const GeneralAlerts = () => {
   const { account, library } = useWeb3React()
@@ -26,10 +25,9 @@ const GeneralAlerts = () => {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = getLastSnowballInfo()
 
   //upgrade gaugesv2
-  const [openModal, setOpenModal] = useState(false)
   const [upgradeGauge, setUpgradeGauge] = useState({upgrade:false,checked:false})
   const [userGauges, setUserGauges] = useState([])
-  const [upgradingStep, setUpgradingStep] = useState(0)
+  const [upgradingStep, setUpgradingStep] = useState({current:0,total:0,pools:0})
 
 
   //partial investments
@@ -38,7 +36,9 @@ const GeneralAlerts = () => {
   const [confirmed, setConfirmed] = useState(false);
   const [pendingPools, setPendingPools] = useState([]);
   const { userPools, deposit, approve } = useCompoundAndEarnContract();
-  const [modal, setModal] = useState({ open: false, title: '', text: '', textButton: '' })
+  const [modal, setModal] = useState(
+    { open: false, title: '', text: '', textButton: '' }
+  )
 
   useEffect(() => {
     if(!asked && account && userPools.length > 0 && gauges.length > 0 
@@ -52,6 +52,7 @@ const GeneralAlerts = () => {
                 pending.push(userPools[idx]);
               }
             }
+            setUpgradingStep({total:pending.length*2,current:0,pools:pending.length});
             setPendingPools(pending);
             setAsked(true);
           }
@@ -72,17 +73,12 @@ const GeneralAlerts = () => {
               Read More.
           </a>
         </>);
-      toast(<Toast 
-        message={'Please click here to understand why.'} 
-        toastType={'warning'}
-        title={'You\'re leaving potential income'}
-        processing={false}/>,{onClick: () => 
-          setModal({ 
-            open: true, 
-            title: 'We noticed that you\'re leaving potential income on the table!',
-            text: readMore,
-            textButton: 'Fix my pools'
-          })});
+      setModal({
+        open: true,
+        title: 'We noticed that you\'re leaving potential income on the table!',
+        text: readMore,
+        textButton: 'Fix my pools'
+      });
     }
   },[pendingPools]);
 
@@ -90,25 +86,29 @@ const GeneralAlerts = () => {
     async function fixPools(){
       if (confirmed && !deposited && pendingPools.length > 0 && pools.length > 0) {
         setDeposited(true);
-        let step = 0;
         for (const idx in pendingPools) {
           const pool = pools.find((item) => {
             return pendingPools[idx].address.toLowerCase()
               === item.address.toLowerCase()
           });
           if(pool){
-            step++;
-            toast(<Toast
-              title={`Step ${step}/${pendingPools.length *2}`}
-              message={'Please Accept the transactions to fix your deposits!'} />)
+            setUpgradingStep((prev) => {
+              return {
+                current:prev.current++,
+                ...prev
+              }
+            });
             await approve(pool, pendingPools[idx].userBalanceSnowglobe, true);
-            step++;
-            toast(<Toast
-              title={`Step ${step}/${pendingPools.length *2}`}
-              message={'Please Accept the transactions to fix your deposits!'} />)
+            setUpgradingStep((prev) => {
+              return {
+                current:prev.current++,
+                ...prev
+              }
+            });
             await deposit(pool, pendingPools[idx].userBalanceSnowglobe, true);
           }
         }
+        setTimeout(() => { window.location.reload(); }, 2000);
       }
     }
     fixPools();
@@ -152,8 +152,25 @@ const GeneralAlerts = () => {
         }));
 
       if (!isEmpty(userGauges)) {
-        setOpenModal(true)
-        setUserGauges(userGauges)
+        const text = (
+          <>
+            In order to better serve the community{"'"}s desire for more frequent
+            changes in SNOB rewards, we have upgraded to GaugeProxyV2.
+            This will allow us to have much more frequent SNOB reward distribution
+            changes.
+            <br/> <br/>
+            Please click the button below to upgrade to GaugeProxyV2 and
+            continue receiving SNOB rewards.
+          </>
+        )
+        setUpgradingStep({total:userGauges.length*4,current:0,pools:userGauges.length});
+        setUserGauges(userGauges);
+        setModal({
+          open: true,
+          title: 'We have upgraded the GaugeProxy system!',
+          text: text,
+          textButton: 'Upgrade!'
+        });
       }else{
         setUpgradeGauge({upgrade:false,checked:true})
       }
@@ -178,6 +195,7 @@ const GeneralAlerts = () => {
         if (!newGaugeAddress) {
           setPopUp({
             title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
             text: `Error get New Gauge Address from New GaugeProxy`
           });
           setUpgradeGauge({upgrade:false,checked:true})
@@ -195,12 +213,18 @@ const GeneralAlerts = () => {
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
           setUpgradeGauge({upgrade:false,checked:true})
           return
         }
-        setUpgradingStep((prev) => prev + 1)
+        setUpgradingStep((prev) => {
+          return {
+            current:prev.current++,
+            ...prev
+          }
+        });
 
         // claim from oldGauge
         const gaugeClaim = await gaugeContract.getReward();
@@ -208,26 +232,38 @@ const GeneralAlerts = () => {
         if (!transactionGaugeClaim.status) {
           setPopUp({
             title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
             text: `Error claiming from Gauge`
           });
           setUpgradeGauge({upgrade:false,checked:true})
           return
         }
-        setUpgradingStep((prev) => prev + 1)
+        setUpgradingStep((prev) => {
+          return {
+            current:prev.current++,
+            ...prev
+          }
+        });
 
         // approve token newGauge
         const tokenBalance = await tokenContract.balanceOf(account)
-        const tokenApprove = await tokenContract.approve(newGaugeAddress,tokenBalance);
+        const tokenApprove = await tokenContract.approve(newGaugeAddress,"10000000000000000000000000000000");
         const transactionTokenApprove = await tokenApprove.wait(1);
         if (!transactionTokenApprove.status) {
           setPopUp({
             title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
             text: `Error approving token`
           });
           setUpgradeGauge({upgrade:false,checked:true})
           return
         }
-        setUpgradingStep((prev) => prev + 1)
+        setUpgradingStep((prev) => {
+          return {
+            current:prev.current++,
+            ...prev
+          }
+        });
 
         // deposit token on newGauge
         const tokenDeposit = await newGaugeContract.deposit(tokenBalance);
@@ -235,16 +271,23 @@ const GeneralAlerts = () => {
         if (!transactionTokenDeposit.status) {
           setPopUp({
             title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
             text: `Error depositing token`
           });
           setUpgradeGauge({upgrade:false,checked:true})
           return
         }
-        setUpgradingStep((prev) => prev + 1)
+        setUpgradingStep((prev) => {
+          return {
+            current:prev.current++,
+            ...prev
+          }
+        });
       }
 
       setPopUp({
         title: 'Success',
+        icon: ANIMATIONS.SUCCESS.VALUE,
         text: 'Upgrade to GaugeProxyV2 completed!'
       });
       setTimeout(() => { window.location.reload(); }, 2000);
@@ -254,50 +297,39 @@ const GeneralAlerts = () => {
     }
   }
 
-  const closeModalHandler = () => {
-    setOpenModal(false)
-  }
-
   return (
     <>
-      {openModal &&
-        <WarningDialogs
-          open={openModal}
-          title='We have upgraded the GaugeProxy system!'
-          text={
-            <>
-              In order to better serve the community{"'"}s desire for more frequent
-              changes in SNOB rewards, we have upgraded to GaugeProxyV2.
-              This will allow us to have much more frequent SNOB reward distribution
-              changes.
-              <br /> <br />
-              Please click the button below to upgrade to GaugeProxyV2 and
-              continue receiving SNOB rewards.
-            </>
-          }
-          textButton='Upgrade!'
-          setConfirmed={(status) => {setUpgradeGauge({upgrade:status,checked:true})}}
-          handleClose={closeModalHandler}
-        />
-      }
-      {upgradeGauge.upgrade &&
-        <UpgradeGaugeSteps
-          gaugesLength={userGauges.length}
-          step={upgradingStep}
-          open={upgradeGauge.upgrade}
-          handleClose={() => setUpgradeGauge({upgrade:false,checked:true})}
-        />
-      }
       {modal.open && (
-      <WarningDialogs
-        open={modal.open}
-        title={modal.title}
-        text={modal.text}
-        textButton={modal.textButton}
-        setConfirmed={setConfirmed}
-        handleClose={() => setModal({ open: false, title: '' })}
-      />
-    )}
+        <WarningDialogs
+          open={modal.open}
+          title={modal.title}
+          text={modal.text}
+          textButton={modal.textButton}
+          setConfirmed={(status) => {
+            if(userGauges.length > 0){
+              setUpgradeGauge({upgrade:status,checked:true});
+            }else{
+              setConfirmed(status);
+            }
+          }}
+          handleClose={() => setModal({ open: false, title: '' })}
+        />
+      )}
+      {(upgradeGauge.upgrade || confirmed) &&
+        <UpgradeSteps
+          length={upgradingStep.pools}
+          step={upgradingStep.current}
+          open={upgradeGauge.upgrade || confirmed}
+          totalSteps={upgradingStep.total}
+          handleClose={() =>{
+            setUpgradingStep({total:0,current:0,pools:0});
+            if(userGauges.length > 0){
+              setUpgradeGauge({upgrade:false,checked:true});
+            }else{
+              setConfirmed(false);
+            }
+          }}
+        />}
     </>
   )
 }
