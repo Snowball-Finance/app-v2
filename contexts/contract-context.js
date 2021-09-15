@@ -10,14 +10,15 @@ import { usePopup } from 'contexts/popup-context'
 import { usePrices } from 'contexts/price-context'
 import { handleConnectionError, isEmpty } from 'utils/helpers/utility'
 import { BNToFloat } from 'utils/helpers/format'
-import { provider } from 'utils/constants/connectors'
 import { useStakingContract } from './staking-context'
+import { useProvider } from './provider-context'
 
 const ContractContext = createContext(null)
 
 export function ContractProvider({ children }) {
   const { account, library, chainId, error } = useWeb3React();
   const { setPopUp,setOpen } = usePopup();
+  const { provider } = useProvider();
 
   const [loading, setLoading] = useState(false);
   const [snowballBalance, setSnowballBalance] = useState(0);
@@ -26,9 +27,9 @@ export function ContractProvider({ children }) {
   const { prices } = usePrices();
 
   const isWrongNetwork = useMemo(() => chainId !== C_CHAIN_ID, [chainId])
-  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library])
-  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library])
-  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library])
+  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library,provider])
+  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library,provider])
+  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library,provider])
 
   const getBalanceInfo = useCallback(async () => {
     try {
