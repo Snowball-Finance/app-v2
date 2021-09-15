@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Grid, useMediaQuery } from '@material-ui/core';
 
@@ -43,20 +43,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
+const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal, 
+  userData, setUserData }) => {
   const classes = useStyles();
-  const [modal, setModal] = useState({ open: false, title: '' });
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
     defaultMatches: true,
   });
+  const [action,setAction] = useState({actionType:'Get_Token'});
 
-  const { withdraw, claim, isTransacting } = useCompoundAndEarnContract();
+  const { withdraw, claim, isTransacting, getBalanceInfoSinglePool } = useCompoundAndEarnContract();
 
-  let actionType, action;
-  if(item.token0){
-    [actionType, action] = getProperAction(item, setModal, item.userLPBalance);
-  }
+  useEffect(()=>{
+    const evalPool = userData ? userData : item;
+    if(item.token0){
+      let actionType, func;
+      [actionType, func] = getProperAction(item, setModal, evalPool.userLPBalance);
+      setAction({actionType,func});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[userData,item]);
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
@@ -90,7 +96,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           />
         </Grid>}
         <Grid item xs={12} lg={4}>
-          <Total item={item} />
+          <Total item={item} userData={userData} />
         </Grid>
       </Grid>
       <Grid 
@@ -101,10 +107,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         alignItems="flex-start"
         spacing={2}
       >
-        {actionType && <Grid item xs={12} lg={4}>
+        {!item.deprecatedPool && action?.actionType && 
+        <Grid item xs={12} lg={4}>
           <CompoundActionButton 
-            type={actionType} 
-            action={action} 
+            type={action.actionType} 
+            action={action.func} 
             endIcon={false} 
             disabled={item.deprecated}
             fullWidth={isSm ? true : false}
@@ -125,11 +132,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={(!item.SNOBHarvestable) || item.claimed}
+            disabled={item.SNOBHarvestable === 0 || item.claimed}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
-              claim(item)
+              claim(item).then(()=>{
+                getBalanceInfoSinglePool(item.address).then((userData) => 
+                  setUserData(userData))
+              })
             }}
             fullWidth={isSm ? true : false}
           >
@@ -138,11 +148,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
         </Grid>
       </Grid>
 
-      {modal.open && (
+      {modal.open && item.address === modal.address && (
         <CompoundDialogs
           open={modal.open}
           title={modal.title}
-          item={item}
+          item={userData}
           handleClose={handleClose}
         />
       )}
