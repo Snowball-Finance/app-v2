@@ -30,4 +30,8 @@ export const POOLS = [
     value: 'benqi',
     label: 'BENQI Pools',
   },
+  {
+    value: 'snowball',
+    label: 'Snowball Pools',
+  },
 ];
