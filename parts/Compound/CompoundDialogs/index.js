@@ -40,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 0),
     textTransform: 'none',
   },
+  button: {
+    fontSize: 24,
+    textTransform: 'capitalize'
+  },
   greyButton: {
     background: '#BDBDBD',
   }
@@ -58,7 +62,7 @@ const CompoundDialogs = ({
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
  
-  const { approve, deposit, isTransacting, transactionStatus } = useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
   useEffect(() =>{
     if(!isTransacting.deposit && !isTransacting.approve){
@@ -149,6 +153,23 @@ const CompoundDialogs = ({
           </>
         );
       }
+      case 'Withdraw': {
+        return (
+          <Grid item xs={12}>
+              <ContainedButton
+                className={clsx(classes.button)}
+                fullWidth
+                onClick={() => {
+                  toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
+                  withdraw(item, amount)
+                  handleClose()
+                }}
+              >
+                Withdraw
+              </ContainedButton>
+            </Grid>
+        )
+      }
       default:
         return null;
     }
@@ -177,7 +198,7 @@ const CompoundDialogs = ({
           {renderButton()}
         </Grid>
       </div>
-      <SnowStepBox transactionStatus={transactionStatus}/>
+      {title==="Withdraw" ?  <></> : <SnowStepBox transactionStatus={transactionStatus}/>}
     </SnowDialog>
   );
 };

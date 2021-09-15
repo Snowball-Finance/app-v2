@@ -64,6 +64,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
   let dailyAPR = item.dailyAPR > 999999?999999:item.dailyAPR;
   let yearlyAPY = item.yearlyAPY > 999999?999999:item.yearlyAPY;
 
+  const [withdraw_modal, setWithdraw] = useState(false);
+  const handleWithdraw = () => {
+    setWithdraw(false);
+  }
+
   return (
     <div className={classes.root}>
       <Grid 
@@ -115,8 +120,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
             disabled={item.userDepositedLP === 0 || !item.userDepositedLP || item.withdrew}
             loading={isTransacting.pageview}
             onClick={() => {
-              toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-              withdraw(item)
+              setWithdraw(true)
             }}
             fullWidth={isSm ? true : false}
           >
@@ -144,6 +148,15 @@ const CompoundListDetail = ({ item, userBoost, totalAPY }) => {
           title={modal.title}
           item={item}
           handleClose={handleClose}
+        />
+      )}
+
+      {withdraw && (
+        <CompoundDialogs
+          open={withdraw_modal}
+          title="Withdraw"
+          handleClose={handleWithdraw}
+          item={item}
         />
       )}
     </div>
