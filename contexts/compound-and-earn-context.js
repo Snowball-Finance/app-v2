@@ -11,7 +11,7 @@ import LP_ABI from 'libs/abis/lp-token.json';
 import { usePopup } from 'contexts/popup-context'
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
-import { isEmpty } from 'utils/helpers/utility';
+import { isEmpty, delay } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
@@ -349,6 +349,8 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         setTransactionStatus({ approvalStep: 2, depositStep: 1 });
+        //await 2 seconds for our node to sync
+        await delay(2000);
         amount = await snowglobeContract.balanceOf(account);
       } else {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
@@ -448,6 +450,8 @@ export function CompoundAndEarnProvider({ children }) {
 
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
+        //await 2 seconds for our node to sync
+        await delay(2000);
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
 
         if (snowglobeBalance.gt(0x00)) {
