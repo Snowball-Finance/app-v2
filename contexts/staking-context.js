@@ -234,7 +234,7 @@ export function StakingContractProvider({ children }) {
       const { balance, date } = data
       const amount = parseEther((balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
-      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, "10000000000000000000000000000000");
+      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
       const transactionApprove = await tokenApprove.wait(1)
       if (!transactionApprove.status) {
         setLoading(false)
@@ -262,7 +262,7 @@ export function StakingContractProvider({ children }) {
     try {
       const amount = parseEther((data.balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
-      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, "10000000000000000000000000000000");
+      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
       const transactionApprove = await tokenApprove.wait(1)
       if (!transactionApprove.status) {
         setLoading(false)
