@@ -254,7 +254,16 @@ export function CompoundAndEarnProvider({ children }) {
     return new Promise(async (resolve, reject) => {
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
-        const approval = await contract.approve(spender, "10000000000000000000000000000000");
+        let useExact = false;
+        await contract.estimateGas.approve(spender, ethers.constants.MaxUint256).catch(() => {
+          // general fallback for tokens who restrict approval amounts
+          useExact = true;
+        })
+
+        const approval = await contract.approve(spender, 
+          useExact 
+          ? ethers.constants.MaxUint256 
+          : amount);
         const transactionApprove = await approval.wait(1);
         if (!transactionApprove.status) {
           setPopUp({
