@@ -365,7 +365,7 @@ export function S4dVaultContractProvider({ children }) {
 
       const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S4D.VAULT);
       if (tokenAllowance.lt(fromAmount)) {
-        const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, "10000000000000000000000000000000");
+        const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256);
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
@@ -425,7 +425,7 @@ export function S4dVaultContractProvider({ children }) {
 
           const tokenAllowance = await tokenContract.allowance(account, CONTRACTS.S4D.VAULT);
           if (tokenAllowance.lt(value)) {
-            const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, "10000000000000000000000000000000");
+            const tokenApprove = await tokenContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256);
             const transactionApprove = await tokenApprove.wait(1)
 
             if (!transactionApprove.status) {
@@ -475,7 +475,7 @@ export function S4dVaultContractProvider({ children }) {
 
       const tokenAllowance = await s4dContract.allowance(account, CONTRACTS.S4D.VAULT);
       if (tokenAllowance.lt(calculatedWithdrawValue)) {
-        const tokenApprove = await s4dContract.approve(CONTRACTS.S4D.VAULT, "10000000000000000000000000000000");
+        const tokenApprove = await s4dContract.approve(CONTRACTS.S4D.VAULT, ethers.constants.MaxUint256);
         const transactionApprove = await tokenApprove.wait(1)
 
         if (!transactionApprove.status) {
