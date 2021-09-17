@@ -1,7 +1,7 @@
 
 import { memo, useMemo } from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Grid, useMediaQuery } from '@material-ui/core'
+import { Grid, Typography, useMediaQuery, Link } from '@material-ui/core'
 import { useWeb3React } from '@web3-react/core'
 
 import SnowDialog from 'components/SnowDialog'
@@ -11,6 +11,7 @@ import { walletlink, injected } from 'utils/constants/connectors'
 const DESKTOP_CONNECTORS = {
   'MetaMask': injected,
   'Coinbase Wallet': walletlink,
+  'Coin 98': walletlink,
 }
 
 const MOBILE_CONNECTORS = {
@@ -18,10 +19,18 @@ const MOBILE_CONNECTORS = {
   'Coinbase Wallet': walletlink,
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   installContainer: {
-    display: 'flex',
-    justifyContent: 'center'
+    padding: theme.spacing(3, 2),
+    [theme.breakpoints.down('sm')]: {
+      padding: 0,
+    },
+  },
+  label: {
+    [theme.breakpoints.down('sm')]: {
+      textAlign: 'start',
+      fontSize: 14
+    },
   }
 }));
 
@@ -46,13 +55,28 @@ const WalletModal = ({
     <SnowDialog
       open={open}
       onClose={onClose}
-      title='Select a Wallet'
+      title='Connect Wallet'
     >
-      <Grid container spacing={2} className={classes.container} >
+      <Grid 
+        container 
+        spacing={2} 
+        className={classes.installContainer} 
+        direction='row'
+        justify='center'
+        alignItems='stretch'
+      >
         {Object.keys(walletConnectors).map(name => {
           const currentConnector = walletConnectors[name]
           return (
-            <Grid key={name} item xs={12} onClick={() => walletSelectHandler(currentConnector)}>
+            <Grid 
+              key={name} 
+              item
+              lg={4}
+              md={4}
+              xs={6} 
+              sm={6} 
+              onClick={() => walletSelectHandler(currentConnector)}
+            >
               <WalletCard
                 selected={currentConnector === connector}
                 name={name}
@@ -60,6 +84,11 @@ const WalletModal = ({
             </Grid>
           )
         })}
+
+        <Grid item xs={12}>
+          <Typography variant='body1' className={classes.label}>New to avalanche</Typography>
+          <Link component='button' variant='body1' underline='none' className={classes.label}>+ Add Avalanche Network to Metamask</Link>
+        </Grid>
       </Grid>
     </SnowDialog>
   );
