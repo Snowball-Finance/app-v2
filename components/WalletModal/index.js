@@ -17,6 +17,7 @@ const DESKTOP_CONNECTORS = {
 const MOBILE_CONNECTORS = {
   'MetaMask': injected,
   'Coinbase Wallet': walletlink,
+  'Coin 98': walletlink,
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -73,8 +74,8 @@ const WalletModal = ({
               item
               lg={4}
               md={4}
-              xs={6} 
-              sm={6} 
+              xs={12} 
+              sm={12} 
               onClick={() => walletSelectHandler(currentConnector)}
             >
               <WalletCard
