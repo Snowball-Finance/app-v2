@@ -123,7 +123,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.userDepositedLP === 0 || !item.userDepositedLP || item.withdrew}
+            disabled={item.userDepositedLP === 0 || !item.userDepositedLP}
             loading={isTransacting.pageview}
             onClick={() => {
               setWithdraw(true)

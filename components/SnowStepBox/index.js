@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
+    padding: theme.spacing(0, 1, 1, 1),
   },
   title: {
     fontSize: '14px',
@@ -51,14 +52,18 @@ const enumDeposit = {
   approval1: 0,
   approval2: 1,
   deposit1: 2,
-  deposit2: 3
+  deposit2: 3,
+  withdraw1: 4,
+  withdraw2: 5
 };
 
 
 const SnowStepBox = ({
-    transactionStatus
+    transactionStatus, title
 }) => {
     const [colors, setColors] = useState([
+      '#DBEDFF',
+      '#DBEDFF',
       '#DBEDFF',
       '#DBEDFF',
       '#DBEDFF',
@@ -77,6 +82,8 @@ const SnowStepBox = ({
     newStatus.push(transactionStatus.approvalStep > 1 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.depositStep > 0 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.depositStep > 1 ? color.enabled : color.disabled);
+    newStatus.push(transactionStatus.withdrawStep > 0 ? color.enabled : color.disabled);
+    newStatus.push(transactionStatus.withdrawStep > 1 ? color.enabled : color.disabled);
     
     setColors(newStatus); 
   },[transactionStatus,color.disabled,color.enabled]);
@@ -85,11 +92,13 @@ const SnowStepBox = ({
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
-          <Typography className={classes.title} >Approval Steps</Typography>
-          <Typography className={classes.title} >Deposit Steps</Typography>
+          {title != "Withdraw" ? <><Typography className={classes.title} >Approval Steps</Typography>
+          <Typography className={classes.title} >Deposit Steps</Typography></> : <Typography className={classes.title} >Withdraw Steps</Typography>}
+          
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
+            {title != "Withdraw" ? <>
             <Box className={classes.ellipse} 
               style={{background:colors[enumDeposit.approval1]}} borderRadius="50%"/>
             <Box className={classes.ellipse} 
@@ -98,12 +107,19 @@ const SnowStepBox = ({
               style={{background:colors[enumDeposit.deposit1]}} borderRadius="50%"/>
             <Box className={classes.ellipse} 
               style={{background:colors[enumDeposit.deposit2]}} borderRadius="50%"/>
+            </> :  <><Box className={classes.ellipse} 
+              style={{background:colors[enumDeposit.withdraw1]}} borderRadius="50%"/>
+            <Box className={classes.ellipse} 
+              style={{background:colors[enumDeposit.withdraw2]}} borderRadius="50%"/>
+              </>}
           </div>
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
+            {title != "Withdraw" ? <>
             <Typography className={classes.subtitle}>{transactionStatus.approvalStep}/2 Step</Typography>
             <Typography className={classes.subtitle}>{transactionStatus.depositStep}/2 Step</Typography>
+            </> : <Typography className={classes.subtitle}>{transactionStatus.withdrawStep}/2 Step</Typography>}
           </div>
         </div>
       </div>  

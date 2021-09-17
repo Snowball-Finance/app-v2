@@ -38,8 +38,8 @@ export function CompoundAndEarnProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [loadedDeprecated, setLoadedDeprecated] = useState(false);
   const [sortedUserPools, setSortedUserPools] = useState(false);
-  const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false });
-  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0 })
+  const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false, withdraw: false });
+  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0, withdrawStep: 0 })
 
   useEffect(() => {
     //only fetch total information when the userpools are empty
@@ -282,7 +282,7 @@ export function CompoundAndEarnProvider({ children }) {
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
         await _approve(vaultContract, gauge.address, amount);
         setIsTransacting({ approve: false });
-        setTransactionStatus({ approvalStep: 2, depositStep: 0 });
+        setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
         return;
       }
 
@@ -300,10 +300,10 @@ export function CompoundAndEarnProvider({ children }) {
       if(!onlyGauge){
         await _approve(lpContract, snowglobeContract.address, amount);
       }
-      setTransactionStatus({ approvalStep: 1, depositStep: 0 });
+      setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
       
       await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
-      setTransactionStatus({ approvalStep: 2, depositStep: 0 });
+      setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
@@ -346,7 +346,7 @@ export function CompoundAndEarnProvider({ children }) {
             return;
           }
         }
-        setTransactionStatus({ approvalStep: 2, depositStep: 1 });
+        setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
         amount = await snowglobeContract.balanceOf(account);
       } else {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
@@ -377,7 +377,7 @@ export function CompoundAndEarnProvider({ children }) {
           text: linkTx
         });
       }
-      setTransactionStatus({ approvalStep: 2, depositStep: 2 });
+      setTransactionStatus({ approvalStep: 2, depositStep: 2, withdrawStep: 0 });
       //refresh data only after 2sec to our node have time to catch up with network
       setTimeout(async ()=> {
         getBalanceInfosAllPools(await getGaugeProxyInfo());
@@ -403,7 +403,7 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
 
-    setIsTransacting({ pageview: true });
+    setIsTransacting({ withdraw: true });
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
@@ -411,13 +411,14 @@ export function CompoundAndEarnProvider({ children }) {
       if (gaugeBalance.gt(0x00)) {
         const gaugeWithdraw = await gaugeContract.withdraw(amount);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
-          setIsTransacting({ pageview: false });
+          setIsTransacting({ withdraw: false });
           return;
         }
 
@@ -431,7 +432,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setIsTransacting({ pageview: false });
+          setIsTransacting({ withdraw: false });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
@@ -469,6 +470,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
@@ -488,7 +490,7 @@ export function CompoundAndEarnProvider({ children }) {
       });
       console.log(error)
     }
-    setIsTransacting({ pageview: false });
+    setIsTransacting({ withdraw: false });
   }
 
   const claim = async (item) => {
