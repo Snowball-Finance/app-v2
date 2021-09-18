@@ -75,6 +75,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     setWithdraw(false);
   }
 
+  const { setTransactionStatus } = useCompoundAndEarnContract();
+
   return (
     <div className={classes.root}>
       <Grid 
@@ -124,8 +126,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         <Grid item xs={12} lg={4}>
           <ContainedButton
             disabled={item.userDepositedLP === 0 || !item.userDepositedLP}
-            loading={isTransacting.pageview}
             onClick={() => {
+              setTransactionStatus({ withdrawStep: 0 });
               setWithdraw(true)
             }}
             fullWidth={isSm ? true : false}

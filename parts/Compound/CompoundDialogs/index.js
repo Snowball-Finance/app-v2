@@ -66,7 +66,7 @@ const CompoundDialogs = ({
   const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
   useEffect(() =>{
-    if(!isTransacting.deposit && !isTransacting.approve){
+    if(!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw){
       toast.dismiss();
     }
   }),[isTransacting];

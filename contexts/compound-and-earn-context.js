@@ -443,6 +443,8 @@ export function CompoundAndEarnProvider({ children }) {
             },2000);
           }
         }
+      } else {
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
       }
 
       if (item.kind === 'Snowglobe') {

@@ -67,7 +67,7 @@ const CompoundActionButton = ({
   const buttonHandler = useCallback(() => {
     action(router);
     if (type === 'Deposit') {
-      setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 0 });
+      setTransactionStatus({ approvalStep: 0, depositStep: 0 });
     }
   }, [type, action, router, setTransactionStatus])
 
