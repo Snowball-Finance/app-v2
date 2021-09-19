@@ -12,6 +12,7 @@ import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { useWeb3React } from '@web3-react/core';
+
 import clsx from 'clsx';
 
 const useStyles = makeStyles(() => ({
@@ -110,7 +111,7 @@ const ListItem = ({
     const evalPool = userData ? userData : pool;
     let actionType,func;
     if(pool.token0){
-      const arrayAction = getProperAction(pool, setModal, 
+      const arrayAction = getProperAction(evalPool, setModal, 
         evalPool.userLPBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
       func = arrayAction[1];
@@ -166,7 +167,9 @@ const ListItem = ({
             type={action?.actionType}
             action={action?.func}
             disabled={action?.actionType !== 'Details' && pool.deprecated}
-          />
+            setUserData={setUserData}
+            item={pool}
+          />           
         }
         summary={
           <DetailItem

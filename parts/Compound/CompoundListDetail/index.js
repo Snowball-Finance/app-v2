@@ -58,7 +58,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     const evalPool = userData ? userData : item;
     if(item.token0){
       let actionType, func;
-      [actionType, func] = getProperAction(item, setModal, evalPool.userLPBalance);
+      [actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance);
       setAction({actionType,func});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
