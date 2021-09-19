@@ -66,22 +66,16 @@ export function StakingContractProvider({ children }) {
     if (isEmpty(account)) {
       setGauges([])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gaugeProxyContract, account, pools]);
 
-  useEffect(() => {
     if (!isEmpty(snowballContract)) {
       getSnowballInfo()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snowballContract])
 
-  useEffect(() => {
     if (!isEmpty(snowconeContract)) {
       getSnowconeInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snowconeContract])
+  }, [gaugeProxyContract, account, pools, snowballContract, snowconeContract]);
 
   const getFeeDistributorInfo = async () => {
     try {
