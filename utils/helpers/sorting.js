@@ -4,6 +4,11 @@ export const sortingByType = (type, data) => {
     sortedData = sortedData.sort(
       (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
     );
+  } else if (type === 'claimable') {
+    sortedData = sortedData.sort(
+      (a, b) =>
+        b.SNOBHarvestable - a.SNOBHarvestable
+    );
   } else {
     sortedData = sortedData.sort((a, b) => b.tvlStaked - a.tvlStaked);
   }
@@ -19,6 +24,11 @@ export const sortingByUserPool = (type, data) => {
         b.userDepositedLP - a.userDepositedLP ||
         b.userLPBalance - a.userLPBalance ||
         b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+    );
+  } else if (type === 'claimable') {
+    sortedData = sortedData.sort(
+      (a, b) =>
+        b.SNOBHarvestable - a.SNOBHarvestable
     );
   } else {
     sortedData = sortedData.sort(
