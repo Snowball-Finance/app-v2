@@ -44,7 +44,7 @@ const ProposalDetail = ({
         endIcon={<CircleLeftIcon />}
         onClick={detailHandler}
       >
-        Detail
+        Details
       </ContainedButton>
     </div>
   )

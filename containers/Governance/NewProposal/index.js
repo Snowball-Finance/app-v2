@@ -9,11 +9,13 @@ import * as yup from 'yup'
 import { useVoteContract } from 'contexts/vote-context'
 import ProposalMainForm from './ProposalMainForm'
 import ProposalSubForm from './ProposalSubForm'
-import { STRING_VALID, VOTE_PERIOD_VALID } from 'utils/constants/validations'
+import { VOTE_PERIOD_VALID } from 'utils/constants/validations'
 
 const schema = yup.object().shape({
-  title: STRING_VALID,
-  data: STRING_VALID,
+  title: yup.string().required('Please enter this field.'),
+  description: yup.string().required('Please enter this field.'),
+  discussURL: yup.string(),
+  documentURL: yup.string(),
   votingPeriod: VOTE_PERIOD_VALID
 });
 
@@ -33,7 +35,8 @@ const NewProposal = () => {
   });
 
   const onSubmit = async (data) => {
-    createProposal(data)
+    const metadata = {"description": data.description, "discussion": data.discussURL, "document": data.documentURL};
+    await createProposal(data.title, metadata, data.votingPeriod);
   }
 
   return (

@@ -18,6 +18,11 @@ const PROPOSAL_LIST = gql`
         againstVotes
         proposer
         metadata
+        {
+          description
+          discussion
+          document
+        }
         details
       }
     }

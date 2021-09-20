@@ -19,27 +19,9 @@ const useStyles = makeStyles((theme) => ({
       width: '100%'
     }
   },
-  Details: {
-    backgroundColor: theme.palette.primary
-  },
-  Deposit: {
-    backgroundColor: theme.custom.palette.green
-  },
-  Get_PGL: {
-    backgroundColor: theme.custom.palette.png_orange
-  },
-  Get_JLP: {
-    backgroundColor: theme.custom.palette.joe_red
-  },
-  Get_xJoe: {
-    backgroundColor: theme.custom.palette.joe_red
-  },
-  Get_s3D: {
-    backgroundColor: theme.custom.palette.s3d_blue
-  },
-  Get_s3F: {
-    backgroundColor: theme.custom.palette.s3f_green
-  }
+  color: props => ({
+    backgroundColor: theme.custom.palette.actions[props.type]
+  }),
 }));
 
 const getIcon = (type) => {
@@ -60,7 +42,7 @@ const CompoundActionButton = ({
   disabled,
   fullWidth
 }) => {
-  const classes = useStyles();
+  const classes = useStyles({type});
   const router = useRouter();
   const { setTransactionStatus } = useCompoundAndEarnContract();
 
@@ -73,7 +55,7 @@ const CompoundActionButton = ({
 
   return (
     <ContainedButton
-      className={clsx({ [classes.button]: endIcon }, classes[type])}
+      className={clsx({ [classes.button]: endIcon }, classes.color)}
       size={endIcon ? 'small' : 'medium'}
       disableElevation={endIcon}
       endIcon={endIcon ? getIcon(type) : null}

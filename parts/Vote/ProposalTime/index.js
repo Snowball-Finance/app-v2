@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core'
+import { Typography, Grid } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
 import StateLabel from 'parts/Vote/StateLabel'
@@ -57,6 +57,7 @@ const ProposalTime = ({
 
   return (
     <div className={classes.root}>
+      <Grid container>
       <Typography
         variant='caption'
         className={classes.headerLabel}
@@ -70,13 +71,16 @@ const ProposalTime = ({
         label={getEnglishDate(proposal.endDate)}
       />
       {proposal.proposer &&
-        <Typography
-          variant='caption'
-          className={classes.propose}
-        >
-          {`Proposed by ${getEllipsis(proposal.proposer)}`}
-        </Typography>
+        <Grid item>
+          <Typography
+            variant='caption'
+            className={classes.propose}
+          >
+            {`Proposed by ${getEllipsis(proposal.proposer)}`}
+          </Typography>
+        </Grid>
       }
+      </Grid>
     </div>
   )
 }

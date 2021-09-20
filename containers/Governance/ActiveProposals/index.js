@@ -16,9 +16,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const AllProposals = () => {
+const ActiveProposals = () => {
   const classes = useStyles();
-  const { proposals } = useVoteContract();
+  const { activeProposals } = useVoteContract();
 
   return (
     <Grid container spacing={2} className={classes.container}>
@@ -28,13 +28,15 @@ const AllProposals = () => {
       <Grid item xs={12} md={4}>
         <XSnowballCard />
       </Grid>
-      <Grid item xs={12}>
-        <Typography variant='h6'>
-          All Proposals
-        </Typography>
-      </Grid>
-      {!isEmpty(proposals) &&
-        proposals.map((proposal, index) => (
+      {isEmpty(activeProposals)
+        ? (
+          <Grid item xs={12}>
+            <Typography variant='h6' align='center'>
+              No Active Proposals
+            </Typography>
+          </Grid>
+        )
+        : activeProposals.map((proposal, index) => (
           <Grid key={index} item xs={12}>
             <ProposalItem proposal={proposal} />
           </Grid>
@@ -44,4 +46,4 @@ const AllProposals = () => {
   )
 }
 
-export default memo(AllProposals)
+export default memo(ActiveProposals)
