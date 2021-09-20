@@ -1,11 +1,11 @@
 
-import VoteDetail from 'containers/VoteDetail'
+import Governance from 'containers/Governance'
 import { VoteContractProvider } from 'contexts/vote-context'
 
-export default function VotePage() {
+export default function GovernancePage() {
   return (
     <VoteContractProvider>
-      <VoteDetail />
+      <Governance />
     </VoteContractProvider>
   )
 }

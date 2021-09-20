@@ -6,10 +6,11 @@ import { AVALANCHE_MAINNET_PARAMS } from "utils/constants/connectors";
 const ProviderContext = createContext(null);
 
 export function ProviderProvider({ children }) {
-  const [loading,setLoading] = useState(true);
-  const [provider,setProvider] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [provider, setProvider] = useState(null);
 
   const PRIVATENODE = process.env.PRIVATENODE;
+  const LOCALNODE = process.env.LOCALNODE;
 
   const nodeIsHealthy = async (url) => {
     var myHeaders = new Headers();
@@ -36,6 +37,10 @@ export function ProviderProvider({ children }) {
   useEffect(() => {
     const loadProviders = async () => {
       if(loading){
+        if (process.env.ENVIRONMENT == 'DEV' && LOCALNODE) {
+          const localProvider = new ethers.providers.StaticJsonRpcProvider(`${LOCALNODE}/ext/bc/C/rpc`);
+          return setProvider(localProvider)
+        }
         //check if our node is healthy
         const nodeHealthy = await nodeIsHealthy(PRIVATENODE);
         if(nodeHealthy){
@@ -65,7 +70,7 @@ export function ProviderProvider({ children }) {
       }
     }
     loadProviders();
-  },[loading]);
+  },[loading, PRIVATENODE, LOCALNODE]);
   
 
   return (

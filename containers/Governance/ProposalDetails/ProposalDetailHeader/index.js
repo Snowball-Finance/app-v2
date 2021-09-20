@@ -23,10 +23,13 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: 600,
     marginBottom: theme.spacing(0.5)
+  },
+  subtitle: {
+    fontWeight: 500
   }
 }))
 
-const VoteDetailHeader = ({
+const ProposalDetailHeader = ({
   proposal
 }) => {
   const classes = useStyles()
@@ -34,6 +37,9 @@ const VoteDetailHeader = ({
   return (
     <Card className={classes.root}>
       <div className={classes.container}>
+        <Typography variant='body1' className={classes.subtitle}>
+          Proposal #{proposal.index} details
+        </Typography>
         <Typography variant='body1' className={classes.title}>
           {proposal.title}
         </Typography>
@@ -47,4 +53,4 @@ const VoteDetailHeader = ({
   )
 }
 
-export default memo(VoteDetailHeader)
+export default memo(ProposalDetailHeader)
