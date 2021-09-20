@@ -1,5 +1,6 @@
 
 import { memo } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -34,14 +35,9 @@ const Logo = ({
   return (
     <Link href={LINKS.HOME.HREF}>
       <a className={clsx(classes.container, className)}>
-        <picture className={classes.picture} {...rest}>
-          <source srcSet={imagePath} />
-          <img
-            className={classes.img}
-            src={imagePath}
-            alt='logo'
-          />
-        </picture>
+        <div className={classes.picture} {...rest}>
+          <Image src={imagePath} width={160} height={40} layout='fixed' alt='logo' />
+        </div>
       </a>
     </Link>
   )

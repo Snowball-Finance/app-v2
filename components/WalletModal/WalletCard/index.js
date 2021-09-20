@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import Image from 'next/image';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid } from '@material-ui/core';
 import clsx from 'clsx';
@@ -46,11 +47,15 @@ const WalletCard = ({ name, selected }) => {
       justify="center"
     >
       <Grid item>
-        <img
-          className={classes.icon}
-          src={`/assets/images/wallet/${name}.png`}
-          alt="Logo"
-        />
+        <div className={classes.icon}>
+          <Image
+            src={`/assets/images/wallet/${name}.png`}
+            width={40}
+            height={40}
+            layout='responsive'
+            alt='Logo'
+          />
+        </div>
       </Grid>
 
       <Grid item>

@@ -1,5 +1,6 @@
 
 import { memo, useMemo, useState, useEffect } from 'react'
+import Image from 'next/image';
 import { Card, Typography, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   metamaskIcon: {
+    display: 'flex',
     marginRight: theme.spacing(1)
   }
 }));
@@ -171,11 +173,15 @@ const CompoundAndEarn = () => {
           className={classes.addMetamask}
           onClick={addMetamask}
         >
-          <img
-            alt='metamask'
-            src={METAMASK_IMAGE_PATH}
-            className={classes.metamaskIcon}
-          />
+          <div className={classes.metamaskIcon}>
+            <Image
+              alt='metamask'
+              src={METAMASK_IMAGE_PATH}
+              width={26}
+              height={26}
+              layout='fixed'
+            />
+          </div>
           Add SNOB to Metamask
         </ContainedButton>
       </div>
