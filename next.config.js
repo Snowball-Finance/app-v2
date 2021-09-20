@@ -20,5 +20,8 @@ module.exports = {
     });
 
     return config;
-  }
+  },
+  images: {
+    domains: ['raw.githubusercontent.com', 'gateway.pinata.cloud'],
+  },
 };

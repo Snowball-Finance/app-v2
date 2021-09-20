@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
@@ -43,11 +44,15 @@ const VoteHandHeader = () => {
 
   return (
     <Card className={classes.root}>
-      <img
-        alt='icon'
-        src={VOTE_HAND_IMAGE_PATH}
-        className={classes.icon}
-      />
+      <div className={classes.icon}>
+        <Image
+          alt='icon'
+          src={VOTE_HAND_IMAGE_PATH}
+          width={164}
+          height={100}
+          layout='fixed'
+        />      
+      </div>
       <Typography variant='body2' gutterBottom>
         Active proposals
       </Typography>

@@ -1,5 +1,6 @@
 
 import { memo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
@@ -10,26 +11,21 @@ const useStyles = makeStyles(() => ({
     display: 'flex'
   },
   img: props => ({
-    height: props.height,
+    height: props.size,
     objectFit: 'contain'
   }),
 }));
 
 const CoinIcon = ({
-  height = 18,
+  size = 18,
   className
 }) => {
-  const classes = useStyles({ height })
+  const classes = useStyles({ size })
 
   return (
-    <picture className={clsx(classes.picture, className)}>
-      <source srcSet={LOGO_IMAGE_PATH} />
-      <img
-        className={classes.img}
-        src={LOGO_IMAGE_PATH}
-        alt='logo'
-      />
-    </picture>
+    <div className={clsx(classes.picture, className)}>
+      <Image src={LOGO_IMAGE_PATH} layout='fixed' width={size} height={size} alt='logo' />
+    </div>
   )
 }
 
