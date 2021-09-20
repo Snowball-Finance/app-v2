@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 import clsx from 'clsx'
@@ -37,21 +38,23 @@ const useStyles = makeStyles((theme) => ({
   s4D: {
     background: theme.custom.gradient.grey,
   },
-  icon: {
+  iconWrapper: {
     position: 'absolute',
     left: 4,
     bottom: 0,
     objectFit: 'contain',
+  },
+  icon: {
+    position: 'relative',
+    width: 148,
     height: 130,
     marginBottom: theme.spacing(1),
     [theme.breakpoints.down('xs')]: {
+      width: 52,
       height: 46,
     }
   },
   ellipse: {
-    position: 'absolute',
-    right: 0,
-    objectFit: 'contain',
     height: '100%',
   },
   title: {
@@ -78,16 +81,23 @@ const VaultWrapper = ({
       {loading && <SnowLoading loading={loading} />}
       <Card className={clsx(classes.header, classes[vault])}>
         {(vaultInfo?.icon || '') &&
-          <img
-            alt='icon'
-            src={vaultInfo.icon}
-            className={classes.icon}
-          />
+          <div className={classes.iconWrapper}>
+            <div className={classes.icon}>
+              <Image
+                alt='icon'
+                src={vaultInfo.icon}
+                layout='fill'
+              />
+            </div>
+          </div>
         }
-        <img
+        <Image
           alt='ellipse'
           src={VAULT_ELLIPSE_IMAGE_PATH}
           className={classes.ellipse}
+          layout='fill'
+          objectFit='contain'
+          objectPosition='right'
         />
         <Typography
           variant='h4'

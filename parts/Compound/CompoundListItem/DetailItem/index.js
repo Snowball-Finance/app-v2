@@ -53,7 +53,6 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         {!item.deprecatedPool && <Grid item xs={4} lg={3}>
           <SnowPairsIcon
             pairsIcon={[item.token0.address, item.token1.address, item.token2.address, item.token3.address]}
-            size={isSm ? 30 : 50}
           />
         </Grid>}
         <Grid item xs={8} lg={2}>
