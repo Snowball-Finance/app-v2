@@ -1,10 +1,12 @@
 import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Card, Grid } from '@material-ui/core'
+import { Card, Grid, Typography } from '@material-ui/core'
 import { Controller } from 'react-hook-form'
 
 import SnowTextField from 'components/UI/TextFields/SnowTextField'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
+import { useContracts } from 'contexts/contract-context'
+import { minimumForProposal } from 'utils/constants/voting-limits'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
   button: {
     textTransform: 'unset',
     backgroundColor: theme.palette.text.secondary
+  },
+  required: {
+    color: 'red',
+    marginRight: theme.spacing(1)
   }
 }))
 
@@ -28,6 +34,7 @@ const ProposalMainForm = ({
   errors
 }) => {
   const classes = useStyles()
+  const { snowconeBalance } = useContracts()
 
   return (
     <Card className={classes.root}>
@@ -36,7 +43,11 @@ const ProposalMainForm = ({
           <Controller
             as={<SnowTextField />}
             name='title'
-            label='Title of new proposal'
+            label={
+              <>
+              Title of new proposal<Typography variant='subtitle' className={classes.required}> * </Typography>
+              </>
+            }
             placeholder='Title of new proposal'
             error={errors.title?.message}
             control={control}
@@ -48,18 +59,29 @@ const ProposalMainForm = ({
             as={<SnowTextField />}
             rows={15}
             multiline={true}
-            name='data'
-            label='Description of new proposal'
+            name='description'
+            label={
+              <>
+              Description of new proposal<Typography variant='subtitle' className={classes.required}> * </Typography>
+              </>
+            }
             placeholder='Description of new proposal'
             error={errors.data?.message}
             control={control}
             defaultValue={''}
           />
         </Grid>
+        <Typography className={classes.required}> * </Typography>
+        <Typography variant='caption'>Required fields</Typography> 
+
         <Grid item xs={12} className={classes.buttonContainer}>
+          {snowconeBalance < minimumForProposal && 
+            <Typography variant="body1" className={classes.required}>{`You must have ${minimumForProposal.toLocaleString()}+ xSNOB to submit`}</Typography>
+          }
           <ContainedButton
             type='submit'
             color='primary'
+            disabled={snowconeBalance < minimumForProposal}
             className={classes.button}
           >
             Submit

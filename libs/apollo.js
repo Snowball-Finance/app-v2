@@ -9,7 +9,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
-      uri: PROXY_URL,
+      uri: process.env.ENVIRONMENT === 'DEV'? process.env.DEVAPIADDR : process.env.APIADDR,
     }),
     cache: new InMemoryCache(),
   });

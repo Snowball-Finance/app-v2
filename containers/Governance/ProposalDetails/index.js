@@ -9,14 +9,16 @@ import { useVoteContract } from 'contexts/vote-context'
 import LinkButton from 'components/UI/Buttons/LinkButton'
 import PageHeader from 'parts/PageHeader'
 import XSnowballCard from 'parts/Vote/XSnowballCard'
-import VoteDetailHeader from './VoteDetailHeader'
-import VoteForAction from './VoteForAction'
-import VoteAgainstAction from './VoteAgainstAction'
-import VoteDetailInfo from './VoteDetailInfo'
-import VoteChange from './VoteChange'
-import VoteMetaInfo from './VoteMetaInfo'
+import VoteHistory from 'parts/Vote/ProposalVoteHistory'
+import ProposalDetailHeader from './ProposalDetailHeader'
+import ProposalAction from './ProposalAction'
+import ProposalDetailInfo from './ProposalDetailInfo'
+import ProposalMetaInfo from './ProposalMetaInfo'
 import { isEmpty } from 'utils/helpers/utility'
 import LINKS from 'utils/constants/links'
+import { useWeb3React } from '@web3-react/core'
+import { ethers } from 'ethers'
+import { BNToFloat } from 'utils/helpers/format'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,65 +40,77 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const VoteDetail = () => {
+const ProposalDetails = () => {
   const classes = useStyles();
+  const { account } = useWeb3React();
   const router = useRouter();
-  const { proposals, getProposalReceipt } = useVoteContract();
+  const { proposals, governanceV2Contract } = useVoteContract();
   const [proposalReceipt, setProposalReceipt] = useState({});
+  const [voted, setVoted] = useState(true);
 
   const proposal = useMemo(() => proposals.find((proposal) => proposal.index === parseInt(router.query.proposal, 10))
     , [router.query.proposal, proposals]);
 
   useEffect(() => {
     const getReceipt = async () => {
-      const proposalReceipt = await getProposalReceipt(proposal.offset)
-      setProposalReceipt(proposalReceipt);
+      if (account && voted) {
+        try {
+          const proposalIdValue = ethers.utils.parseUnits(proposal.offset.toString(), 0);
+          const receipt = await governanceV2Contract.getReceipt(proposalIdValue, account);
+          const votes = BNToFloat(receipt[2], 18);
+          setProposalReceipt({
+            hasVoted: receipt[0] || false,
+            support: receipt[1] || false,
+            votes
+          });
+          setVoted(false);
+        } catch (error) {
+          console.log('error => ', error)
+        }
+      }
     }
-
     if (!isEmpty(proposal)) {
       getReceipt()
     }
-  }, [proposal, getProposalReceipt, setProposalReceipt]);
+  }, [proposal, setProposalReceipt, account, governanceV2Contract, voted]);
 
   return (
     <main className={classes.root}>
       <PageHeader
         title='Governance'
-        subHeader='To vote you must stake your SNOB for xSNOB.'
+        subHeader='Use xSNOB to vote for proposals'
       />
       <Grid container spacing={2} className={classes.container}>
         <Grid item xs={12}>
-          <LinkButton className={classes.backLink} href={LINKS.VOTE.HREF}>
+          <LinkButton className={classes.backLink} href={LINKS.GOVERNANCE.HREF}>
             <ArrowLeft size={20} /> Go back to all proposals
           </LinkButton>
         </Grid>
         {!isEmpty(proposal) &&
           <>
             <Grid item xs={12} md={8}>
-              <VoteDetailHeader proposal={proposal} />
+              <ProposalDetailHeader proposal={proposal} />
             </Grid>
             <Grid item xs={12} md={4}>
               <XSnowballCard />
             </Grid>
-            {proposal.state === 'Active' && (proposalReceipt?.hasVoted || false) &&
-              <Grid item xs={12}>
-                <VoteChange
-                  proposal={proposal}
-                  proposalReceipt={proposalReceipt}
-                />
-              </Grid>
-            }
-            <Grid item xs={12} md={6}>
-              <VoteForAction proposal={proposal} />
+            <Grid item xs={12}>
+              <VoteHistory
+                proposal={proposal}
+                proposalReceipt={proposalReceipt}
+              />
             </Grid>
             <Grid item xs={12} md={6}>
-              <VoteAgainstAction proposal={proposal} />
+              <ProposalAction action='For' proposal={proposal} setVoted={setVoted} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <ProposalAction action='Against' proposal={proposal} setVoted={setVoted} />
             </Grid>
             <Grid item xs={12} md={8}>
-              <VoteDetailInfo proposal={proposal} />
+              <ProposalDetailInfo proposal={proposal} />
             </Grid>
             <Grid item xs={12} md={4}>
-              <VoteMetaInfo proposal={proposal} />
+              <ProposalMetaInfo proposal={proposal} />
             </Grid>
           </>
         }
@@ -105,4 +119,4 @@ const VoteDetail = () => {
   )
 }
 
-export default memo(VoteDetail)
+export default memo(ProposalDetails)

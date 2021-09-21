@@ -13,6 +13,7 @@ const LAST_SNOWBALL_INFO = gql`
       snobNextPhase
       snowballToken {
         supply
+        totalSupply
         pangolinPrice
       }
       poolsInfo{
@@ -90,6 +91,7 @@ const GET_TVL_INFO_LAST_SNOWBALL = gql`
       snobNextPhase
       snowballToken {
         supply
+        totalSupply
         pangolinPrice
       }
     }

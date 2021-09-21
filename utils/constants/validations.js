@@ -1,5 +1,6 @@
 
 import * as yup from 'yup'
+import { minimumVotingPeriod, maximumVotingPeriod } from 'utils/constants/voting-limits'
 
 const BALANCE_VALID = yup.number()
   .typeError('Please enter valid balance')
@@ -9,16 +10,14 @@ const BALANCE_VALID = yup.number()
   .required('Please input field.');
 
 const VOTE_PERIOD_VALID = yup.number()
-  .typeError('Please enter valid balance')
-  .min(1, 'This field should be more than 1.')
-  .max(30, 'This field should be less than 30.')
+  .typeError('Please enter valid vote period, in days.')
+  .integer("Number should be a whole number")
+  .min(minimumVotingPeriod, `This field should be more than ${minimumVotingPeriod}.`)
+  .max(maximumVotingPeriod, `This field should be less than ${maximumVotingPeriod}.`)
   .required('Please input field.');
 
 const SELECT_VALID = yup.string()
   .required('Please select one.');
-
-const STRING_VALID = yup.string()
-  .required('Please enter this field.');
 
 const SELECT_OBJECT_VALID = yup.object()
   .nullable()
@@ -31,7 +30,6 @@ export {
   SELECT_VALID,
   SELECT_OBJECT_VALID,
   DATE_VALID,
-  STRING_VALID,
   BALANCE_VALID,
   VOTE_PERIOD_VALID
 };

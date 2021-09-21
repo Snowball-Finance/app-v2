@@ -3,12 +3,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 
 import { useVoteContract } from 'contexts/vote-context'
+import VoteForIcon from 'components/Icons/VoteForIcon'
 import VoteAgainstIcon from 'components/Icons/VoteAgainstIcon'
 import SnowProgressBar from 'components/SnowProgressBar'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import getStatusColor from 'utils/helpers/getStatusColor'
 
-const colors = getStatusColor('Defeated')
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -30,53 +30,60 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-end'
   },
-  voteButton: {
-    backgroundColor: colors.backgroundColor,
+  voteButton: props => ({
+    backgroundColor: props.colors.backgroundColor,
     fontSize: 12,
     fontWeight: 600,
-    color: colors.color,
+    color: props.colors.color,
     textTransform: 'none',
-  }
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  })
 }))
 
-const VoteAgainstAction = ({
-  proposal
+const ProposalAction = ({
+  action,
+  proposal,
+  setVoted
 }) => {
-  const classes = useStyles()
+  const isFor = action === "For";
+  const colors = isFor ? getStatusColor('Active') : getStatusColor('Defeated');
+  const classes = useStyles({colors});
   const { voteProposal } = useVoteContract();
-  const againstValue = proposal.againstVotes / (proposal.forVotes + proposal.againstVotes) * 100;
+  const votes = isFor ? proposal.forVotes : proposal.againstVotes;
+  const votePercent = votes / (proposal.forVotes + proposal.againstVotes) * 100;
 
   return (
     <Card className={classes.root}>
       <div className={classes.headerContainer}>
         <Typography variant='body1' className={classes.header}>
-          Against
+          {action}
         </Typography>
         <Typography variant='body1' className={classes.header}>
-          {proposal.againstVotes.toLocaleString()}
+          {votes.toLocaleString()}
         </Typography>
       </div>
       <SnowProgressBar
-        state='Failed'
-        value={againstValue}
+        state={isFor ? 'Active' : 'Failed'}
+        value={votePercent}
       />
-      <Typography variant='caption'>
-        Addresses votes against
-      </Typography>
-      <div className={classes.buttonContainer}>
-        <ContainedButton
-          className={classes.voteButton}
-          size='small'
-          disableElevation
-          disabled={proposal.state !== 'Active'}
-          endIcon={<VoteAgainstIcon />}
-          onClick={() => voteProposal(proposal, false)}
-        >
-          Vote against
-        </ContainedButton>
-      </div>
+      {proposal.state === 'Active' &&
+        <div className={classes.buttonContainer}>
+          <ContainedButton
+            className={classes.voteButton}
+            size='small'
+            disableElevation
+            disabled={proposal.state !== 'Active'}
+            endIcon={isFor ? <VoteForIcon /> : <VoteAgainstIcon />}
+            onClick={() => voteProposal(proposal, isFor, setVoted)}
+          >
+            Vote {action}
+          </ContainedButton>
+        </div>
+      }
     </Card>
   )
 }
 
-export default memo(VoteAgainstAction)
+export default memo(ProposalAction)

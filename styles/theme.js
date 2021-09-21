@@ -97,6 +97,15 @@ const lightTheme = responsiveFontSizes(
           joe_red: 'rgba(242, 113, 106, 0.12)',
           sherpa_red: 'rgba(252, 61, 74, 0.12)',
           green: 'rgba(40, 199, 111, 0.12)'
+        },
+        actions: {
+          Details: '#0085EB',
+          Deposit: '#28C76F',
+          Get_PGL: '#FF9F43',
+          Get_JLP: '#F2716A',
+          Get_xJoe: '#F2716A',
+          Get_s3D: '#1891FC',
+          Get_s3F: '#39CD33'
         }
       },
       gradient: {

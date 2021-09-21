@@ -5,6 +5,7 @@ import { Card, Grid, Typography, Divider } from '@material-ui/core'
 import DiscordIcon from 'components/Icons/DiscordIcon'
 import ExternalLinkIcon from 'components/Icons/ExternalLinkIcon'
 import ClockIcon from 'components/Icons/ClockIcon'
+import { FileText } from 'react-feather'
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 
 const useStyles = makeStyles((theme) => ({
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const VoteMetaInfo = ({
+const ProposalMetaInfo = ({
   proposal
 }) => {
   const classes = useStyles()
@@ -48,9 +49,16 @@ const VoteMetaInfo = ({
     <Card className={classes.root}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <a aria-label='discord' href={proposal.metadata} className={classes.link} target='_blank' rel='noreferrer'>
+          <a aria-label='discord' href={proposal.metadata?.discussion} className={classes.link} target='_blank' rel='noreferrer'>
             <DiscordIcon />
-            <span>Discuss of proposal in Discord</span>
+            <span>Discussion of proposal in Discord</span>
+            <ExternalLinkIcon />
+          </a>
+        </Grid>
+        <Grid item xs={12}>
+          <a aria-label='document' href={proposal.metadata?.document} className={classes.link} target='_blank' rel='noreferrer'>
+            <FileText size={18} />
+            <span>Proposal Document</span>
             <ExternalLinkIcon />
           </a>
         </Grid>
@@ -65,7 +73,7 @@ const VoteMetaInfo = ({
           <div className={classes.timeContainer}>
             <ClockIcon />
             <Typography className={classes.time}>
-              Start voting at<br />
+              Started voting at<br />
               <span>
                 {getEnglishDateWithTime(proposal.startDate)}
               </span>
@@ -76,7 +84,7 @@ const VoteMetaInfo = ({
           <div className={classes.timeContainer}>
             <ClockIcon />
             <Typography className={classes.time}>
-              End voting at<br />
+              {proposal.state === 'Active' ? "End of " : "Ended "} voting at<br />
               <span>
                 {getEnglishDateWithTime(proposal.endDate)}
               </span>
@@ -88,4 +96,4 @@ const VoteMetaInfo = ({
   )
 }
 
-export default memo(VoteMetaInfo)
+export default memo(ProposalMetaInfo)

@@ -22,12 +22,20 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: 40,
     objectFit: 'contain',
-    height: '100%'
+    height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      right: 0,
+      top:0,
+      height: '80%',
+    }
   },
   subHeader: {
     fontSize: 11,
     maxWidth: 370,
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+      width: '75%',
+    }
   },
   subHeaderButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.5)',

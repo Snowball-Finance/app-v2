@@ -10,11 +10,12 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1.5, 2.5),
   },
   info: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    wordWrap: "break-word"
   }
 }))
 
-const VoteDetailInfo = ({
+const ProposalDetailInfo = ({
   proposal
 }) => {
   const classes = useStyles()
@@ -22,10 +23,10 @@ const VoteDetailInfo = ({
   return (
     <Card className={classes.root}>
       <Typography variant='caption' className={classes.info}>
-        {proposal?.details || 'No detail'}
+        {proposal?.metadata?.description || 'No details given'}
       </Typography>
     </Card>
   )
 }
 
-export default memo(VoteDetailInfo)
+export default memo(ProposalDetailInfo)
