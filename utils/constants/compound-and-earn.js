@@ -34,4 +34,8 @@ export const POOLS = [
     value: 'snowball',
     label: 'Snowball Pools',
   },
+  {
+    value: 'claimable',
+    label: 'Claimable Pools',
+  }
 ];

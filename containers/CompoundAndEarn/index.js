@@ -160,7 +160,11 @@ const CompoundAndEarn = () => {
         ...filteredDataWithDepositLP,
         ...filteredDataWithTokensToInvested,
       ];
-    } else if (event.target.value !== 'all') {
+    } else if ( event.target.value === 'claimable') {
+      filteredData = filteredData.filter(
+      (item) => item.SNOBHarvestable > 0
+      );
+    } else if (event.target.value !== 'all' && event.target.value !== 'claimable') {
       filteredData = filteredData.filter((item) =>
         item.source.toLowerCase().includes(event.target.value)
       );
