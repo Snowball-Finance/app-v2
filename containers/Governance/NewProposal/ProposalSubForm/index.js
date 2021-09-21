@@ -59,7 +59,7 @@ const ProposalSubForm = ({
             placeholder='Period of days to vote'
             error={errors.votingPeriod?.message}
             control={control}
-            defaultValue={''}
+            defaultValue={minimumVotingPeriod}
           />
         </Grid>
         <Grid item xs={12}>

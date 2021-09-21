@@ -41,6 +41,7 @@ const ContainedButton = React.forwardRef(({
     <Button
       ref={ref}
       href={href}
+      target="_blank"
       component={href ? ButtonLink : 'button'}
       className={clsx(className, classes.root)}
       classes={{

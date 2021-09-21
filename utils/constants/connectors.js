@@ -2,8 +2,6 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
-const PRIVATENODE = process.env.PRIVATENODE;
-
 const AVALANCHE_MAINNET_PARAMS = {
   chainId: '0xa86a',
   chainName: 'Avalanche Mainnet C-Chain',
@@ -13,18 +11,6 @@ const AVALANCHE_MAINNET_PARAMS = {
       decimals: 18
   },
   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-  blockExplorerUrls: ['https://cchain.explorer.avax.network/']
-}
-
-const HARDHAT_FORK_PARAMS = {
-  chainId: '0xa86a',
-  chainName: 'Hardhat C-Chain Fork',
-  nativeCurrency: {
-      name: 'Avalanche',
-      symbol: 'AVAX',
-      decimals: 18
-  },
-  rpcUrls: [`${PRIVATENODE}/ext/bc/C/rpc`],
   blockExplorerUrls: ['https://cchain.explorer.avax.network/']
 }
 
@@ -41,7 +27,5 @@ export {
   injected,
   trustWallet,
   walletlink,
-  AVALANCHE_MAINNET_PARAMS,
-  PRIVATENODE,
-  HARDHAT_FORK_PARAMS
+  AVALANCHE_MAINNET_PARAMS
 }
