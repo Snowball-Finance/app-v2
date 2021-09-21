@@ -7,7 +7,12 @@ import clsx from 'clsx'
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(0.5, 1),
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between'
+    }
   },
   button: {
     fontSize: 16,
@@ -15,6 +20,11 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'capitalize',
     padding: theme.spacing(0.5, 1),
     borderRadius: 7,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center'
+    },
     [theme.breakpoints.down('xs')]: {
       fontSize: 12,
       minWidth: 'unset',
