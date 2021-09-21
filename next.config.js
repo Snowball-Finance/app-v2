@@ -3,7 +3,10 @@ module.exports = {
   env: {
     NETWORK: process.env.NETWORK,
     PRIVATENODE: process.env.PRIVATENODE,
-    APIADDR: process.env.APIADDR
+    LOCALNODE: process.env.LOCALNODE,
+    IPFS_API_URL: process.env.IPFS_API_URL,
+    APIADDR: process.env.APIADDR,
+    DEVAPIADDR: process.env.DEVAPIADDR,
   },
   webpack: (config, { dev }) => {
     if (dev) {

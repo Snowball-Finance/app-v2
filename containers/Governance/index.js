@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Vote = () => {
+const Governance = () => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState(VOTE_TABS.active.VALUE)
 
@@ -29,7 +29,7 @@ const Vote = () => {
     <main className={classes.root}>
       <PageHeader
         title='Governance'
-        subHeader='To vote you must stake your SNOB for xSNOB.'
+        subHeader='Use xSNOB to vote for proposals'
       />
       <SubMenuTabs
         tabs={VOTE_TABS_ARRAY}
@@ -44,4 +44,4 @@ const Vote = () => {
   )
 }
 
-export default memo(Vote)
+export default memo(Governance)

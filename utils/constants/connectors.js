@@ -16,6 +16,18 @@ const AVALANCHE_MAINNET_PARAMS = {
   blockExplorerUrls: ['https://cchain.explorer.avax.network/']
 }
 
+const HARDHAT_FORK_PARAMS = {
+  chainId: '0xa86a',
+  chainName: 'Hardhat C-Chain Fork',
+  nativeCurrency: {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+  },
+  rpcUrls: [`${PRIVATENODE}/ext/bc/C/rpc`],
+  blockExplorerUrls: ['https://cchain.explorer.avax.network/']
+}
+
 const walletlink = new WalletLinkConnector({
   url: AVALANCHE_MAINNET_PARAMS.rpcUrls[0],
   appName: 'Snowball',
@@ -30,5 +42,6 @@ export {
   trustWallet,
   walletlink,
   AVALANCHE_MAINNET_PARAMS,
-  PRIVATENODE
+  PRIVATENODE,
+  HARDHAT_FORK_PARAMS
 }
