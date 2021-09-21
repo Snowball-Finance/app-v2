@@ -10,8 +10,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1.5, 2.5),
   },
   info: {
-    marginBottom: theme.spacing(2),
-    wordWrap: "break-word"
+    marginBottom: theme.spacing(2)
   }
 }))
 
@@ -19,12 +18,23 @@ const ProposalDetailInfo = ({
   proposal
 }) => {
   const classes = useStyles()
-
+  const lines = proposal.metadata?.description.split('\n')
   return (
     <Card className={classes.root}>
-      <Typography variant='caption' className={classes.info}>
-        {proposal?.metadata?.description || 'No details given'}
-      </Typography>
+       {lines 
+          ? (
+            lines.map((line, i) => (
+              <span key={i}>
+                  {line}
+                  <br/>
+              </span>
+            ))
+          ) : (
+            <Typography variant='caption' className={classes.info}>
+            No Details Given
+            </Typography>
+          )
+        }
     </Card>
   )
 }

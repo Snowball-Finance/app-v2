@@ -1,7 +1,6 @@
 import { memo, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography, Grid } from '@material-ui/core'
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
 import StateLabel from 'parts/Vote/StateLabel'
 import getEllipsis from 'utils/helpers/getEllipsis'
@@ -42,7 +41,7 @@ const ProposalTime = ({
   const headerLabel = useMemo(() => {
     switch (proposal.state) {
       case 'Active':
-        return 'Voting finish at'
+        return 'Voting finishes at'
       case 'Defeated':
         return 'Defeated'
       case 'Pending Execution':
@@ -54,7 +53,7 @@ const ProposalTime = ({
       case 'Vetoed':
         return 'Canceled'
       default:
-        return 'Voting finish at'
+        return 'Voting finished at'
     }
   }, [proposal.state]);
 
@@ -66,7 +65,6 @@ const ProposalTime = ({
         className={classes.headerLabel}
       >
         {headerLabel}
-        <HelpOutlineIcon className={classes.helpIcon} />
       </Typography>
       <StateLabel
         size={12}
