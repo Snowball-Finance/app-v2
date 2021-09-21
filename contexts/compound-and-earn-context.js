@@ -406,7 +406,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   }
 
-  const withdraw = async (item, amount) => {
+  const withdraw = async (item, amount = 0) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -422,7 +422,7 @@ export function CompoundAndEarnProvider({ children }) {
 
       const gaugeBalance = await gaugeContract.balanceOf(account);
       if (gaugeBalance.gt(0x00)) {
-        const gaugeWithdraw = await gaugeContract.withdraw(amount);
+        const gaugeWithdraw = await gaugeContract.withdraw(amount > 0 ? amount : gaugeBalance);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
         setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
         if (!transactionGaugeWithdraw.status) {
@@ -467,7 +467,7 @@ export function CompoundAndEarnProvider({ children }) {
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
 
         if (snowglobeBalance.gt(0x00)) {
-          const snowglobeWithdraw = await snowglobeContract.withdraw(amount);
+          const snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
           const transactionSnowglobeWithdraw = await snowglobeWithdraw.wait(1)
 
           if (!transactionSnowglobeWithdraw.status) {

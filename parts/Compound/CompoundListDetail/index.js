@@ -126,10 +126,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={userData.userDepositedLP === 0 || !userData.userDepositedLP}
+            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
             onClick={() => {
-              setTransactionStatus({ withdrawStep: 0 });
-              setWithdraw(true)
+              if(userData.deprecatedPool){
+                withdraw(userData);
+              }else{
+                setTransactionStatus({ withdrawStep: 0 });
+                setWithdraw(true)
+              }
             }}
             fullWidth={isSm ? true : false}
           >
@@ -138,7 +142,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={userData.SNOBHarvestable === 0 || userData.claimed}
+            disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
