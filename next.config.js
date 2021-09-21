@@ -2,6 +2,7 @@
 module.exports = {
   env: {
     NETWORK: process.env.NETWORK,
+    ENVIRONMENT: process.env.ENVIRONMENT,
     PRIVATENODE: process.env.PRIVATENODE,
     LOCALNODE: process.env.LOCALNODE,
     IPFS_API_URL: process.env.IPFS_API_URL,

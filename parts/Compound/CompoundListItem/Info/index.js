@@ -66,6 +66,7 @@ const Info = ({ icon, buttonText, boost }) => {
           size="small"
           disableElevation
           endIcon={<HelpOutlineIcon />}
+          href="https://snowballs.gitbook.io/snowball-docs/governance/xsnob/reward-boosting"
         >
           {buttonText}
         </ContainedButton>

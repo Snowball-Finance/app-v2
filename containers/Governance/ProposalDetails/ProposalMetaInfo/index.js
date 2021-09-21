@@ -48,27 +48,33 @@ const ProposalMetaInfo = ({
   return (
     <Card className={classes.root}>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <a aria-label='discord' href={proposal.metadata?.discussion} className={classes.link} target='_blank' rel='noreferrer'>
-            <DiscordIcon />
-            <span>Discussion of proposal in Discord</span>
-            <ExternalLinkIcon />
-          </a>
-        </Grid>
-        <Grid item xs={12}>
-          <a aria-label='document' href={proposal.metadata?.document} className={classes.link} target='_blank' rel='noreferrer'>
-            <FileText size={18} />
-            <span>Proposal Document</span>
-            <ExternalLinkIcon />
-          </a>
-        </Grid>
-        <Grid item xs={12}>
-          <Divider
-            flexItem
-            orientation="horizontal"
-            className={classes.divider}
-          />
-        </Grid>
+      {proposal.metadata?.discussion && (
+          <Grid item xs={12}>
+            <a aria-label='discord' href={proposal.metadata.discussion} className={classes.link} target='_blank' rel='noreferrer'>
+              <DiscordIcon />
+              <span>Discussion of proposal in Discord</span>
+              <ExternalLinkIcon />
+            </a>
+          </Grid>
+        )}
+        {proposal.metadata?.document && (
+          <Grid item xs={12}>
+            <a aria-label='document' href={proposal.metadata.document} className={classes.link} target='_blank' rel='noreferrer'>
+              <FileText size={18} />
+              <span>Proposal Document</span>
+              <ExternalLinkIcon />
+            </a>
+          </Grid>
+        )}
+        {(proposal.metadata?.discussion || proposal.metadata?.document) && (
+          <Grid item xs={12}>
+            <Divider
+              flexItem
+              orientation="horizontal"
+              className={classes.divider}
+            />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <div className={classes.timeContainer}>
             <ClockIcon />

@@ -6,6 +6,7 @@ import { useVoteContract } from 'contexts/vote-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import VoteForIcon from 'components/Icons/VoteForIcon'
 import VoteAgainstIcon from 'components/Icons/VoteAgainstIcon'
+import { formatNumber } from 'utils/helpers/format'
 
 const useStyles = makeStyles((theme) => ({
   root: props => ({
@@ -46,7 +47,7 @@ const VoteHistory = ({
     <Card className={classes.root}>
       <Typography variant='body1' className={classes.label}>
         {hasVoted ? 
-        `You voted ${isFor ? 'For' : 'Against'} with ${(proposalReceipt?.votes || 0).toLocaleString()} xSNOB` 
+        `You voted ${isFor ? 'For' : 'Against'} with ${formatNumber(proposalReceipt?.votes || 0, 4)} xSNOB`
         : proposal.state === 'Active' ? 
         "You haven't voted on this proposal yet" 
         : "You didn't vote on this proposal"
@@ -60,7 +61,7 @@ const VoteHistory = ({
           disableElevation
           onClick={() => voteProposal(proposal, !isFor)}
         >
-          Change Vote
+          Switch Vote
         </ContainedButton>
       }
     </Card>

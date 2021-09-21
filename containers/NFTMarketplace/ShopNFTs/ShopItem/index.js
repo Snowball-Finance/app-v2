@@ -110,7 +110,7 @@ const ShopItem = ({
           className={classes.detailButton}
           onClick={() => onDetail(nft)}
         >
-          Detail
+          Details
         </ContainedButton>
         <ContainedButton
           fullWidth
@@ -119,7 +119,7 @@ const ShopItem = ({
           className={classes.button}
           onClick={purchaseHandler}
         >
-          {nft.max === nft.supply ? 'Max Mint' : 'Buy'}
+          {nft.max === nft.supply ? 'Sold Out' : 'Buy'}
         </ContainedButton>
       </div>
     </Card>
