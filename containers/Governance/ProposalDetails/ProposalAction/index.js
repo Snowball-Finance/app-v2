@@ -8,6 +8,7 @@ import VoteAgainstIcon from 'components/Icons/VoteAgainstIcon'
 import SnowProgressBar from 'components/SnowProgressBar'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import getStatusColor from 'utils/helpers/getStatusColor'
+import { formatNumber } from 'utils/helpers/format'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +62,7 @@ const ProposalAction = ({
           {action}
         </Typography>
         <Typography variant='body1' className={classes.header}>
-          {votes.toLocaleString()}
+          {formatNumber(votes, 2)}
         </Typography>
       </div>
       <SnowProgressBar
