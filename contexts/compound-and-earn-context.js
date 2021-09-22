@@ -520,10 +520,12 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
 
+    const userData = await getBalanceInfoSinglePool(item.address);
+    if (userData.SNOBHarvestable === 0) return;
+
     setIsTransacting({ pageview: true });
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
       if (transactionReward.status) {
