@@ -67,11 +67,11 @@ export function StakingContractProvider({ children }) {
       setGauges([])
     }
 
-    if (!isEmpty(snowballContract)) {
+    if (!isEmpty(snowballContract) && provider) {
       getSnowballInfo()
     }
 
-    if (!isEmpty(snowconeContract)) {
+    if (!isEmpty(snowconeContract) && provider) {
       getSnowconeInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

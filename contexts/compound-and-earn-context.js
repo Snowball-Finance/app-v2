@@ -415,16 +415,20 @@ export function CompoundAndEarnProvider({ children }) {
       });
       return;
     }
-
+    
     setIsTransacting({ withdraw: true });
+    if(!item.deprecatedPool){
+        await claim(item);
+    }
+    setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+    
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
       const gaugeBalance = await gaugeContract.balanceOf(account);
       if (gaugeBalance.gt(0x00)) {
         const gaugeWithdraw = await gaugeContract.withdraw(amount > 0 ? amount : gaugeBalance);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
@@ -445,7 +449,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
           setIsTransacting({ withdraw: false });
           if(item.deprecatedPool){
             item.withdrew = true;
@@ -458,7 +462,7 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
       } else {
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {
@@ -488,7 +492,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
@@ -524,9 +528,10 @@ export function CompoundAndEarnProvider({ children }) {
     const userData = await getBalanceInfoSinglePool(item.address);
     if (userData.SNOBHarvestable === 0) return;
 
-    setIsTransacting({ pageview: true });
+    setIsTransacting({ pageview: true, withdraw:true });
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
+      
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
       if (transactionReward.status) {

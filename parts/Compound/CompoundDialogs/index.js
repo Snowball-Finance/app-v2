@@ -75,7 +75,7 @@ const CompoundDialogs = ({
     if(transactionStatus.depositStep === 2){
       handleClose();
     }
-    if(transactionStatus.withdrawStep === 2){
+    if(transactionStatus.withdrawStep === 3){
       handleClose();
     }
   }),[transactionStatus];
