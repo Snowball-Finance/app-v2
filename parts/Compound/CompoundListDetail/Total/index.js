@@ -37,6 +37,10 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     }
   },
+  underlyingTokensLine: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   boldSubtitle: {
     fontWeight: 600,
   },
@@ -70,7 +74,7 @@ const Total = ({ item, userData }) => {
         </div>}
         {userData?.underlyingTokens ? <div className={classes.infoContainer}>
           <Typography variant="body2">{userData.underlyingTokens ? `Underlying tokens` : ``}</Typography>
-          <Typography variant="subtitle2"> <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token0.address]} size={25} />
+          <Typography variant="subtitle2" className={classes.underlyingTokensLine}> <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token0.address]} size={25} />
             {formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)} | <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token1.address]} size={25} />
             {formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)} </Typography>
         </div> : null}
