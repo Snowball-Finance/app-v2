@@ -445,6 +445,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           setIsTransacting({ withdraw: false });
           if(item.deprecatedPool){
             item.withdrew = true;

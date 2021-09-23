@@ -46,7 +46,7 @@ export function ProviderProvider({ children }) {
         if(nodeHealthy){
           
           const privateProvider = new ethers.providers.
-            StaticJsonRpcProvider(`${PRIVATENODE}/ext/bc/C/rpc`);
+            StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
 
           //do a quick call to check if the node is sync
           try {
@@ -54,7 +54,7 @@ export function ProviderProvider({ children }) {
             await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
             setProvider(privateProvider);
           } catch (error) {
-            console.log(error);
+            console.error(error);
             setProvider(
               new ethers.providers.
                 StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
