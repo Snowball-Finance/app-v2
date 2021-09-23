@@ -27,7 +27,7 @@ export function ProviderProvider({ children }) {
     try{
       const response = await fetch(`${url}/ext/health`, requestOptions);
       const bodyResponse = await response.json(); 
-      return bodyResponse.result?.healthy;
+      return bodyResponse.healthy;
     }catch(error){
       console.log(error);
       return false;
