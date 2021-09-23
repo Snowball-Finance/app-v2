@@ -48,7 +48,8 @@ const MultiSideItem = ({
   isOpen,
   isSelect,
   sidebar,
-  onTab
+  onTab,
+  onClickAway,
 }) => {
   const classes = useStyles();
 
@@ -72,6 +73,7 @@ const MultiSideItem = ({
               key={item.TITLE}
               target={item?.IS_EXT_LINK ? '_blank' : ''}
               rel={item?.IS_EXT_LINK ? 'noreferrer' : ''}
+              onClick={onClickAway}
               href={item.HREF}
             >
               <ListItemIcon className={classes.nestedItemIcon}>
