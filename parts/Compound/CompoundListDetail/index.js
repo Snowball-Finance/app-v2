@@ -172,7 +172,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           open={withdraw_modal}
           title="Withdraw"
           handleClose={handleWithdraw}
-          item={item}
+          item={userData}
         />
       )}
     </div>
