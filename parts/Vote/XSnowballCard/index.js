@@ -36,7 +36,7 @@ const XSnowballCard = () => {
   const { snowconeBalance } = useContracts()
   return (
     <Card className={classes.root}>
-      <CoinIcon height={62} className={classes.icon} />
+      <CoinIcon size={62} className={classes.icon} />
       <div>
         <Typography
           variant='body2'

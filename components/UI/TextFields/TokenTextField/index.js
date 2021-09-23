@@ -35,10 +35,6 @@ const useStyles = makeStyles(theme => {
     },
     tokenIcon: {
       marginRight: theme.spacing(1),
-      [theme.breakpoints.down('xs')]: {
-        width: 40,
-        height: 40,
-      }
     },
     select: {
       fontSize: 26,

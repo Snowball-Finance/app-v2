@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import Image from 'next/image';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -39,7 +40,9 @@ const TVLTooltip = ({ icon }) => {
         </Typography>
       </div>
       <div className={classes.right}>
-        <img alt="icon" src={icon} className={classes.icon} />
+        <div className={classes.icon}>
+          <Image alt="icon" src={icon} width={74} height={100} layout='fixed' />
+        </div>
       </div>
     </div>
   );
