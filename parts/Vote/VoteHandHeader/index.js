@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(1.5, 2.5),
-    backgroundColor: theme.custom.palette.lightBlue
+    backgroundColor: theme.custom.palette.governanceBanner
   },
   icon: {
     position: 'absolute',

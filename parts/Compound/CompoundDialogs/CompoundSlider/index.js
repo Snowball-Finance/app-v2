@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: theme.palette.text.primary,
-    backgroundColor: theme.custom.palette.depositSliderButton,
+    backgroundColor: theme.custom.palette.blueButton,
   },
   activeButton: {
     color: '#FFFFFF',
