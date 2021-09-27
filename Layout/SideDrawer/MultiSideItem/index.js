@@ -5,8 +5,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography,
-  Collapse
+  Collapse,
+  Chip,
+  Grid
 } from '@material-ui/core'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
@@ -24,21 +25,18 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 40,
     padding: theme.spacing(0, 0.25)
   },
+  circle: {
+    color: theme.palette.text.primary
+  },
   selected: {
     borderRadius: theme.spacing(0.5),
     backgroundColor: theme.palette.background.default,
   },
   new: {
-    fontSize: 12,
-    borderRadius: 30,
-    padding: theme.spacing(0, 1),
     color: theme.custom.palette.white,
     backgroundColor: theme.custom.palette.green
   },
   deprecated: {
-    fontSize: 12,
-    borderRadius: 30,
-    padding: theme.spacing(0, 1),
     color: theme.custom.palette.white,
     backgroundColor: theme.custom.palette.joe_red
   }
@@ -76,16 +74,26 @@ const MultiSideItem = ({
               onClick={onClickAway}
               href={item.HREF}
             >
-              <ListItemIcon className={classes.nestedItemIcon}>
-                <Circle size={15}/>
-              </ListItemIcon>
-              <ListItemText primary={item.TITLE} />
-              {item?.IS_NEW &&
-                <Typography className={classes.new}>New</Typography>
-              }
-              {item?.IS_DEPRECATED &&
-                <Typography className={classes.deprecated}>Deprecated</Typography>
-              }
+              <Grid container justify='space-between' alignItems='center'>
+                <Grid item xs={2}>
+                  <ListItemIcon className={classes.nestedItemIcon}>
+                    <Circle size={15} className={classes.circle}/>
+                  </ListItemIcon>
+                </Grid>
+
+                <Grid item xs={5}>
+                  <ListItemText primary={item.TITLE} />
+                </Grid>
+
+                <Grid item xs={5}>
+                  {item?.IS_NEW &&
+                    <Chip size='small' className={classes.new} label='New' />
+                  }
+                  {item?.IS_DEPRECATED &&
+                    <Chip size='small' className={classes.deprecated} label='Deprecated' />
+                  }
+                </Grid>
+              </Grid>
             </ListItemLink>
           ))}
         </List>

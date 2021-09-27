@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(4, 2.5),
+    backgroundColor: theme.palette.background.primary,
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'row',
     },

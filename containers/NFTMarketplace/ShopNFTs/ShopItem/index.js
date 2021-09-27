@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     height: '100%',
     paddingBottom: theme.spacing(6),
+    backgroundColor: theme.palette.background.primary,
     '&:hover': {
       transform: 'translateY(-5px)',
       transition: `ease-out 0.4s `,

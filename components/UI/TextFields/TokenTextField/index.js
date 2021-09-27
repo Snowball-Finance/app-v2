@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => {
       fontWeight: 'bold',
       minWidth: 'unset',
       padding: theme.spacing(0, 1),
-      backgroundColor: theme.custom.palette.lightBlue
+      backgroundColor: theme.custom.palette.blueButton
     },
     textField: {
       border: 'none',
