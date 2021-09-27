@@ -51,7 +51,7 @@ const lightTheme = responsiveFontSizes(
       },
       MuiPaper: {
         rounded: {
-          borderRadius: 10,
+          borderRadius: 10
         },
       },
       MuiListItem: {
@@ -183,6 +183,7 @@ const darkTheme = responsiveFontSizes(
       MuiPaper: {
         rounded: {
           borderRadius: 10,
+          backgroundColor: '#1c2132',
         },
       },
       MuiListItem: {

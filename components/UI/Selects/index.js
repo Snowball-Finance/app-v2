@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: theme.spacing(0, 0.5),
-    backgroundColor: theme.palette.background.primary
   },
   selectBox: {
     width: '100%',
