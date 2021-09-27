@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     position: 'relative',
     height: '100%',
+    backgroundColor: theme.palette.background.primary,
     '&:hover': {
       transform: 'translateY(-5px)',
       transition: `ease-out 0.4s `,

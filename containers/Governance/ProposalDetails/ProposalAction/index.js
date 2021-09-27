@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     height: '100%',
     padding: theme.spacing(1.5, 2.5),
+    backgroundColor: theme.palette.background.primary,
   },
   headerContainer: {
     display: 'flex',

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(1, 2.5),
-    backgroundColor:  props.hasVoted ? props.isFor ? theme.custom.palette.transparent.green : theme.custom.palette.transparent.joe_red : theme.custom.palette.lightGrey,
+    backgroundColor:  props.hasVoted ? props.isFor ? theme.custom.palette.transparent.green : theme.custom.palette.transparent.joe_red : theme.palette.background.primary,
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
     },

@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: theme.custom.layout.maxCardWidth,
     padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.primary,
   },
   header: {
     display: 'flex',

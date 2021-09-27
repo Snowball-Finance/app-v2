@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: 'no-repeat',
     backgroundPositionX: 'right',
     backgroundPositionY: 'bottom',
-    height: '100%'
+    height: '100%',
+    backgroundColor: theme.palette.background.primary,
   },
   title: {
     fontWeight: 'bold',

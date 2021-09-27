@@ -10,12 +10,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: theme.spacing(0, 0.5),
+    backgroundColor: theme.palette.background.primary
   },
   selectBox: {
     width: '100%',
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
-    backgroundColor: theme.custom.palette.white,
+    backgroundColor: theme.palette.background.primary,
   },
 }));
 

@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(0.5, 1),
     marginBottom: theme.spacing(2),
+    backgroundColor: theme.palette.background.primary,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       display: 'flex',
