@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   selected: {
-    backgroundColor: theme.custom.palette.lightBlue
+    backgroundColor: theme.custom.palette.activeTab
   }
 }));
 

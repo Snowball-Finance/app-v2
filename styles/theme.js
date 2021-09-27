@@ -104,6 +104,8 @@ const lightTheme = responsiveFontSizes(
         sidebarIcon: '#55535d',
         tokenPairTableHeader: '#C8E6FE',
         connectTopbar: '#E5F3FF',
+        activeTab: '#C8E6FE',
+        depositSliderButton: '#C8E6FE',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
@@ -232,6 +234,8 @@ const darkTheme = responsiveFontSizes(
         sidebarIcon: '#55535d',
         tokenPairTableHeader: '#1E2848',
         connectTopbar: 'rgba(40, 162, 255, 0.12)',
+        activeTab: '#1A93F2',
+        depositSliderButton: '#1E2848',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
