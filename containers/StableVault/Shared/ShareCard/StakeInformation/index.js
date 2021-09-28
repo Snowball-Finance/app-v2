@@ -1,5 +1,6 @@
 
 import { memo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
 import { formatNumber } from 'utils/helpers/format';
@@ -29,7 +30,9 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     width: 36,
     height: 36,
-    marginRight: theme.spacing(1.5)
+    marginRight: theme.spacing(1.5),
+    borderRadius: '50%',
+    overflow: 'hidden'
   },
   value: {
     fontWeight: 'bold',
@@ -53,11 +56,15 @@ const StakeInformation = ({
     <div className={classes.container}>
       <div className={classes.infoContainer}>
         {LP_ICONS[vault.toUpperCase()] &&
-          <img
-            alt='icon'
-            src={LP_ICONS[vault.toUpperCase()]}
-            className={classes.icon}
-          />
+          <div className={classes.icon}>
+            <Image
+              alt='icon'
+              src={LP_ICONS[vault.toUpperCase()]}
+              width={36}
+              height={36}
+              layout='fixed'
+            />
+          </div>
         }
         <Typography variant='body2' className={classes.value}>
           {`${formatNumber(staked, 2)} ${vault}`}

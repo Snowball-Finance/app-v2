@@ -32,6 +32,9 @@ export function ContractProvider({ children }) {
   const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library,provider])
 
   const getBalanceInfo = useCallback(async () => {
+    if(!provider){
+      return;
+    }
     try {
       const [
         snowballBalance,

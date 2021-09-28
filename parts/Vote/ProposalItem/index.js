@@ -10,6 +10,7 @@ import ProposalDetail from '../ProposalDetail'
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.primary,
   },
 }))
 

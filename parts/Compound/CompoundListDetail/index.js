@@ -58,7 +58,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     const evalPool = userData ? userData : item;
     if(item.token0){
       let actionType, func;
-      [actionType, func] = getProperAction(item, setModal, evalPool.userLPBalance);
+      [actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance);
       setAction({actionType,func});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,6 +69,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
   };
   let dailyAPR = item.dailyAPR > 999999?999999:item.dailyAPR;
   let yearlyAPY = item.yearlyAPY > 999999?999999:item.yearlyAPY;
+
+  const [withdraw_modal, setWithdraw] = useState(false);
+  const handleWithdraw = () => {
+    setWithdraw(false);
+  }
+
+  const { setTransactionStatus } = useCompoundAndEarnContract();
 
   return (
     <div className={classes.root}>
@@ -119,11 +126,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.userDepositedLP === 0 || !item.userDepositedLP || item.withdrew}
-            loading={isTransacting.pageview}
+            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
             onClick={() => {
-              toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-              withdraw(item)
+              if(userData.deprecatedPool){
+                withdraw(userData);
+              }else{
+                setTransactionStatus({ withdrawStep: 0 });
+                setWithdraw(true)
+              }
             }}
             fullWidth={isSm ? true : false}
           >
@@ -132,7 +142,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.SNOBHarvestable === 0 || item.claimed}
+            disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
@@ -154,6 +164,15 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           title={modal.title}
           item={userData}
           handleClose={handleClose}
+        />
+      )}
+
+      {withdraw && (
+        <CompoundDialogs
+          open={withdraw_modal}
+          title="Withdraw"
+          handleClose={handleWithdraw}
+          item={userData}
         />
       )}
     </div>

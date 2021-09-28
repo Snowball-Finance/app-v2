@@ -34,11 +34,16 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
   buttonContainer: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 0, 0),
   },
   modalButton: {
     padding: theme.spacing(2, 0),
     textTransform: 'none',
+  },
+  button: {
+    textTransform: 'none',
+    width: '100%',
+    padding: theme.spacing(2, 0),
   },
   greyButton: {
     background: '#BDBDBD',
@@ -58,10 +63,10 @@ const CompoundDialogs = ({
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
  
-  const { approve, deposit, isTransacting, transactionStatus } = useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
   useEffect(() =>{
-    if(!isTransacting.deposit && !isTransacting.approve){
+    if(!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw){
       toast.dismiss();
     }
   }),[isTransacting];
@@ -70,14 +75,17 @@ const CompoundDialogs = ({
     if(transactionStatus.depositStep === 2){
       handleClose();
     }
+    if(transactionStatus.withdrawStep === 3){
+      handleClose();
+    }
   }),[transactionStatus];
 
   const calculatePercentage = (amount) => {
-    return amount / (item?.userLPBalance/10**item?.lpDecimals) * 100;
+    return title != "Withdraw" ? amount / (item?.userLPBalance/10**item?.lpDecimals) * 100 : amount / (item?.userBalanceGauge/10**item?.lpDecimals) * 100
   };
 
   const calculatedBalance = (value) => {
-    return item?.userLPBalance.mul(value).div(100);
+    return title != "Withdraw" ? item?.userLPBalance.mul(value).div(100) : item?.userBalanceGauge.mul(value).div(100);
   };
 
   const enabledHandler = (isApproved = false) => {
@@ -88,7 +96,8 @@ const CompoundDialogs = ({
   const inputHandler = (event) => {
     if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
       const percentage = calculatePercentage(event.target.value);
-      if (item?.userLPBalance/10**item?.lpDecimals >= event.target.value) {
+      const balance = title != "Withdraw" ? item?.userLPBalance/10**item?.lpDecimals : item?.userBalanceGauge/10**item?.lpDecimals;
+      if (balance >= event.target.value) {
         setinputAmount(event.target.value);
         setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
         setSlider(percentage);
@@ -108,13 +117,14 @@ const CompoundDialogs = ({
     setSlider(value);
     setAmount(usedBalance);
     setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
+    setError(null);
   };
 
   const renderButton = () => {
     switch (title) {
       case 'Deposit': {
         return (
-          <>
+          <Grid container spacing={2}>
             <Grid item xs={6}>
               <ContainedButton
                 className={clsx(classes.modalButton)}
@@ -146,8 +156,26 @@ const CompoundDialogs = ({
                 Deposit
               </GradientButton>
             </Grid>
-          </>
+          </Grid>
         );
+      }
+      case 'Withdraw': {
+        return (
+          <Grid item xs={12}>
+              <ContainedButton
+                className={clsx(classes.button)}
+                disableElevation
+                disabled={amount==0}
+                loading={isTransacting.withdraw}
+                onClick={() => {
+                  toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
+                  withdraw(item, amount)
+                }}
+              >
+                Withdraw
+              </ContainedButton>
+            </Grid>
+        )
       }
       default:
         return null;
@@ -167,6 +195,7 @@ const CompoundDialogs = ({
       <div className={classes.container}>
         <Details
           item={item}
+          title={title}
           amount={inputAmount}
           inputHandler={inputHandler}
           error={error}
@@ -177,7 +206,7 @@ const CompoundDialogs = ({
           {renderButton()}
         </Grid>
       </div>
-      <SnowStepBox transactionStatus={transactionStatus}/>
+      {<SnowStepBox transactionStatus={transactionStatus} title={title}/>}
     </SnowDialog>
   );
 };

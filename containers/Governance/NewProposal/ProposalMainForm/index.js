@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     padding: theme.spacing(1.5, 2.5),
+    backgroundColor: theme.palette.background.primary
   },
   buttonContainer: {
     display: 'flex',

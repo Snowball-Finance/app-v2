@@ -15,20 +15,20 @@ export function ProviderProvider({ children }) {
   const nodeIsHealthy = async (url) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-  
-    var raw = JSON.stringify({"jsonrpc":"2.0","id":1,"method":"health.getLiveness"});
-  
+
+    var raw = JSON.stringify({ "jsonrpc": "2.0", "id": 1, "method": "health.getLiveness" });
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
-    try{
+    try {
       const response = await fetch(`${url}/ext/health`, requestOptions);
-      const bodyResponse = await response.json(); 
-      return bodyResponse.result?.healthy;
-    }catch(error){
+      const bodyResponse = await response.json();
+      return bodyResponse.healthy;
+    } catch (error) {
       console.log(error);
       return false;
     }
@@ -36,42 +36,45 @@ export function ProviderProvider({ children }) {
 
   useEffect(() => {
     const loadProviders = async () => {
-      if(loading){
-        if (process.env.ENVIRONMENT == 'DEV' && LOCALNODE) {
-          const localProvider = new ethers.providers.StaticJsonRpcProvider(`${LOCALNODE}/ext/bc/C/rpc`);
-          return setProvider(localProvider)
-        }
-        //check if our node is healthy
-        const nodeHealthy = await nodeIsHealthy(PRIVATENODE);
-        if(nodeHealthy){
-          
-          const privateProvider = new ethers.providers.
-            StaticJsonRpcProvider(`${PRIVATENODE}/ext/bc/C/rpc`);
+      if (loading) {
+        try {
+          if (process.env.ENVIRONMENT == 'DEV' && LOCALNODE) {
+            const localProvider = new ethers.providers.StaticJsonRpcProvider(`${LOCALNODE}/ext/bc/C/rpc`);
+            return setProvider(localProvider)
+          }
+          //check if our node is healthy
+          const nodeHealthy = await nodeIsHealthy(PRIVATENODE);
+          if (nodeHealthy) {
 
-          //do a quick call to check if the node is sync
-          try {
-            //avalanche burn address
-            await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
-            setProvider(privateProvider);
-          } catch (error) {
-            console.log(error);
+            const privateProvider = new ethers.providers.
+              StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
+
+            //do a quick call to check if the node is sync
+            try {
+              //avalanche burn address
+              await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
+              setProvider(privateProvider);
+            } catch (error) {
+              console.error(error);
+              setProvider(
+                new ethers.providers.
+                  StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
+              );
+            }
+          } else {
             setProvider(
               new ethers.providers.
                 StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
             );
           }
-        }else{
-          setProvider(
-            new ethers.providers.
-              StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
-          );
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     }
     loadProviders();
-  },[loading, PRIVATENODE, LOCALNODE]);
-  
+  }, [loading, PRIVATENODE, LOCALNODE]);
+
 
   return (
     <ProviderContext.Provider

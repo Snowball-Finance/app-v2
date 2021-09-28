@@ -8,14 +8,15 @@ const ButtonLink = React.forwardRef(({
   hrefAs,
   children,
   prefetch,
-  target
+  target,
+  onClick,
 }, ref) => (
   <Link
     href={href}
     as={hrefAs}
     prefetch={prefetch}
   >
-    <a className={className} ref={ref} target={target}>
+    <a className={className} ref={ref} target={target} onClick={onClick}>
       {children}
     </a>
   </Link>
