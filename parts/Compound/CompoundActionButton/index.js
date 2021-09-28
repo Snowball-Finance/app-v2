@@ -8,6 +8,8 @@ import clsx from 'clsx';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import { toast } from 'react-toastify';
+import Toast from 'components/Toast';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -30,6 +32,8 @@ const getIcon = (type) => {
       return (<ArrowDropDownCircleIcon />);
     case "Deposit":
       return (<SystemUpdateAltRoundedIcon />);
+    case "CLAIM":
+      return;
     default:
       return (<LaunchIcon />);
   }
@@ -40,16 +44,27 @@ const CompoundActionButton = ({
   action,
   endIcon = true,
   disabled,
-  fullWidth
+  fullWidth,
+  setUserData,
+  item
 }) => {
   const classes = useStyles({type});
   const router = useRouter();
-  const { setTransactionStatus } = useCompoundAndEarnContract();
+  const { setTransactionStatus, claim, getBalanceInfoSinglePool, isTransacting } = useCompoundAndEarnContract();
 
   const buttonHandler = useCallback(() => {
-    action(router);
-    if (type === 'Deposit') {
-      setTransactionStatus({ approvalStep: 0, depositStep: 0 });
+    if (type === 'CLAIM') {
+      toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
+      claim(item).then(()=>{
+      getBalanceInfoSinglePool(item.address).then((userData) => 
+        setUserData(userData))
+      })
+    }
+    else {
+      action(router);
+      if (type === 'Deposit') {
+        setTransactionStatus({ approvalStep: 0, depositStep: 0 });
+      }
     }
   }, [type, action, router, setTransactionStatus])
 
@@ -62,6 +77,7 @@ const CompoundActionButton = ({
       onClick={buttonHandler}
       disabled={disabled}
       fullWidth={fullWidth}
+      loading={type === 'CLAIM' ? isTransacting.pageview : null}
     >
       {type.replace('_', ' ')}
     </ContainedButton>
