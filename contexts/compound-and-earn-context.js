@@ -11,13 +11,14 @@ import LP_ABI from 'libs/abis/lp-token.json';
 import { usePopup } from 'contexts/popup-context'
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
-import { isEmpty } from 'utils/helpers/utility';
+import { isEmpty, delay } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
-import { AVALANCHE_MAINNET_PARAMS, provider } from 'utils/constants/connectors';
+import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
+import { useProvider } from './provider-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -26,6 +27,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo  } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
+  const { provider } = useProvider();
   const { prices } = usePrices();
   const snowballInfoQuery = getLastSnowballInfo();
   const deprecatedContractsQuery = getDeprecatedContracts();
@@ -252,7 +254,16 @@ export function CompoundAndEarnProvider({ children }) {
     return new Promise(async (resolve, reject) => {
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
-        const approval = await contract.approve(spender, "10000000000000000000000000000000");
+        let useExact = false;
+        await contract.estimateGas.approve(spender, ethers.constants.MaxUint256).catch(() => {
+          // general fallback for tokens who restrict approval amounts
+          useExact = true;
+        })
+
+        const approval = await contract.approve(spender, 
+          useExact 
+          ? ethers.constants.MaxUint256 
+          : amount);
         const transactionApprove = await approval.wait(1);
         if (!transactionApprove.status) {
           setPopUp({
@@ -347,6 +358,8 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
+        //await 2 seconds for our node to sync
+        await delay(2000);
         amount = await snowglobeContract.balanceOf(account);
       } else {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
@@ -392,8 +405,7 @@ export function CompoundAndEarnProvider({ children }) {
     }
     setIsTransacting({ deposit: false });
   }
-
-  const withdraw = async (item, amount) => {
+  const withdraw = async (item, amount = 0) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -407,7 +419,6 @@ export function CompoundAndEarnProvider({ children }) {
     setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
     await claim(item);
     setIsTransacting({ withdraw: true });
-
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
@@ -436,6 +447,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           setIsTransacting({ withdraw: false });
           if(item.deprecatedPool){
             item.withdrew = true;
@@ -453,10 +465,12 @@ export function CompoundAndEarnProvider({ children }) {
 
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
+        //await 2 seconds for our node to sync
+        await delay(2000);
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
 
         if (snowglobeBalance.gt(0x00)) {
-          const snowglobeWithdraw = await snowglobeContract.withdraw(amount);
+          const snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
           const transactionSnowglobeWithdraw = await snowglobeWithdraw.wait(1)
 
           if (!transactionSnowglobeWithdraw.status) {
@@ -515,7 +529,6 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ pageview: true });
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
       if (transactionReward.status) {

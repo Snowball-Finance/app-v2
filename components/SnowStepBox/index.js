@@ -86,8 +86,6 @@ const SnowStepBox = ({
     newStatus.push(transactionStatus.withdrawStep > 0 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.withdrawStep > 1 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.withdrawStep > 2 ? color.enabled : color.disabled);
-
-    
     setColors(newStatus); 
   },[transactionStatus,color.disabled,color.enabled]);
 

@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import Image from 'next/image';
 import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
@@ -66,12 +67,15 @@ const Info = ({ icon, buttonText, boost }) => {
           size="small"
           disableElevation
           endIcon={<HelpOutlineIcon />}
+          href="https://snowballs.gitbook.io/snowball-docs/governance/xsnob/reward-boosting"
         >
           {buttonText}
         </ContainedButton>
       </div>
       <div className={classes.right}>
-        <img alt="icon" src={icon} className={classes.icon} />
+        <div className={classes.icon}>
+          <Image alt="icon" src={icon} width={136} height={120} layout='fixed' />
+        </div>
       </div>
     </div>
   );

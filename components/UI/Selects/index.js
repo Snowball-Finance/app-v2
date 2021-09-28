@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
-    backgroundColor: theme.custom.palette.white,
+    backgroundColor: theme.palette.background.primary,
   },
 }));
 

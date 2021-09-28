@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
 import StateProgressBar from 'parts/Vote/StateProgressBar'
+import { formatNumber } from 'utils/helpers/format'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,12 +25,12 @@ const ProposalStatus = ({
     <div className={classes.root}>
       <StateProgressBar
         state='Active'
-        header={`For: ${proposal.forVotes.toLocaleString()}`}
+        header={`For: ${formatNumber(proposal.forVotes, 2)}`}
         value={forValue}
       />
       <StateProgressBar
         state='Defeated'
-        header={`Against: ${proposal.againstVotes.toLocaleString()}`}
+        header={`Against: ${formatNumber(proposal.againstVotes, 2)}`}
         value={againstValue}
       />
     </div>

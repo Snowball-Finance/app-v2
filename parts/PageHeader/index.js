@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
@@ -65,7 +66,9 @@ const PageHeader = ({
 
   return (
     <Card className={clsx(classes.root, className)}>
-      <img alt="icon" src={COMPOUND_AND_EARN_IMAGE_PATH} className={classes.icon} />
+      <div className={classes.icon}>
+        <Image alt="icon" src={COMPOUND_AND_EARN_IMAGE_PATH} width={164} height={100} layout='fixed' />
+      </div>
       <div className={classes.container}>
         <Typography variant="h5" className={classes.header}>
           {title}

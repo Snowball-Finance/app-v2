@@ -1,6 +1,7 @@
 
 const LOGO_IMAGE_PATH = '/assets/images/logo.svg'
 const LOGO_LABEL_IMAGE_PATH = '/assets/images/logo-label.svg'
+const LOGO_DARK_LABEL_IMAGE_PATH = '/assets/images/logo-dark-label.svg'
 const BANNER_IMAGE_PATH = '/assets/images/banner.jpg'
 const FOOTER_POWER_BY_IMAGE_PATH = '/assets/images/icons/power-by.png'
 const METAMASK_IMAGE_PATH = '/assets/images/icons/metamask.png'
@@ -20,6 +21,7 @@ const NO_IMAGE_PATH = '/assets/images/no-image.png'
 export {
   LOGO_IMAGE_PATH,
   LOGO_LABEL_IMAGE_PATH,
+  LOGO_DARK_LABEL_IMAGE_PATH,
   BANNER_IMAGE_PATH,
   FOOTER_POWER_BY_IMAGE_PATH,
   METAMASK_IMAGE_PATH,

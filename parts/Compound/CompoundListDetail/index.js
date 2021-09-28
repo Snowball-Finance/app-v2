@@ -114,7 +114,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         alignItems="flex-start"
         spacing={2}
       >
-        {action?.actionType && <Grid item xs={12} lg={4}>
+        {!item.deprecatedPool && action?.actionType && 
+        <Grid item xs={12} lg={4}>
           <CompoundActionButton 
             type={action.actionType} 
             action={action.func} 
@@ -125,10 +126,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.userDepositedLP === 0 || !item.userDepositedLP}
+            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
             onClick={() => {
-              setTransactionStatus({ withdrawStep: 0 });
-              setWithdraw(true)
+              if(userData.deprecatedPool){
+                withdraw(userData);
+              }else{
+                setTransactionStatus({ withdrawStep: 0 });
+                setWithdraw(true)
+              }
             }}
             fullWidth={isSm ? true : false}
           >
@@ -137,7 +142,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         </Grid>
         <Grid item xs={12} lg={4}>
           <ContainedButton
-            disabled={item.SNOBHarvestable === 0 || item.claimed}
+            disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)

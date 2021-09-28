@@ -37,9 +37,11 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const dexTokenName = item.symbol == "S4D" ? "SNOB" : item.symbol;
 
   return (
-    <Grid container
+    <Grid 
+      container
       direction="column"
-      display="flex">
+      display="flex"
+    >
         {item.deprecatedPool && <Typography align="center" color="error">
           This pool is deprecated and don{`'`}t receive rewards anymore, please withdraw from it.
         </Typography>}
@@ -53,7 +55,6 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         {!item.deprecatedPool && <Grid item xs={4} lg={3}>
           <SnowPairsIcon
             pairsIcon={[item.token0.address, item.token1.address, item.token2.address, item.token3.address]}
-            size={isSm ? 30 : 50}
           />
         </Grid>}
         <Grid item xs={8} lg={2}>

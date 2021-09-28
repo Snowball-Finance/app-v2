@@ -1,7 +1,6 @@
 import { memo, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core'
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import { Typography, Grid } from '@material-ui/core'
 
 import StateLabel from 'parts/Vote/StateLabel'
 import getEllipsis from 'utils/helpers/getEllipsis'
@@ -13,7 +12,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      alignItems: 'flex-end',
+    }
   },
   headerLabel: {
     display: 'flex',
@@ -39,7 +41,7 @@ const ProposalTime = ({
   const headerLabel = useMemo(() => {
     switch (proposal.state) {
       case 'Active':
-        return 'Voting finish at'
+        return 'Voting finishes at'
       case 'Defeated':
         return 'Defeated'
       case 'Pending Execution':
@@ -51,18 +53,18 @@ const ProposalTime = ({
       case 'Vetoed':
         return 'Canceled'
       default:
-        return 'Voting finish at'
+        return 'Voting finished at'
     }
   }, [proposal.state]);
 
   return (
     <div className={classes.root}>
+      <Grid container>
       <Typography
         variant='caption'
         className={classes.headerLabel}
       >
         {headerLabel}
-        <HelpOutlineIcon className={classes.helpIcon} />
       </Typography>
       <StateLabel
         size={12}
@@ -70,13 +72,16 @@ const ProposalTime = ({
         label={getEnglishDate(proposal.endDate)}
       />
       {proposal.proposer &&
-        <Typography
-          variant='caption'
-          className={classes.propose}
-        >
-          {`Proposed by ${getEllipsis(proposal.proposer)}`}
-        </Typography>
+        <Grid item>
+          <Typography
+            variant='caption'
+            className={classes.propose}
+          >
+            {`Proposed by ${getEllipsis(proposal.proposer)}`}
+          </Typography>
+        </Grid>
       }
+      </Grid>
     </div>
   )
 }

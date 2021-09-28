@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundPositionX: 'right',
     backgroundPositionY: 'bottom',
     height: '100%',
+    backgroundColor: theme.palette.background.primary,
   },
   title: {
     fontWeight: 'bold',
@@ -90,22 +91,22 @@ const TotalLockedValue = () => {
             <Typography variant="subtitle1" color="textPrimary">
               $
               {formatNumber(
-                snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply *
+                snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.totalSupply *
                 snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.pangolinPrice
               , 2)}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={7}>
             <Typography variant="h6" color="secondary">
-              Circulating Supply
+              Total Supply
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {`${formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply, 2)} - Max: 18,000,000`}
+              {`${formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.totalSupply, 2)} - Max: 18,000,000`}
             </Typography>
             <BorderLinearProgress
               variant="determinate"
               value={
-                (+snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.supply / 18000000) * 100
+                (+snowballTVLQuery.data?.LastSnowballInfo?.snowballToken.totalSupply / 18000000) * 100
               }
             />
           </Grid>

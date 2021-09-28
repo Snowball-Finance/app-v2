@@ -1,4 +1,5 @@
 import { memo, useEffect, useMemo, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { useContracts } from 'contexts/contract-context';
 import CustomAccordion from 'components/CustomAccordion';
@@ -11,12 +12,22 @@ import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { useWeb3React } from '@web3-react/core';
+import clsx from 'clsx';
+
+const useStyles = makeStyles(() => ({
+  accordionContainer: {
+    '& .MuiAccordion-root': {
+      filter: 'drop-shadow(0px 4px 10px rgba(51, 169, 255, 0.5))'
+    }
+  },
+}));
 
 const ListItem = ({
   pool,
   modal,
   setModal
 }) => {
+  const classes = useStyles();
   const { gauges, snowconeBalance, totalSnowcone } = useContracts();
   const [timerRefresh, setTimerRefresh] = useState(null);
   const [refresh, setRefresh] = useState(false);
@@ -89,6 +100,8 @@ const ListItem = ({
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
     if(userPool){
       setUserData(userPool);
+    }else{
+      setUserData(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[pool,userPools]);
@@ -146,6 +159,7 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
+        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
         onChanged={onChangedExpanded}
         expandMoreIcon={
           <CompoundActionButton

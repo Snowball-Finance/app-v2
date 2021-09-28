@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     height: '100%',
+    backgroundColor: theme.palette.background.primary,
   },
   cell: {
     padding: theme.spacing(1),
