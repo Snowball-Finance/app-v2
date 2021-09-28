@@ -64,16 +64,15 @@ const TopAppBar = ({
       <Hidden smUp>
         <Logo isLabel />
         <ThemeButton />
-        <div />
       </Hidden>
 
-      <div className={classes.rowContainer}>
-        <Hidden xsDown>
+      <Hidden xsDown>
+        <div className={classes.rowContainer}>
           <SnobBalance />
           <ConnectWallet />
           <ThemeButton />
-        </Hidden>
-      </div>
+        </div>
+      </Hidden>
     </Paper>
   )
 }
