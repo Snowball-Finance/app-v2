@@ -261,7 +261,7 @@ const darkTheme = responsiveFontSizes(
         green: 'linear-gradient(90deg, #32CE27 0%, #2A4428 100%)',
         grey: 'linear-gradient(90deg, #969797 0%, #1E2848 100%)',
         red: 'linear-gradient(90deg, #F04242 0%, #1E2848 100%)',
-        lightBlue: 'linear-gradient(307deg,#5E5873,rgb(255 255 255))',
+        lightBlue: 'linear-gradient(270deg, rgba(140, 206, 255, 0.24) 23.91%, rgba(140, 206, 255, 0) 96.09%)',
       },
       layout: {
         maxCardWidth: 513,
