@@ -54,7 +54,8 @@ const enumDeposit = {
   deposit1: 2,
   deposit2: 3,
   withdraw1: 4,
-  withdraw2: 5
+  withdraw2: 5,
+  withdraw3: 6
 };
 
 
@@ -84,6 +85,7 @@ const SnowStepBox = ({
     newStatus.push(transactionStatus.depositStep > 1 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.withdrawStep > 0 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.withdrawStep > 1 ? color.enabled : color.disabled);
+    newStatus.push(transactionStatus.withdrawStep > 2 ? color.enabled : color.disabled);
     
     setColors(newStatus); 
   },[transactionStatus,color.disabled,color.enabled]);
@@ -111,6 +113,8 @@ const SnowStepBox = ({
               style={{background:colors[enumDeposit.withdraw1]}} borderRadius="50%"/>
             <Box className={classes.ellipse} 
               style={{background:colors[enumDeposit.withdraw2]}} borderRadius="50%"/>
+            <Box className={classes.ellipse} 
+              style={{background:colors[enumDeposit.withdraw3]}} borderRadius="50%"/>
               </>}
           </div>
         </div>
@@ -119,7 +123,7 @@ const SnowStepBox = ({
             {title != "Withdraw" ? <>
             <Typography className={classes.subtitle}>{transactionStatus.approvalStep}/2 Step</Typography>
             <Typography className={classes.subtitle}>{transactionStatus.depositStep}/2 Step</Typography>
-            </> : <Typography className={classes.subtitle}>{transactionStatus.withdrawStep}/2 Step</Typography>}
+            </> : <Typography className={classes.subtitle}>{transactionStatus.withdrawStep}/3 Step</Typography>}
           </div>
         </div>
       </div>  
