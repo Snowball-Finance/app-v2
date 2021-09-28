@@ -404,6 +404,10 @@ export function CompoundAndEarnProvider({ children }) {
     }
 
     setIsTransacting({ withdraw: true });
+    setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+    await claim(item);
+    setIsTransacting({ withdraw: true });
+
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
 
@@ -411,7 +415,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (gaugeBalance.gt(0x00)) {
         const gaugeWithdraw = await gaugeContract.withdraw(amount);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
@@ -444,7 +448,7 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
       } else {
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {
@@ -472,7 +476,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
@@ -504,6 +508,9 @@ export function CompoundAndEarnProvider({ children }) {
       })
       return;
     }
+
+    const userData = await getBalanceInfoSinglePool(item.address);
+    if (userData.SNOBHarvestable === 0) return;
 
     setIsTransacting({ pageview: true });
     try {
