@@ -14,7 +14,15 @@ module.exports = {
     es6: true,
   },
   extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended', 'airbnb', 'prettier'],
+  plugins: ['prettier'],
   rules: {
+    'no-nested-ternary': 0,
+    'import/prefer-default-export': 0,
+    'no-restricted-syntax': 0,
+    'import/order': 0,
+    'jsx-a11y/click-events-have-key-events': 0,
+    'jsx-a11y/no-static-element-interactions': 0,
+    'import/no-unresolved': 0,
     'react/display-name': 0, // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/display-name.md
     'no-unused-vars': 'warn', // When we use var, will give us warning
     'react/no-unknown-property': 0, // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
