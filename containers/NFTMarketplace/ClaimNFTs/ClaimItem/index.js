@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import Image from 'next/image'
 import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -13,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     height: '100%',
     paddingBottom: theme.spacing(6),
+    backgroundColor: theme.palette.background.primary,
     '&:hover': {
       transform: 'translateY(-5px)',
       transition: `ease-out 0.4s `,
@@ -23,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   image: {
+    position: 'relative',
     height: 186,
     minHeight: 186,
     width: '100%',
@@ -63,11 +66,14 @@ const ClaimItem = ({
     <Card className={classes.card}>
       <Grid container spacing={2} className={classes.infoContainer}>
         <Grid item xs={12}>
-          <img
-            alt='NFT Image'
-            src={nft?.imgUrl || NO_IMAGE_PATH}
-            className={classes.image}
-          />
+          <div className={classes.image}>
+            <Image
+              alt='NFT Image'
+              src={nft?.imgUrl || NO_IMAGE_PATH}
+              objectFit='contain'
+              layout='fill'
+            />
+          </div>
         </Grid>
         <Grid item xs={12}>
           <ListItem

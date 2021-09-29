@@ -1,4 +1,5 @@
 import { memo, useMemo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import { useAPIContext } from 'contexts/api-context';
 
@@ -12,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     width: 60,
     height: 60,
     borderRadius: '50%',
+    overflow: 'hidden',
     objectFit: 'container',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
@@ -22,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     width: 30,
     height: 30,
     borderRadius: '50%',
+    overflow: 'hidden',
     objectFit: 'container',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
@@ -40,17 +43,25 @@ const FarmIcon = ({
 
   return (
     <div className={classes.root}>
-      <img
-        alt='token-icon'
-        src={`https://raw.githubusercontent.com/Snowball-Finance/bridge-tokens/main/avalanche-tokens/${token0.address}/logo.png`}
-        className={classes.mainImage}
-      />
-      {token1.address &&
-        <img
+      <div className={classes.mainImage}>
+        <Image
           alt='token-icon'
-          src={`https://raw.githubusercontent.com/Snowball-Finance/bridge-tokens/main/avalanche-tokens/${token1.address}/logo.png`}
-          className={classes.subImage}
+          src={`https://raw.githubusercontent.com/Snowball-Finance/bridge-tokens/main/avalanche-tokens/${token0.address}/logo.png`}
+          width={60}
+          height={60}
+          layout='fixed'
         />
+      </div>
+      {token1.address &&
+        <div className={classes.subImage}>
+          <Image
+            alt='token-icon'
+            src={`https://raw.githubusercontent.com/Snowball-Finance/bridge-tokens/main/avalanche-tokens/${token1.address}/logo.png`}
+            width={30}
+            height={30}
+            layout='fixed'
+          />
+        </div>
       }
     </div>
   )

@@ -11,21 +11,23 @@ import LP_ABI from 'libs/abis/lp-token.json';
 import { usePopup } from 'contexts/popup-context'
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
-import { isEmpty } from 'utils/helpers/utility';
+import { isEmpty, delay } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
-import { AVALANCHE_MAINNET_PARAMS, provider } from 'utils/constants/connectors';
+import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
+import { useProvider } from './provider-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
-  const { gauges, retrieveGauge, setGauges, getBalanceInfo } = useContracts();
+  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo  } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
+  const { provider } = useProvider();
   const { prices } = usePrices();
   const snowballInfoQuery = getLastSnowballInfo();
   const deprecatedContractsQuery = getDeprecatedContracts();
@@ -38,8 +40,8 @@ export function CompoundAndEarnProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [loadedDeprecated, setLoadedDeprecated] = useState(false);
   const [sortedUserPools, setSortedUserPools] = useState(false);
-  const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false });
-  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0 })
+  const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false, withdraw: false });
+  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0, withdrawStep: 0 })
 
   useEffect(() => {
     //only fetch total information when the userpools are empty
@@ -47,7 +49,7 @@ export function CompoundAndEarnProvider({ children }) {
     //a more performatic approach
     if(account && !isEmpty(gauges) && !isEmpty(prices) && userPools.length === 0){
       setLoading(true);
-      getBalanceInfosAllPools();
+      getBalanceInfosAllPools(gauges);
     }
     //reset state
     if(!account){
@@ -209,7 +211,7 @@ export function CompoundAndEarnProvider({ children }) {
     };
   }
 
-  const getBalanceInfosAllPools = async () => {
+  const getBalanceInfosAllPools = async (gauges) => {
     setLoading(true);
     try {
       const dataWithPoolBalance = await Promise.all(
@@ -223,7 +225,7 @@ export function CompoundAndEarnProvider({ children }) {
     setLoading(false);
   };
 
-  const getBalanceInfoSinglePool = async (poolAddress,refreshSorting = false) => {
+  const getBalanceInfoSinglePool = async (poolAddress) => {
     if (!account || isEmpty(gauges)) {
       return
     }
@@ -235,40 +237,13 @@ export function CompoundAndEarnProvider({ children }) {
 
       //update gauge state
       const gaugeInfo = await retrieveGauge(givenPool);
-  
-      let foundGauge = false;
-      let clonedGauges = gauges.concat([]);
-      for (const idx in clonedGauges) {
-        if (clonedGauges[idx].address.toLowerCase() === givenPool.gaugeInfo.address.toLowerCase()) {
-          foundGauge = true;
-          clonedGauges[idx] = gaugeInfo;
-        }
-      }
-      if (!foundGauge) {
-        clonedGauges.append(gaugeInfo);
-      }
-      setGauges(clonedGauges);
 
       //update user pool state
-      let poolInfo = await generatePoolInfo(givenPool,clonedGauges);
-      let foundPool = false;
-      let cloneUserPools = userPools.concat([]);
-      for(const idx in cloneUserPools){
-        if(cloneUserPools[idx].address.toLowerCase() === poolAddress.toLowerCase()){
-          foundPool = true;
-          cloneUserPools[idx] = poolInfo;
-        }
-      }
-      if(!foundPool){
-        cloneUserPools.push(poolInfo);
-      }
-      setUserPools(cloneUserPools);
+      const poolInfo = await generatePoolInfo(givenPool,[gaugeInfo]);
 
       getBalanceInfo();
 
-      if(refreshSorting){
-        setSortedUserPools(false);
-      }
+      return poolInfo;
       
     } catch (error) {
       console.log('[Error] getBalanceInfosSinglePool => ', error)
@@ -279,7 +254,16 @@ export function CompoundAndEarnProvider({ children }) {
     return new Promise(async (resolve, reject) => {
       const allowance = await contract.allowance(account, spender)
       if (amount.gt(allowance)) {
-        const approval = await contract.approve(spender, amount);
+        let useExact = false;
+        await contract.estimateGas.approve(spender, ethers.constants.MaxUint256).catch(() => {
+          // general fallback for tokens who restrict approval amounts
+          useExact = true;
+        })
+
+        const approval = await contract.approve(spender, 
+          useExact 
+          ? ethers.constants.MaxUint256 
+          : amount);
         const transactionApprove = await approval.wait(1);
         if (!transactionApprove.status) {
           setPopUp({
@@ -309,7 +293,7 @@ export function CompoundAndEarnProvider({ children }) {
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
         await _approve(vaultContract, gauge.address, amount);
         setIsTransacting({ approve: false });
-        setTransactionStatus({ approvalStep: 2, depositStep: 0 });
+        setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
         return;
       }
 
@@ -327,10 +311,10 @@ export function CompoundAndEarnProvider({ children }) {
       if(!onlyGauge){
         await _approve(lpContract, snowglobeContract.address, amount);
       }
-      setTransactionStatus({ approvalStep: 1, depositStep: 0 });
+      setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
       
       await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
-      setTransactionStatus({ approvalStep: 2, depositStep: 0 });
+      setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
@@ -373,7 +357,9 @@ export function CompoundAndEarnProvider({ children }) {
             return;
           }
         }
-        setTransactionStatus({ approvalStep: 2, depositStep: 1 });
+        setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
+        //await 2 seconds for our node to sync
+        await delay(2000);
         amount = await snowglobeContract.balanceOf(account);
       } else {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
@@ -404,9 +390,12 @@ export function CompoundAndEarnProvider({ children }) {
           text: linkTx
         });
       }
-      setTransactionStatus({ approvalStep: 2, depositStep: 2 });
+      setTransactionStatus({ approvalStep: 2, depositStep: 2, withdrawStep: 0 });
       //refresh data only after 2sec to our node have time to catch up with network
-      setTimeout(()=> getBalanceInfoSinglePool(item.address,true),2000);
+      setTimeout(async ()=> {
+        getBalanceInfosAllPools(await getGaugeProxyInfo());
+        setSortedUserPools(false);
+      },2000);
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
@@ -417,7 +406,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   }
 
-  const withdraw = async (item) => {
+  const withdraw = async (item, amount = 0) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -426,22 +415,27 @@ export function CompoundAndEarnProvider({ children }) {
       });
       return;
     }
-
-    setIsTransacting({ pageview: true });
+    
+    setIsTransacting({ withdraw: true });
+    if(!item.deprecatedPool){
+        await claim(item);
+    }
+    setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
+    
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
       const gaugeBalance = await gaugeContract.balanceOf(account);
       if (gaugeBalance.gt(0x00)) {
-        const gaugeWithdraw = await gaugeContract.withdraw(gaugeBalance);
+        const gaugeWithdraw = await gaugeContract.withdraw(amount > 0 ? amount : gaugeBalance);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
-          setIsTransacting({ pageview: false });
+          setIsTransacting({ withdraw: false });
           return;
         }
 
@@ -455,22 +449,30 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setIsTransacting({ pageview: false });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
+          setIsTransacting({ withdraw: false });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
             //refresh data only after 2sec to our node have time to catch up with network
-            setTimeout(()=> getBalanceInfoSinglePool(item.address,true),2000);
+            setTimeout(async ()=> {
+              await getBalanceInfosAllPools(await getGaugeProxyInfo());
+              setSortedUserPools(false);
+            },2000);
           }
         }
+      } else {
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
+        //await 2 seconds for our node to sync
+        await delay(2000);
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
 
         if (snowglobeBalance.gt(0x00)) {
-          const snowglobeWithdraw = await snowglobeContract.withdraw(snowglobeBalance);
+          const snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
           const transactionSnowglobeWithdraw = await snowglobeWithdraw.wait(1)
 
           if (!transactionSnowglobeWithdraw.status) {
@@ -490,11 +492,15 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
             //refresh data only after 2sec to our node have time to catch up with network
-            setTimeout(()=> getBalanceInfoSinglePool(item.address,true),2000);
+            setTimeout(async ()=> {
+              await getBalanceInfosAllPools(await getGaugeProxyInfo());
+              setSortedUserPools(false);
+            },2000);
           }
         }
       }
@@ -506,7 +512,7 @@ export function CompoundAndEarnProvider({ children }) {
       });
       console.log(error)
     }
-    setIsTransacting({ pageview: false });
+    setIsTransacting({ withdraw: false });
   }
 
   const claim = async (item) => {
@@ -519,10 +525,13 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
 
-    setIsTransacting({ pageview: true });
+    const userData = await getBalanceInfoSinglePool(item.address);
+    if (userData.SNOBHarvestable === 0) return;
+
+    setIsTransacting({ pageview: true, withdraw:true });
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
+      
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
       if (transactionReward.status) {
@@ -537,9 +546,6 @@ export function CompoundAndEarnProvider({ children }) {
         });
       if(item.deprecatedPool){
         item.claimed = true;
-      }else{
-        //refresh data only after 2sec to our node have time to catch up with network
-        setTimeout(()=> getBalanceInfoSinglePool(item.address),2000);
       }
         
       } else {

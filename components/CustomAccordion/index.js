@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { AccordionDetails } from '@material-ui/core';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -23,7 +23,8 @@ const AccordionSummary = withStyles((theme) => ({
   root: {
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
-    }
+    },
+    backgroundColor: theme.palette.background.primary
   },
   expandIcon: {
     transform: 'none !important',
@@ -33,18 +34,25 @@ const AccordionSummary = withStyles((theme) => ({
   },
 }))(MuiAccordionSummary);
 
+const AccordionDetails = withStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.background.primary
+  },
+}))(MuiAccordionDetails);
+
 const CustomAccordion = ({
   className,
   style,
   summary,
   details,
   expandMoreIcon,
+  onChanged
 }) => {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.root, className)} style={style}>
-      <Accordion defaultExpanded={false}>
+      <Accordion defaultExpanded={false} onChange={onChanged}>
         <AccordionSummary
           expandIcon={expandMoreIcon || <ExpandMoreIcon />}
           aria-controls="panel1c-content"

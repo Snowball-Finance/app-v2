@@ -23,19 +23,11 @@ const LINKS = Object.freeze({
   },
   GOVERNANCE: {
     TITLE: 'Governance',
-    HREF: 'https://app.snowball.network/governance_v2'
+    HREF: '/governance'
   },
   COMPOUND_AND_EARN: {
     TITLE: 'Compound & Earn',
     HREF: '/compound-and-earn'
-  },
-  VOTE: {
-   TITLE: 'Vote',
-   HREF: '/vote'
-  },
-  VOTE_DETAIL: {
-    TITLE: 'Vote Detail',
-    HREF: '/vote/detail/[proposal]'
   },
   NFT_MARKETPLACE: {
     TITLE: 'NFT Marketplace',
@@ -65,6 +57,10 @@ const LINKS = Object.freeze({
     TITLE: 'Use Old Website',
     HREF: 'https://app.snowball.network',
     IS_EXT_LINK: true
+  },
+  VOTE_DETAIL: {
+    TITLE: 'Vote Detail',
+    HREF: '/governance/proposal/[proposal]'
   },
 });
 

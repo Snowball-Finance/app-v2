@@ -40,10 +40,12 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+  
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools,setLoadedDeprecated,setSortedUserPools,
     setUserPools } = useCompoundAndEarnContract();
 
+  const [modal, setModal] = useState({ open: false, title: '', address:'' });
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
@@ -85,6 +87,9 @@ const CompoundAndEarn = () => {
       let sortedData = [...poolsInfo]
       sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
       setLastSnowballInfo(sortedData);
+      setSearch('');
+      setType('apy');
+      setPool('all');
       return
     }
 
@@ -93,6 +98,9 @@ const CompoundAndEarn = () => {
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
       setSortedUserPools(true);
+      setSearch('');
+      setType('apy');
+      setPool('all');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
@@ -110,7 +118,13 @@ const CompoundAndEarn = () => {
         (item) => item.name.search(spiltItem.toUpperCase()) != -1
       );
     });
-    setLastSnowballInfo(filterData);
+
+    let sortedData = sortingByType(type, filterData);
+    if (account) {
+      sortedData = sortingByUserPool(type, filterData);
+    }    
+
+    setLastSnowballInfo(sortedData);
     setSearch(value);
   };
 
@@ -121,12 +135,17 @@ const CompoundAndEarn = () => {
         ? [...lastSnowballModifiedInfo]
         : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
-    setLastSnowballInfo(filterData);
+    let sortedData = sortingByType(type, filterData);
+    if (account) {
+      sortedData = sortingByUserPool(type, filterData);
+    }    
+
+    setLastSnowballInfo(sortedData);
     setSearch('');
   };
 
   const handleSorting = (event) => {
-    const filterData = filterDataByProtocol.length
+    let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
         ? [...lastSnowballModifiedInfo]
@@ -137,7 +156,16 @@ const CompoundAndEarn = () => {
       sortedData = sortingByUserPool(event.target.value, filterData);
     }
 
-    setLastSnowballInfo(sortedData);
+    if(search !== "") {
+      filterData = sortedData;
+      const splittedValue = search.split(' ');
+      splittedValue.forEach((spiltItem) => {
+        filterData = filterData.filter(
+          (item) => item.name.search(spiltItem.toUpperCase()) != -1
+        );
+      });
+      setLastSnowballInfo(filterData);    }
+    else setLastSnowballInfo(sortedData);
     setType(event.target.value);
   };
 
@@ -158,14 +186,27 @@ const CompoundAndEarn = () => {
         ...filteredDataWithDepositLP,
         ...filteredDataWithTokensToInvested,
       ];
-    } else if (event.target.value !== 'all') {
+    } else if ( event.target.value === 'claimable') {
+      filteredData = filteredData.filter(
+      (item) => item.SNOBHarvestable > 0
+      );
+    } else if (event.target.value !== 'all' && event.target.value !== 'claimable') {
       filteredData = filteredData.filter((item) =>
         item.source.toLowerCase().includes(event.target.value)
       );
     }
     const sortedData = sortingByUserPool(type, filteredData);
-    setLastSnowballInfo(sortedData);
     setFilterDataByProtocol(sortedData);
+    if(search !== "") {
+      let filterData = sortedData;
+      const splittedValue = search.split(' ');
+      splittedValue.forEach((spiltItem) => {
+        filterData = filterData.filter(
+          (item) => item.name.search(spiltItem.toUpperCase()) != -1
+        );
+      });
+      setLastSnowballInfo(filterData);    }
+    else setLastSnowballInfo(sortedData);
     setPool(event.target.value);
   };
 
@@ -221,7 +262,7 @@ const CompoundAndEarn = () => {
             lastSnowballInfo?.map((pool, index) => (
                 <Grid item key={index} xs={12}>
                   {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) && 
-                    <ListItem pool={pool} />}
+                    <ListItem pool={pool} modal={modal} setModal={setModal}/>}
                 </Grid>
               ))
           )

@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     borderRadius: '10px',
-    backgroundColor: '#E5F3FF',
+    backgroundColor: theme.custom.palette.connectTopbar,
   },
   account: {
     display: 'flex',

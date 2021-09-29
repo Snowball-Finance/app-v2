@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Details = ({
   item,
+  title,
   amount,
   error,
   inputHandler
@@ -58,7 +59,7 @@ const Details = ({
           <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
         </div>
         <div className={classes.pairText}>
-          <Typography variant='caption'>Deposit</Typography>
+          <Typography variant='caption'>{title}</Typography>
           <Typography variant='h6'>{item.name}</Typography>
         </div>
       </div>
@@ -72,10 +73,13 @@ const Details = ({
           error={error}
           onChange={inputHandler}
         />
-        <Typography variant='caption' className={classes.balanceText}>
+        {title != "Withdraw" ? <Typography variant='caption' className={classes.balanceText}>
           Available: {(item.userLPBalance / 10**item.lpDecimals).toLocaleString(
             undefined, { maximumSignificantDigits: 18 })} {item.symbol}
-        </Typography>
+        </Typography> : <Typography variant='caption' className={classes.balanceText}>
+          Available: {(item.userBalanceGauge / 10**item.lpDecimals).toLocaleString(
+            undefined, { maximumSignificantDigits: 18 })} {item.symbol}
+        </Typography> }
       </div>
     </>
   );

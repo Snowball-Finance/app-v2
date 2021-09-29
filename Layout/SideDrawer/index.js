@@ -10,7 +10,6 @@ import MultiSideItem from './MultiSideItem'
 import LINKS from 'utils/constants/links'
 import SIDEBAR_MENU from 'utils/constants/sidebar-menu'
 import { isEmpty } from 'utils/helpers/utility'
-import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -64,7 +63,6 @@ const SideDrawer = ({
   const classes = useStyles();
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState('')
-  const { setSortedUserPools } = useCompoundAndEarnContract();
 
   useEffect(() => {
     for (const item of SIDEBAR_MENU) {
@@ -150,6 +148,7 @@ const SideDrawer = ({
                 isSelect={selectedItem === sidebar.TITLE}
                 sidebar={sidebar}
                 onTab={itemHandler}
+                onClickAway={onClickAway}
               />
             )
           })}

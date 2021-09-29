@@ -1,11 +1,13 @@
 
 import { memo } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { makeStyles } from '@material-ui/core/styles'
 
 import LINKS from 'utils/constants/links'
-import { LOGO_IMAGE_PATH, LOGO_LABEL_IMAGE_PATH } from 'utils/constants/image-paths'
+import { LOGO_IMAGE_PATH, LOGO_LABEL_IMAGE_PATH, LOGO_DARK_LABEL_IMAGE_PATH } from 'utils/constants/image-paths'
 import clsx from 'clsx'
+import { useDarkMode } from 'contexts/ui-context'
 
 const useStyles = makeStyles(() => ({
   picture: {
@@ -28,20 +30,16 @@ const Logo = ({
   ...rest
 }) => {
   const classes = useStyles();
+  const { darkMode } = useDarkMode();
 
-  const imagePath = isLabel ? LOGO_LABEL_IMAGE_PATH : LOGO_IMAGE_PATH
+  const imagePath = isLabel ? darkMode ? LOGO_DARK_LABEL_IMAGE_PATH : LOGO_LABEL_IMAGE_PATH : LOGO_IMAGE_PATH
 
   return (
     <Link href={LINKS.HOME.HREF}>
       <a className={clsx(classes.container, className)}>
-        <picture className={classes.picture} {...rest}>
-          <source srcSet={imagePath} />
-          <img
-            className={classes.img}
-            src={imagePath}
-            alt='logo'
-          />
-        </picture>
+        <div className={classes.picture} {...rest}>
+          <Image src={imagePath} width={160} height={40} layout='fixed' alt='logo' />
+        </div>
       </a>
     </Link>
   )
