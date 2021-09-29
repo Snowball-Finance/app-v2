@@ -323,20 +323,28 @@ export function S4dVaultContractProvider({ children }) {
       const fraxAmount = data[1].value;
       const tusdAmount = data[2].value;
       const usdtAmount = data[3].value;
-      const totalAmount = data[0].value + data[1].value + data[2].value + data[3].value
+      let totalAmount = 0;
+      for(let i=0; i<4; i++) {
+        totalAmount += BNToFloat(data[i].value, data[i].token.decimal);
+      }
 
       const minToMint = await unsignedVaultContract.calculateTokenAmount([daiAmount, fraxAmount, tusdAmount, usdtAmount], true)
       const minToMintValue = BNToFloat(minToMint, 18)
+      const ratio = svToken.ratio || 1;
+      const usdValue = minToMintValue * ratio;
       const difference = (minToMintValue * (svToken.ratio || 1)) - totalAmount
       const discount = (totalAmount > 0 ? (difference / totalAmount) * 100 : 0);
 
       return {
         minToMintValue,
-        discount
+        discount,
+        ratio,
+        usdValue,
+        totalAmount,
       }
     } catch (error) {
       console.log('[Error] getWithdrawAmount => ', error)
-      return { minToMintValue: 0, discount: 0 };
+      return { minToMintValue: 0, discount: 0, ratio: 0, usdValue: 0,totalAmount: 0 };
     }
   }
 
