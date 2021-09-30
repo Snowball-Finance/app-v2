@@ -11,10 +11,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
   },
   iconButton: {
-    color: theme.palette.action.active,
+    color: theme.palette.text.primary,
     transform: 'scale(1, 1)',
     transition: theme.transitions.create(['transform', 'color'], {
       duration: theme.transitions.duration.shorter,

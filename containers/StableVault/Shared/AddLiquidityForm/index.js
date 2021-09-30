@@ -10,7 +10,8 @@ import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import { useFormStyles } from 'styles/use-styles'
 import getVaultInfo from 'utils/helpers/getVaultInfo'
-import { floatToBN } from 'utils/helpers/format'
+import { BNToFloat, floatToBN } from 'utils/helpers/format'
+import VaultAddLiquidityDialog from './VaultAddLiquidityDialog'
 
 const AddLiquidityForm = ({
   vault,
@@ -26,6 +27,13 @@ const AddLiquidityForm = ({
   const [maxSlippage, setMaxSlippage] = useState(0.1);
 
   const { control, handleSubmit, setValue } = useForm();
+  const [open, setAddLiquidityDialog] = useState(false);
+  const [tokenData, setTokenData] = useState();
+  const [s4d, setS4d] = useState(0);
+  const [s4dRatio, setS4dRatio] = useState(0);
+  const [usdValue, setUsdValue] = useState(0);
+  const [discountValue, setDiscount] = useState(0);
+  const [s4dTotal, setS4dTotal] = useState(0);
 
   const onSubmit = async (data) => {
     let isValidation = true;
@@ -47,18 +55,21 @@ const AddLiquidityForm = ({
         ...liquidityData,
         {
           token,
-          value: floatToBN(data[`input${token.index}`],token.decimal) || 0
+          value: floatToBN(data[`input${token.index}`], token.decimal) || 0
         }
       ]
     }
 
-    const { minToMintValue } = await getDepositReview(liquidityData)
-    const receivingValue = {
-      token: vault,
-      value: minToMintValue
-    }
+    const { minToMintValue, discount, ratio, usdValue, totalAmount } = await getDepositReview(liquidityData)
 
-    await addLiquidity(liquidityData, maxSlippage, receivingValue)
+    setS4d(minToMintValue);
+    setS4dRatio(ratio);
+    setUsdValue(usdValue);
+    setDiscount(discount)
+    setS4dTotal(totalAmount);
+    setTokenData(liquidityData)
+    setAddLiquidityDialog(true)
+
     for (const token of tokenArray) {
       setValue(`input${token.index}`, '')
     }
@@ -107,6 +118,21 @@ const AddLiquidityForm = ({
             </GradientButton>
           </Grid>
         </Grid>
+        {open &&
+          <VaultAddLiquidityDialog
+            open={open}
+            setOpen={setAddLiquidityDialog}
+            maxSlippage={maxSlippage}
+            liquidityData={tokenData}
+            addLiquidity={addLiquidity}
+            vault={vault}
+            totalAmount={s4dTotal}
+            minToMintValue={s4d}
+            discount={discountValue}
+            ratio={s4dRatio}
+            usdValue={usdValue}
+          />
+        }
       </form>
     </CardFormWrapper>
   )

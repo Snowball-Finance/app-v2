@@ -35,10 +35,6 @@ const useStyles = makeStyles(theme => {
     },
     tokenIcon: {
       marginRight: theme.spacing(1),
-      [theme.breakpoints.down('xs')]: {
-        width: 40,
-        height: 40,
-      }
     },
     select: {
       fontSize: 26,
@@ -60,7 +56,7 @@ const useStyles = makeStyles(theme => {
       fontWeight: 'bold',
       minWidth: 'unset',
       padding: theme.spacing(0, 1),
-      backgroundColor: theme.custom.palette.lightBlue
+      backgroundColor: theme.custom.palette.blueButton
     },
     textField: {
       border: 'none',

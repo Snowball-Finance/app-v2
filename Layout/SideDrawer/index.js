@@ -148,6 +148,7 @@ const SideDrawer = ({
                 isSelect={selectedItem === sidebar.TITLE}
                 sidebar={sidebar}
                 onTab={itemHandler}
+                onClickAway={onClickAway}
               />
             )
           })}

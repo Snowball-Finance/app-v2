@@ -40,8 +40,8 @@ export function CompoundAndEarnProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [loadedDeprecated, setLoadedDeprecated] = useState(false);
   const [sortedUserPools, setSortedUserPools] = useState(false);
-  const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false });
-  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0 })
+  const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false, withdraw: false });
+  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0, withdrawStep: 0 })
 
   useEffect(() => {
     //only fetch total information when the userpools are empty
@@ -293,7 +293,7 @@ export function CompoundAndEarnProvider({ children }) {
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
         await _approve(vaultContract, gauge.address, amount);
         setIsTransacting({ approve: false });
-        setTransactionStatus({ approvalStep: 2, depositStep: 0 });
+        setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
         return;
       }
 
@@ -311,10 +311,10 @@ export function CompoundAndEarnProvider({ children }) {
       if(!onlyGauge){
         await _approve(lpContract, snowglobeContract.address, amount);
       }
-      setTransactionStatus({ approvalStep: 1, depositStep: 0 });
+      setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
       
       await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
-      setTransactionStatus({ approvalStep: 2, depositStep: 0 });
+      setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
@@ -357,7 +357,7 @@ export function CompoundAndEarnProvider({ children }) {
             return;
           }
         }
-        setTransactionStatus({ approvalStep: 2, depositStep: 1 });
+        setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
         //await 2 seconds for our node to sync
         await delay(2000);
         amount = await snowglobeContract.balanceOf(account);
@@ -390,7 +390,7 @@ export function CompoundAndEarnProvider({ children }) {
           text: linkTx
         });
       }
-      setTransactionStatus({ approvalStep: 2, depositStep: 2 });
+      setTransactionStatus({ approvalStep: 2, depositStep: 2, withdrawStep: 0 });
       //refresh data only after 2sec to our node have time to catch up with network
       setTimeout(async ()=> {
         getBalanceInfosAllPools(await getGaugeProxyInfo());
@@ -406,7 +406,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   }
 
-  const withdraw = async (item) => {
+  const withdraw = async (item, amount = 0) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -415,22 +415,23 @@ export function CompoundAndEarnProvider({ children }) {
       });
       return;
     }
-
-    setIsTransacting({ pageview: true });
+    
+    setIsTransacting({ withdraw: true });
+    
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
       const gaugeBalance = await gaugeContract.balanceOf(account);
       if (gaugeBalance.gt(0x00)) {
-        const gaugeWithdraw = await gaugeContract.withdraw(gaugeBalance);
+        const gaugeWithdraw = await gaugeContract.withdraw(amount > 0 ? amount : gaugeBalance);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
-          setIsTransacting({ pageview: false });
+          setIsTransacting({ withdraw: false });
           return;
         }
 
@@ -444,10 +445,12 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setIsTransacting({ pageview: false });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
+            await claim(item, true);
+            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async ()=> {
               await getBalanceInfosAllPools(await getGaugeProxyInfo());
@@ -455,6 +458,8 @@ export function CompoundAndEarnProvider({ children }) {
             },2000);
           }
         }
+      } else {
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {
@@ -464,7 +469,7 @@ export function CompoundAndEarnProvider({ children }) {
         const snowglobeBalance = await snowglobeContract.balanceOf(account);
 
         if (snowglobeBalance.gt(0x00)) {
-          const snowglobeWithdraw = await snowglobeContract.withdraw(snowglobeBalance);
+          const snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
           const transactionSnowglobeWithdraw = await snowglobeWithdraw.wait(1)
 
           if (!transactionSnowglobeWithdraw.status) {
@@ -484,9 +489,12 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
+            await claim(item, true);
+            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async ()=> {
               await getBalanceInfosAllPools(await getGaugeProxyInfo());
@@ -503,10 +511,10 @@ export function CompoundAndEarnProvider({ children }) {
       });
       console.log(error)
     }
-    setIsTransacting({ pageview: false });
+    setIsTransacting({ withdraw: false });
   }
 
-  const claim = async (item) => {
+  const claim = async (item, withdraw = false) => {
     if (!account || !gauges) {
       setPopUp({
         title: 'Network Error',
@@ -516,10 +524,14 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
 
-    setIsTransacting({ pageview: true });
+    if(item.SNOBHarvestable <= 0){
+      return;
+    }
+
+    setIsTransacting({ pageview: true, withdraw:true });
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
-
+      
       const gaugeReward = await gaugeContract.getReward()
       const transactionReward = await gaugeReward.wait(1)
       if (transactionReward.status) {
@@ -550,7 +562,9 @@ export function CompoundAndEarnProvider({ children }) {
         text: `Error claiming from Gauge ${error.message}`
       });
     }
-    setIsTransacting({ pageview: false });
+    if(!withdraw){
+      setIsTransacting({ pageview: false });
+    }
   }
 
   return (
@@ -570,7 +584,8 @@ export function CompoundAndEarnProvider({ children }) {
       sortedUserPools,
       setLoadedDeprecated,
       setSortedUserPools,
-      setUserPools
+      setUserPools,
+      getBalanceInfosAllPools
     }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -599,7 +614,8 @@ export function useCompoundAndEarnContract() {
     sortedUserPools,
     setLoadedDeprecated,
     setSortedUserPools,
-    setUserPools
+    setUserPools,
+    getBalanceInfosAllPools
   } = context;
 
   return {
@@ -618,6 +634,7 @@ export function useCompoundAndEarnContract() {
     sortedUserPools,
     setLoadedDeprecated,
     setSortedUserPools,
-    setUserPools
+    setUserPools,
+    getBalanceInfosAllPools
   };
 }
