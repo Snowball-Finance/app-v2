@@ -61,10 +61,10 @@ const useStyles = makeStyles((theme) => ({
 
 const ThemeButton = () => {
   const classes = useStyles();
-  const { darkMode, setDarkMode } = useDarkMode();
+  const { darkMode, handleDarkModeChange } = useDarkMode();
 
   const themeHandler = () => {
-    setDarkMode(!darkMode);
+    handleDarkModeChange();
   };
 
   return (
