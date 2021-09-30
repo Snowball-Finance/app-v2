@@ -128,8 +128,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           <ContainedButton
             disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
             onClick={() => {
-              if(userData.deprecatedPool){
-                withdraw(userData);
+              if(item.deprecatedPool){
+                withdraw(item);
               }else{
                 setTransactionStatus({ withdrawStep: 0 });
                 setWithdraw(true)
@@ -147,8 +147,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
             onClick={() => {
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
               claim(item).then(()=>{
-                getBalanceInfoSinglePool(item.address).then((userData) => 
+                if(!item.deprecatedPool){
+                  getBalanceInfoSinglePool(item.address).then((userData) => 
                   setUserData(userData))
+                }
               })
             }}
             fullWidth={isSm ? true : false}

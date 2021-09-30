@@ -37,7 +37,7 @@ export function S4dVaultContractProvider({ children }) {
 
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
-  const { getBalanceInfoSinglePool } = useCompoundAndEarnContract();
+  const { getBalanceInfosAllPools } = useCompoundAndEarnContract();
 
   const [loading, setLoading] = useState(false)
   const [svToken, setSVToken] = useState({ name: 'S4D', priceId: 's4d', decimal: 18, balance: 0, supply: 0, percentage: 0, ratio: 0 })
@@ -458,7 +458,7 @@ export function S4dVaultContractProvider({ children }) {
 
       if (transactionAddLiquidity.status) {
         //refresh the pool status for the user be able to deposit
-        setTimeout(()=> getBalanceInfoSinglePool(CONTRACTS.S4D.TOKEN,true),2000);
+        setTimeout(()=> getBalanceInfosAllPools(),2000);
         await getInit();
       }
     } catch (error) {
