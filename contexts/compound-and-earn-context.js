@@ -417,10 +417,6 @@ export function CompoundAndEarnProvider({ children }) {
     }
     
     setIsTransacting({ withdraw: true });
-    if(!item.deprecatedPool){
-        await claim(item);
-    }
-    setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
     
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
@@ -428,7 +424,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (gaugeBalance.gt(0x00)) {
         const gaugeWithdraw = await gaugeContract.withdraw(amount > 0 ? amount : gaugeBalance);
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 1 });
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
             title: 'Transaction Error',
@@ -449,11 +445,12 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
-          setIsTransacting({ withdraw: false });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
+            await claim(item, true);
+            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async ()=> {
               await getBalanceInfosAllPools(await getGaugeProxyInfo());
@@ -492,10 +489,12 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.SUCCESS.VALUE,
             text: linkTx
           });
-          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
           if(item.deprecatedPool){
             item.withdrew = true;
           }else{
+            await claim(item, true);
+            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async ()=> {
               await getBalanceInfosAllPools(await getGaugeProxyInfo());
@@ -515,7 +514,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ withdraw: false });
   }
 
-  const claim = async (item) => {
+  const claim = async (item, withdraw = false) => {
     if (!account || !gauges) {
       setPopUp({
         title: 'Network Error',
@@ -525,8 +524,9 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
 
-    const userData = await getBalanceInfoSinglePool(item.address);
-    if (userData.SNOBHarvestable === 0) return;
+    if(item.SNOBHarvestable <= 0){
+      return;
+    }
 
     setIsTransacting({ pageview: true, withdraw:true });
     try {
@@ -562,7 +562,9 @@ export function CompoundAndEarnProvider({ children }) {
         text: `Error claiming from Gauge ${error.message}`
       });
     }
-    setIsTransacting({ pageview: false });
+    if(!withdraw){
+      setIsTransacting({ pageview: false });
+    }
   }
 
   return (
@@ -582,7 +584,8 @@ export function CompoundAndEarnProvider({ children }) {
       sortedUserPools,
       setLoadedDeprecated,
       setSortedUserPools,
-      setUserPools
+      setUserPools,
+      getBalanceInfosAllPools
     }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -611,7 +614,8 @@ export function useCompoundAndEarnContract() {
     sortedUserPools,
     setLoadedDeprecated,
     setSortedUserPools,
-    setUserPools
+    setUserPools,
+    getBalanceInfosAllPools
   } = context;
 
   return {
@@ -630,6 +634,7 @@ export function useCompoundAndEarnContract() {
     sortedUserPools,
     setLoadedDeprecated,
     setSortedUserPools,
-    setUserPools
+    setUserPools,
+    getBalanceInfosAllPools
   };
 }
