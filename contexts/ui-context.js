@@ -5,17 +5,16 @@ const DarkModeContext = createContext();
 function DarkModeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(()=> {
-    if (process.browser) {
-      const darkModeFromStorage = JSON.parse(localStorage.getItem('darkMode')) || false;
-      setDarkMode(darkModeFromStorage);
-    }
+  useEffect(() => {
+    const darkModeFromStorage =
+      JSON.parse(localStorage.getItem('darkMode')) || false;
+    setDarkMode(darkModeFromStorage);
   }, []);
 
   const handleDarkModeChange = () => {
     localStorage.setItem('darkMode', !darkMode);
     setDarkMode(!darkMode);
-  }
+  };
   const value = { darkMode, handleDarkModeChange };
 
   return (
