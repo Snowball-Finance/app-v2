@@ -5,7 +5,7 @@ import { injected } from 'utils/constants/connectors'
 
 const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
-  const [tried, setTried] = useState(false);
+  const [tried, setTried] = useState<boolean>(false);
 
   useEffect(() => {
     injected.isAuthorized()
