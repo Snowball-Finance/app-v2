@@ -8,6 +8,8 @@ import clsx from 'clsx';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import { toast } from 'react-toastify';
+import Toast from 'components/Toast';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -19,27 +21,9 @@ const useStyles = makeStyles((theme) => ({
       width: '100%'
     }
   },
-  Details: {
-    backgroundColor: theme.palette.primary
-  },
-  Deposit: {
-    backgroundColor: theme.custom.palette.green
-  },
-  Get_PGL: {
-    backgroundColor: theme.custom.palette.png_orange
-  },
-  Get_JLP: {
-    backgroundColor: theme.custom.palette.joe_red
-  },
-  Get_xJoe: {
-    backgroundColor: theme.custom.palette.joe_red
-  },
-  Get_s3D: {
-    backgroundColor: theme.custom.palette.s3d_blue
-  },
-  Get_s3F: {
-    backgroundColor: theme.custom.palette.s3f_green
-  }
+  color: props => ({
+    backgroundColor: theme.custom.palette.actions[props.type]
+  }),
 }));
 
 const getIcon = (type) => {
@@ -48,6 +32,8 @@ const getIcon = (type) => {
       return (<ArrowDropDownCircleIcon />);
     case "Deposit":
       return (<SystemUpdateAltRoundedIcon />);
+    case "CLAIM":
+      return;
     default:
       return (<LaunchIcon />);
   }
@@ -58,28 +44,40 @@ const CompoundActionButton = ({
   action,
   endIcon = true,
   disabled,
-  fullWidth
+  fullWidth,
+  setUserData,
+  item
 }) => {
-  const classes = useStyles();
+  const classes = useStyles({type});
   const router = useRouter();
-  const { setTransactionStatus } = useCompoundAndEarnContract();
+  const { setTransactionStatus, claim, getBalanceInfoSinglePool, isTransacting } = useCompoundAndEarnContract();
 
   const buttonHandler = useCallback(() => {
-    action(router);
-    if (type === 'Deposit') {
-      setTransactionStatus({ approvalStep: 0, depositStep: 0 });
+    if (type === 'CLAIM') {
+      toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
+      claim(item).then(()=>{
+      getBalanceInfoSinglePool(item.address).then((userData) => 
+        setUserData(userData))
+      })
+    }
+    else {
+      action(router);
+      if (type === 'Deposit') {
+        setTransactionStatus({ approvalStep: 0, depositStep: 0 });
+      }
     }
   }, [type, action, router, setTransactionStatus])
 
   return (
     <ContainedButton
-      className={clsx({ [classes.button]: endIcon }, classes[type])}
+      className={clsx({ [classes.button]: endIcon }, classes.color)}
       size={endIcon ? 'small' : 'medium'}
       disableElevation={endIcon}
       endIcon={endIcon ? getIcon(type) : null}
       onClick={buttonHandler}
       disabled={disabled}
       fullWidth={fullWidth}
+      loading={type === 'CLAIM' ? isTransacting.pageview : null}
     >
       {type.replace('_', ' ')}
     </ContainedButton>

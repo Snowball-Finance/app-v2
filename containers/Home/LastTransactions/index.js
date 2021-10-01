@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-start',
     padding: theme.spacing(2),
     height: '100%',
+    backgroundColor: theme.palette.background.primary,
   },
   buttonContainer: {
     marginTop: theme.spacing(2),

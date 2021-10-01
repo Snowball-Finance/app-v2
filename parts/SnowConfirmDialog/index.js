@@ -16,7 +16,7 @@ const SnowConfirmDialog = ({
         show={true}
         size={150}
         icon={icon} />
-      <Typography color='textPrimary' variant='h6' align='center'>
+      <Typography color='textPrimary' style={{ wordWrap: 'break-word' }} variant='h6' align='center'>
         {text}
       </Typography>
     </SnowDialog>

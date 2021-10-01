@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import Image from 'next/image'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, Typography } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
@@ -16,18 +17,26 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(1.5, 2.5),
-    backgroundColor: theme.custom.palette.lightBlue
+    backgroundColor: theme.custom.palette.governanceBanner
   },
   icon: {
     position: 'absolute',
     right: 40,
     objectFit: 'contain',
-    height: '100%'
+    height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      right: 0,
+      top:0,
+      height: '80%',
+    }
   },
   subHeader: {
     fontSize: 11,
     maxWidth: 370,
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+      width: '75%',
+    }
   },
   subHeaderButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
@@ -43,11 +52,15 @@ const VoteHandHeader = () => {
 
   return (
     <Card className={classes.root}>
-      <img
-        alt='icon'
-        src={VOTE_HAND_IMAGE_PATH}
-        className={classes.icon}
-      />
+      <div className={classes.icon}>
+        <Image
+          alt='icon'
+          src={VOTE_HAND_IMAGE_PATH}
+          width={164}
+          height={100}
+          layout='fixed'
+        />      
+      </div>
       <Typography variant='body2' gutterBottom>
         Active proposals
       </Typography>

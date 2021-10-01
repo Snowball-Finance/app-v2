@@ -1,26 +1,24 @@
+import { memo } from 'react';
+import Image from 'next/image';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography, Grid } from '@material-ui/core';
+import clsx from 'clsx';
 
-import { memo } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import { Typography, Paper } from '@material-ui/core'
-import clsx from 'clsx'
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+const useStyles = makeStyles((theme) => ({
+  container: {
+    height: '100%',
     padding: theme.spacing(2),
     backgroundColor: theme.palette.background.primary,
     cursor: 'pointer',
     transition: 'ease-out 0.4s',
+    border: '1px solid rgba(117, 115, 115, 0.2)',
     borderRadius: theme.spacing(1.5),
     '&:hover': {
       transform: 'translateY(-5px)',
-    }
+    },
   },
   selected: {
-    border: `1px solid ${theme.custom.palette.border}`
+    border: `1px solid ${theme.custom.palette.border}`,
   },
   icon: {
     width: 40,
@@ -32,32 +30,41 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     fontWeight: 'bold',
-    margin: theme.spacing(1)
-  }
+    textAlign: 'center',
+    margin: theme.spacing(1),
+  },
 }));
 
-const WalletCard = ({
-  name,
-  selected
-}) => {
-  const classes = useStyles()
+const WalletCard = ({ name, selected }) => {
+  const classes = useStyles();
 
   return (
-    <Paper className={clsx(classes.paper, { [classes.selected]: selected })}>
-      <img
-        className={classes.icon}
-        src={`/assets/images/wallet/${name}.png`}
-        alt='Logo'
-      />
-      <Typography
-        variant='h6'
-        color='textSecondary'
-        className={classes.label}
-      >
-        {name}
-      </Typography>
-    </Paper>
+    <Grid
+      container
+      className={clsx(classes.container, { [classes.selected]: selected })}
+      direction="column"
+      alignItems="center"
+      justify="center"
+    >
+      <Grid item>
+        <div className={classes.icon}>
+          <Image
+            src={`/assets/images/wallet/${name}.png`}
+            width={40}
+            height={40}
+            layout='responsive'
+            alt='Logo'
+          />
+        </div>
+      </Grid>
+
+      <Grid item>
+        <Typography variant="body2" className={classes.label}>
+          {name}
+        </Typography>
+      </Grid>
+    </Grid>
   );
-}
+};
 
 export default memo(WalletCard);

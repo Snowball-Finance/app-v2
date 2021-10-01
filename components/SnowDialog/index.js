@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     minWidth: 520,
     borderRadius: 10,
-    backgroundColor: theme.palette.primary.default,
+    backgroundColor: theme.palette.background.primary,
     [theme.breakpoints.down('sm')]: {
       minWidth: 'unset'
     },
@@ -36,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
   closeIcon: {
     position: 'absolute',
     top: theme.spacing(1),
-    right: theme.spacing(2)
+    right: theme.spacing(2),
+    color: theme.palette.text.primary,
   },
   dialogContent: {
     width: '100%',

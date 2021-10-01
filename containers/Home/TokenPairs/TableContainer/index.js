@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
   header: {
-    backgroundColor: theme.custom.palette.lightBlue
+    backgroundColor: theme.custom.palette.tokenPairTableHeader
   },
   pairs: {
     fontSize: 12,
@@ -24,6 +24,11 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'uppercase',
     width: 140
   },
+  tableBody: {
+    '& .MuiTableCell-root': {
+      borderBottomColor: theme.palette.background.default
+    }
+  }
 }));
 
 const TableContainer = ({
@@ -46,7 +51,7 @@ const TableContainer = ({
           </TableCell>
         </TableRow>
       </TableHead>
-      <TableBody>
+      <TableBody className={classes.tableBody}>
         {children}
       </TableBody>
     </Table>
