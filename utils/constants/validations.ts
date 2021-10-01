@@ -6,7 +6,7 @@ const BALANCE_VALID = yup.number()
   .typeError('Please enter valid balance')
   .test('balance',
     'This field should be more than 0.',
-    value => value > 0)
+    value => (value || 0) > 0)
   .required('Please input field.');
 
 const VOTE_PERIOD_VALID = yup.number()
