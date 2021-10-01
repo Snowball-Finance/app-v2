@@ -1,16 +1,17 @@
 import { ethers } from "ethers";
+import { BigNumberish } from "@ethersproject/bignumber";
 import { isEmpty, roundDown } from "./utility";
 
-export const formatPercent = (decimal = 0) => {
+export const formatPercent = (decimal: number | undefined = 0): string => {
   return (decimal * 100).toFixed(2);
 };
 
-export const formatAPY = (apy) => {
+export const formatAPY = (apy: number): string => {
   if (apy === Number.POSITIVE_INFINITY) return "∞%";
   return apy.toFixed(2) + "%";
 };
 
-export const formatNumber = (num, precision, exponencial = false) =>
+export const formatNumber = (num?: BigNumberish, precision?: number, exponencial: boolean = false) =>
  num ?
     //exponencial for numbers too big/too small
     (exponencial && (num > 10 ** 5 || num < 1e-3)) ?
@@ -24,7 +25,7 @@ export const formatNumber = (num, precision, exponencial = false) =>
 
 //this function doesnt parse scientific notation floats, you need
 //to use toLocaleString if you want to avoid it
-export const floatToBN = (number, decimals = 18) => {
+export const floatToBN = (number?: number, decimals: number = 18) => {
   try{
     if(!isEmpty(number)){
       return ethers.utils.parseUnits(roundDown(number,decimals),decimals);
@@ -32,24 +33,31 @@ export const floatToBN = (number, decimals = 18) => {
       return ethers.utils.parseUnits("0");
     }
   }catch(error){
-    console.error(error.message);
+    // TODO: remove later dvd: https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
-export const BNToString = (bn, decimals = 18) => {
+export const BNToString = (bn: BigNumberish, decimals: string | BigNumberish = 18) => {
   try{
-    return ethers.utils.formatUnits(bn,decimals).toLocaleString(undefined,{minimumFractionDigits:decimals});
+    return ethers.utils.formatUnits(bn, decimals).toLocaleString();
   }catch(error){
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
 
 //be aware that converting too big or too small numbers to float will
 //cause it to be converted to scientific notation
-export const BNToFloat = (bn, decimals = 18) => {
+export const BNToFloat = (bn: any, decimals: number = 18) => {
   try{
     return Number(bn / 10 ** decimals);
   }catch(error){
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 }
