@@ -1,12 +1,19 @@
 
 import { Fragment } from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentInitialProps,
+  DocumentContext
+} from 'next/document'
 import { ServerStyleSheets } from '@material-ui/core/styles'
 
 import globalStyles from 'styles/global'
 
 class MyDocument extends Document {
-  static async getInitialProps(ctx) {
+  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
     const sheets = new ServerStyleSheets();
     const originalRenderPage = ctx.renderPage;
 
@@ -27,7 +34,7 @@ class MyDocument extends Document {
     };
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <Html lang='en'>
         <Head>

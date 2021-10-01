@@ -1,5 +1,6 @@
 
 import Head from 'next/head'
+import { AppProps, AppInitialProps, AppContext } from 'next/app';
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ApolloProvider } from '@apollo/client'
 
@@ -22,7 +23,7 @@ import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const apolloClient = useApollo(pageProps.initialApolloState);
 
   return (
@@ -90,7 +91,7 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-MyApp.getInitialProps = async ({ Component, ctx }) => {
+MyApp.getInitialProps = async ({ Component, ctx }: AppContext): Promise<AppInitialProps> => {
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
   return { pageProps };
 };
