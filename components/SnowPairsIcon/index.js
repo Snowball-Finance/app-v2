@@ -19,6 +19,8 @@ const useStyles = makeStyles((theme) => ({
     height: props.size || 50,
     borderRadius: '50%',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    backgroundColor: 'white',
+    padding: 1,
     [theme.breakpoints.down('sm')]: {
       width: props.size || 30,
       height: props.size || 30,
