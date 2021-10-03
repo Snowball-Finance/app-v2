@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { BigNumberish } from "@ethersproject/bignumber";
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import { isEmpty, roundDown } from "./utility";
 
 export const formatPercent = (decimal: number | undefined = 0): string => {
@@ -11,7 +11,7 @@ export const formatAPY = (apy: number): string => {
   return apy.toFixed(2) + "%";
 };
 
-export const formatNumber = (num?: BigNumberish, precision?: number, exponencial: boolean = false) =>
+export const formatNumber = (num?: BigNumberish, precision?: number, exponencial: boolean = false): string =>
  num ?
     //exponencial for numbers too big/too small
     (exponencial && (num > 10 ** 5 || num < 1e-3)) ?
@@ -25,7 +25,7 @@ export const formatNumber = (num?: BigNumberish, precision?: number, exponencial
 
 //this function doesnt parse scientific notation floats, you need
 //to use toLocaleString if you want to avoid it
-export const floatToBN = (number?: number, decimals: number = 18) => {
+export const floatToBN = (number?: number, decimals: number = 18): BigNumber | undefined => {
   try{
     if(!isEmpty(number)){
       return ethers.utils.parseUnits(roundDown(number,decimals),decimals);
@@ -40,7 +40,7 @@ export const floatToBN = (number?: number, decimals: number = 18) => {
   }
 }
 
-export const BNToString = (bn: BigNumberish, decimals: string | BigNumberish = 18) => {
+export const BNToString = (bn: BigNumberish, decimals: string | BigNumberish = 18): string | undefined => {
   try{
     return ethers.utils.formatUnits(bn, decimals).toLocaleString();
   }catch(error){
@@ -52,7 +52,7 @@ export const BNToString = (bn: BigNumberish, decimals: string | BigNumberish = 1
 
 //be aware that converting too big or too small numbers to float will
 //cause it to be converted to scientific notation
-export const BNToFloat = (bn: any, decimals: number = 18) => {
+export const BNToFloat = (bn: any, decimals: number = 18): number | undefined => {
   try{
     return Number(bn / 10 ** decimals);
   }catch(error){
