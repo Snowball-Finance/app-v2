@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
   activeButton: {
     color: '#FFFFFF',
     backgroundColor: theme.custom.palette.blue,
+    '& :hover': {
+      color: '#FFFFFF',
+    }
   },
 }));
 
