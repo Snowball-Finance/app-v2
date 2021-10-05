@@ -12,10 +12,20 @@ import MESSAGES from 'utils/constants/messages';
 import { useAPIContext } from './api-context'
 import { BNToFloat, floatToBN } from 'utils/helpers/format'
 import ANIMATIONS from 'utils/constants/animate-icons'
+import { ChildrenProps } from 'types'
 
-const ContractContext = createContext(null)
+interface NftContextInterface {
+  loading: boolean;
+  claimNFTs: any;
+  shopNFTs: any;
+  purchasedNFTs: any;
+  purchaseNFT: any;
+  claimNFT: any;
+}
 
-export function NFTContractProvider({ children }) {
+const ContractContext = createContext<NftContextInterface | null>(null)
+
+export function NFTContractProvider({ children }: ChildrenProps): JSX.Element {
   const { account, library } = useWeb3React();
   const { setPopUp } = usePopup();
 
@@ -151,7 +161,7 @@ export function NFTContractProvider({ children }) {
       const { abi, type } = getNFTABI(address);
       const nftContract = new ethers.Contract(address, abi, library.getSigner())
 
-      let nftClaim = {}
+      let nftClaim: any = {}
       if (type === 'EARLY_VOTER') {
         nftClaim = await nftContract.claim(account)
       }
@@ -227,8 +237,7 @@ export function NFTContractProvider({ children }) {
         purchasedNFTs,
         purchaseNFT,
         claimNFT
-      }}
-    >
+      }}>
       {children}
     </ContractContext.Provider>
   )
