@@ -4,8 +4,12 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import LoadingSpinner from './LoadingSpinner'
 
+type StyleProps = {
+  height: string | number | undefined,
+};
+
 const useStyles = makeStyles((theme) => ({
-  root: props => ({
+  root: (props: StyleProps) => ({
     position: 'absolute',
     zIndex: theme.zIndex.drawer + 2,
     display: 'flex',
@@ -16,11 +20,17 @@ const useStyles = makeStyles((theme) => ({
   })
 }));
 
+type SnowLoadingProps = {
+  loading: boolean,
+  height?: string | number,
+  size?: number,
+}
+
 const SnowLoading = ({
   loading,
   height,
   size = 100
-}) => {
+}: SnowLoadingProps): JSX.Element => {
   const classes = useStyles({ height });
 
   return (
