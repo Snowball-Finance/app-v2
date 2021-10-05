@@ -75,7 +75,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     setWithdraw(false);
   }
 
-  const { setTransactionStatus } = useCompoundAndEarnContract();
+  // const { setTransactionStatus } = useCompoundAndEarnContract();
 
   return (
     <div className={classes.root}>

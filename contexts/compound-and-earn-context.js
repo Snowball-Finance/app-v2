@@ -504,11 +504,19 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
     } catch (error) {
-      setPopUp({
-        title: 'Transaction Error',
-        icon: ANIMATIONS.ERROR.VALUE,
-        text: `Error withdrawing`
-      });
+      if (error.code == 4001) {
+        setPopUp({
+          title: 'Rejected',
+          icon: ANIMATIONS.ERROR.VALUE,
+          text: `You rejected this withdrawl`
+        });
+      } else {
+        setPopUp({
+          title: 'Transaction Error',
+          icon: ANIMATIONS.ERROR.VALUE,
+          text: `Error withdrawing`
+        });
+      }
       console.log(error)
     }
     setIsTransacting({ withdraw: false, pageview:false });

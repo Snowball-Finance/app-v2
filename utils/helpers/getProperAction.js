@@ -1,8 +1,8 @@
 import LINKS from 'utils/constants/links'
 import { WAVAX } from 'utils/constants/addresses'
 
-const PangolinPoolURL = 'https://app.pangolin.exchange/#/add/';
-const JoePoolURL = 'https://www.traderjoexyz.com/#/pool/';
+const PangolinURL = 'https://app.pangolin.exchange/#';
+const JoeURL = 'https://www.traderjoexyz.com/#';
 
 const getProperAction = (item, setModal, balance, deposit = 0, details = false) => {
 	let action = [];
@@ -17,13 +17,13 @@ const getProperAction = (item, setModal, balance, deposit = 0, details = false) 
 	} else if (balance > 0) {
 		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })];
 	} else if (item.name == "xJOE") {
-		action = ["Get_xJoe", () => { window.open(`https://www.traderjoexyz.com/#/stake`) }];
+		action = ["Get_xJoe", () => { window.open(`${JoeURL}/stake`) }];
 	} else if (!item.token1?.address) {
-		action = ["Get_Token", () => { window.open(`https://app.pangolin.exchange/#/swap/${token1}`) }];
+		action = ["Get_Token", () => { window.open(`${PangolinURL}/swap/${token1}`) }];
 	} else if (item.source == "Pangolin") {
-		action = ["Get_PGL", () => { window.open(`${PangolinPoolURL}${token1}/${token2}`) }];
+		action = ["Get_PGL", () => { window.open(`${PangolinURL}/pool/${token1}/${token2}`) }];
 	} else if (item.source == "Trader Joe") {
-		action = ["Get_JLP", () => { window.open(`${JoePoolURL}${token1}/${token2}`) }];
+		action = ["Get_JLP", () => { window.open(`${JoeURL}/pool/${token1}/${token2}`) }];
 	} else if (item.name == "S3D (USDT-BUSD-DAI)") {
 		action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];
 	} else if (item.name == "S3F (FRAX-TUSD-USDT)") {
