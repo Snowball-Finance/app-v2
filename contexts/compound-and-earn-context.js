@@ -416,7 +416,7 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
     
-    setIsTransacting({ withdraw: true });
+    setIsTransacting({ withdraw: true, pageview:true});
     
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
@@ -431,7 +431,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
-          setIsTransacting({ withdraw: false });
+          setIsTransacting({ withdraw: false, pageview:false });
           return;
         }
 
@@ -511,7 +511,7 @@ export function CompoundAndEarnProvider({ children }) {
       });
       console.log(error)
     }
-    setIsTransacting({ withdraw: false });
+    setIsTransacting({ withdraw: false, pageview:false });
   }
 
   const claim = async (item, withdraw = false) => {

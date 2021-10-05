@@ -4,13 +4,13 @@ import { WAVAX } from 'utils/constants/addresses'
 const PangolinPoolURL = 'https://app.pangolin.exchange/#/add/';
 const JoePoolURL = 'https://www.traderjoexyz.com/#/pool/';
 
-const getProperAction = (item, setModal, balance, deposit = 0) => {
+const getProperAction = (item, setModal, balance, deposit = 0, details = false) => {
 	let action = [];
 
 	const token1 = item.token0?.address == WAVAX ? "AVAX" : item.token0?.address?.toLowerCase();
 	const token2 = item.token1?.address == WAVAX ? "AVAX" : item.token1?.address?.toLowerCase();
 
-	if (item.SNOBHarvestable > 0 && item.userDepositedLP === 0) {
+	if (item.SNOBHarvestable > 0 && item.userDepositedLP === 0 && !details) {
 		action = ["CLAIM", () => { }]
 	} else if (deposit > 0) {
 		action = ["Details", () => { }]
