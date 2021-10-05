@@ -54,6 +54,7 @@ export function ContractProvider({ children }) {
     } catch (error) {
       console.log('[Error] getBalanceInfo => ', error)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, snowballContract, snowconeContract])
 
   useEffect(() => {
