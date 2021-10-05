@@ -416,7 +416,7 @@ export function CompoundAndEarnProvider({ children }) {
       return;
     }
     
-    setIsTransacting({ withdraw: true });
+    setIsTransacting({ withdraw: true, pageview:true});
     
     try {
       const gaugeContract = new ethers.Contract(item.gaugeInfo.address, GAUGE_ABI, library.getSigner());
@@ -431,7 +431,7 @@ export function CompoundAndEarnProvider({ children }) {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`
           });
-          setIsTransacting({ withdraw: false });
+          setIsTransacting({ withdraw: false, pageview:false });
           return;
         }
 
@@ -504,14 +504,22 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
     } catch (error) {
-      setPopUp({
-        title: 'Transaction Error',
-        icon: ANIMATIONS.ERROR.VALUE,
-        text: `Error withdrawing`
-      });
+      if (error.code == 4001) {
+        setPopUp({
+          title: 'Rejected',
+          icon: ANIMATIONS.ERROR.VALUE,
+          text: `You rejected this withdrawl`
+        });
+      } else {
+        setPopUp({
+          title: 'Transaction Error',
+          icon: ANIMATIONS.ERROR.VALUE,
+          text: `Error withdrawing`
+        });
+      }
       console.log(error)
     }
-    setIsTransacting({ withdraw: false });
+    setIsTransacting({ withdraw: false, pageview:false });
   }
 
   const claim = async (item, withdraw = false) => {

@@ -66,6 +66,7 @@ const CompoundActionButton = ({
         setTransactionStatus({ approvalStep: 0, depositStep: 0 });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, action, router, setTransactionStatus])
 
   return (

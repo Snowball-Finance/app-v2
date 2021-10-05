@@ -58,7 +58,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     const evalPool = userData ? userData : item;
     if(item.token0){
       let actionType, func;
-      [actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance);
+      [actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, 0, true);
       setAction({actionType,func});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +75,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     setWithdraw(false);
   }
 
-  const { setTransactionStatus } = useCompoundAndEarnContract();
+  // const { setTransactionStatus } = useCompoundAndEarnContract();
 
   return (
     <div className={classes.root}>
@@ -127,13 +127,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         <Grid item xs={12} lg={4}>
           <ContainedButton
             disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
+            loading={isTransacting.pageview}
             onClick={() => {
-              if(item.deprecatedPool){
-                withdraw(item);
-              }else{
-                setTransactionStatus({ withdrawStep: 0 });
-                setWithdraw(true)
-              }
+              //if(item.deprecatedPool){
+              withdraw(item);
+              //}else{
+              // setTransactionStatus({ withdrawStep: 0 });
+              //  setWithdraw(true)
+              //}
             }}
             fullWidth={isSm ? true : false}
           >
