@@ -4,7 +4,14 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Button, Card } from '@material-ui/core'
 import clsx from 'clsx'
 
-const useStyles = makeStyles((theme) => ({
+type SubMenuTabProps = {
+  tabs: Array<any>;
+  selectedTab?: string;
+  setSelectedTab?: Function;
+  className?: string;
+}
+
+const useStyles = makeStyles((theme: any) => ({
   root: {
     padding: theme.spacing(0.5, 1),
     marginBottom: theme.spacing(2),
@@ -42,7 +49,7 @@ const SubMenuTabs = ({
   selectedTab,
   setSelectedTab,
   className
-}) => {
+}: SubMenuTabProps) => {
   const classes = useStyles();
 
   const buttonHandler = (value) => () => {

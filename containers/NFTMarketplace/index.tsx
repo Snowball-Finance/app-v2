@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NFTMarketplace = () => {
+const NFTMarketplace = (): JSX.Element => {
   const classes = useStyles();
   const { loading } = useNFTContract();
 

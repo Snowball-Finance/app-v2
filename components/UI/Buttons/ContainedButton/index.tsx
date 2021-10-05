@@ -1,12 +1,19 @@
 
 import React, { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Button, CircularProgress } from '@material-ui/core'
+import { Button, CircularProgress, PropTypes } from '@material-ui/core'
 import clsx from 'clsx'
 
 import ButtonLink from 'components/UI/Buttons/ButtonLink'
 
-const useStyles = makeStyles(theme => ({
+type ContainedButtonProps = {
+  classes?: any;
+  color?: PropTypes.Color;
+  href?: string;
+  loading?: boolean;
+}
+
+const useStyles = makeStyles((theme: any) => ({
   root: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -34,14 +41,15 @@ const ContainedButton = React.forwardRef(({
   disabled,
   children,
   ...rest
-}, ref) => {
+}: ContainedButtonProps & React.ComponentPropsWithoutRef<typeof Button> , ref) => {
+
   const classes = useStyles();
 
   return (
     <Button
       ref={ref}
       href={href}
-      target="_blank"
+      // target="_blank" // TODO: dvd remove later: invalid props
       component={href ? ButtonLink : 'button'}
       className={clsx(className, classes.root)}
       classes={{
