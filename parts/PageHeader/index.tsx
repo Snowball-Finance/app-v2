@@ -11,7 +11,14 @@ import {
 } from 'utils/constants/image-paths'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 
-const useStyles = makeStyles((theme) => ({
+type PageHeaderProps = {
+  title?: string;
+  subHeader?: string;
+  subButton?: any;
+  className?: string;
+}
+
+const useStyles = makeStyles((theme: any) => ({
   root: {
     position: 'relative',
     display: 'flex',
@@ -61,7 +68,7 @@ const PageHeader = ({
   subHeader,
   subButton,
   className
-}) => {
+}: PageHeaderProps): JSX.Element => {
   const classes = useStyles()
 
   return (

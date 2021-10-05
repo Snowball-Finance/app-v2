@@ -1,7 +1,7 @@
 
 import { makeStyles } from '@material-ui/core/styles'
 
-const useCommonStyles = makeStyles(theme => ({
+const useCommonStyles = makeStyles((theme: any) => ({
   containerWidth: {
     width: '100%',
     paddingLeft: theme.spacing(4),
