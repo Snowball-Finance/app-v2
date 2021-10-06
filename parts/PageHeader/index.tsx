@@ -18,7 +18,7 @@ type PageHeaderProps = {
   className?: string;
 }
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
     display: 'flex',

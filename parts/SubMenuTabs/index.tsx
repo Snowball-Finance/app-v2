@@ -11,7 +11,7 @@ type SubMenuTabProps = {
   className?: string;
 }
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0.5, 1),
     marginBottom: theme.spacing(2),
