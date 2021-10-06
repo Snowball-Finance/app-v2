@@ -13,7 +13,7 @@ type ContainedButtonProps = {
   loading?: boolean;
 }
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     fontSize: 14,
     fontWeight: 'bold',
