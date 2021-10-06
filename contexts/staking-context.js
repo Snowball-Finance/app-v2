@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useMemo, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
+import { toast } from 'react-toastify';
 
 import { parseEther } from 'ethers/lib/utils'
 import { isEmpty } from 'utils/helpers/utility'
@@ -256,6 +257,10 @@ export function StakingContractProvider({ children }) {
     try {
       const amount = parseEther((data.balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
+      const allowance = await snowballContractApprove.allowance(account, CONTRACTS.SNOWCONE);
+      if(!amount.gt(allowance)) {
+        return toast.warn('Amount is less than the approved allowance!');
+      }
       const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
       const transactionApprove = await tokenApprove.wait(1)
       if (!transactionApprove.status) {
