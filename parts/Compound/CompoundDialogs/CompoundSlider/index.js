@@ -15,10 +15,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.blueButton,
   },
   activeButton: {
-    color: '#FFFFFF',
+    color: theme.custom.palette.white,
     backgroundColor: theme.custom.palette.blue,
     '& :hover': {
-      color: '#FFFFFF',
+      color: theme.custom.palette.white,
     }
   },
 }));
