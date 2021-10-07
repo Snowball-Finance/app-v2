@@ -11,7 +11,7 @@ export const formatAPY = (apy: number): string => {
   return apy.toFixed(2) + "%";
 };
 
-export const formatNumber = (num?: BigNumberish, precision?: number, exponencial?: boolean): string =>
+export const formatNumber = (num: BigNumberish, precision?: number, exponencial?: boolean): string =>
  num ?
     //exponencial for numbers too big/too small
     (exponencial && (num > 10 ** 5 || num < 1e-3)) ?
