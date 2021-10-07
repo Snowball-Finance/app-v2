@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>SnowBall - App Page 🎣 </h1>
+  <h1>Snowball - App Page 🎣 </h1>
   <p>Snowball combines multiple DeFi protocols to create an interconnected experience. Swap stablecoins, earn by providing liquidity, or auto-compound liquidity rewards through our contracts.</p>
 </div>
 
