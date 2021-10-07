@@ -14,7 +14,7 @@ import { BNToFloat, floatToBN } from 'utils/helpers/format'
 import ANIMATIONS from 'utils/constants/animate-icons'
 import { ChildrenProps } from 'types'
 
-interface NftContextInterface {
+type NftContextProps = {
   loading: boolean;
   claimNFTs: any;
   shopNFTs: any;
@@ -23,7 +23,7 @@ interface NftContextInterface {
   claimNFT: any;
 }
 
-const ContractContext = createContext<NftContextInterface | null>(null)
+const ContractContext = createContext<NftContextProps | null>(null)
 
 export function NFTContractProvider({ children }: ChildrenProps): JSX.Element {
   const { account, library } = useWeb3React();

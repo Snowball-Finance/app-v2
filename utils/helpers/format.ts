@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import { isEmpty, roundDown } from "./utility";
 
-export const formatPercent = (decimal: number | undefined = 0): string => {
+export const formatPercent = (decimal: number = 0): string => {
   return (decimal * 100).toFixed(2);
 };
 
@@ -11,7 +11,7 @@ export const formatAPY = (apy: number): string => {
   return apy.toFixed(2) + "%";
 };
 
-export const formatNumber = (num?: BigNumberish, precision?: number, exponencial: boolean = false): string =>
+export const formatNumber = (num?: BigNumberish, precision?: number, exponencial?: boolean): string =>
  num ?
     //exponencial for numbers too big/too small
     (exponencial && (num > 10 ** 5 || num < 1e-3)) ?
