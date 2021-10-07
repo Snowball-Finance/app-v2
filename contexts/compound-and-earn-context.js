@@ -94,6 +94,7 @@ export function CompoundAndEarnProvider({ children }) {
               symbol:
                 pool.source === 'Trader Joe'? 'JLP' 
                 : pool.source === 'BENQI' ? 'QLP'
+                : pool.source === 'AAVE' ? 'ALP'
                 : pool.source === 'Pangolin' ? 'PGL'
                 : 'SNOB',
               userDepositedLP:userDeposited,
