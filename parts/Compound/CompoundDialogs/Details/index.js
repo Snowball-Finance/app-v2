@@ -7,7 +7,7 @@ import SnowTextField from 'components/UI/TextFields/SnowTextField';
 
 const useStyles = makeStyles((theme) => ({
   inputContainer: {
-    border: '1px solid rgba(108, 117, 125, 0.12)',
+    border: '1px solid #6C757D',
     borderRadius: 7,
     padding: theme.spacing(1, 0),
   },
@@ -54,7 +54,7 @@ const Details = ({
   console.log(item)
   return (
     <>
-      <div className={classes.pairContainer}>
+      {/* <div className={classes.pairContainer}>
         <div>
           <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
         </div>
@@ -62,7 +62,7 @@ const Details = ({
           <Typography variant='caption'>{title}</Typography>
           <Typography variant='h6'>{item.name}</Typography>
         </div>
-      </div>
+      </div> */}
 
       <div className={classes.inputContainer}>
         <SnowTextField
