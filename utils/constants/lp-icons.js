@@ -3,6 +3,7 @@ const LP_ICONS = Object.freeze({
   PGL: '/assets/images/lp-icons/PNG.png',
   JLP: '/assets/images/lp-icons/JOE.png',
   QLP: '/assets/images/lp-icons/BENQI.png',
+  ALP: '/assets/images/lp-icons/AAVE.png',
   SNOB: '/assets/images/lp-icons/SNOWBALL.png',
 
   PNG: '/assets/images/lp-icons/PNG.png',

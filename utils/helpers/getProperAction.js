@@ -21,7 +21,7 @@ const getProperAction = (item, setModal, balance, deposit = 0, details = false) 
 	} else if (!item.token1?.address) {
 		action = ["Get_Token", () => { window.open(`${PangolinURL}/swap/${token1}`) }];
 	} else if (item.source == "Pangolin") {
-		action = ["Get_PGL", () => { window.open(`${PangolinURL}/pool/${token1}/${token2}`) }];
+		action = ["Get_PGL", () => { window.open(`${PangolinURL}/add/${token1}/${token2}`) }];
 	} else if (item.source == "Trader Joe") {
 		action = ["Get_JLP", () => { window.open(`${JoeURL}/pool/${token1}/${token2}`) }];
 	} else if (item.name == "S3D (USDT-BUSD-DAI)") {
