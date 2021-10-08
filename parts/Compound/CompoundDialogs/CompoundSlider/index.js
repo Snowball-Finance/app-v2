@@ -11,14 +11,22 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   button: {
+    padding: theme.spacing(0.5, 0.25),
     color: theme.palette.text.primary,
-    backgroundColor: theme.custom.palette.blueButton,
+    backgroundColor: 'transparent',
+    width: 48,
+    minWidth: 48,
+    padding: theme.spacing(0.75, 1),
+    '&:hover': {
+      backgroundColor: theme.custom.palette.blueButton,
+    }
   },
   activeButton: {
     color: theme.custom.palette.white,
     backgroundColor: theme.custom.palette.blue,
-    '& :hover': {
+    '&:hover': {
       color: theme.custom.palette.white,
+      backgroundColor: theme.custom.palette.blue,
     }
   },
 }));
@@ -48,6 +56,10 @@ const BorderSlider = withStyles(() => ({
 }))(Slider);
 
 const marks = [
+  {
+    value: 0,
+    label: '0%',
+  },
   {
     value: 25,
     label: '25%',

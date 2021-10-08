@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import { Grid } from '@material-ui/core';
 import clsx from 'clsx'
 
@@ -10,7 +11,6 @@ import Toast from 'components/Toast';
 import SnowStepBox from 'components/SnowStepBox';
 import SnowDialog from 'components/SnowDialog';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
@@ -18,10 +18,16 @@ import { roundDown } from 'utils/helpers/utility';
 const useStyles = makeStyles((theme) => ({
   dialog: {
     minWidth: 200,
+    width: 420,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
   },
   dialogTitle: {
     background: 'none',
     justifyContent: 'left',
+    height: 48,
+    paddingBottom: 0,
   },
   dialogTitleText: {
     color: 'currentColor',
@@ -29,6 +35,8 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogCloseIcon: {
     color: 'currentColor',
+    top: theme.spacing(0.5),
+    right: theme.spacing(1.5),
   },
   container: {
     padding: theme.spacing(1),
@@ -39,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
   modalButton: {
     padding: theme.spacing(2, 0),
     textTransform: 'none',
+    '&:disabled': {
+      backgroundColor: `${theme.custom.palette.blueButton} !important`,
+    }
   },
   button: {
     textTransform: 'none',
@@ -127,7 +138,7 @@ const CompoundDialogs = ({
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <ContainedButton
-                className={clsx(classes.modalButton)}
+                className={classes.modalButton}
                 disableElevation
                 fullWidth
                 disabled={enabledHandler(true)}
@@ -141,8 +152,8 @@ const CompoundDialogs = ({
               </ContainedButton>
             </Grid>
             <Grid item xs={6}>
-              <GradientButton
-                className={clsx(classes.modalButton)}
+              <ContainedButton
+                className={classes.modalButton}
                 disableElevation
                 fullWidth
                 disabled={enabledHandler(false)}
@@ -154,7 +165,7 @@ const CompoundDialogs = ({
                 }
               >
                 Deposit
-              </GradientButton>
+              </ContainedButton>
             </Grid>
           </Grid>
         );
@@ -192,6 +203,7 @@ const CompoundDialogs = ({
       titleTextClass={classes.dialogTitleText}
       closeIconClass={classes.dialogCloseIcon}
     >
+      <Typography variant='subtitle2'>Select token to convert</Typography>
       <div className={classes.container}>
         <Details
           item={item}
