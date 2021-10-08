@@ -14,6 +14,9 @@ const useStyles = makeStyles(() => ({
     borderRadius: '50%',
     objectFit: 'container',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    '& img': {
+      borderRadius: '50%',
+    }
   })
 }));
 
