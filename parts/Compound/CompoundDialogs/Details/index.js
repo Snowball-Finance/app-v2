@@ -9,54 +9,37 @@ import SnowTextField from 'components/UI/TextFields/SnowTextField';
 import { extractValidTokens, hexToFloat } from '../utils';
 
 const useStyles = makeStyles((theme) => ({
-	container: {
-		display: 'grid',
-		gridTemplateColumns: '4fr 6fr',
-		alignItems: 'center',
-		gap: theme.spacing(1),
-		border: `1px solid ${theme.custom.palette.border}`,
-		borderRadius: 7,
-		padding: theme.spacing(1),
-	},
-	tokenSelect: {
-		display: 'flex',
-		alignItems: 'center',
-	},
-	tokenLabel: {
-		marginLeft: theme.spacing(1),
-	},
-	inputContainer: {
-	},
-	input: {
-		'& .MuiOutlinedInput-root': {
-			border: 'none',
-		},
-		'& input': {
-			textAlign: 'end',
-			fontSize: theme.typography.h4.fontSize
-		},
-	},
-	balanceText: {
-		display: 'flex',
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignItems: 'flex-end',
-		textAlign: 'right',
-		whiteSpace: 'nowrap',
-	},
-	pairContainer: {
-		display: 'flex',
-		alignItems: 'center',
-		flexDirection: 'column',
-		justifyContent: 'center',
-		marginBottom: theme.spacing(1),
-	},
-	pairText: {
-		textAlign: 'center',
-	},
-	select: {
-		boxShadow: theme.custom.utils.boxShadow,
-	},
+  inputContainer: {
+    border: '1px solid #6C757D',
+    borderRadius: 7,
+    padding: theme.spacing(1, 0),
+  },
+  input: {
+    '& .MuiOutlinedInput-root': {
+      border: 'none',
+    },
+    '& input': {
+      textAlign: 'end',
+      fontSize: theme.typography.h4.fontSize
+    },
+  },
+  balanceText: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    paddingRight: 20
+  },
+  pairContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  pairText: {
+    textAlign: 'center',
+  },
 }));
 
 const Available = ({ isDeposit, userData, classes }) => {
@@ -76,7 +59,23 @@ const Details = ({
 	onTokenChange
 
 }) => {
-	const classes = useStyles();
+  const classes = useStyles();
+  const token0 = item.token0.address;
+  const token1 = item.token1.address;
+  const token2 = item.token2.address;
+  const token3 = item.token3.address;
+  console.log(item)
+  return (
+    <>
+      {/* <div className={classes.pairContainer}>
+        <div>
+          <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
+        </div>
+        <div className={classes.pairText}>
+          <Typography variant='caption'>{title}</Typography>
+          <Typography variant='h6'>{item.name}</Typography>
+        </div>
+      </div> */}
 
 	const tokens = extractValidTokens({ obj: userData })
 

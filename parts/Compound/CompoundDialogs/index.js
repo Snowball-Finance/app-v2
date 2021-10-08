@@ -19,7 +19,7 @@ import { SnowCheckbox } from 'components/UI/Checkbox';
 const useStyles = makeStyles((theme) => ({
   dialog: {
     minWidth: 200,
-    width: 510,
+    width: 420,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
     },
@@ -238,7 +238,7 @@ const CompoundDialogs = ({
       closeIconClass={classes.dialogCloseIcon}
     >
       <Typography variant='subtitle2'>Select token to convert</Typography>
-      <div className={classes.container} >
+      <div className={classes.container}>
         <Details
           {...{
             userData,
