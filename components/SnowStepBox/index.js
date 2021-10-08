@@ -27,24 +27,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     padding: theme.spacing(0, 1, 1, 1),
   },
-  title: {
-    fontSize: '14px',
-    justifyItems: 'center',
-  },
-  subtitle: {
-    fontSize: '12px',
-    justifyItems: 'center',
-  },
   ellipse: {
     borderRadius: 16,
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderColor: '#DBEDFF',
-    padding: theme.spacing(1),
-    width: '15px',
-    height: '15px',
-    left: '47px',
-    top: '33px',
+    width: theme.spacing(2),
+    height: theme.spacing(2),
+    left: theme.spacing(6),
+    top: theme.spacing(4),
   }
 }));
 
@@ -94,8 +82,8 @@ const SnowStepBox = ({
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
-          {title != "Withdraw" ? <><Typography className={classes.title} >Approval Steps</Typography>
-          <Typography className={classes.title} >Deposit Steps</Typography></> : <Typography className={classes.title} >Withdraw Steps</Typography>}
+          {title != "Withdraw" ? <><Typography variant='caption'>Approval Steps</Typography>
+          <Typography variant='caption'>Deposit Steps</Typography></> : <Typography variant='caption'>Withdraw Steps</Typography>}
           
         </div>
         <div className={classes.lower}>
@@ -121,9 +109,9 @@ const SnowStepBox = ({
         <div className={classes.lower}>
           <div className={classes.container}>
             {title != "Withdraw" ? <>
-            <Typography className={classes.subtitle}>{transactionStatus.approvalStep}/2 Step</Typography>
-            <Typography className={classes.subtitle}>{transactionStatus.depositStep}/2 Step</Typography>
-            </> : <Typography className={classes.subtitle}>{transactionStatus.withdrawStep}/3 Step</Typography>}
+            <Typography variant='caption'>{transactionStatus.approvalStep}/2 Step</Typography>
+            <Typography variant='caption'>{transactionStatus.depositStep}/2 Step</Typography>
+            </> : <Typography variant='caption'>{transactionStatus.withdrawStep}/3 Step</Typography>}
           </div>
         </div>
       </div>  
