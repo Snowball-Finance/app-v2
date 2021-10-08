@@ -26,7 +26,11 @@ const useStyles = makeStyles((theme) => ({
   QLP: {
     backgroundColor: theme.custom.palette.transparent.snob_blue,
     color: theme.custom.palette.snob_blue
-  }
+  },
+  ALP: {
+    backgroundColor: theme.custom.palette.transparent.aave_purple,
+    color: theme.custom.palette.aave_purple,
+  },
 }));
 
 const Tags = ({ children, style, className, type }) => {
