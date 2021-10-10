@@ -73,13 +73,10 @@ const Details = ({
           error={error}
           onChange={inputHandler}
         />
-        {title != "Withdraw" ? <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userLPBalance / 10**item.lpDecimals).toLocaleString(
-            undefined, { maximumSignificantDigits: 18 })} {item.symbol}
-        </Typography> : <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userBalanceGauge / 10**item.lpDecimals).toLocaleString(
-            undefined, { maximumSignificantDigits: 18 })} {item.symbol}
-        </Typography> }
+        <Typography variant='caption' className={classes.balanceText}>
+        Available: {((title === "Withdraw" ? item.userBalanceGauge : item.userLPBalance) / 10 ** item.lpDecimals).toLocaleString(
+          undefined, { maximumSignificantDigits: 18 })} {token2 ? item.symbol : item.name}
+        </Typography>
       </div>
     </>
   );

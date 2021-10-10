@@ -509,7 +509,7 @@ export function CompoundAndEarnProvider({ children }) {
         setPopUp({
           title: 'Rejected',
           icon: ANIMATIONS.ERROR.VALUE,
-          text: `You rejected this withdrawl`
+          text: `You rejected this withdrawal`
         });
       } else {
         setPopUp({
