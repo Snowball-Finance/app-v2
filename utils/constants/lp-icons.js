@@ -10,7 +10,7 @@ const LP_ICONS = Object.freeze({
   WAVAX: '/assets/images/lp-icons/AVAX.png',
   ETHER: '/assets/images/lp-icons/ETH.png',
   ETH: '/assets/images/lp-icons/ETH.png',
-  SHERPA: 'assets/images/lp-icons/SHERPA.png',
+  SHERPA: '/assets/images/lp-icons/SHERPA.png',
   LINK: '/assets/images/lp-icons/LINK.png',
   SUSHI: '/assets/images/lp-icons/SUSHI.png',
   WBTC: '/assets/images/lp-icons/WBTC.png',
