@@ -12,6 +12,7 @@ import SnowStepBox from 'components/SnowStepBox';
 import SnowDialog from 'components/SnowDialog';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
+import CompoundInfo from './CompoundInfo';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
 
@@ -64,6 +65,8 @@ const useStyles = makeStyles((theme) => ({
 const CompoundDialogs = ({
   open,
   title,
+  pool,
+  poolList,
   item,
   handleClose,
 }) => {
@@ -207,6 +210,7 @@ const CompoundDialogs = ({
       <div className={classes.container}>
         <Details
           item={item}
+          poolList={poolList}
           title={title}
           amount={inputAmount}
           inputHandler={inputHandler}
@@ -214,11 +218,12 @@ const CompoundDialogs = ({
         />
 
         <CompoundSlider value={slider} onChange={handleSliderChange} />
-        <Grid container spacing={1} className={classes.buttonContainer}>
+        <CompoundInfo pool={pool} />
+        <div className={classes.buttonContainer}>
           {renderButton()}
-        </Grid>
+        </div>
       </div>
-      {<SnowStepBox transactionStatus={transactionStatus} title={title}/>}
+      <SnowStepBox transactionStatus={transactionStatus} title={title}/>
     </SnowDialog>
   );
 };
