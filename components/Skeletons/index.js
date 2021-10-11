@@ -2,9 +2,9 @@ import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   skeleton: {
-    background: '#ddd',
+    background: theme.custom.palette.skeleton,
     overflow: 'hidden',
     margin: '10px 0',
     borderRadius: 4,

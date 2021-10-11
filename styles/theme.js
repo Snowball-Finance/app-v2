@@ -108,6 +108,8 @@ const lightTheme = responsiveFontSizes(
         activeTab: '#C8E6FE',
         blueButton: '#C8E6FE',
         governanceBanner: '#C8E6FE',
+        skeleton: '#F8F8F8',
+        shimmer: 'rgba(255,255,255,0.2)',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
@@ -242,6 +244,8 @@ const darkTheme = responsiveFontSizes(
         activeTab: '#1A93F2',
         blueButton: '#1E2848',
         governanceBanner: '#1A93F2',
+        skeleton: '#5E5873',
+        shimmer: 'rgba(255,255,255,0.01)',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
