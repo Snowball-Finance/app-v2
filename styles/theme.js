@@ -108,6 +108,7 @@ const lightTheme = responsiveFontSizes(
         activeTab: '#C8E6FE',
         blueButton: '#C8E6FE',
         governanceBanner: '#C8E6FE',
+        nftBtn: '#F8F8F8',
         skeleton: '#F8F8F8',
         shimmer: 'rgba(255,255,255,0.2)',
         transparent: {
@@ -244,6 +245,7 @@ const darkTheme = responsiveFontSizes(
         activeTab: '#1A93F2',
         blueButton: '#1E2848',
         governanceBanner: '#1A93F2',
+        nftBtn: '#5E5873',
         skeleton: '#5E5873',
         shimmer: 'rgba(255,255,255,0.01)',
         transparent: {

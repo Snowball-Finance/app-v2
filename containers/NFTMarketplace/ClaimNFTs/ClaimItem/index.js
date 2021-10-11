@@ -42,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   button: {
+    backgroundColor: `${theme.custom.palette.nftBtn} !important`,
+    color: `${theme.palette.text.primary} !important`,
     borderRadius: 0,
     padding: theme.spacing(1.5)
   }
