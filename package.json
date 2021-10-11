@@ -38,6 +38,7 @@
     "react-identicons": "^1.2.5",
     "react-lottie": "^1.2.3",
     "react-toastify": "^7.0.4",
+    "react-virtualized": "^9.22.3",
     "web3": "^1.3.6",
     "yup": "^0.32.8"
   },

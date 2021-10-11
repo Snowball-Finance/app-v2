@@ -1,9 +1,15 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
 import { makeStyles } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
+import {
+  List,
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+} from 'react-virtualized';
 
 import { useAPIContext } from 'contexts/api-context';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
@@ -40,12 +46,24 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
-  
-  const { userPools, userDeprecatedPools, loadedDeprecated,
-    sortedUserPools,setLoadedDeprecated,setSortedUserPools,
-    setUserPools } = useCompoundAndEarnContract();
+  const cache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 100,
+    })
+  );
 
-  const [modal, setModal] = useState({ open: false, title: '', address:'' });
+  const {
+    userPools,
+    userDeprecatedPools,
+    loadedDeprecated,
+    sortedUserPools,
+    setLoadedDeprecated,
+    setSortedUserPools,
+    setUserPools,
+  } = useCompoundAndEarnContract();
+
+  const [modal, setModal] = useState({ open: false, title: '', address: '' });
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
@@ -55,45 +73,56 @@ const CompoundAndEarn = () => {
   const [loadedSort, setLoadedSort] = useState(false);
 
   //reset state when index opened
-  useEffect(()=>{
-    if(!loadedSort){
+  useEffect(() => {
+    if (!loadedSort) {
       setSortedUserPools(false);
       setLoadedSort(true);
     }
-  },[loadedSort,setSortedUserPools])
+  }, [loadedSort, setSortedUserPools]);
 
   useEffect(() => {
-    if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
+    if (
+      userDeprecatedPools.length > 0 &&
+      !loadedDeprecated &&
+      sortedUserPools
+    ) {
       let newArray = [...userPools];
       userDeprecatedPools.forEach((pool) => {
         //check if it's not duplicated
-        if(userPools.indexOf(
-          (element)=> element.address.toLowerCase() === pool.address.toLowerCase()
-        ) === -1){
+        if (
+          userPools.indexOf(
+            (element) =>
+              element.address.toLowerCase() === pool.address.toLowerCase()
+          ) === -1
+        ) {
           newArray.push(pool);
         }
-      })
+      });
       setLoadedDeprecated(true);
       setSortedUserPools(false);
       setUserPools(newArray);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userDeprecatedPools,loadedDeprecated,sortedUserPools]);
+  }, [userDeprecatedPools, loadedDeprecated, sortedUserPools]);
 
   useEffect(() => {
-    const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } = snowballInfoQuery;
+    const {
+      data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {},
+    } = snowballInfoQuery;
 
     if (isEmpty(userPools)) {
-      let sortedData = [...poolsInfo]
-      sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
+      let sortedData = [...poolsInfo];
+      sortedData = sortedData.sort(
+        (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+      );
       setLastSnowballInfo(sortedData);
       setSearch('');
       setType('apy');
       setPool('all');
-      return
+      return;
     }
 
-    if(!sortedUserPools){
+    if (!sortedUserPools) {
       const sortedData = sortingByUserPool(type, userPools);
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
@@ -109,8 +138,8 @@ const CompoundAndEarn = () => {
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
-        ? [...lastSnowballModifiedInfo]
-        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+      ? [...lastSnowballModifiedInfo]
+      : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
     const splittedValue = value.split(' ');
     splittedValue.forEach((spiltItem) => {
@@ -122,7 +151,7 @@ const CompoundAndEarn = () => {
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
-    }    
+    }
 
     setLastSnowballInfo(sortedData);
     setSearch(value);
@@ -132,13 +161,13 @@ const CompoundAndEarn = () => {
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
-        ? [...lastSnowballModifiedInfo]
-        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+      ? [...lastSnowballModifiedInfo]
+      : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
-    }    
+    }
 
     setLastSnowballInfo(sortedData);
     setSearch('');
@@ -148,15 +177,15 @@ const CompoundAndEarn = () => {
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
-        ? [...lastSnowballModifiedInfo]
-        : [...lastSnowballInfo];
+      ? [...lastSnowballModifiedInfo]
+      : [...lastSnowballInfo];
 
     let sortedData = sortingByType(event.target.value, filterData);
     if (account) {
       sortedData = sortingByUserPool(event.target.value, filterData);
     }
 
-    if(search !== "") {
+    if (search !== '') {
       filterData = sortedData;
       const splittedValue = search.split(' ');
       splittedValue.forEach((spiltItem) => {
@@ -164,8 +193,8 @@ const CompoundAndEarn = () => {
           (item) => item.name.search(spiltItem.toUpperCase()) != -1
         );
       });
-      setLastSnowballInfo(filterData);    }
-    else setLastSnowballInfo(sortedData);
+      setLastSnowballInfo(filterData);
+    } else setLastSnowballInfo(sortedData);
     setType(event.target.value);
   };
 
@@ -176,7 +205,12 @@ const CompoundAndEarn = () => {
 
     if (event.target.value === 'myPools') {
       const filteredDataWithTokensToInvested = filteredData.filter((item) => {
-        const [actionType] = getProperAction(item, null, item.userLPBalance, item.usdValue);
+        const [actionType] = getProperAction(
+          item,
+          null,
+          item.userLPBalance,
+          item.usdValue
+        );
         return actionType === 'Deposit';
       });
       const filteredDataWithDepositLP = filteredData.filter(
@@ -186,18 +220,19 @@ const CompoundAndEarn = () => {
         ...filteredDataWithDepositLP,
         ...filteredDataWithTokensToInvested,
       ];
-    } else if ( event.target.value === 'claimable') {
-      filteredData = filteredData.filter(
-      (item) => item.SNOBHarvestable > 0
-      );
-    } else if (event.target.value !== 'all' && event.target.value !== 'claimable') {
+    } else if (event.target.value === 'claimable') {
+      filteredData = filteredData.filter((item) => item.SNOBHarvestable > 0);
+    } else if (
+      event.target.value !== 'all' &&
+      event.target.value !== 'claimable'
+    ) {
       filteredData = filteredData.filter((item) =>
         item.source.toLowerCase().includes(event.target.value)
       );
     }
     const sortedData = sortingByUserPool(type, filteredData);
     setFilterDataByProtocol(sortedData);
-    if(search !== "") {
+    if (search !== '') {
       let filterData = sortedData;
       const splittedValue = search.split(' ');
       splittedValue.forEach((spiltItem) => {
@@ -205,8 +240,8 @@ const CompoundAndEarn = () => {
           (item) => item.name.search(spiltItem.toUpperCase()) != -1
         );
       });
-      setLastSnowballInfo(filterData);    }
-    else setLastSnowballInfo(sortedData);
+      setLastSnowballInfo(filterData);
+    } else setLastSnowballInfo(sortedData);
     setPool(event.target.value);
   };
 
@@ -217,15 +252,15 @@ const CompoundAndEarn = () => {
   return (
     <main className={classes.root}>
       <PageHeader
-        title='Compound and Earn SNOB now!'
-        subHeader='Check your Investments'
+        title="Compound and Earn SNOB now!"
+        subHeader="Check your Investments"
       />
       <Grid container spacing={3} className={classes.container}>
         <Grid item xs={12} md={8}>
           <SearchInput
             className={classes.input}
             value={search}
-            placeholder='Search your favorite pairs'
+            placeholder="Search your favorite pairs"
             onChange={(newValue) => handleSearch(newValue)}
             onCancelSearch={handleCancelSearch}
           />
@@ -249,24 +284,51 @@ const CompoundAndEarn = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Typography variant='h5'>
-            PAIRS
-          </Typography>
+          <Typography variant="h5">PAIRS</Typography>
         </Grid>
-        {snowballInfoQuery.loading
-          ? (
-            <Grid item xs={12}>
-              <CompoundAndEarnSkeleton />
-            </Grid>
-          ) : (
-            lastSnowballInfo?.map((pool, index) => (
-                <Grid item key={index} xs={12}>
-                  {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) && 
-                    <ListItem pool={pool} modal={modal} setModal={setModal}/>}
-                </Grid>
-              ))
-          )
-        }
+        {snowballInfoQuery.loading ? (
+          <Grid item xs={12}>
+            <CompoundAndEarnSkeleton />
+          </Grid>
+        ) : (
+          <div style={{ width: '1200px', height: '40vh' }}>
+            <AutoSizer>
+              {({ width, height }) => (
+                <List
+                  width={width}
+                  height={height}
+                  rowHeight={cache.current.rowHeight}
+                  deferredMeasurementCache={cache.current}
+                  rowCount={lastSnowballInfo.length}
+                  rowRenderer={({ key, index, style, parent }) => {
+                    const pool = lastSnowballInfo[index];
+
+                    return (
+                      <CellMeasurer
+                        key={key}
+                        cache={cache.current}
+                        parent={parent}
+                        columnIndex={0}
+                        rowIndex={index}
+                      >
+                        <Grid item xs={12} style={style}>
+                          {(!pool?.deprecatedPool ||
+                            !(pool?.withdrew && pool?.claimed)) && (
+                            <ListItem
+                              pool={pool}
+                              modal={modal}
+                              setModal={setModal}
+                            />
+                          )}
+                        </Grid>
+                      </CellMeasurer>
+                    );
+                  }}
+                />
+              )}
+            </AutoSizer>
+          </div>
+        )}
       </Grid>
     </main>
   );
