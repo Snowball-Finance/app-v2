@@ -70,7 +70,7 @@ const CompoundDialogs = ({
   title,
   pool,
   poolList,
-  userData,
+  item,
   handleClose,
 }) => {
   const classes = useStyles();
@@ -240,33 +240,21 @@ const CompoundDialogs = ({
       <Typography variant='subtitle2'>Select token to convert</Typography>
       <div className={classes.container}>
         <Details
-          {...{
-            userData,
-            poolList,
-            title,
-            pool
-          }}
-          amount={state.inputAmount}
-          onTokenChange={handleTokenChange}
-          inputHandler={handleInputChange}
-          error={state.error}
+          item={item}
+          poolList={poolList}
+          title={title}
+          amount={inputAmount}
+          inputHandler={inputHandler}
+          error={error}
         />
 
-        <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-        <CompoundInfo pool={pool} amount={state.inputAmount} activeToken={state.selectedToken} />
-        <SnowCheckbox
-          className={classes.mt1}
-          label="Infinite Approval"
-          isChecked={state.isInfiniteApprovalChecked}
-          onChange={handleInfiniteApprovalCheckboxChange}
-        />
+        <CompoundSlider value={slider} onChange={handleSliderChange} />
+        <CompoundInfo pool={pool} />
         <div className={classes.buttonContainer}>
           {renderButton()}
         </div>
       </div>
-      <div className={classes.mt1}>
-        <SnowStepBox transactionStatus={transactionStatus} title={title} />
-      </div>
+      <SnowStepBox transactionStatus={transactionStatus} title={title}/>
     </SnowDialog>
   );
 };

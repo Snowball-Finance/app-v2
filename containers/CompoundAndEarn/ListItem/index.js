@@ -196,7 +196,7 @@ const ListItem = ({
           open={modal.open}
           pool={pool}
           poolList={poolList}
-          userData={userData}
+          item={userData}
           handleClose={() => setModal({ open: false, title: '' })}
         />
       )}

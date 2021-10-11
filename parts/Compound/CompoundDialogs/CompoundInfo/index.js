@@ -6,7 +6,6 @@ import Box from '@material-ui/core/Box';
 import ArrowDownIcon from 'components/Icons/ArrowDownIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import SnowTokenIcon from 'components/SnowTokenIcon';
-import { extractValidTokens } from '../utils';
 
 const useStyles = makeStyles((theme) => ({
   downArrow: {
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-
+    
   },
   pairInfoStyle: {
     marginLeft: theme.spacing(1),
@@ -51,53 +50,40 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundInfo = ({
   pool,
-  activeToken,
-  amount = '0.00'
 }) => {
   const classes = useStyles();
-  const tokens = extractValidTokens({ obj: pool })
-
-  //extract priceField name
-  let priceField = ''
-  if (tokens[0]) {
-    for (const key in tokens[0]) {
-      if (key.toLowerCase().includes('price')) {
-        priceField = key
-      }
-    }
-  }
-
-
-  const halfAmount = amount / 2;
-
-  const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField], amount: halfAmount * token[priceField] }))
+  const token0 = pool.token0.address;
+  const token1 = pool.token1.address;
+  const token2 = pool.token2.address;
+  const token3 = pool.token3.address;
+  console.log('pool ==>', pool);
 
   return (
     <>
       <ArrowDownIcon className={classes.downArrow} />
       <div className={classes.container}>
         <div className={classes.pairLine}>
-          <SnowPairsIcon pairsIcon={tokensWithPriceAndAmount.map(token => token.address)} size={36} />
+          <SnowPairsIcon pairsIcon={['0x5947BB275c521040051D82396192181b413227A3', '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7']} size={36} />
           <div className={classes.pairInfoStyle}>
             <Typography variant='subtitle1'>To</Typography>
             <Typography variant='subtitle1' className={classes.bold}>
-              {tokensWithPriceAndAmount.map(token => token.symbol).join('-')} {pool.symbol}
+              LINK-AVAX {pool.symbol}
             </Typography>
           </div>
-          <Typography className={classes.amountText}>{amount}</Typography>
+          <Typography className={classes.amountText}>0.00</Typography>
         </div>
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
-          {
-            tokensWithPriceAndAmount.map((token, index) => {
-              return (<Box key={index} className={classes.tokenLine} mb={index === tokensWithPriceAndAmount.length - 1 ? 1 : 0}>
-                <SnowTokenIcon token={token.symbol} size={20} />
-                <Typography className={classes.pairInfoStyle}>{token.name}</Typography>
-                <Typography className={classes.amountText}>{token.amount}</Typography>
-              </Box>)
-            })
-          }
-
+          <Box className={classes.tokenLine}>
+            <SnowTokenIcon token='WAVAX' size={20} />
+            <Typography className={classes.pairInfoStyle}>AVAX</Typography>
+            <Typography className={classes.amountText}>0.00</Typography>
+          </Box>
+          <Box className={classes.tokenLine} mb={1}>
+            <SnowTokenIcon token='LINK' size={20} />
+            <Typography className={classes.pairInfoStyle}>LINK</Typography>
+            <Typography className={classes.amountText}>0.00</Typography>
+          </Box>
           <Box className={classes.tokenLine} >
             <Typography>Protocol</Typography>
             <Typography className={classes.bold}>{pool.source}</Typography>
