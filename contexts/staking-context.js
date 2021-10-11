@@ -259,7 +259,7 @@ export function StakingContractProvider({ children }) {
       const amount = parseEther((data.balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
       const allowance = await snowballContractApprove.allowance(account, CONTRACTS.SNOWCONE);
-      if(!amount.gt(allowance)) {
+      if(amount.gt(allowance)) {
         const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
         toast(<Toast message={'Waiting for approval...'} toastType={'processing'}/>);
         const transactionApprove = await tokenApprove.wait(1)
