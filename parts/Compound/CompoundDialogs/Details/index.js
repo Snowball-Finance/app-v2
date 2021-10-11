@@ -51,7 +51,7 @@ const Details = ({
   const token1 = item.token1.address;
   const token2 = item.token2.address;
   const token3 = item.token3.address;
-
+  console.log(item)
   return (
     <>
       <div className={classes.pairContainer}>
@@ -73,13 +73,10 @@ const Details = ({
           error={error}
           onChange={inputHandler}
         />
-        {title != "Withdraw" ? <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userLPBalance / 10**item.lpDecimals).toLocaleString(
-            undefined, { maximumSignificantDigits: 18 })} {item.symbol}
-        </Typography> : <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userBalanceGauge / 10**item.lpDecimals).toLocaleString(
-            undefined, { maximumSignificantDigits: 18 })} {item.symbol}
-        </Typography> }
+        <Typography variant='caption' className={classes.balanceText}>
+        Available: {((title === "Withdraw" ? item.userBalanceGauge : item.userLPBalance) / 10 ** item.lpDecimals).toLocaleString(
+          undefined, { maximumSignificantDigits: 18 })} {token1 ? item.symbol : item.name}
+        </Typography>
       </div>
     </>
   );
