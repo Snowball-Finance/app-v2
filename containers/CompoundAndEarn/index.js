@@ -262,7 +262,7 @@ const CompoundAndEarn = () => {
             lastSnowballInfo?.map((pool, index) => (
                 <Grid item key={index} xs={12}>
                   {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) && 
-                    <ListItem pool={pool} modal={modal} setModal={setModal}/>}
+                    <ListItem pool={pool} modal={modal} setModal={setModal} poolList={lastSnowballInfo} />}
                 </Grid>
               ))
           )
