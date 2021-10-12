@@ -3,6 +3,8 @@ import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { NoEthereumProviderError, UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector'
+import { MAX_RETRIES } from 'config';
+import { ethers } from 'ethers';
 
 const isServer = () => typeof window === 'undefined';
 
@@ -73,6 +75,17 @@ const roundDown = (value, decimals = 18) => {
   return `${integerString}.${decimalsString.slice(0, decimals)}`;
 }
 
+const getBalanceWithRetry = async (contract, account) => {
+  let balance = ethers.BigNumber.from("0");
+
+  let currentDepth = 0;
+  while((!balance.gt("0x0")) && (MAX_RETRIES > currentDepth)){
+    balance = await contract.balanceOf(account);
+    currentDepth++;
+  }
+  return balance;
+}
+
 export {
   isServer,
   isEmpty,
@@ -82,4 +95,5 @@ export {
   addAvalancheNetwork,
   handleConnectionError,
   metaMaskInstallHandler,
+  getBalanceWithRetry
 }
