@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: theme.palette.text.primary,
-    backgroundColor: theme.custom.palette.blueButton,
+    backgroundColor: theme.custom.paletteblueContainer,
   },
   activeButton: {
     color: theme.custom.palette.white,

@@ -17,9 +17,9 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   popover: {
-    backgroundColor: theme.custom.palette.lightBlue,
+    backgroundColor: theme.custom.palette.blueContainer,
     '&::before': {
-      backgroundColor: theme.custom.palette.lightBlue,
+      backgroundColor: theme.custom.palette.blueContainer,
     },
   },
   boost: {
