@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
   tokenSelect: {
     display: 'flex',
     alignItems: 'center',
+    marginTop: theme.spacing(1),
   },
   tokenLabel: {
     marginLeft: theme.spacing(1),

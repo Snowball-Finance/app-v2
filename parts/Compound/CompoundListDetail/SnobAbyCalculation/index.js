@@ -1,8 +1,9 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import { formatNumber } from 'utils/helpers/format';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -17,9 +18,22 @@ const useStyles = makeStyles(() => ({
   boldSubtitle: {
     fontWeight: 600,
   },
+  gradientBorder: {
+    marginTop: theme.spacing(1),
+    width: '100%',
+    height: '100%',
+    border: 'double 1px transparent',
+    borderRadius: 10,
+    backgroundImage: `linear-gradient(${theme.palette.background.primary}, ${theme.palette.background.primary}), radial-gradient(circle at top left, #33A9FF,#264E86)`,
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'content-box, border-box',
+    '& $container': {
+      padding: theme.spacing(1),
+    }
+  },
 }));
 
-const SnobApyCalculation = ({ totalAPY, snobAPR, userBoost, kind }) => {
+const SnobApyCalculation = ({ totalAPY, snobAPR, userBoost, kind, userData }) => {
   const classes = useStyles();
 
   return (
@@ -36,8 +50,14 @@ const SnobApyCalculation = ({ totalAPY, snobAPR, userBoost, kind }) => {
         <Typography variant="subtitle2">{userBoost}</Typography>
       </div>
       <div className={classes.container}>
-        <Typography variant="body2">{kind === 'Snowglobe' ? 'Total APY' : 'Total APR'}</Typography>
+        <Typography variant="body2"><b>{kind === 'Snowglobe' ? 'Total APY' : 'Total APR'}</b></Typography>
         <Typography variant="subtitle2">{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
+      </div>
+      <div className={classes.gradientBorder}>
+        <div className={classes.container}>
+          <Typography variant='subtitle2'>SNOB (Claimable)</Typography>
+          <Typography variant='subtitle2'><b>{formatNumber(userData?.SNOBHarvestable || 0.00, 2)}</b> (${formatNumber(userData?.SNOBValue || 0.00, 2)})</Typography>
+        </div>
       </div>
     </div>
   );
