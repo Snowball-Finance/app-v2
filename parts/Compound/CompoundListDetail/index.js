@@ -100,6 +100,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
             snobAPR={item.gaugeInfo?.snobYearlyAPR}
             totalAPY={totalAPY}
             userBoost={userBoost}
+            userData={userData}
           />
         </Grid>}
         <Grid item xs={12} lg={4}>
