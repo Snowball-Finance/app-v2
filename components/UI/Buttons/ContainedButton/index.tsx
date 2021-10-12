@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import ButtonLink from 'components/UI/Buttons/ButtonLink'
 
 type ContainedButtonProps = {
-  classes?: any;
+  classes?: Record<string, string>;
   color?: PropTypes.Color;
   href?: string;
   loading?: boolean;
