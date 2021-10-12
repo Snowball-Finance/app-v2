@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 type SnowLoadingProps = {
   loading: boolean,
-  height?: string | number,
+  height?: number,
   size?: number,
 }
 
