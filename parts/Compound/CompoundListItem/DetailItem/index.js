@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Typography, Grid, useMediaQuery } from '@material-ui/core';
+import { Typography, Grid, useMediaQuery, Box } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 import SnowTokenIcon from 'components/SnowTokenIcon';
@@ -64,12 +64,10 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
             </Grid>
             <Grid item xs={6} xl={6} md={12} lg={12}>
               <Tags type={dexTokenName}>
-                <Grid container direction="row" alignItems="center" spacing={2}>
-                  <Grid item xs={2}>
-                    <SnowTokenIcon size={12} token={dexTokenName} />
-                  </Grid>
-                  <Grid item xs={10}>{item.source}</Grid>
-                </Grid>
+                <Box display='flex' alignItems='center'>
+                  <SnowTokenIcon size={12} token={dexTokenName} />
+                  &nbsp;&nbsp;{item.source}
+                </Box>
               </Tags>
             </Grid>
           </Grid>
