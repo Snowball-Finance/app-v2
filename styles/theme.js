@@ -96,6 +96,7 @@ const lightTheme = responsiveFontSizes(
         darkGreen: '#2A4428',
         png_orange: '#FF9F43',
         joe_red: '#F2716A',
+        banker_skyblue: '#6663ff',
         sherpa_red: '#FC3D4A',
         aave_purple: '#B6509E',
         snob_blue: '#28A2FF',
@@ -115,6 +116,7 @@ const lightTheme = responsiveFontSizes(
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
           joe_red: 'rgba(242, 113, 106, 0.12)',
+          banker_skyblue: 'rgb(31, 154, 255, 0.12)',
           sherpa_red: 'rgba(252, 61, 74, 0.12)',
           aave_purple: 'rgba(182, 80, 158, 0.12)',
           green: 'rgba(40, 199, 111, 0.12)'
@@ -124,6 +126,7 @@ const lightTheme = responsiveFontSizes(
           Deposit: '#28C76F',
           Get_PGL: '#FF9F43',
           Get_JLP: '#F2716A',
+          GET_BLP: '#6663ff',
           Get_xJoe: '#F2716A',
           Get_s3D: '#1891FC',
           Get_s3F: '#39CD33'
@@ -233,6 +236,7 @@ const darkTheme = responsiveFontSizes(
         darkGreen: '#2A4428',
         png_orange: '#FF9F43',
         joe_red: '#F2716A',
+        banker_skyblue: '#6663ff',
         sherpa_red: '#FC3D4A',
         aave_purple: '#B6509E',
         snob_blue: '#28A2FF',
@@ -252,6 +256,7 @@ const darkTheme = responsiveFontSizes(
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
           joe_red: 'rgba(242, 113, 106, 0.12)',
+          banker_skyblue: 'rgb(31, 154, 255, 0.12)',
           sherpa_red: 'rgba(252, 61, 74, 0.12)',
           aave_purple: 'rgba(182, 80, 158, 0.12)',
           green: 'rgba(40, 199, 111, 0.12)'
@@ -261,6 +266,7 @@ const darkTheme = responsiveFontSizes(
           Deposit: '#28C76F',
           Get_PGL: '#FF9F43',
           Get_JLP: '#F2716A',
+          GET_BLP: '#6663ff',
           Get_xJoe: '#F2716A',
           Get_s3D: '#1891FC',
           Get_s3F: '#39CD33'

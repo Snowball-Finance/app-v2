@@ -93,6 +93,7 @@ export function CompoundAndEarnProvider({ children }) {
               source:pool.source,
               symbol:
                 pool.source === 'Trader Joe'? 'JLP' 
+                : pool.source === 'Banker Joe' ? 'BLP'
                 : pool.source === 'BENQI' ? 'QLP'
                 : pool.source === 'AAVE' ? 'ALP'
                 : pool.source === 'Pangolin' ? 'PGL'
