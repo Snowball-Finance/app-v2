@@ -59,16 +59,16 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         </Grid>}
         <Grid item xs={8} lg={2}>
           <Grid container direction={isSm ? 'row' : 'column'}>
-            <Grid item xs={6} xl={7} md={12} lg={12}>
+            <Grid item xs={6} xl={6} md={12} lg={12}>
               <Typography variant="subtitle2">{item.name}</Typography>
             </Grid>
-            <Grid item xs={6} xl={7} md={12} lg={12}>
+            <Grid item xs={6} xl={6} md={12} lg={12}>
               <Tags type={dexTokenName}>
                 <Grid container direction="row" alignItems="center" spacing={2}>
                   <Grid item xs={2}>
                     <SnowTokenIcon size={12} token={dexTokenName} />
                   </Grid>
-                  <Grid item>{item.source}</Grid>
+                  <Grid item xs={10}>{item.source}</Grid>
                 </Grid>
               </Tags>
             </Grid>
