@@ -52,12 +52,12 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         alignItems="center"
         spacing={isSm ? 1 : 4}
       >
-        {!item.deprecatedPool && <Grid item xs={4} lg={3}>
+        {!item.deprecatedPool && <Grid item xs={4} lg={3} xl={3}>
           <SnowPairsIcon
             pairsIcon={[item.token0.address, item.token1.address, item.token2.address, item.token3.address]}
           />
         </Grid>}
-        <Grid item xs={8} lg={2}>
+        <Grid item xs={8} lg={2} xl={3}>
           <Grid container direction={isSm ? 'row' : 'column'}>
             <Grid item xs={6} xl={6} md={12} lg={12}>
               <Typography variant="subtitle2">{item.name}</Typography>
