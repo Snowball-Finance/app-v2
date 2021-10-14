@@ -61,7 +61,7 @@ export function StakingContractProvider({ children }) {
   }, [feeDistributorContract,sherpaDistributorContract])
 
   useEffect(() => {
-    if (!isEmpty(gaugeProxyContract) && (!isEmpty(pools))) {
+    if (!isEmpty(gaugeProxyContract) && (!isEmpty(pools)) && provider) {
       getGaugeProxyInfo();
     }
 
@@ -77,7 +77,7 @@ export function StakingContractProvider({ children }) {
       getSnowconeInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gaugeProxyContract, account, pools, snowballContract, snowconeContract]);
+  }, [gaugeProxyContract, account, pools, snowballContract, snowconeContract, provider]);
 
   const getFeeDistributorInfo = async () => {
     try {

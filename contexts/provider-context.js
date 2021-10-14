@@ -1,11 +1,12 @@
+import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useState } from "react";
-import { AVALANCHE_MAINNET_PARAMS } from "utils/constants/connectors";
 
 
 const ProviderContext = createContext(null);
 
 export function ProviderProvider({ children }) {
+  const { library } = useWeb3React();
   const [loading, setLoading] = useState(true);
   const [provider, setProvider] = useState(null);
 
@@ -36,36 +37,19 @@ export function ProviderProvider({ children }) {
 
   useEffect(() => {
     const loadProviders = async () => {
-      if (loading) {
+      if (loading && library) {
         try {
-          if (process.env.ENVIRONMENT == 'DEV' && LOCALNODE) {
-            const localProvider = new ethers.providers.StaticJsonRpcProvider(`${LOCALNODE}/ext/bc/C/rpc`);
-            return setProvider(localProvider)
-          }
-          //check if our node is healthy
-          const nodeHealthy = await nodeIsHealthy(PRIVATENODE);
-          if (nodeHealthy) {
+          const privateProvider = new ethers.providers.
+            StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
 
-            const privateProvider = new ethers.providers.
-              StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
-
-            //do a quick call to check if the node is sync
-            try {
-              //avalanche burn address
-              await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
-              setProvider(privateProvider);
-            } catch (error) {
-              console.error(error);
-              setProvider(
-                new ethers.providers.
-                  StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
-              );
-            }
-          } else {
-            setProvider(
-              new ethers.providers.
-                StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
-            );
+          try {
+            //do a quick call at avalanche burn address to see if it`s acessible
+            const provider = library.getSigner().provider;
+            await provider.getBalance('0x0100000000000000000000000000000000000000');
+            setProvider(provider);
+          } catch (error) {
+            console.error(error);
+            setProvider(privateProvider);
           }
         } finally {
           setLoading(false);
@@ -73,7 +57,7 @@ export function ProviderProvider({ children }) {
       }
     }
     loadProviders();
-  }, [loading, PRIVATENODE, LOCALNODE]);
+  }, [loading, PRIVATENODE, LOCALNODE, library]);
 
 
   return (
