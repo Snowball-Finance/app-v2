@@ -1,17 +1,16 @@
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useState } from "react";
+import { AVALANCHE_MAINNET_PARAMS } from "utils/constants/connectors";
 
 
 const ProviderContext = createContext(null);
 
 export function ProviderProvider({ children }) {
-  const { library } = useWeb3React();
-  const [loading, setLoading] = useState(true);
+  const { account, library } = useWeb3React();
   const [provider, setProvider] = useState(null);
 
   const PRIVATENODE = process.env.PRIVATENODE;
-  const LOCALNODE = process.env.LOCALNODE;
 
   const nodeIsHealthy = async (url) => {
     var myHeaders = new Headers();
@@ -37,27 +36,33 @@ export function ProviderProvider({ children }) {
 
   useEffect(() => {
     const loadProviders = async () => {
-      if (loading && library) {
+      const privateProvider = new ethers.providers.
+        StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
+      //if there's a wallet connected
+      if (library && account) {
         try {
-          const privateProvider = new ethers.providers.
-            StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
-
-          try {
-            //do a quick call at avalanche burn address to see if it`s acessible
-            const provider = library.getSigner().provider;
-            await provider.getBalance('0x0100000000000000000000000000000000000000');
-            setProvider(provider);
-          } catch (error) {
-            console.error(error);
-            setProvider(privateProvider);
-          }
-        } finally {
-          setLoading(false);
+          //do a quick call at avalanche burn address to see if it`s acessible
+          const provider = library.getSigner().provider;
+          await provider.getBalance('0x0100000000000000000000000000000000000000');
+          setProvider(provider);
+        } catch (error) {
+          console.error(error);
+          setProvider(privateProvider);
+        } 
+      //we need an unsigned provider if there's no wallet connected
+      } else {
+        try{
+          await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
+          setProvider(privateProvider);
+        }catch{
+          const unsigProvider = new ethers.providers.
+            StaticJsonRpcProvider(`${AVALANCHE_MAINNET_PARAMS.rpcUrls[0]}`);
+          setProvider(unsigProvider);
         }
       }
     }
     loadProviders();
-  }, [loading, PRIVATENODE, LOCALNODE, library]);
+  }, [ PRIVATENODE, library, account]);
 
 
   return (
