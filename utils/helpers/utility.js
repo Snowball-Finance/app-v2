@@ -82,6 +82,7 @@ const getBalanceWithRetry = async (contract, account) => {
   while ((!balance.gt("0x0")) && (MAX_RETRIES > currentDepth)) {
     balance = await contract.balanceOf(account);
     currentDepth++;
+    await delay(1000);
   }
   return balance;
 }
