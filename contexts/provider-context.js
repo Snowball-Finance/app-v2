@@ -1,7 +1,6 @@
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useState } from "react";
-import { AVALANCHE_MAINNET_PARAMS } from "utils/constants/connectors";
 
 
 const ProviderContext = createContext(null);
@@ -39,7 +38,7 @@ export function ProviderProvider({ children }) {
       const privateProvider = new ethers.providers.
         StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
       //if there's a wallet connected
-      if (library && account) {
+      if (library) {
         try {
           //do a quick call at avalanche burn address to see if it`s acessible
           const provider = library.getSigner().provider;
@@ -48,21 +47,12 @@ export function ProviderProvider({ children }) {
         } catch (error) {
           console.error(error);
           setProvider(privateProvider);
-        } 
-      //we need an unsigned provider if there's no wallet connected
-      } else {
-        try{
-          await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
-          setProvider(privateProvider);
-        }catch{
-          const unsigProvider = new ethers.providers.
-            StaticJsonRpcProvider(`${AVALANCHE_MAINNET_PARAMS.rpcUrls[0]}`);
-          setProvider(unsigProvider);
         }
+        //we need an unsigned provider if there's no wallet connected
       }
     }
     loadProviders();
-  }, [ PRIVATENODE, library, account]);
+  }, [PRIVATENODE, library, account]);
 
 
   return (

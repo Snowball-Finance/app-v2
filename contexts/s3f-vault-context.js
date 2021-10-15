@@ -11,7 +11,6 @@ import MESSAGES from 'utils/constants/messages';
 import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
-import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const ContractContext = createContext(null);
@@ -25,12 +24,12 @@ const pairNames = 'FRAX + TUSD + USDT';
 export function S3fVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
-  const { provider } = useProvider();
-  const unsignedS3fContract = new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, provider)
-  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, provider)
-  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, provider)
-  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, provider)
-  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, provider)
+  const unsignedProvider = new ethers.providers.StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
+  const unsignedS3fContract = new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, unsignedProvider)
+  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, unsignedProvider)
+  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, unsignedProvider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, unsignedProvider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, unsignedProvider)
 
 
   const [loading, setLoading] = useState(false);
@@ -78,7 +77,7 @@ export function S3fVaultContractProvider({ children }) {
     getSupply();
     //getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider]);
+  }, [unsignedProvider]);
 
   const getSupply = async () => {
     try {
@@ -159,7 +158,7 @@ export function S3fVaultContractProvider({ children }) {
 
   const getTransactions = async () => {
     try {
-      let blockNumber = await provider.getBlockNumber();
+      let blockNumber = await unsignedProvider.getBlockNumber();
       let events = [];
       let transactions = [];
       let attempt = 0;
