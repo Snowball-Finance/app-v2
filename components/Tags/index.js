@@ -23,10 +23,18 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.joe_red,
     color: theme.custom.palette.joe_red
   },
+  BLP: {
+    backgroundColor: theme.custom.palette.transparent.banker_skyblue,
+    color: theme.custom.palette.banker_skyblue
+  },
   QLP: {
     backgroundColor: theme.custom.palette.transparent.snob_blue,
     color: theme.custom.palette.snob_blue
-  }
+  },
+  ALP: {
+    backgroundColor: theme.custom.palette.transparent.aave_purple,
+    color: theme.custom.palette.aave_purple,
+  },
 }));
 
 const Tags = ({ children, style, className, type }) => {

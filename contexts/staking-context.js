@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useMemo, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
+import { toast } from 'react-toastify';
 
 import { parseEther } from 'ethers/lib/utils'
 import { isEmpty } from 'utils/helpers/utility'
@@ -16,6 +17,7 @@ import FEE_DISTRIBUTOR_ABI from 'libs/abis/fee-distributor.json'
 import { usePrices } from 'contexts/price-context'
 import { useAPIContext } from './api-context'
 import { useProvider } from './provider-context'
+import Toast from 'components/Toast';
 
 const ContractContext = createContext(null)
 
@@ -59,7 +61,7 @@ export function StakingContractProvider({ children }) {
   }, [feeDistributorContract,sherpaDistributorContract])
 
   useEffect(() => {
-    if (!isEmpty(gaugeProxyContract) && (!isEmpty(pools))) {
+    if (!isEmpty(gaugeProxyContract) && (!isEmpty(pools)) && provider) {
       getGaugeProxyInfo();
     }
 
@@ -75,7 +77,7 @@ export function StakingContractProvider({ children }) {
       getSnowconeInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gaugeProxyContract, account, pools, snowballContract, snowconeContract]);
+  }, [gaugeProxyContract, account, pools, snowballContract, snowconeContract, provider]);
 
   const getFeeDistributorInfo = async () => {
     try {
@@ -256,11 +258,15 @@ export function StakingContractProvider({ children }) {
     try {
       const amount = parseEther((data.balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
-      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
-      const transactionApprove = await tokenApprove.wait(1)
-      if (!transactionApprove.status) {
-        setLoading(false)
-        return;
+      const allowance = await snowballContractApprove.allowance(account, CONTRACTS.SNOWCONE);
+      if(amount.gt(allowance)) {
+        const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
+        toast(<Toast message={'Waiting for approval...'} toastType={'processing'}/>);
+        const transactionApprove = await tokenApprove.wait(1)
+        if (!transactionApprove.status) {
+          setLoading(false)
+          return;
+        }
       }
 
       const snowconeContractIncrease = new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, library.getSigner());

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   shimmerWrapper: {
     position: 'absolute',
     top: 0,
@@ -13,9 +13,9 @@ const useStyles = makeStyles(() => ({
   shimmer: {
     width: '50%',
     height: '100%',
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: theme.custom.palette.shimmer,
     transform: 'skewX(-20deg)',
-    boxShadow: '0 0 30px 30px rgba(255,255,255,0.2)',
+    boxShadow: `0 0 30px 30px ${theme.custom.palette.shimmer}`,
   },
   '@keyframes loading': {
     '0%': { transform: 'translateX(-150%)' },
