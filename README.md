@@ -10,7 +10,7 @@
 This project is the App Page for Snowball (front-end) and a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ### Local: http://localhost:3000
-### Development: https://jupiter-frontend.vercel.app/
+### Development: https://app-v2-mocha.vercel.app/
 
 ---
 
