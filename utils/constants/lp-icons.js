@@ -2,6 +2,7 @@ const LP_ICONS = Object.freeze({
   // DeX Icons
   PGL: '/assets/images/lp-icons/PNG.png',
   JLP: '/assets/images/lp-icons/JOE.png',
+  BLP: '/assets/images/lp-icons/BLP.png',
   QLP: '/assets/images/lp-icons/BENQI.png',
   ALP: '/assets/images/lp-icons/AAVE.png',
   SNOB: '/assets/images/lp-icons/SNOWBALL.png',
@@ -10,7 +11,7 @@ const LP_ICONS = Object.freeze({
   WAVAX: '/assets/images/lp-icons/AVAX.png',
   ETHER: '/assets/images/lp-icons/ETH.png',
   ETH: '/assets/images/lp-icons/ETH.png',
-  SHERPA: 'assets/images/lp-icons/SHERPA.png',
+  SHERPA: '/assets/images/lp-icons/SHERPA.png',
   LINK: '/assets/images/lp-icons/LINK.png',
   SUSHI: '/assets/images/lp-icons/SUSHI.png',
   WBTC: '/assets/images/lp-icons/WBTC.png',
