@@ -340,7 +340,6 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ deposit: true });
     try {
-      let gaugeAmount = ethers.BigNumber.from("0");
       if (item.kind === 'Snowglobe') {
         const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
@@ -361,19 +360,13 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
-        
-        gaugeAmount = await getBalanceWithRetry(snowglobeContract, account);
 
-      } else {
-        const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
-        const balance = await vaultContract.balanceOf(account);
-        gaugeAmount = amount.gt(balance) ? balance : amount
       }
 
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
-      const gaugeDeposit = await gaugeContract.deposit(gaugeAmount);
+      const gaugeDeposit = await gaugeContract.depositAll();
       const transactionGaugeDeposit = await gaugeDeposit.wait(1);
       if (!transactionGaugeDeposit.status) {
         setPopUp({
