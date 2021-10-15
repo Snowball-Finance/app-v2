@@ -24,7 +24,7 @@ const pairNames = 'USDT + BUSD + DAI'
 export function S3dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
-  const unsignedProvider = new ethers.providers.StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
+  const { unsignedProvider } = useProvider();
   const unsignedS3dContract = new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, unsignedProvider)
   const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, unsignedProvider)
   const unsignedBusdContract = new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, unsignedProvider)

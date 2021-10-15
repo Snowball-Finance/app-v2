@@ -1,6 +1,6 @@
 import { useWeb3React } from "@web3-react/core";
-import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useState } from "react";
+import { getBestStaticProvider } from "utils/helpers/utility";
 
 
 const ProviderContext = createContext(null);
@@ -8,6 +8,7 @@ const ProviderContext = createContext(null);
 export function ProviderProvider({ children }) {
   const { account, library } = useWeb3React();
   const [provider, setProvider] = useState(null);
+  const [unsignedProvider, setUnsignedProvider] = useState(null);
 
   const PRIVATENODE = process.env.PRIVATENODE;
 
@@ -35,20 +36,12 @@ export function ProviderProvider({ children }) {
 
   useEffect(() => {
     const loadProviders = async () => {
-      const privateProvider = new ethers.providers.
-        StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
       //if there's a wallet connected
-      if (library) {
-        try {
-          //do a quick call at avalanche burn address to see if it`s acessible
-          const provider = library.getSigner().provider;
-          await provider.getBalance('0x0100000000000000000000000000000000000000');
-          setProvider(provider);
-        } catch (error) {
-          console.error(error);
-          setProvider(privateProvider);
-        }
-        //we need an unsigned provider if there's no wallet connected
+      const bestProvider = await getBestStaticProvider(library)
+
+      setUnsignedProvider(bestProvider)
+      if(library){
+        setProvider(bestProvider)
       }
     }
     loadProviders();
@@ -58,7 +51,8 @@ export function ProviderProvider({ children }) {
   return (
     <ProviderContext.Provider
       value={{
-        provider
+        provider,
+        unsignedProvider
       }}
     >
       {children}
@@ -73,10 +67,12 @@ export function useProvider() {
   }
 
   const {
-    provider
+    provider,
+    unsignedProvider
   } = context
 
   return {
-    provider
+    provider,
+    unsignedProvider
   }
 }

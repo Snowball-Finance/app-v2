@@ -42,7 +42,7 @@ const handleConnectionError = (error) => {
   } else if (error instanceof UnsupportedChainIdError) {
     return {
       message: MESSAGES.CONNECT_UNSUPPORTED_CHAIN_ID_ERROR,
-      icon:  ANIMATIONS.WARNING.VALUE,
+      icon: ANIMATIONS.WARNING.VALUE,
       button: 'Switch to Avalanche',
       confirmAction: addAvalancheNetwork
     }
@@ -79,11 +79,34 @@ const getBalanceWithRetry = async (contract, account) => {
   let balance = ethers.BigNumber.from("0");
 
   let currentDepth = 0;
-  while((!balance.gt("0x0")) && (MAX_RETRIES > currentDepth)){
+  while ((!balance.gt("0x0")) && (MAX_RETRIES > currentDepth)) {
     balance = await contract.balanceOf(account);
     currentDepth++;
   }
   return balance;
+}
+
+const getBestStaticProvider = async (library) => {
+  const PRIVATENODE = process.env.PRIVATENODE;
+
+  const privateProvider = new ethers.providers.
+    StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
+  //if there's a wallet connected
+  try {
+    let provider;
+
+    if (library) {
+      provider = library.getSigner().provider;
+    } else {
+      provider = new ethers.providers.
+        StaticJsonRpcProvider(`${AVALANCHE_MAINNET_PARAMS.rpcUrls[0]}`);
+    }
+    await provider.getBalance('0x0100000000000000000000000000000000000000');
+    return provider
+  } catch (error) {
+    console.error(error);
+    return privateProvider;
+  }
 }
 
 export {
@@ -95,5 +118,6 @@ export {
   addAvalancheNetwork,
   handleConnectionError,
   metaMaskInstallHandler,
-  getBalanceWithRetry
+  getBalanceWithRetry,
+  getBestStaticProvider
 }

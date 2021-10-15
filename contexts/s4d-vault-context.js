@@ -13,6 +13,8 @@ import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
 import { useCompoundAndEarnContract } from './compound-and-earn-context'
 import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors'
+import { getBestStaticProvider } from 'utils/helpers/utility'
+import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
@@ -27,7 +29,7 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
-  const unsignedProvider = new ethers.providers.StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
+  const { unsignedProvider } = useProvider();
   const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, unsignedProvider)
   const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, unsignedProvider)
   const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, unsignedProvider)
