@@ -9,8 +9,14 @@
 
 This project is the App Page for Snowball (front-end) and a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+---
+
+## Deployment Testing URLs
+
 ### Local: http://localhost:3000
-### Development: https://app-v2-mocha.vercel.app/
+### Production Branch: https://app-v2-mocha.vercel.app/
+### Candidate Branch: https://app-v2-git-candidate-snowballnetwork.vercel.app/
+### Development Branch: https://app-v2-git-development-snowballnetwork.vercel.app/
 
 ---
 
