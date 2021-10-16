@@ -67,7 +67,7 @@ const VoteDistribution = () => {
   },[gauges,gaugeProxyContract])
 
   return (
-    <CardWrapper title='This chart shows the current SNOB  reward allocations per pool (updated weekly).'>
+    <CardWrapper title='This chart shows the current SNOB  reward allocations per pool (updated daily).'>
       <Typography
         variant='h1'
         className={classes.title}

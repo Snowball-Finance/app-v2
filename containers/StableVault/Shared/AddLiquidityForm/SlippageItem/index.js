@@ -2,9 +2,6 @@
 import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
-import { formatNumber } from 'utils/helpers/format';
-
-import SnowTokenIcon from 'components/SnowTokenIcon'
 
 const useStyles = makeStyles((theme) => ({
   container: {

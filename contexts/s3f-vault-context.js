@@ -25,12 +25,12 @@ const pairNames = 'FRAX + TUSD + USDT';
 export function S3fVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
-  const { provider } = useProvider();
-  const unsignedS3fContract = new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, provider)
-  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, provider)
-  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, provider)
-  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, provider)
-  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, provider)
+  const { unsignedProvider } = useProvider();
+  const unsignedS3fContract = new ethers.Contract(CONTRACTS.S3F.TOKEN, ERC20_ABI, unsignedProvider)
+  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S3F.FRAX, ERC20_ABI, unsignedProvider)
+  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S3F.TUSD, ERC20_ABI, unsignedProvider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3F.USDT, ERC20_ABI, unsignedProvider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3F.VAULT, S3F_VAULT_ABI, unsignedProvider)
 
 
   const [loading, setLoading] = useState(false);
@@ -78,7 +78,7 @@ export function S3fVaultContractProvider({ children }) {
     getSupply();
     //getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider]);
+  }, [unsignedProvider]);
 
   const getSupply = async () => {
     try {
@@ -159,7 +159,7 @@ export function S3fVaultContractProvider({ children }) {
 
   const getTransactions = async () => {
     try {
-      let blockNumber = await provider.getBlockNumber();
+      let blockNumber = await unsignedProvider.getBlockNumber();
       let events = [];
       let transactions = [];
       let attempt = 0;

@@ -42,14 +42,22 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   detailButton: {
-    backgroundColor: theme.custom.palette.lightGrey,
-    color: theme.custom.palette.darkGrey,
+    backgroundColor: theme.custom.palette.nftBtn,
+    color: theme.palette.text.primary,
+    borderRadius: 0,
+    padding: theme.spacing(1.5),
+    '& :hover': {
+      color: theme.palette.text.primary,
+    }
+  },
+  button: {
+    backgroundColor: `${theme.custom.palette.nftBtn} !important`,
+    color: `${theme.palette.text.primary} !important`,
     borderRadius: 0,
     padding: theme.spacing(1.5)
   },
-  button: {
-    borderRadius: 0,
-    padding: theme.spacing(1.5)
+  shopingIcon: {
+    color: theme.palette.text.primary,
   }
 }));
 
@@ -121,7 +129,7 @@ const ShopItem = ({
         <ContainedButton
           fullWidth
           disabled={nft.max === nft.supply}
-          startIcon={<ShoppingCart size={18} color='white' />}
+          startIcon={<ShoppingCart size={18} className={classes.shopingIcon} />}
           className={classes.button}
           onClick={purchaseHandler}
         >

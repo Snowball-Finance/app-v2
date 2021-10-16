@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 4,
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.background.primary,
   },
   container: {
     display: 'grid',
