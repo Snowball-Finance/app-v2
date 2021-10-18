@@ -25,12 +25,12 @@ const pairNames = 'USDT + BUSD + DAI'
 export function S3dVaultContractProvider({ children }) {
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
-  const { unsignedProvider } = useProvider();
-  const unsignedS3dContract = new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, unsignedProvider)
-  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, unsignedProvider)
-  const unsignedBusdContract = new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, unsignedProvider)
-  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, unsignedProvider)
-  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, unsignedProvider)
+  const { provider } = useProvider();
+  const unsignedS3dContract = new ethers.Contract(CONTRACTS.S3D.TOKEN, ERC20_ABI, provider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S3D.USDT, ERC20_ABI, provider)
+  const unsignedBusdContract = new ethers.Contract(CONTRACTS.S3D.BUSD, ERC20_ABI, provider)
+  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S3D.DAI, ERC20_ABI, provider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S3D.VAULT, S3D_VAULT_ABI, provider)
 
 
   const [loading, setLoading] = useState(false)
@@ -78,7 +78,7 @@ export function S3dVaultContractProvider({ children }) {
     getSupply();
     //getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unsignedProvider]);
+  }, [provider]);
 
   const getSupply = async () => {
     try {
@@ -158,7 +158,7 @@ export function S3dVaultContractProvider({ children }) {
 
   const getTransactions = async () => {
     try {
-      let blockNumber = await unsignedProvider.getBlockNumber();
+      let blockNumber = await provider.getBlockNumber();
       let events = [];
       let transactions = [];
       let attempt = 0;
