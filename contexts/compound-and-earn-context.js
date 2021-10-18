@@ -19,6 +19,7 @@ import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
+import { getContractCall, getContractObject, getMultiContractData } from 'libs/services/multicall';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -121,6 +122,8 @@ export function CompoundAndEarnProvider({ children }) {
 
   const generatePoolInfo = async (item,gauges) => {
     const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, provider);
+    const lpContractCalls = getContractCall("balanceOf",[account]);
+
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
     let totalSupply = 0, userDepositedLP = 0, SNOBHarvestable = 0, SNOBValue = 0, 
@@ -202,6 +205,7 @@ export function CompoundAndEarnProvider({ children }) {
       address: item.address,
       userLPBalance,
       lpDecimals,
+      lpContractCalls,
       userDepositedLP: userDepositedLP,
       usdValue: (userDepositedLP) * item.pricePoolToken,
       totalSupply,
@@ -216,10 +220,18 @@ export function CompoundAndEarnProvider({ children }) {
   const getBalanceInfosAllPools = async (gauges) => {
     setLoading(true);
     try {
+      const contractCalls = [];
       const dataWithPoolBalance = await Promise.all(
         pools.map(async (item) => {
-          return await generatePoolInfo(item,gauges);
+          const poolInfo = await generatePoolInfo(item,gauges);
+          if(poolInfo.lpContractCalls){
+            contractCalls.push(getContractObject(item.lpAddress,ERC20_ABI,[poolInfo.lpContractCalls]));
+          }
+          return poolInfo;
         }));
+        const contractData = await getMultiContractData(provider,contractCalls);
+        console.log(contractData);
+
       setUserPools(dataWithPoolBalance);
     } catch (error) {
       console.log('[Error] getBalanceInfosAllPools => ', error)
