@@ -12,6 +12,8 @@ import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
 import { useCompoundAndEarnContract } from './compound-and-earn-context'
+import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors'
+import { getBestStaticProvider } from 'utils/helpers/utility'
 import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
@@ -27,13 +29,13 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
-  const { provider } = useProvider();
-  const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
-  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
-  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, provider)
-  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, provider)
-  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, provider)
-  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, provider)
+  const { unsignedProvider } = useProvider();
+  const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, unsignedProvider)
+  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, unsignedProvider)
+  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, unsignedProvider)
+  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, unsignedProvider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, unsignedProvider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, unsignedProvider)
 
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
@@ -89,7 +91,7 @@ export function S4dVaultContractProvider({ children }) {
     getSupply();
     getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider]);
+  }, [unsignedProvider]);
 
   const getSupply = async () => {
     try {
@@ -178,7 +180,7 @@ export function S4dVaultContractProvider({ children }) {
 
   const getTransactions = async () => {
     try {
-      let blockNumber = await provider.getBlockNumber();
+      let blockNumber = await unsignedProvider.getBlockNumber();
       let events = [];
       let transactions = [];
       let attempt = 0;

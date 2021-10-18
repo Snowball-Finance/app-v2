@@ -1,16 +1,16 @@
-import { ethers } from "ethers";
+import { useWeb3React } from "@web3-react/core";
 import { createContext, useContext, useEffect, useState } from "react";
-import { AVALANCHE_MAINNET_PARAMS } from "utils/constants/connectors";
+import { getBestStaticProvider } from "utils/helpers/utility";
 
 
 const ProviderContext = createContext(null);
 
 export function ProviderProvider({ children }) {
-  const [loading, setLoading] = useState(true);
+  const { account, library } = useWeb3React();
   const [provider, setProvider] = useState(null);
+  const [unsignedProvider, setUnsignedProvider] = useState(null);
 
   const PRIVATENODE = process.env.PRIVATENODE;
-  const LOCALNODE = process.env.LOCALNODE;
 
   const nodeIsHealthy = async (url) => {
     var myHeaders = new Headers();
@@ -36,50 +36,23 @@ export function ProviderProvider({ children }) {
 
   useEffect(() => {
     const loadProviders = async () => {
-      if (loading) {
-        try {
-          if (process.env.ENVIRONMENT == 'DEV' && LOCALNODE) {
-            const localProvider = new ethers.providers.StaticJsonRpcProvider(`${LOCALNODE}/ext/bc/C/rpc`);
-            return setProvider(localProvider)
-          }
-          //check if our node is healthy
-          const nodeHealthy = await nodeIsHealthy(PRIVATENODE);
-          if (nodeHealthy) {
+      //if there's a wallet connected
+      const bestProvider = await getBestStaticProvider(library)
 
-            const privateProvider = new ethers.providers.
-              StaticJsonRpcProvider(`${PRIVATENODE}ext/bc/C/rpc`);
-
-            //do a quick call to check if the node is sync
-            try {
-              //avalanche burn address
-              await privateProvider.getBalance('0x0100000000000000000000000000000000000000');
-              setProvider(privateProvider);
-            } catch (error) {
-              console.error(error);
-              setProvider(
-                new ethers.providers.
-                  StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
-              );
-            }
-          } else {
-            setProvider(
-              new ethers.providers.
-                StaticJsonRpcProvider(AVALANCHE_MAINNET_PARAMS.rpcUrls[0])
-            );
-          }
-        } finally {
-          setLoading(false);
-        }
+      setUnsignedProvider(bestProvider)
+      if(library){
+        setProvider(bestProvider)
       }
     }
     loadProviders();
-  }, [loading, PRIVATENODE, LOCALNODE]);
+  }, [PRIVATENODE, library, account]);
 
 
   return (
     <ProviderContext.Provider
       value={{
-        provider
+        provider,
+        unsignedProvider
       }}
     >
       {children}
@@ -94,10 +67,12 @@ export function useProvider() {
   }
 
   const {
-    provider
+    provider,
+    unsignedProvider
   } = context
 
   return {
-    provider
+    provider,
+    unsignedProvider
   }
 }

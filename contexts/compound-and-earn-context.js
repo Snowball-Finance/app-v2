@@ -11,7 +11,7 @@ import LP_ABI from 'libs/abis/lp-token.json';
 import { usePopup } from 'contexts/popup-context'
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
-import { isEmpty, delay } from 'utils/helpers/utility';
+import { isEmpty, getBalanceWithRetry } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
@@ -41,7 +41,7 @@ export function CompoundAndEarnProvider({ children }) {
   const [loadedDeprecated, setLoadedDeprecated] = useState(false);
   const [sortedUserPools, setSortedUserPools] = useState(false);
   const [isTransacting, setIsTransacting] = useState({ approve: false, deposit: false, withdraw: false });
-  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0, withdrawStep: 0 })
+  const [transactionStatus, setTransactionStatus] = useState({ approvalStep: 0, depositStep: 0, withdrawStep: 0 });
 
   useEffect(() => {
     //only fetch total information when the userpools are empty
@@ -93,6 +93,7 @@ export function CompoundAndEarnProvider({ children }) {
               source:pool.source,
               symbol:
                 pool.source === 'Trader Joe'? 'JLP' 
+                : pool.source === 'Banker Joe' ? 'BLP'
                 : pool.source === 'BENQI' ? 'QLP'
                 : pool.source === 'AAVE' ? 'ALP'
                 : pool.source === 'Pangolin' ? 'PGL'
@@ -359,19 +360,13 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
-        //await 2 seconds for our node to sync
-        await delay(2000);
-        amount = await snowglobeContract.balanceOf(account);
-      } else {
-        const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
-        const balance = await vaultContract.balanceOf(account);
-        amount = amount.gt(balance) ? balance : amount
+
       }
 
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
-      const gaugeDeposit = await gaugeContract.deposit(amount);
+      const gaugeDeposit = await gaugeContract.depositAll();
       const transactionGaugeDeposit = await gaugeDeposit.wait(1);
       if (!transactionGaugeDeposit.status) {
         setPopUp({
@@ -465,9 +460,8 @@ export function CompoundAndEarnProvider({ children }) {
 
       if (item.kind === 'Snowglobe') {
         const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-        //await 2 seconds for our node to sync
-        await delay(2000);
-        const snowglobeBalance = await snowglobeContract.balanceOf(account);
+        
+        const snowglobeBalance = await getBalanceWithRetry(snowglobeContract, account);
 
         if (snowglobeBalance.gt(0x00)) {
           const snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
