@@ -1,8 +1,8 @@
 import { memo, useEffect, useState, useRef } from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, useMediaQuery } from '@material-ui/core';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
 import {
   List,
@@ -46,12 +46,18 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+  const [rowHeight, setRowHeight] = useState(80);
   const cache = useRef(
     new CellMeasurerCache({
       fixedWidth: true,
       defaultHeight: 100,
     })
   );
+  const listRef = useRef();
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
+    defaultMatches: true,
+  });
 
   const {
     userPools,
@@ -106,9 +112,8 @@ const CompoundAndEarn = () => {
   }, [userDeprecatedPools, loadedDeprecated, sortedUserPools]);
 
   useEffect(() => {
-    const {
-      data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {},
-    } = snowballInfoQuery;
+    const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } =
+      snowballInfoQuery;
 
     if (isEmpty(userPools)) {
       let sortedData = [...poolsInfo];
@@ -133,6 +138,14 @@ const CompoundAndEarn = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
+
+  useEffect(() => {
+    if(isSm) {
+      setRowHeight(220);
+    } else {
+      setRowHeight(80);
+    }
+  }, [isSm]);
 
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length
@@ -291,15 +304,17 @@ const CompoundAndEarn = () => {
             <CompoundAndEarnSkeleton />
           </Grid>
         ) : (
-          <div style={{ width: '1200px', height: '40vh' }}>
+          <div style={{ width: '100%', height: '40vh' }}>
             <AutoSizer>
               {({ width, height }) => (
                 <List
+                  ref={listRef}
                   width={width}
                   height={height}
-                  rowHeight={cache.current.rowHeight}
+                  rowHeight={rowHeight}
                   deferredMeasurementCache={cache.current}
                   rowCount={lastSnowballInfo.length}
+                  overscanRowCount={3}
                   rowRenderer={({ key, index, style, parent }) => {
                     const pool = lastSnowballInfo[index];
 
