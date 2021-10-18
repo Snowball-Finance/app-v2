@@ -7,7 +7,6 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
-import LP_ABI from 'libs/abis/lp-token.json';
 import { usePopup } from 'contexts/popup-context'
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
@@ -19,13 +18,15 @@ import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
+import { getMultiContractData } from 'libs/services/multicall';
+import { getGaugeCalls, getPoolCalls } from 'libs/services/multicall-queries';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
-  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo  } = useContracts();
+  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo, setGaugeCalls  } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
   const { provider } = useProvider();
   const { prices } = usePrices();
@@ -119,8 +120,9 @@ export function CompoundAndEarnProvider({ children }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps   
   },[loading,account])
 
-  const generatePoolInfo = async (item,gauges) => {
-    const lpContract = new ethers.Contract(item.lpAddress, LP_ABI, provider);
+  const generatePoolInfo = (item, gauges, contractData) => {
+    const lpData = contractData[item.lpAddress];
+    const snowglobeData = contractData[item.address];
     const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
     let totalSupply = 0, userDepositedLP = 0, SNOBHarvestable = 0, SNOBValue = 0, 
@@ -131,96 +133,92 @@ export function CompoundAndEarnProvider({ children }) {
       SNOBValue = SNOBHarvestable * prices?.SNOB;
     }
 
-    userLPBalance  = await lpContract.balanceOf(account);
-    if(+userLPBalance > 0){
-      lpDecimals = await lpContract.decimals();
-    }
+    userLPBalance = lpData.balanceOf;
+    lpDecimals = lpData.decimals;
 
     switch(item.kind){
-      case 'Snowglobe':
-        const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, provider);
-        userBalanceSnowglobe = await snowglobeContract.balanceOf(account);
-        if(+userBalanceSnowglobe <= 0 && gauge.staked <= 0){
-          break;
-        }
-        
-        if(+userLPBalance <= 0){
-          lpDecimals = await lpContract.decimals();
-        }
-
-        totalSupply = await snowglobeContract.totalSupply();
-
-        let snowglobeRatio;
-        const snowglobeTotalBalance = await snowglobeContract.balance();
-        if (snowglobeTotalBalance > 0) {
-          snowglobeRatio = await snowglobeContract.getRatio();
-        } else {
-          snowglobeRatio = floatToBN(1, 18);
-        }
-        if (userBalanceSnowglobe.gt('0x0') && userLPBalance.eq('0x0')) {
-          userLPBalance = userLPBalance.add(userBalanceSnowglobe);
-        }
-        userDepositedLP = BNToFloat(userBalanceSnowglobe, lpDecimals) *
-          BNToFloat(snowglobeRatio, 18);
-
-        if (!isEmpty(gauge)) {
-          userDepositedLP += (gauge.staked / 10 ** lpDecimals) * BNToFloat(snowglobeRatio, 18);
-        }
-
-        if (userDepositedLP > 0 && item.token1.address) {
-          let reserves = await lpContract.getReserves();
-          let totalSupplyPGL = BNToFloat(await lpContract.totalSupply(), 18);
-
-          const r0 = BNToFloat(reserves._reserve0, item.token0.decimals);
-          const r1 = BNToFloat(reserves._reserve1, item.token1.decimals);
-          let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
-          let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
-          underlyingTokens = {
-            token0: {
-              address: item.token0.address,
-              symbol: item.token0.symbol,
-              reserveOwned: reserve0Owned,
-            },
-            token1: {
-              address: item.token1.address,
-              symbol: item.token1.symbol,
-              reserveOwned: reserve1Owned,
+        case 'Snowglobe':
+          userBalanceSnowglobe = snowglobeData.balanceOf;
+          if(+userBalanceSnowglobe <= 0 && gauge.staked <= 0){
+            break;
+          }
+  
+          totalSupply = snowglobeData.totalSupply;
+  
+          let snowglobeRatio;
+          const snowglobeTotalBalance =  snowglobeData.balance;
+          if (snowglobeTotalBalance > 0) {
+            snowglobeRatio = snowglobeData.getRatio;
+          } else {
+            snowglobeRatio = floatToBN(1, 18);
+          }
+          if (userBalanceSnowglobe.gt('0x0') && userLPBalance.eq('0x0')) {
+            userLPBalance = userLPBalance.add(userBalanceSnowglobe);
+          }
+          userDepositedLP = BNToFloat(userBalanceSnowglobe, lpDecimals) *
+            BNToFloat(snowglobeRatio, 18);
+  
+          if (!isEmpty(gauge)) {
+            userDepositedLP += (gauge.staked / 10 ** lpDecimals) * BNToFloat(snowglobeRatio, 18);
+          }
+  
+          if (userDepositedLP > 0 && item.token1.address) {
+            let reserves = lpData.getReserves;
+            let totalSupplyPGL = BNToFloat(lpData.totalSupply, 18);
+  
+            const r0 = BNToFloat(reserves[0], item.token0.decimals);
+            const r1 = BNToFloat(reserves[1], item.token1.decimals);
+            let reserve0Owned = userDepositedLP * (r0) / (totalSupplyPGL);
+            let reserve1Owned = userDepositedLP * (r1) / (totalSupplyPGL);
+            underlyingTokens = {
+              token0: {
+                address: item.token0.address,
+                symbol: item.token0.symbol,
+                reserveOwned: reserve0Owned,
+              },
+              token1: {
+                address: item.token1.address,
+                symbol: item.token1.symbol,
+                reserveOwned: reserve1Owned,
+              }
             }
           }
-        }
-      break;
-      case 'Stablevault':
-        if(!isEmpty(gauge)){
-          userDepositedLP = gauge.staked / 1e18;
-          totalSupply = gauge.totalSupply;
-        }
-      break;
-    }
-
-    return {
-      ...item,
-      address: item.address,
-      userLPBalance,
-      lpDecimals,
-      userDepositedLP: userDepositedLP,
-      usdValue: (userDepositedLP) * item.pricePoolToken,
-      totalSupply,
-      SNOBHarvestable,
-      SNOBValue,
-      underlyingTokens,
-      userBalanceSnowglobe,
-      userBalanceGauge: gauge ? gauge.staked: 0
-    };
+        break;
+        case 'Stablevault':
+          if(!isEmpty(gauge)){
+            userDepositedLP = gauge.staked / 1e18;
+            totalSupply = gauge.totalSupply;
+          }
+        break;
+      }
+  
+      return {
+        ...item,
+        address: item.address,
+        userLPBalance,
+        lpDecimals,
+        userDepositedLP: userDepositedLP,
+        usdValue: (userDepositedLP) * item.pricePoolToken,
+        totalSupply,
+        SNOBHarvestable,
+        SNOBValue,
+        underlyingTokens,
+        userBalanceSnowglobe,
+        userBalanceGauge: gauge ? gauge.staked: 0
+      };
+    
   }
 
   const getBalanceInfosAllPools = async (gauges) => {
     setLoading(true);
     try {
-      const dataWithPoolBalance = await Promise.all(
-        pools.map(async (item) => {
-          return await generatePoolInfo(item,gauges);
-        }));
-      setUserPools(dataWithPoolBalance);
+      let poolsCalls = [];
+      pools.forEach(item => {poolsCalls = poolsCalls.concat(getPoolCalls(item, account))});
+      const poolsData = await getMultiContractData(provider,poolsCalls);
+
+      const poolInfo = pools.map(item => generatePoolInfo(item, gauges, poolsData));
+
+      setUserPools(poolInfo);
     } catch (error) {
       console.log('[Error] getBalanceInfosAllPools => ', error)
     }
@@ -238,10 +236,15 @@ export function CompoundAndEarnProvider({ children }) {
       });
 
       //update gauge state
-      const gaugeInfo = await retrieveGauge(givenPool);
+      const gaugeCalls = getGaugeCalls(givenPool, account);
+      const gaugeData = await getMultiContractData(provider,gaugeCalls);
+      const gaugeInfo = await retrieveGauge(givenPool,gaugeData);
+
+      const poolCalls = getPoolCalls(givenPool, account);
+      const poolData = await getMultiContractData(provider,poolCalls);
 
       //update user pool state
-      const poolInfo = await generatePoolInfo(givenPool,[gaugeInfo]);
+      const poolInfo = generatePoolInfo(givenPool,[gaugeInfo], poolData);
 
       getBalanceInfo();
 
