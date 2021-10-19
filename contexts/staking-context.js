@@ -127,8 +127,8 @@ export function StakingContractProvider({ children }) {
     if(!totalWeight){
       totalWeight = await gaugeProxyContract.totalWeight();
     }
-    const gaugeTokenContract = new ethers.Contract(pool.address, GAUGE_TOKEN_ABI, library.getSigner())
-    const gaugeContract = new ethers.Contract(pool.gaugeInfo.address, GAUGE_ABI, library.getSigner())
+    const gaugeTokenContract = new ethers.Contract(pool.address, GAUGE_TOKEN_ABI, provider)
+    const gaugeContract = new ethers.Contract(pool.gaugeInfo.address, GAUGE_ABI, provider)
 
     const address = pool.gaugeInfo.address;
     const balance = await gaugeTokenContract.balanceOf(account);
