@@ -120,6 +120,18 @@ const CompoundDialogs = ({
     setError(null);
   };
 
+  const approveHandler = async () => {
+    try {
+      toast(<Toast message={'Checking for approval...'} toastType={'processing'}/>)
+      const result = await approve(item, amount)
+      if (result) {
+        setApproved(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const renderButton = () => {
     switch (title) {
       case 'Deposit': {
@@ -132,10 +144,7 @@ const CompoundDialogs = ({
                 fullWidth
                 disabled={enabledHandler(true)}
                 loading={isTransacting.approve}
-                onClick={() => {
-                  toast(<Toast message={'Checking for approval...'} toastType={'processing'}/>)
-                  setApproved(approve(item, amount))
-                }}
+                onClick={approveHandler}
               >
                 Approve
               </ContainedButton>
