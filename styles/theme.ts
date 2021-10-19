@@ -1,4 +1,4 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
 const fontFamily = [
   'Montserrat',
@@ -14,7 +14,7 @@ const fontFamily = [
 ]
 
 const lightTheme = responsiveFontSizes(
-  createMuiTheme({
+  createTheme({
     typography: {
       fontFamily: fontFamily.join(','),
     },
@@ -153,7 +153,7 @@ const lightTheme = responsiveFontSizes(
 )
 
 const darkTheme = responsiveFontSizes(
-  createMuiTheme({
+  createTheme({
     typography: {
       fontFamily: fontFamily.join(','),
     },
