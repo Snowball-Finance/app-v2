@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client';
 import { DEPRECATED_CONTRACTS } from 'api/queries/contractList';
 import { CURRENT_DISTRIBUTION_PHASE } from 'api/queries/distributionPhase';
 import { NFTS_LIST } from 'api/queries/nftsList';
-import { MULTIPLE_PAIRS_INFO } from 'api/queries/pairsInfo';
 import { PROPOSAL_LIST } from 'api/queries/proposalList';
 import { LAST_SNOWBALL_INFO } from 'api/queries/snowballInfo';
 import { MULTIPLE_TRANSACTION_INFO } from 'api/queries/transactionInfo';
@@ -31,12 +30,6 @@ export function APIProvider({ children }) {
     );
   }
 
-  const getPairsInfo = () => {
-    return useQuery(MULTIPLE_PAIRS_INFO, {
-      variables: { first: 1, grouped: true },
-    });
-  }
-
   const getCurrentDistributionPhase = () => {
     return useQuery(CURRENT_DISTRIBUTION_PHASE);
   }
@@ -55,7 +48,7 @@ export function APIProvider({ children }) {
 
   return (
     <APIContext.Provider value={{ getCurrentDistributionPhase,getLastSnowballInfo,
-      getMultipleTransactionsInfo, getNFTsList, getPairsInfo, getProposalList,
+      getMultipleTransactionsInfo, getNFTsList, getProposalList,
       getDeprecatedContracts }}>
       {children}
     </APIContext.Provider>
@@ -69,8 +62,8 @@ export function useAPIContext() {
   }
 
   const { getCurrentDistributionPhase,getLastSnowballInfo, getMultipleTransactionsInfo,
-     getNFTsList, getPairsInfo, getProposalList,getDeprecatedContracts } = context;
+     getNFTsList, getProposalList,getDeprecatedContracts } = context;
 
   return { getCurrentDistributionPhase,getLastSnowballInfo, getMultipleTransactionsInfo,
-    getNFTsList, getPairsInfo, getProposalList, getDeprecatedContracts };
+    getNFTsList, getProposalList, getDeprecatedContracts };
 }
