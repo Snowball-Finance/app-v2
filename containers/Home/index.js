@@ -4,7 +4,6 @@ import { Grid } from '@material-ui/core'
 
 import CompoundAndEarn from './CompoundAndEarn'
 import TotalLockedValue from './TotalLockedValue'
-import TokenPairs from './TokenPairs'
 import LastTransactions from './LastTransactions'
 
 const Home = () => {
@@ -18,10 +17,7 @@ const Home = () => {
       <Grid item xs={12} lg={6}>
         <TotalLockedValue />
       </Grid>
-      <Grid item xs={12} lg={8}>
-        <TokenPairs />
-      </Grid>
-      <Grid item xs={12} lg={4}>
+      <Grid item xs={12} lg={12}>
         <LastTransactions />
       </Grid>
     </Grid>
