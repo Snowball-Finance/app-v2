@@ -254,28 +254,33 @@ export function CompoundAndEarnProvider({ children }) {
 
   const _approve = async (contract, spender, amount) => {
     return new Promise(async (resolve, reject) => {
-      const allowance = await contract.allowance(account, spender)
-      if (amount.gt(allowance)) {
-        let useExact = false;
-        await contract.estimateGas.approve(spender, ethers.constants.MaxUint256).catch(() => {
-          // general fallback for tokens who restrict approval amounts
-          useExact = true;
-        })
-
-        const approval = await contract.approve(spender, 
-          useExact 
-          ? ethers.constants.MaxUint256 
-          : amount);
-        const transactionApprove = await approval.wait(1);
-        if (!transactionApprove.status) {
-          setPopUp({
-            title: 'Transaction Error',
-            text: `Error Approving`
-          });
-          reject(false);
+      try {
+        const allowance = await contract.allowance(account, spender)
+        if (amount.gt(allowance)) {
+          let useExact = false;
+          await contract.estimateGas.approve(spender, ethers.constants.MaxUint256).catch((error) => {
+            // general fallback for tokens who restrict approval amounts
+            console.log(error);
+            useExact = true;
+          })
+          const approval = await contract.approve(spender, 
+            useExact 
+            ? ethers.constants.MaxUint256 
+            : amount);
+          const transactionApprove = await approval.wait(1);
+          if (!transactionApprove.status) {
+            setPopUp({
+              title: 'Transaction Error',
+              text: `Error Approving`
+            });
+            reject(false);
+          }
         }
+        resolve(true)
+      } catch (error) {
+        console.log(error);
+        reject(error);
       }
-      resolve(true)
     })
   }
 
@@ -287,7 +292,6 @@ export function CompoundAndEarnProvider({ children }) {
         text: MESSAGES.METAMASK_NOT_CONNECTED
       })
     }
-
     setIsTransacting({ approve: true });
     try {
       if (item.kind === 'Stablevault') {
@@ -296,7 +300,7 @@ export function CompoundAndEarnProvider({ children }) {
         await _approve(vaultContract, gauge.address, amount);
         setIsTransacting({ approve: false });
         setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
-        return;
+        return true;
       }
 
       const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
@@ -317,6 +321,8 @@ export function CompoundAndEarnProvider({ children }) {
       
       await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
+      setIsTransacting({ approve: false });
+      return true;
     } catch (error) {
       setPopUp({
         title: 'Transaction Error',
