@@ -36,7 +36,19 @@ const getGaugeCalls = (pool, account) => {
   return [gaugeTokenCalls, gaugeCalls];
 }
 
+const getDeprecatedCalls = (pool, account) => {
+  const snowglobeCalls = new ContractCall(pool.contractAddresses[0], SNOWGLOBE_ABI);
+  const gaugeCalls = new ContractCall(pool.contractAddresses[1], GAUGE_ABI);
+
+  snowglobeCalls.setCall("balanceOf", [account]);
+  gaugeCalls.setCall("balanceOf", [account]);
+  gaugeCalls.setCall("earned", [account]);
+
+  return [snowglobeCalls,gaugeCalls];
+}
+
 export {
   getGaugeCalls,
-  getPoolCalls
+  getPoolCalls,
+  getDeprecatedCalls
 }
