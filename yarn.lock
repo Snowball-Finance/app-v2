@@ -2362,14 +2362,14 @@
     "@web3-react/types" "^6.0.7"
     tiny-invariant "^1.0.6"
 
-"@web3-react/walletlink-connector@^6.2.6":
-  version "6.2.6"
-  resolved "https://registry.yarnpkg.com/@web3-react/walletlink-connector/-/walletlink-connector-6.2.6.tgz#e717cd3562511715a6c67313eee62db5b8c3b909"
-  integrity sha512-LRdVVQ6FZVUmMkNMZGiZpGaDu1wLPKbVWfnHXP0wie2G+Kmbx6xiipqvjLMm6qHe9LT7A1GcIbRrTTGxyshK/Q==
+"@web3-react/walletlink-connector@6.2.5":
+  version "6.2.5"
+  resolved "https://registry.yarnpkg.com/@web3-react/walletlink-connector/-/walletlink-connector-6.2.5.tgz#103231432555496c73d07019a0ab0bb08c5ccfe8"
+  integrity sha512-8Wx+4TqMPZw5kGzraxRLbsLA9mUOYxLJk8QvNzuuFQ8/YpHhL58mQGnHx30KReXTJpMG4TZGE4yCLp3Bd+jVfQ==
   dependencies:
     "@web3-react/abstract-connector" "^6.0.7"
     "@web3-react/types" "^6.0.7"
-    walletlink "^2.1.11"
+    walletlink "^2.1.10"
 
 "@wry/context@^0.6.0":
   version "0.6.0"
@@ -7131,9 +7131,9 @@ preact@10.4.1:
   integrity sha512-WKrRpCSwL2t3tpOOGhf2WfTpcmbpxaWtDbdJdKdjd0aEiTkvOmS4NBkG6kzlaAHI9AkQ3iVqbFWM3Ei7mZ4o1Q==
 
 preact@^10.5.9:
-  version "10.5.14"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.14.tgz#0b14a2eefba3c10a57116b90d1a65f5f00cd2701"
-  integrity sha512-KojoltCrshZ099ksUZ2OQKfbH66uquFoxHSbnwKbTJHeQNvx42EmC7wQVWNuDt6vC5s3nudRHFtKbpY4ijKlaQ==
+  version "10.5.15"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.15.tgz#6df94d8afecf3f9e10a742fd8c362ddab464225f"
+  integrity sha512-5chK29n6QcJc3m1lVrKQSQ+V7K1Gb8HeQY6FViQ5AxCAEGu3DaHffWNDkC9+miZgsLvbvU9rxbV1qinGHMHzqA==
 
 precond@0.2:
   version "0.2.3"
@@ -8785,7 +8785,7 @@ vm2@^3.9.3:
   resolved "https://registry.yarnpkg.com/vm2/-/vm2-3.9.5.tgz#5288044860b4bbace443101fcd3bddb2a0aa2496"
   integrity sha512-LuCAHZN75H9tdrAiLFf030oW7nJV5xwNMuk1ymOZwopmuK3d2H4L1Kv4+GFHgarKiLfXXLFU+7LDABHnwOkWng==
 
-walletlink@^2.1.11:
+walletlink@^2.1.10:
   version "2.1.11"
   resolved "https://registry.yarnpkg.com/walletlink/-/walletlink-2.1.11.tgz#4ed5d53066f4fae8cc43169475e4f9d1f6b8735a"
   integrity sha512-DdnQ2jnVHAdKgQ1IgxPKn3GvVEUbrGCgvgqKqQ7eanxUnyWgRm5T8Ib6NqPDuQ6SNFk6St54uN+uxV7GP6AyZg==
