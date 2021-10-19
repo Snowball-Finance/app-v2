@@ -29,13 +29,13 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
-  const { unsignedProvider } = useProvider();
-  const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, unsignedProvider)
-  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, unsignedProvider)
-  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, unsignedProvider)
-  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, unsignedProvider)
-  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, unsignedProvider)
-  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, unsignedProvider)
+  const { provider } = useProvider();
+  const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
+  const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
+  const unsignedFraxContract = new ethers.Contract(CONTRACTS.S4D.FRAX, ERC20_ABI, provider)
+  const unsignedTusdContract = new ethers.Contract(CONTRACTS.S4D.TUSD, ERC20_ABI, provider)
+  const unsignedUsdtContract = new ethers.Contract(CONTRACTS.S4D.USDT, ERC20_ABI, provider)
+  const unsignedVaultContract = new ethers.Contract(CONTRACTS.S4D.VAULT, S4D_VAULT_ABI, provider)
 
   const { library, account } = useWeb3React();
   const { setPopUp } = usePopup();
@@ -91,7 +91,7 @@ export function S4dVaultContractProvider({ children }) {
     getSupply();
     getTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unsignedProvider]);
+  }, [provider]);
 
   const getSupply = async () => {
     try {
@@ -180,7 +180,7 @@ export function S4dVaultContractProvider({ children }) {
 
   const getTransactions = async () => {
     try {
-      let blockNumber = await unsignedProvider.getBlockNumber();
+      let blockNumber = await provider.getBlockNumber();
       let events = [];
       let transactions = [];
       let attempt = 0;
