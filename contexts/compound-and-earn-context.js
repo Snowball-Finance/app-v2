@@ -484,39 +484,44 @@ export function CompoundAndEarnProvider({ children }) {
 
         const snowglobeBalance = await getBalanceWithRetry(snowglobeContract, account);
 
+        let snowglobeWithdraw;
+        //if the node is falling behind uses withdrawAll instead
+        //we don`t want to call withdrawAll directly because it can fail at dust amounts
         if (snowglobeBalance.gt(0x00)) {
-          const snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
-          const transactionSnowglobeWithdraw = await snowglobeWithdraw.wait(1)
+          snowglobeWithdraw = await snowglobeContract.withdraw(amount > 0 ? amount : snowglobeBalance);
+        } else {
+          snowglobeWithdraw = await snowglobeContract.withdrawAll();
+        }
+        const transactionSnowglobeWithdraw = await snowglobeWithdraw.wait(1)
 
-          if (!transactionSnowglobeWithdraw.status) {
-            setPopUp({
-              title: 'Transaction Error',
-              icon: ANIMATIONS.ERROR.VALUE,
-              text: `Error withdrawing from Snowglobe`
-            });
-            return;
-          }
-          const linkTx = getLink(
-            `${AVALANCHE_MAINNET_PARAMS.
-              blockExplorerUrls[0]}tx/${transactionSnowglobeWithdraw.transactionHash}`
-            , 'Check on C-Chain Explorer.');
+        if (!transactionSnowglobeWithdraw.status) {
           setPopUp({
-            title: 'Withdraw Complete',
-            icon: ANIMATIONS.SUCCESS.VALUE,
-            text: linkTx
+            title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
+            text: `Error withdrawing from Snowglobe`
           });
-          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
-          if (item.deprecatedPool) {
-            item.withdrew = true;
-          } else {
-            await claim(item, true);
-            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
-            //refresh data only after 2sec to our node have time to catch up with network
-            setTimeout(async () => {
-              await getBalanceInfosAllPools(await getGaugeProxyInfo());
-              setSortedUserPools(false);
-            }, 2000);
-          }
+          return;
+        }
+        const linkTx = getLink(
+          `${AVALANCHE_MAINNET_PARAMS.
+            blockExplorerUrls[0]}tx/${transactionSnowglobeWithdraw.transactionHash}`
+          , 'Check on C-Chain Explorer.');
+        setPopUp({
+          title: 'Withdraw Complete',
+          icon: ANIMATIONS.SUCCESS.VALUE,
+          text: linkTx
+        });
+        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
+        if (item.deprecatedPool) {
+          item.withdrew = true;
+        } else {
+          await claim(item, true);
+          setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
+          //refresh data only after 2sec to our node have time to catch up with network
+          setTimeout(async () => {
+            await getBalanceInfosAllPools(await getGaugeProxyInfo());
+            setSortedUserPools(false);
+          }, 2000);
         }
       }
     } catch (error) {
