@@ -27,8 +27,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    gap: theme.spacing(2),
   },
   dialogTitle: {
     background: 'none',
@@ -107,16 +109,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           <Total item={item} userData={userData} />
         </Grid>
       </Grid>
-      <Grid 
+      <div
         className={classes.button}
-        container
-        direction="row"
-        justify="space-between"
-        alignItems="flex-start"
-        spacing={2}
       >
         {!item.deprecatedPool && action?.actionType && 
-        <Grid item xs={12} lg={4}>
           <CompoundActionButton 
             type={action.actionType} 
             action={action.func} 
@@ -124,25 +120,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
             disabled={item.deprecated}
             fullWidth={isSm ? true : false}
           />
-        </Grid>}
-        <Grid item xs={12} lg={4}>
-          <ContainedButton
-            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
-            loading={isTransacting.pageview}
-            onClick={() => {
-              //if(item.deprecatedPool){
-              withdraw(item);
-              //}else{
-              // setTransactionStatus({ withdrawStep: 0 });
-              //  setWithdraw(true)
-              //}
-            }}
-            fullWidth={isSm ? true : false}
-          >
-            Withdraw
-          </ContainedButton>
-        </Grid>
-        <Grid item xs={12} lg={4}>
+        }
           <ContainedButton
             disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
@@ -159,8 +137,22 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           >
             Claim
           </ContainedButton>
-        </Grid>
-      </Grid>
+          <ContainedButton
+            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
+            loading={isTransacting.pageview}
+            onClick={() => {
+              //if(item.deprecatedPool){
+              withdraw(item);
+              //}else{
+              // setTransactionStatus({ withdrawStep: 0 });
+              //  setWithdraw(true)
+              //}
+            }}
+            fullWidth={isSm ? true : false}
+          >
+            Withdraw
+          </ContainedButton>
+      </div>
 
       {modal.open && item.address === modal.address && (
         <CompoundDialogs
