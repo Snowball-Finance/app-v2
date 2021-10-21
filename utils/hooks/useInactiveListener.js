@@ -8,37 +8,33 @@ const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window;
+    ethereum && ethereum.removeAllListeners(["networkChanged"])
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = chainId => {
         console.log('chainChanged', chainId);
         activate(injected);
+        ethereum.removeAllListeners(["networkChanged"])
       };
 
       const handleAccountsChanged = accounts => {
         console.log('accountsChanged', accounts);
         if (accounts.length > 0) {
           activate(injected);
+          ethereum.removeAllListeners(["networkChanged"])
         }
-      };
-
-      const handleNetworkChanged = networkId => {
-        console.log('networkChanged', networkId);
-        activate(injected);
       };
 
       ethereum.on('chainChanged', handleChainChanged);
       ethereum.on('accountsChanged', handleAccountsChanged);
-      ethereum.on('networkChanged', handleNetworkChanged);
 
       return () => {
         if (ethereum.removeListener) {
           ethereum.removeListener('chainChanged', handleChainChanged);
           ethereum.removeListener('accountsChanged', handleAccountsChanged);
-          ethereum.removeListener('networkChanged', handleNetworkChanged);
         }
       };
     }
-
+    
     return () => { };
   }, [active, error, suppress, activate]);
 }
