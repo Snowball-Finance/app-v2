@@ -382,12 +382,23 @@ export function CompoundAndEarnProvider({ children }) {
         }
         setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
 
+      }else{
+        const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
+
+        const balance = await tokenContract.balanceOf(account);
+        amount = amount.gt(balance) ? balance : amount;
       }
 
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
-      const gaugeDeposit = await gaugeContract.depositAll();
+      let gaugeDeposit;
+      if(item.kind === 'Snowglobe'){
+        gaugeDeposit = await gaugeContract.depositAll();
+      }else{
+        gaugeDeposit = await gaugeContract.deposit(amount);
+      }
+      
       const transactionGaugeDeposit = await gaugeDeposit.wait(1);
       if (!transactionGaugeDeposit.status) {
         setPopUp({
