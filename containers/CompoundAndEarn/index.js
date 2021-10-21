@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CompoundAndEarn = () => {
+  console.log('CompoundAndEarn')
   const classes = useStyles();
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
@@ -56,6 +57,8 @@ const CompoundAndEarn = () => {
 
   //reset state when index opened
   useEffect(()=>{
+    console.log('1')
+
     if(!loadedSort){
       setSortedUserPools(false);
       setLoadedSort(true);
@@ -63,6 +66,8 @@ const CompoundAndEarn = () => {
   },[loadedSort,setSortedUserPools])
 
   useEffect(() => {
+    console.log('2')
+
     if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
       let newArray = [...userPools];
       userDeprecatedPools.forEach((pool) => {
@@ -81,9 +86,13 @@ const CompoundAndEarn = () => {
   },[userDeprecatedPools,loadedDeprecated,sortedUserPools]);
 
   useEffect(() => {
+    console.log('3')
+
     const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } = snowballInfoQuery;
 
     if (isEmpty(userPools)) {
+      console.log('3.25')
+
       let sortedData = [...poolsInfo]
       sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
       setLastSnowballInfo(sortedData);
@@ -92,6 +101,7 @@ const CompoundAndEarn = () => {
       setPool('all');
       return
     }
+    console.log('3.5')
 
     if(!sortedUserPools){
       const sortedData = sortingByUserPool(type, userPools);
@@ -106,6 +116,8 @@ const CompoundAndEarn = () => {
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
+    console.log('4')
+
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
@@ -129,6 +141,8 @@ const CompoundAndEarn = () => {
   };
 
   const handleCancelSearch = () => {
+    console.log('5')
+
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
@@ -145,6 +159,8 @@ const CompoundAndEarn = () => {
   };
 
   const handleSorting = (event) => {
+    console.log('6')
+
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
@@ -170,6 +186,8 @@ const CompoundAndEarn = () => {
   };
 
   const handleUserPoolChange = (event) => {
+    console.log('7')
+
     let filteredData = lastSnowballModifiedInfo.length
       ? [...lastSnowballModifiedInfo]
       : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];

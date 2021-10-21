@@ -179,7 +179,7 @@ const ListItem = ({
           />
         }
         details={
-          <CompoundListDetail
+         expanded? <CompoundListDetail
             item={pool}
             userData={userData}
             modal={modal}
@@ -187,7 +187,7 @@ const ListItem = ({
             setUserData={setUserData}
             userBoost={userBoost}
             totalAPY={totalAPY}
-          />
+          />:<></>
         }
       />
       {modal.open && pool.address === modal.address && (
