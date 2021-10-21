@@ -13,14 +13,12 @@ const useInactiveListener = (suppress = false) => {
       const handleChainChanged = chainId => {
         console.log('chainChanged', chainId);
         activate(injected);
-        ethereum.removeAllListeners(["networkChanged"])
       };
 
       const handleAccountsChanged = accounts => {
         console.log('accountsChanged', accounts);
         if (accounts.length > 0) {
           activate(injected);
-          ethereum.removeAllListeners(["networkChanged"])
         }
       };
 
