@@ -50,6 +50,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Total = ({ item, userData }) => {
   const classes = useStyles();
+  if (item.token3.address)
+  console.log('item.type ==>', item);
 
   return (
     <div className={classes.root}>
@@ -71,7 +73,7 @@ const Total = ({ item, userData }) => {
         <div className={classes.container}>
           <Typography variant='subtitle2'>&nbsp;</Typography>
         </div>
-        <div className={classes.greyBorder}>
+        {item.kind !== 'Stablevault' && <div className={classes.greyBorder}>
           <div className={classes.container}>
             {userData?.underlyingTokens ?
               <>
@@ -116,7 +118,7 @@ const Total = ({ item, userData }) => {
               </>
             }
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
