@@ -85,7 +85,7 @@ const Total = ({ item, userData }) => {
                   pairsIcon={[item.token0.address]}
                   amount={0}
                   symbol={item.token0.symbol} />
-                {item.token1.address &&
+                {item?.token1?.address &&
                   <UnderlyingTokenItem
                     pairsIcon={[item.token1.address]}
                     amount={0}
