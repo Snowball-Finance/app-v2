@@ -33,26 +33,28 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SnobApyCalculation = ({ totalAPY, snobAPR, userBoost, kind, userData }) => {
+const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, userData }) => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Typography variant="subtitle1" className={classes.boldSubtitle}>
-        SNOB APR
-      </Typography>
-      <div className={classes.container}>
-        <Typography variant="body2">SNOB APR</Typography>
-        <Typography variant="subtitle2">{snobAPR?.toFixed(2)}%</Typography>
-      </div>
-      <div className={classes.container}>
-        <Typography variant="body2">Boost</Typography>
-        <Typography variant="subtitle2">{userBoost}</Typography>
-      </div>
-      <div className={classes.container}>
-        <Typography variant="body2"><b>{kind === 'Snowglobe' ? 'Total APY' : 'Total APR'}</b></Typography>
-        <Typography variant="subtitle2">{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
-      </div>
+      {!isDeprecated && <>
+        <Typography variant="subtitle1" className={classes.boldSubtitle}>
+          SNOB APR
+        </Typography>
+        <div className={classes.container}>
+          <Typography variant="body2">SNOB APR</Typography>
+          <Typography variant="subtitle2">{snobAPR?.toFixed(2)}%</Typography>
+        </div>
+        <div className={classes.container}>
+          <Typography variant="body2">Boost</Typography>
+          <Typography variant="subtitle2">{userBoost}</Typography>
+        </div>
+        <div className={classes.container}>
+          <Typography variant="body2"><b>{kind === 'Snowglobe' ? 'Total APY' : 'Total APR'}</b></Typography>
+          <Typography variant="subtitle2">{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
+        </div>
+      </>}
       <div className={classes.gradientBorder}>
         <div className={classes.container}>
           <Typography variant='subtitle2'>SNOB (Claimable)</Typography>

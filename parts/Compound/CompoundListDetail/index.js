@@ -4,7 +4,7 @@ import { Grid, useMediaQuery } from '@material-ui/core';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import ApyCalculation from './ApyCalculation';
-import SnobAbyCalculation from './SnobAbyCalculation';
+import SnobApyCalculation from './SnobApyCalculation';
 import Total from './Total';
 import CompoundDialogs from '../CompoundDialogs';
 import getProperAction from 'utils/helpers/getProperAction';
@@ -96,15 +96,16 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
             yearlyAPY={yearlyAPY}
           />
         </Grid>}
-        {!item.deprecatedPool &&<Grid item xs={12} lg={4}>
-          <SnobAbyCalculation
+        <Grid item xs={12} lg={4}>
+          <SnobApyCalculation
             kind={item.kind}
+            isDeprecated={item.deprecatedPool}
             snobAPR={item.gaugeInfo?.snobYearlyAPR}
             totalAPY={totalAPY}
             userBoost={userBoost}
             userData={userData}
           />
-        </Grid>}
+        </Grid>
         <Grid item xs={12} lg={4}>
           <Total item={item} userData={userData} />
         </Grid>
