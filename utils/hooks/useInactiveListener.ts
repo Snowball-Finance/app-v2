@@ -7,9 +7,9 @@ const useInactiveListener = (suppress = false) => {
   const { active, error, activate } = useWeb3React();
 
   useEffect(() => {
-    const { ethereum } = window;
+    const ethereum = window['ethereum'];
     ethereum && ethereum.removeAllListeners(["networkChanged"]);
-    
+
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = (chainId: number) => {
         console.log('chainChanged', chainId);
