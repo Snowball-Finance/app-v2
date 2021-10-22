@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { BNToFloat, formatNumber } from 'utils/helpers/format';
-import SnowPairsIcon from 'components/SnowPairsIcon';
+import UnderlyingTokenItem from './UnderlyingTokenItem';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,10 +39,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     }
   },
-  underlyingTokensLine: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   boldSubtitle: {
     fontWeight: 600,
   },
@@ -50,8 +46,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Total = ({ item, userData }) => {
   const classes = useStyles();
-  if (item.token3.address)
-  console.log('item.type ==>', item);
 
   return (
     <div className={classes.root}>
@@ -65,10 +59,10 @@ const Total = ({ item, userData }) => {
         {!item.deprecatedPool &&<div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-              ((userData?.userBalanceSnowglobe ? BNToFloat(userData?.userBalanceSnowglobe,userData?.lpDecimals) : 0) +
-              (userData?.userBalanceGauge/10**userData?.lpDecimals)) / 
-              BNToFloat(userData?.totalSupply,userData?.lpDecimals) * 100 || 0.00, 5)}
-            %</Typography>
+            ((userData?.userBalanceSnowglobe ? BNToFloat(userData?.userBalanceSnowglobe,userData?.lpDecimals) : 0) +
+            (userData?.userBalanceGauge/10**userData?.lpDecimals)) / 
+            BNToFloat(userData?.totalSupply,userData?.lpDecimals) * 100 || 0.00, 5)} %
+          </Typography>
         </div>}
         <div className={classes.container}>
           <Typography variant='subtitle2'>&nbsp;</Typography>
@@ -77,43 +71,25 @@ const Total = ({ item, userData }) => {
           <div className={classes.container}>
             {userData?.underlyingTokens ?
               <>
-                <Box display='flex' alignItems='center'>
-                  <Typography variant="subtitle2" className={classes.underlyingTokensLine} noWrap>
-                    <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token0.address]} size={20} /> &nbsp;
-                    {formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)} &nbsp;
-                    <b>{userData?.underlyingTokens?.token0.symbol}</b>
-                  </Typography>
-                </Box>
-                <Box display='flex' alignItems='center'>
-                  <Typography variant="subtitle2" className={classes.underlyingTokensLine} noWrap>
-                    <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token1.address]} size={20} /> &nbsp;
-                    {formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
-                    <b>{userData?.underlyingTokens?.token1.symbol}</b>
-                  </Typography>
-                </Box>
+                <UnderlyingTokenItem
+                  pairsIcon={[userData?.underlyingTokens?.token0.address]}
+                  amount={formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)}
+                  symbol={userData?.underlyingTokens?.token0.symbol} />
+                <UnderlyingTokenItem
+                  pairsIcon={[userData?.underlyingTokens?.token1.address]}
+                  amount={formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
+                  symbol={userData?.underlyingTokens?.token0.symbol} />
               </>:
               <>
-                <Box display='flex' alignItems='center'>
-                  <SnowPairsIcon pairsIcon={[item.token0.address]} size={20} />
-                  <b>&nbsp;0 {item.token0.symbol}</b>
-                </Box>
+                <UnderlyingTokenItem
+                  pairsIcon={[item.token0.address]}
+                  amount={0}
+                  symbol={item.token0.symbol} />
                 {item.token1.address &&
-                  <Box display='flex' alignItems='center'>
-                    <SnowPairsIcon pairsIcon={[item.token1.address]} size={20} />
-                    <b>&nbsp;0 {item.token1.symbol}</b>
-                  </Box>
-                }
-                {item.token2.address &&
-                  <Box display='flex' alignItems='center'>
-                    <SnowPairsIcon pairsIcon={[item.token2.address]} size={20} />
-                    <b>&nbsp;0 {item.token2.symbol}</b>
-                  </Box>
-                }
-                {item.token3.address &&
-                  <Box display='flex' alignItems='center'>
-                    <SnowPairsIcon pairsIcon={[item.token3.address]} size={20} />
-                    <b>&nbsp;0 {item.token3.symbol}</b>
-                  </Box>
+                  <UnderlyingTokenItem
+                    pairsIcon={[item.token1.address]}
+                    amount={0}
+                    symbol={item.token1.symbol} />
                 }
               </>
             }
