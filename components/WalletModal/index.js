@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const COIN_98 = "Coin 98";
 const WalletModal = ({
   open,
   onClose,
@@ -52,15 +53,15 @@ const WalletModal = ({
 
   const walletSelectHandler = (currentConnector, name) => {
     console.log(currentConnector,name);
-    if(name == 'Coin 98') {
+    if (name === COIN_98) {
       if (!window.ethereum.isCoin98 && !window.coin98) {
-        setOpen(true)
+        setOpen(true);
         return;
-      }else{
+      } else {
         onConnectWallet(currentConnector);
         onClose();
       }
-    }else{
+    } else {
       onConnectWallet(currentConnector);
       onClose();
     }
@@ -73,10 +74,10 @@ const WalletModal = ({
       onClose={onClose}
       title='Connect Wallet'
     >
-      <Grid 
-        container 
-        spacing={2} 
-        className={classes.installContainer} 
+      <Grid
+        container
+        spacing={2}
+        className={classes.installContainer}
         direction='row'
         justify='center'
         alignItems='stretch'
@@ -84,13 +85,13 @@ const WalletModal = ({
         {Object.keys(walletConnectors).map(name => {
           const currentConnector = walletConnectors[name]
           return (
-            <Grid 
-              key={name} 
+            <Grid
+              key={name}
               item
               lg={4}
               md={4}
-              xs={12} 
-              sm={12} 
+              xs={12}
+              sm={12}
               onClick={() => walletSelectHandler(currentConnector,name)}
             >
               <WalletCard

@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 
 import Skeleton from 'components/Skeletons';
@@ -25,8 +25,9 @@ const useStyles = makeStyles(() => ({
 
 const DashboardTransactionSkeleton = () => {
   const classes = useStyles();
+  const arr = useMemo(() => [1, 2, 3], []);
 
-  return [1, 2, 3].map((item) => (
+  return arr.map((item) => (
     <div className={classes.root} key={item}>
       <div className={classes.container}>
         <div className={classes.child}>

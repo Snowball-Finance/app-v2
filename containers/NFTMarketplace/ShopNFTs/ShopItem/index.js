@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import Image from 'next/image'
 import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -68,9 +68,10 @@ const ShopItem = ({
   const classes = useStyles();
   const { purchaseNFT } = useNFTContract();
 
-  const purchaseHandler = () => {
+  const purchaseHandler = useCallback(() => {
     purchaseNFT(nft)
-  }
+  }, [nft])
+  const onDetailsClick = useCallback(() => onDetail(nft), [nft])
 
   return (
     <Card className={classes.card}>
@@ -122,7 +123,7 @@ const ShopItem = ({
           fullWidth
           color='secondary'
           className={classes.detailButton}
-          onClick={() => onDetail(nft)}
+          onClick={onDetailsClick}
         >
           Details
         </ContainedButton>

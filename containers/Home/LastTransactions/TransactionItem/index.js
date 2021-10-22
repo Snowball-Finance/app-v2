@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import moment from 'moment';
+import moment from 'moment'; //ToDo: cut off moment
 
 import getTransactionInfo from 'utils/helpers/getTransactionInfo';
 import { formatNumber } from 'utils/helpers/format';

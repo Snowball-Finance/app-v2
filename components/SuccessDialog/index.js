@@ -32,7 +32,7 @@ const SuccessDialog = ({ open, handleClose, subHeader }) => {
   return (
     <SnowDialog
       open={open}
-      onClose={() => handleClose()}
+      onClose={handleClose}
       dialogClass={classes.dialog}
       dialogTitleClass={classes.dialogTitle}
       closeIconClass={classes.dialogCloseIcon}
@@ -42,7 +42,7 @@ const SuccessDialog = ({ open, handleClose, subHeader }) => {
         <Typography variant="subtitle1">{subHeader}</Typography>
         <ContainedButton
           className={classes.button}
-          onClick={() => handleClose()}
+          onClick={handleClose}
           disableElevation
           fullWidth
         >

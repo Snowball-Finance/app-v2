@@ -56,11 +56,11 @@ const WarningDialogs = ({
   setConfirmed
 }) => {
   const classes = useStyles();
-  
+
   return (
     <SnowDialog
       open={open}
-      onClose={() => handleClose()}
+      onClose={handleClose}
       dialogClass={classes.dialog}
       dialogTitleClass={classes.dialogTitle}
       titleTextClass={classes.dialogTitleText}
@@ -68,12 +68,8 @@ const WarningDialogs = ({
     >
       <Grid container className={classes.container}>
         <WarningIcon size={150} />
-        <Typography className={classes.title}>
-          {title}
-        </Typography>
-        <Typography className={classes.text}>
-          {text}
-        </Typography>
+        <Typography className={classes.title}>{title}</Typography>
+        <Typography className={classes.text}>{text}</Typography>
         <Grid item xs={6}>
           <ContainedButton
             className={clsx(classes.modalButton)}
@@ -81,16 +77,14 @@ const WarningDialogs = ({
             fullWidth
             //loading={ }
             onClick={() => {
-              setConfirmed(true)
-              handleClose()
+              setConfirmed(true);
+              handleClose();
             }}
           >
             {textButton}
           </ContainedButton>
         </Grid>
-
       </Grid>
-
     </SnowDialog>
   );
 };

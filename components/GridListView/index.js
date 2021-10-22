@@ -1,21 +1,21 @@
-import { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
-import ViewModuleIcon from '@material-ui/icons/ViewModule';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import clsx from 'clsx';
+import { memo, useCallback } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { Paper } from "@material-ui/core";
+import ViewModuleIcon from "@material-ui/icons/ViewModule";
+import ViewListIcon from "@material-ui/icons/ViewList";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: theme.spacing(6),
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
   iconButton: {
     color: theme.palette.action.active,
-    cursor: 'pointer',
+    cursor: "pointer",
   },
   activeIconButton: {
     color: theme.custom.palette.blue,
@@ -24,6 +24,8 @@ const useStyles = makeStyles((theme) => ({
 
 const GridListView = ({ className, style, isListView, onChange }) => {
   const classes = useStyles();
+  const onClickChangePositive = useCallback(() => onChange(true), [onChange]);
+  const onClickChangeNegative = useCallback(() => onChange(false), [onChange]);
 
   return (
     <Paper
@@ -32,13 +34,13 @@ const GridListView = ({ className, style, isListView, onChange }) => {
       elevation={0}
     >
       <ViewModuleIcon
-        onClick={() => onChange(false)}
+        onClick={onClickChangeNegative}
         className={clsx(classes.iconButton, {
           [classes.activeIconButton]: !isListView,
         })}
       />
       <ViewListIcon
-        onClick={() => onChange(true)}
+        onClick={onClickChangePositive}
         className={clsx(classes.iconButton, {
           [classes.activeIconButton]: isListView,
         })}

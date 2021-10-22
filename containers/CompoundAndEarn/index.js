@@ -17,6 +17,10 @@ import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
 import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
 
+const DEFAULT_TYPE = "apy";
+const DEFAULT_POOL = "all";
+const DEFAULT_SEARCH = '';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -40,15 +44,15 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
-  
+
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools,setLoadedDeprecated,setSortedUserPools,
     setUserPools } = useCompoundAndEarnContract();
 
   const [modal, setModal] = useState({ open: false, title: '', address:'' });
-  const [search, setSearch] = useState('');
-  const [type, setType] = useState('apy');
-  const [userPool, setPool] = useState('all');
+  const [search, setSearch] = useState(DEFAULT_SEARCH);
+  const [type, setType] = useState(DEFAULT_TYPE);
+  const [userPool, setPool] = useState(DEFAULT_POOL);
   const [lastSnowballInfo, setLastSnowballInfo] = useState([]);
   const [lastSnowballModifiedInfo, setLastSnowballModifiedInfo] = useState([]);
   const [filterDataByProtocol, setFilterDataByProtocol] = useState([]);
@@ -87,9 +91,9 @@ const CompoundAndEarn = () => {
       let sortedData = [...poolsInfo]
       sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
       setLastSnowballInfo(sortedData);
-      setSearch('');
-      setType('apy');
-      setPool('all');
+      setSearch(DEFAULT_SEARCH);
+      setType(DEFAULT_TYPE);
+      setPool(DEFAULT_POOL);
       return
     }
 
@@ -98,9 +102,9 @@ const CompoundAndEarn = () => {
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
       setSortedUserPools(true);
-      setSearch('');
-      setType('apy');
-      setPool('all');
+      setSearch(DEFAULT_SEARCH);
+      setType(DEFAULT_TYPE);
+      setPool(DEFAULT_POOL);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
@@ -122,7 +126,7 @@ const CompoundAndEarn = () => {
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
-    }    
+    }
 
     setLastSnowballInfo(sortedData);
     setSearch(value);
@@ -138,7 +142,7 @@ const CompoundAndEarn = () => {
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
-    }    
+    }
 
     setLastSnowballInfo(sortedData);
     setSearch('');
@@ -261,7 +265,7 @@ const CompoundAndEarn = () => {
           ) : (
             lastSnowballInfo?.map((pool, index) => (
                 <Grid item key={index} xs={12}>
-                  {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) && 
+                  {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) &&
                     <ListItem pool={pool} modal={modal} setModal={setModal}/>}
                 </Grid>
               ))

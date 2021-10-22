@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// ToDo: cleanup styles objects
 const DashboardTVL = () => {
   const classes = useStyles();
 

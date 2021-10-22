@@ -1,4 +1,4 @@
-import { memo, useState, useRef, useEffect } from 'react'
+import { memo, useState, useRef, useEffect, useCallback } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Popper, Paper, ClickAwayListener } from '@material-ui/core'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
@@ -44,22 +44,25 @@ const CustomPopover = ({
   const [open, setOpen] = useState(false);
   // const [mouseOverPopover, setMouseOverPopover] = useState(false);
 
-  const handleOpenActions = (event) => {
-    event.stopPropagation();
-    setOpen(true);
-  };
+  const handleOpenActions = useCallback(
+    (event) => {
+      event.stopPropagation();
+      setOpen(true);
+    },
+    [setOpen]
+  );
 
   // const handleCloseActions = () => {
   //   setOpen(false);
   // };
 
-  const handleClosePopover = event => {
+  const handleClosePopover = useCallback((event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
 
     setOpen(false);
-  };
+  }, [setOpen])
 
   // const handleEnterPopover = () => {
   //   setMouseOverPopover(true);

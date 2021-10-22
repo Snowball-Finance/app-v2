@@ -13,11 +13,14 @@ import SnowDatePicker from 'components/UI/SnowDatePicker'
 import SnowRadio from 'components/UI/SnowRadio'
 import { BALANCE_VALID, DATE_VALID, SELECT_VALID } from 'utils/constants/validations'
 import DURATIONS from 'utils/constants/staking-durations'
+import { DURATION_VALUES } from "utils/constants/staking-durations";
 import {
   getDayOffset,
   getWeekDiff,
 } from 'utils/helpers/date';
 import { estimateXSnobForDate } from 'utils/helpers/stakeDate'
+
+const ONE_YEAR_TS = 1000 * 3600 * 24 * 365;
 
 const useStyles = makeStyles(() => ({
   form: {
@@ -63,20 +66,20 @@ const CreateLock = () => {
 
   useEffect(() => {
     switch (watchAllFields.duration) {
-      case '1':
-        setValue('date', getDayOffset(new Date(), 7))
+      case DURATION_VALUES.ONE_WEEK:
+        setValue("date", getDayOffset(new Date(), 7));
         break;
-      case '2':
-        setValue('date', getDayOffset(new Date(), 30))
+      case DURATION_VALUES.ONE_MONTH:
+        setValue("date", getDayOffset(new Date(), 30));
         break;
-      case '3':
-        setValue('date', getDayOffset(new Date(), 364))
+      case DURATION_VALUES.ONE_YEAR:
+        setValue("date", getDayOffset(new Date(), 364));
         break;
-      case '4':
-        setValue('date', getDayOffset(new Date(), 365 * 2))
+      case DURATION_VALUES.TWO_YEARS:
+        setValue("date", getDayOffset(new Date(), 365 * 2));
         break;
       default:
-        setValue('date', getDayOffset(new Date(), 7))
+        setValue("date", getDayOffset(new Date(), 7));
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,11 +92,15 @@ const CreateLock = () => {
       return `${lockingWeeks} week${lockingWeeks > 1 ? 's' : ''}`;
     } else {
       const years = Number(
-        (+watchAllFields?.date - +new Date()) / 365 / 1000 / 3600 / 24,
+        (+watchAllFields?.date - +new Date()) / ONE_YEAR_TS,
       ).toFixed(0);
       return `${years} ${years === '1' ? 'year' : 'years'} (${lockingWeeks} weeks)`;
     }
   }, [watchAllFields?.date])
+
+  const onMax = useCallback(() => {
+    setValue("balance", parseFloat(snowballBalance).toFixed(3) - 0.001);
+  }, [snowballBalance, setValue]);
 
   return (
     <form
@@ -118,7 +125,7 @@ const CreateLock = () => {
             name='balance'
             label={`Balance: ${parseFloat(snowballBalance).toFixed(3) - 0.001}`}
             placeholder='Balance'
-            onMax={() => setValue('balance', (parseFloat(snowballBalance).toFixed(3) - 0.001))}
+            onMax={onMax}
             error={errors.balance?.message}
             control={control}
             defaultValue={0.00}
