@@ -67,34 +67,36 @@ const Total = ({ item, userData }) => {
         <div className={classes.container}>
           <Typography variant='subtitle2'>&nbsp;</Typography>
         </div>
-        {item.kind !== 'Stablevault' && <div className={classes.greyBorder}>
-          <div className={classes.container}>
-            {userData?.underlyingTokens ?
-              <>
-                <UnderlyingTokenItem
-                  pairsIcon={[userData?.underlyingTokens?.token0.address]}
-                  amount={formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)}
-                  symbol={userData?.underlyingTokens?.token0.symbol} />
-                <UnderlyingTokenItem
-                  pairsIcon={[userData?.underlyingTokens?.token1.address]}
-                  amount={formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
-                  symbol={userData?.underlyingTokens?.token0.symbol} />
-              </>:
-              <>
-                <UnderlyingTokenItem
-                  pairsIcon={[item.token0.address]}
-                  amount={0}
-                  symbol={item.token0.symbol} />
-                {item?.token1?.address &&
+        {item.kind !== 'Stablevault' && (userData?.underlyingTokens || item?.token0?.address) &&
+          <div className={classes.greyBorder}>
+            <div className={classes.container}>
+              {userData?.underlyingTokens ?
+                <>
                   <UnderlyingTokenItem
-                    pairsIcon={[item.token1.address]}
-                    amount={0}
-                    symbol={item.token1.symbol} />
-                }
-              </>
-            }
-          </div>
-        </div>}
+                    pairsIcon={[userData?.underlyingTokens?.token0.address]}
+                    amount={formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)}
+                    symbol={userData?.underlyingTokens?.token0.symbol} />
+                  <UnderlyingTokenItem
+                    pairsIcon={[userData?.underlyingTokens?.token1.address]}
+                    amount={formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
+                    symbol={userData?.underlyingTokens?.token0.symbol} />
+                </>:
+                <>
+                  {item?.token0?.address &&
+                    <UnderlyingTokenItem
+                      pairsIcon={[item.token0.address]}
+                      amount={0}
+                      symbol={item.token0.symbol} />}
+                  {item?.token1?.address &&
+                    <UnderlyingTokenItem
+                      pairsIcon={[item.token1.address]}
+                      amount={0}
+                      symbol={item.token1.symbol} />
+                  }
+                </>
+              }
+            </div>
+          </div>}
       </div>
     </div>
   );
