@@ -65,15 +65,15 @@ const SnowStepBox = ({ transactionStatus, title }) => {
   const classes = useStyles();
 
   const color = useMemo(
-    {
+    () => ({
       enabled: ENABLED_COLOR,
-      disabled: DISABLED_COLOR,
-    },
+      disabled: DISABLED_COLOR
+    }),
     []
   );
 
   useEffect(() => {
-    setColors( [
+    setColors([
       transactionStatus.approvalStep > 0 ? color.enabled : color.disabled,
       transactionStatus.approvalStep > 1 ? color.enabled : color.disabled,
       transactionStatus.depositStep > 0 ? color.enabled : color.disabled,

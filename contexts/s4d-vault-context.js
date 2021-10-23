@@ -522,32 +522,54 @@ export function S4dVaultContractProvider({ children }) {
     setLoading(false)
   }
 
+  const value = useMemo(
+    () => ({
+      loading,
+      svToken,
+      daiToken,
+      fraxToken,
+      tusdToken,
+      usdtToken,
+      tokenArray,
+      tokenValues,
+      pairNames,
+      totalSupply,
+      staked,
+      transactions,
+      getToSwapAmount,
+      getDepositReview,
+      getWithdrawAmount,
+      onSwap,
+      addLiquidity,
+      removeLiquidity,
+    }),
+    [
+      loading,
+      svToken,
+      daiToken,
+      fraxToken,
+      tusdToken,
+      usdtToken,
+      tokenArray,
+      tokenValues,
+      pairNames,
+      totalSupply,
+      staked,
+      transactions,
+      getToSwapAmount,
+      getDepositReview,
+      getWithdrawAmount,
+      onSwap,
+      addLiquidity,
+      removeLiquidity,
+    ]
+  );
+
   return (
-    <ContractContext.Provider
-      value={{
-        loading,
-        svToken,
-        daiToken,
-        fraxToken,
-        tusdToken,
-        usdtToken,
-        tokenArray,
-        tokenValues,
-        pairNames,
-        totalSupply,
-        staked,
-        transactions,
-        getToSwapAmount,
-        getDepositReview,
-        getWithdrawAmount,
-        onSwap,
-        addLiquidity,
-        removeLiquidity
-      }}
-    >
+    <ContractContext.Provider value={value}>
       {children}
     </ContractContext.Provider>
-  )
+  );
 }
 
 export function useS4dVaultContracts() {

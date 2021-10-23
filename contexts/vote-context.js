@@ -183,22 +183,33 @@ const createProposal = useCallback(async (
   setLoading(false)
 }, [account, snowconeBalance, governanceV2Contract, setPopUp])
 
+
+const value = useMemo(
+  () => ({
+    loading,
+    proposals,
+    activeProposals,
+    proposalCount,
+    quorumVotes,
+    governanceV2Contract,
+    voteProposal,
+    createProposal,
+  }),
+  [
+    loading,
+    proposals,
+    activeProposals,
+    proposalCount,
+    quorumVotes,
+    governanceV2Contract,
+    voteProposal,
+    createProposal,
+  ]
+);
+
 return (
-  <ContractContext.Provider
-    value={{
-      loading,
-      proposals,
-      activeProposals,
-      proposalCount,
-      quorumVotes,
-      governanceV2Contract,
-      voteProposal,
-      createProposal
-    }}
-  >
-    {children}
-  </ContractContext.Provider>
-)
+  <ContractContext.Provider value={value}>{children}</ContractContext.Provider>
+);
 }
 
 export function useVoteContract() {

@@ -1,26 +1,31 @@
-import { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { memo } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 
-import Skeleton from 'components/Skeletons';
-import Shimmer from 'components/Skeletons/Shimmer';
+import Skeleton from "components/Skeletons";
+import Shimmer from "components/Skeletons/Shimmer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: '10px 15px',
+    padding: "10px 15px",
     borderRadius: 8,
-    position: 'relative',
-    overflow: 'hidden',
+    position: "relative",
+    overflow: "hidden",
     backgroundColor: theme.palette.background.primary,
-    height: '100%',
+    height: "100%",
   },
   child: {
     marginTop: 20,
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  width45: {
+    width: "45%",
+  },
+  top20: {
+    marginTop: 20,
   },
 }));
 
-// ToDo: cleanup styles objects
 const DashboardTVL = () => {
   const classes = useStyles();
 
@@ -31,26 +36,26 @@ const DashboardTVL = () => {
         <Skeleton type="text" />
       </div>
       <div className={classes.child}>
-        <div style={{ width: '45%' }}>
+        <div className={classes.width45}>
           <Skeleton type="title" />
           <Skeleton type="text" />
         </div>
-        <div style={{ width: '45%' }}>
+        <div className={classes.width45}>
           <Skeleton type="title" />
           <Skeleton type="text" />
         </div>
       </div>
       <div className={classes.child}>
-        <div style={{ width: '45%' }}>
+        <div className={classes.width45}>
           <Skeleton type="title" />
           <Skeleton type="text" />
         </div>
-        <div style={{ width: '45%' }}>
+        <div className={classes.width45}>
           <Skeleton type="title" />
           <Skeleton type="text" />
         </div>
       </div>
-      <div style={{ marginTop: 20 }}>
+      <div className={classes.top20}>
         <Skeleton type="title" />
         <Skeleton type="text" />
       </div>
