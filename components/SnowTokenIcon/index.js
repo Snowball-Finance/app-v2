@@ -30,7 +30,7 @@ const SnowTokenIcon = ({
     <div className={clsx(classes.tokenImage, className)}>
       <Image
         alt='token-icon'
-        src={LP_ICONS[token] || LP_ICONS.SNOB}
+        src={LP_ICONS[token || "SNOB"]??LP_ICONS.SNOB}
         width={size}
         height={size}
         layout='fixed'
