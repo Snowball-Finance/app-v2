@@ -79,7 +79,7 @@ const Total = ({ item, userData }) => {
                   <UnderlyingTokenItem
                     pairsIcon={[userData?.underlyingTokens?.token1.address]}
                     amount={formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
-                    symbol={userData?.underlyingTokens?.token0.symbol} />
+                    symbol={userData?.underlyingTokens?.token1.symbol} />
                 </>:
                 <>
                   {item?.token0?.address &&
