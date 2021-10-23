@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 import { useWeb3React } from "@web3-react/core";
 
 import useEagerConnect from "utils/hooks/useEagerConnect";

@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 
@@ -30,12 +37,8 @@ const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
-  const {
-    gauges,
-    retrieveGauge,
-    getBalanceInfo,
-    getGaugeProxyInfo,
-  } = useContracts();
+  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } =
+    useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
   const { provider } = useProvider();
   const { prices } = usePrices();
@@ -166,9 +169,7 @@ export function CompoundAndEarnProvider({ children }) {
         deprecatedPool: true,
       };
     },
-    [
-      prices
-    ]
+    [prices]
   );
 
   const generatePoolInfo = useCallback(
@@ -257,25 +258,23 @@ export function CompoundAndEarnProvider({ children }) {
 
       return {
         ...item,
-        address: item.address,
-        userLPBalance,
-        lpDecimals,
-        userDepositedLP: userDepositedLP,
-        usdValue: userDepositedLP * item.pricePoolToken,
-        totalSupply,
         SNOBHarvestable,
         SNOBValue,
+        address: item.address,
+        lpDecimals,
+        totalSupply,
         underlyingTokens,
-        userBalanceSnowglobe,
+        usdValue: userDepositedLP * item.pricePoolToken,
         userBalanceGauge: gauge ? gauge.staked : 0,
+        userBalanceSnowglobe,
+        userDepositedLP: userDepositedLP,
+        userLPBalance,
       };
     },
-    [
-      prices,
-    ]
+    [prices]
   );
 
-  const getBalanceInfosAllPools = sueCallback(
+  const getBalanceInfosAllPools = useCallback(
     async (gauges) => {
       setLoading(true);
       try {
@@ -295,15 +294,7 @@ export function CompoundAndEarnProvider({ children }) {
       }
       setLoading(false);
     },
-    [
-      setIsTransacting,
-      setPopUp,
-      library,
-      claim,
-      getBalanceInfosAllPools,
-      getGaugeProxyInfo,
-      account,
-    ]
+    [provider, setUserPools, generatePoolInfo, pools, account]
   );
 
   const getBalanceInfoSinglePool = useCallback(
@@ -379,10 +370,7 @@ export function CompoundAndEarnProvider({ children }) {
         }
       });
     },
-    [
-      setPopUp,
-      account,
-    ]
+    [setPopUp, account]
   );
 
   const approve = useCallback(
@@ -470,13 +458,7 @@ export function CompoundAndEarnProvider({ children }) {
       }
       setIsTransacting({ approve: false });
     },
-    [
-      _approve, gauges,
-      setIsTransacting,
-      setPopUp,
-      library,
-      account,
-    ]
+    [_approve, gauges, setIsTransacting, setPopUp, library, account]
   );
 
   const deposit = useCallback(
@@ -601,6 +583,64 @@ export function CompoundAndEarnProvider({ children }) {
     ]
   );
 
+  const claim = useCallback(
+    async (item, withdraw = false) => {
+      if (!account || !gauges) {
+        setPopUp({
+          title: "Network Error",
+          icon: ANIMATIONS.WARNING.VALUE,
+          text: MESSAGES.METAMASK_NOT_CONNECTED,
+        });
+        return;
+      }
+
+      if (item.SNOBHarvestable <= 0) {
+        return;
+      }
+
+      setIsTransacting({ pageview: true, withdraw: true });
+      try {
+        const gaugeContract = new ethers.Contract(
+          item.gaugeInfo.address,
+          GAUGE_ABI,
+          library.getSigner()
+        );
+
+        const gaugeReward = await gaugeContract.getReward();
+        const transactionReward = await gaugeReward.wait(1);
+        if (transactionReward.status) {
+          const linkTx = getLink(
+            `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionReward.transactionHash}`,
+            "Check on C-Chain Explorer."
+          );
+          setPopUp({
+            title: "Claim Complete",
+            icon: ANIMATIONS.SUCCESS.VALUE,
+            text: linkTx,
+          });
+          if (item.deprecatedPool) {
+            item.claimed = true;
+          }
+        } else {
+          setPopUp({
+            title: "Claim Error",
+            icon: ANIMATIONS.ERROR.VALUE,
+            text: `Error claiming from Gauge ${error.message}`,
+          });
+        }
+      } catch (error) {
+        setPopUp({
+          title: "Claim Error",
+          icon: ANIMATIONS.ERROR.VALUE,
+          text: `Error claiming from Gauge ${error.message}`,
+        });
+      }
+      if (!withdraw) {
+        setIsTransacting({ pageview: false });
+      }
+    },
+    [setIsTransacting, setPopUp, library, account, gauges]
+  );
   const withdraw = useCallback(
     async (item, amount = 0) => {
       if (!account) {
@@ -761,112 +801,54 @@ export function CompoundAndEarnProvider({ children }) {
       setIsTransacting({ withdraw: false, pageview: false });
     },
     [
-      setIsTransacting,
-      setPopUp,
-      library,
+      account,
       claim,
       getBalanceInfosAllPools,
       getGaugeProxyInfo,
-      account,
+      library,
+      setIsTransacting,
+      setPopUp,
     ]
   );
 
-  const claim = useCallback(
-    async (item, withdraw = false) => {
-      if (!account || !gauges) {
-        setPopUp({
-          title: "Network Error",
-          icon: ANIMATIONS.WARNING.VALUE,
-          text: MESSAGES.METAMASK_NOT_CONNECTED,
-        });
-        return;
-      }
-
-      if (item.SNOBHarvestable <= 0) {
-        return;
-      }
-
-      setIsTransacting({ pageview: true, withdraw: true });
-      try {
-        const gaugeContract = new ethers.Contract(
-          item.gaugeInfo.address,
-          GAUGE_ABI,
-          library.getSigner()
-        );
-
-        const gaugeReward = await gaugeContract.getReward();
-        const transactionReward = await gaugeReward.wait(1);
-        if (transactionReward.status) {
-          const linkTx = getLink(
-            `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionReward.transactionHash}`,
-            "Check on C-Chain Explorer."
-          );
-          setPopUp({
-            title: "Claim Complete",
-            icon: ANIMATIONS.SUCCESS.VALUE,
-            text: linkTx,
-          });
-          if (item.deprecatedPool) {
-            item.claimed = true;
-          }
-        } else {
-          setPopUp({
-            title: "Claim Error",
-            icon: ANIMATIONS.ERROR.VALUE,
-            text: `Error claiming from Gauge ${error.message}`,
-          });
-        }
-      } catch (error) {
-        setPopUp({
-          title: "Claim Error",
-          icon: ANIMATIONS.ERROR.VALUE,
-          text: `Error claiming from Gauge ${error.message}`,
-        });
-      }
-      if (!withdraw) {
-        setIsTransacting({ pageview: false });
-      }
-    },
-    [setIsTransacting, setPopUp, library, account, gauges]
-  );
   const value = useMemo(
     () => ({
-      loading,
-      isTransacting,
-      userPools,
-      transactionStatus,
       approve,
-      deposit,
-      withdraw,
       claim,
-      setTransactionStatus,
-      userDeprecatedPools,
+      deposit,
       getBalanceInfoSinglePool,
+      getBalanceInfosAllPools,
+      isTransacting,
       loadedDeprecated,
-      sortedUserPools,
+      loading,
       setLoadedDeprecated,
       setSortedUserPools,
+      setTransactionStatus,
       setUserPools,
-      getBalanceInfosAllPools,
+      sortedUserPools,
+      transactionStatus,
+      userDeprecatedPools,
+      userPools,
+      withdraw,
     }),
     [
-      loading,
-      isTransacting,
-      userPools,
-      transactionStatus,
       approve,
-      deposit,
-      withdraw,
       claim,
-      setTransactionStatus,
-      userDeprecatedPools,
+      deposit,
       getBalanceInfoSinglePool,
+      getBalanceInfosAllPools,
+      isTransacting,
       loadedDeprecated,
-      sortedUserPools,
+      loading,
       setLoadedDeprecated,
       setSortedUserPools,
+      setTransactionStatus,
       setUserPools,
-      getBalanceInfosAllPools,
+      sortedUserPools,
+      transactionStatus,
+      userDeprecatedPools,
+      userPools,
+      withdraw,
     ]
   );
 
@@ -884,42 +866,42 @@ export function useCompoundAndEarnContract() {
   }
 
   const {
-    loading,
-    isTransacting,
-    userPools,
-    transactionStatus,
     approve,
-    deposit,
-    withdraw,
     claim,
-    setTransactionStatus,
-    userDeprecatedPools,
+    deposit,
     getBalanceInfoSinglePool,
+    getBalanceInfosAllPools,
+    isTransacting,
     loadedDeprecated,
-    sortedUserPools,
+    loading,
     setLoadedDeprecated,
     setSortedUserPools,
+    setTransactionStatus,
     setUserPools,
-    getBalanceInfosAllPools,
+    sortedUserPools,
+    transactionStatus,
+    userDeprecatedPools,
+    userPools,
+    withdraw,
   } = context;
 
   return {
-    loading,
-    isTransacting,
-    userPools,
-    transactionStatus,
     approve,
-    deposit,
-    withdraw,
     claim,
-    setTransactionStatus,
-    userDeprecatedPools,
+    deposit,
     getBalanceInfoSinglePool,
+    getBalanceInfosAllPools,
+    isTransacting,
     loadedDeprecated,
-    sortedUserPools,
+    loading,
     setLoadedDeprecated,
     setSortedUserPools,
+    setTransactionStatus,
     setUserPools,
-    getBalanceInfosAllPools,
+    sortedUserPools,
+    transactionStatus,
+    userDeprecatedPools,
+    userPools,
+    withdraw,
   };
 }

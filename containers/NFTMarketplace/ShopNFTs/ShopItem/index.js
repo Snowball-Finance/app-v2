@@ -68,9 +68,10 @@ const ShopItem = ({
   const classes = useStyles();
   const { purchaseNFT } = useNFTContract();
 
-  const purchaseHandler = () => {
-    purchaseNFT(nft)
-  }
+  const purchaseHandler = useCallback(() => {
+    purchaseNFT(nft);
+  }, [nft, purchaseNFT]);
+  const onDetailsClick = useCallback(() => onDetail(nft), [onDetail, nft]);
 
   return (
     <Card className={classes.card}>
