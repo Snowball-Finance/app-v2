@@ -83,7 +83,7 @@ export function ContractProvider({ children }) {
     }else{
       setOpen(false);
     }
-  
+
   },[error,setPopUp,setOpen]);
 
   const { gauges, retrieveGauge, setGauges, getGaugeProxyInfo } = useStakingContract({
@@ -91,25 +91,37 @@ export function ContractProvider({ children }) {
     gaugeProxyContract,
     setLoading
   })
-
+  const value = useMemo(
+    () => ({
+      loading,
+      gauges,
+      retrieveGauge,
+      setGauges,
+      isWrongNetwork,
+      snowballBalance,
+      snowconeBalance,
+      totalSnowcone,
+      getBalanceInfo,
+      getGaugeProxyInfo,
+    }),
+    [
+      loading,
+      gauges,
+      retrieveGauge,
+      setGauges,
+      isWrongNetwork,
+      snowballBalance,
+      snowconeBalance,
+      totalSnowcone,
+      getBalanceInfo,
+      getGaugeProxyInfo,
+    ]
+  );
   return (
-    <ContractContext.Provider
-      value={{
-        loading,
-        gauges,
-        retrieveGauge,
-        setGauges,
-        isWrongNetwork,
-        snowballBalance,
-        snowconeBalance,
-        totalSnowcone,
-        getBalanceInfo,
-        getGaugeProxyInfo
-      }}
-    >
+    <ContractContext.Provider value={value}>
       {children}
     </ContractContext.Provider>
-  )
+  );
 }
 
 export function useContracts() {

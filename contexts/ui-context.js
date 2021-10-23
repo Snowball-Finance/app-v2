@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useCallback, useEffect, useMemo } from 'react';
 
 const DarkModeContext = createContext();
 
@@ -11,11 +11,14 @@ function DarkModeProvider({ children }) {
     setDarkMode(darkModeFromStorage);
   }, []);
 
-  const handleDarkModeChange = () => {
-    localStorage.setItem('darkMode', !darkMode);
-    setDarkMode(!darkMode);
-  };
-  const value = { darkMode, handleDarkModeChange };
+  const handleDarkModeChange = useCallback(() => {
+    localStorage.setItem("darkMode", !darkMode);
+    setDarkMode((darkMode) => !darkMode);
+  }, [setDarkMode, darkMode]);
+  const value = useMemo(
+    () => ({ darkMode, handleDarkModeChange }),
+    [darkMode, handleDarkModeChange]
+  );
 
   return (
     <DarkModeContext.Provider value={value}>

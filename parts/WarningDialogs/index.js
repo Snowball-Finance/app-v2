@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
 import clsx from 'clsx'
@@ -56,7 +56,12 @@ const WarningDialogs = ({
   setConfirmed
 }) => {
   const classes = useStyles();
-  
+
+  const onClick = useCallback(() => {
+    setConfirmed(true);
+    handleClose();
+  }, [handleClose, setConfirmed]);
+
   return (
     <SnowDialog
       open={open}
@@ -80,10 +85,7 @@ const WarningDialogs = ({
             disableElevation
             fullWidth
             //loading={ }
-            onClick={() => {
-              setConfirmed(true)
-              handleClose()
-            }}
+            onClick={onClick}
           >
             {textButton}
           </ContainedButton>

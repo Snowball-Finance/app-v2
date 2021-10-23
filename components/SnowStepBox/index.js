@@ -72,23 +72,25 @@ const SnowStepBox = ({
     ]);
   const classes = useStyles();
 
-  const color = {
-      enabled: '#28A2FF',
-      disabled:'#DBEDFF'
-  }
+  const color = useMemo(
+    () => ({
+      enabled: ENABLED_COLOR,
+      disabled: DISABLED_COLOR
+    }),
+    []
+  );
 
-  useEffect(() =>{
-    var newStatus = [];
-    newStatus.push(transactionStatus.approvalStep > 0 ? color.enabled : color.disabled);
-    newStatus.push(transactionStatus.approvalStep > 1 ? color.enabled : color.disabled);
-    newStatus.push(transactionStatus.depositStep > 0 ? color.enabled : color.disabled);
-    newStatus.push(transactionStatus.depositStep > 1 ? color.enabled : color.disabled);
-    newStatus.push(transactionStatus.withdrawStep > 0 ? color.enabled : color.disabled);
-    newStatus.push(transactionStatus.withdrawStep > 1 ? color.enabled : color.disabled);
-    newStatus.push(transactionStatus.withdrawStep > 2 ? color.enabled : color.disabled);
-    
-    setColors(newStatus); 
-  },[transactionStatus,color.disabled,color.enabled]);
+  useEffect(() => {
+    setColors([
+      transactionStatus.approvalStep > 0 ? color.enabled : color.disabled,
+      transactionStatus.approvalStep > 1 ? color.enabled : color.disabled,
+      transactionStatus.depositStep > 0 ? color.enabled : color.disabled,
+      transactionStatus.depositStep > 1 ? color.enabled : color.disabled,
+      transactionStatus.withdrawStep > 0 ? color.enabled : color.disabled,
+      transactionStatus.withdrawStep > 1 ? color.enabled : color.disabled,
+      transactionStatus.withdrawStep > 2 ? color.enabled : color.disabled,
+    ]);
+  }, [transactionStatus, color.disabled, color.enabled]);
 
   return (
     <div className={classes.root}>
@@ -96,24 +98,24 @@ const SnowStepBox = ({
         <div className={classes.container}>
           {title != "Withdraw" ? <><Typography className={classes.title} >Approval Steps</Typography>
           <Typography className={classes.title} >Deposit Steps</Typography></> : <Typography className={classes.title} >Withdraw Steps</Typography>}
-          
+
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
             {title != "Withdraw" ? <>
-            <Box className={classes.ellipse} 
+            <Box className={classes.ellipse}
               style={{background:colors[enumDeposit.approval1]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
+            <Box className={classes.ellipse}
               style={{background:colors[enumDeposit.approval2]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
+            <Box className={classes.ellipse}
               style={{background:colors[enumDeposit.deposit1]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
+            <Box className={classes.ellipse}
               style={{background:colors[enumDeposit.deposit2]}} borderRadius="50%"/>
-            </> :  <><Box className={classes.ellipse} 
+            </> :  <><Box className={classes.ellipse}
               style={{background:colors[enumDeposit.withdraw1]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
+            <Box className={classes.ellipse}
               style={{background:colors[enumDeposit.withdraw2]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
+            <Box className={classes.ellipse}
               style={{background:colors[enumDeposit.withdraw3]}} borderRadius="50%"/>
               </>}
           </div>
@@ -126,7 +128,7 @@ const SnowStepBox = ({
             </> : <Typography className={classes.subtitle}>{transactionStatus.withdrawStep}/3 Step</Typography>}
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   );
 

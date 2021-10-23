@@ -1,11 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { useWeb3React } from "@web3-react/core";
 
-import useEagerConnect from 'utils/hooks/useEagerConnect'
-import useInactiveListener from 'utils/hooks/useInactiveListener'
-import WalletModal from 'components/WalletModal'
+import useEagerConnect from "utils/hooks/useEagerConnect";
+import useInactiveListener from "utils/hooks/useInactiveListener";
+import WalletModal from "components/WalletModal";
 
-const ContractContext = createContext(null)
+const ContractContext = createContext(null);
 
 export function WalletProvider({ children }) {
   const { connector, activate } = useWeb3React();
@@ -15,50 +15,52 @@ export function WalletProvider({ children }) {
 
   useEffect(() => {
     if (activatingConnector && activatingConnector === connector) {
-      setActivatingConnector(undefined)
+      setActivatingConnector(undefined);
     }
-  }, [activatingConnector, connector])
+  }, [activatingConnector, connector]);
 
   const triedEager = useEagerConnect();
-  useInactiveListener(!triedEager || !!activatingConnector)
+  useInactiveListener(!triedEager || !!activatingConnector);
 
-  const onConnectWallet = (injected) => {
-    setActivatingConnector(injected);
-    activate(injected);
-  }
+  const onConnectWallet = useCallback(
+    (injected) => {
+      setActivatingConnector(injected);
+      activate(injected);
+    },
+    [setActivatingConnector, activate]
+  );
 
+  const value = useMemo(
+    () => ({
+      setIsWalletDialog,
+      onConnectWallet,
+    }),
+    [setIsWalletDialog, onConnectWallet]
+  );
   return (
-    <ContractContext.Provider
-      value={{
-        setIsWalletDialog,
-        onConnectWallet
-      }}
-    >
+    <ContractContext.Provider value={value}>
       {children}
-      {isWalletDialog &&
+      {isWalletDialog && (
         <WalletModal
           open={isWalletDialog}
           onClose={() => setIsWalletDialog(false)}
           onConnectWallet={onConnectWallet}
         />
-      }
+      )}
     </ContractContext.Provider>
-  )
+  );
 }
 
 export function useWallets() {
-  const context = useContext(ContractContext)
+  const context = useContext(ContractContext);
   if (!context) {
-    throw new Error('Missing stats context')
+    throw new Error("Missing stats context");
   }
 
-  const {
-    setIsWalletDialog,
-    onConnectWallet
-  } = context
+  const { setIsWalletDialog, onConnectWallet } = context;
 
   return {
     setIsWalletDialog,
-    onConnectWallet
-  }
+    onConnectWallet,
+  };
 }

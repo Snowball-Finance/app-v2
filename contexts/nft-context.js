@@ -218,20 +218,22 @@ export function NFTContractProvider({ children }) {
     setLoading(false)
   }, [account, library, setLoading, setPopUp, getNFTData])
 
+  const value = useMemo(
+    () => ({
+      loading,
+      claimNFTs,
+      shopNFTs,
+      purchasedNFTs,
+      purchaseNFT,
+      claimNFT,
+    }),
+    [loading, claimNFTs, shopNFTs, purchasedNFTs, purchaseNFT, claimNFT]
+  );
   return (
-    <ContractContext.Provider
-      value={{
-        loading,
-        claimNFTs,
-        shopNFTs,
-        purchasedNFTs,
-        purchaseNFT,
-        claimNFT
-      }}
-    >
+    <ContractContext.Provider value={value}>
       {children}
     </ContractContext.Provider>
-  )
+  );
 }
 
 export function useNFTContract() {
