@@ -43,13 +43,9 @@ const ProposalMainForm = ({
         <Grid item xs={12}>
           <Controller
             as={<SnowTextField />}
-            name='title'
-            label={
-              <>
-              Title of new proposal<Typography variant='subtitle' className={classes.required}> * </Typography>
-              </>
-            }
-            placeholder='Title of new proposal'
+            name="title"
+            label={<LabelOfNewProposal label="Title of new proposal" />}
+            placeholder="Title of new proposal"
             error={errors.title?.message}
             control={control}
             defaultValue={''}
@@ -73,10 +69,10 @@ const ProposalMainForm = ({
           />
         </Grid>
         <Typography className={classes.required}> * </Typography>
-        <Typography variant='caption'>Required fields</Typography> 
+        <Typography variant='caption'>Required fields</Typography>
 
         <Grid item xs={12} className={classes.buttonContainer}>
-          {snowconeBalance < minimumForProposal && 
+          {snowconeBalance < minimumForProposal &&
             <Typography variant="body1" className={classes.required}>{`You must have ${minimumForProposal.toLocaleString()}+ xSNOB to submit`}</Typography>
           }
           <ContainedButton

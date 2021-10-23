@@ -1,5 +1,8 @@
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
-module.exports = {
+module.exports = withBundleAnalyzer({
   env: {
     NETWORK: process.env.NETWORK,
     ENVIRONMENT: process.env.ENVIRONMENT,
@@ -14,18 +17,18 @@ module.exports = {
       config.module.rules.push({
         test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader'
+        loader: "eslint-loader",
       });
     }
 
     config.module.rules.push({
       test: /\.svg$/,
-      use: ['@svgr/webpack']
+      use: ["@svgr/webpack"],
     });
 
     return config;
   },
   images: {
-    domains: ['raw.githubusercontent.com', 'gateway.pinata.cloud'],
+    domains: ["raw.githubusercontent.com", "gateway.pinata.cloud"],
   },
-};
+});

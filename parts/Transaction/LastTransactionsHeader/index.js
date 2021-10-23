@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import moment from 'moment'
+import { DateTime } from "luxon";
 
 const useStyles = makeStyles((theme) => ({
   headerContainer: {
@@ -41,30 +41,19 @@ const LastTransactionsHeader = ({
 
   return (
     <div className={classes.headerContainer}>
-      <Typography
-        color='textPrimary'
-        align='center'
-        className={classes.date}
-      >
-        {moment().format('ddd')}
+      <Typography color="textPrimary" align="center" className={classes.date}>
+        {DateTime.now().toLocaleString({ weekday: "short" })}
         <br />
-        <span>{moment().date()}</span>
+        <span>{DateTime.now().day}</span>
       </Typography>
-      <Divider
-        flexItem
-        orientation='vertical'
-        className={classes.divider}
-      />
-      <Typography
-        color='textPrimary'
-        className={classes.title}
-      >
+      <Divider flexItem orientation="vertical" className={classes.divider} />
+      <Typography color="textPrimary" className={classes.title}>
         Last transactions
         <br />
         <span>{title}</span>
       </Typography>
     </div>
-  )
+  );
 }
 
 export default memo(LastTransactionsHeader);
