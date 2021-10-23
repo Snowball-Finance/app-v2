@@ -30,6 +30,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+const LabelOfNewProposal = ({ label }) => {
+    const classes = useStyles();
+
+  return (
+  <>
+    {label}
+    <Typography variant="subtitle" className={classes.required}>
+      {" "}
+      *{" "}
+    </Typography>
+  </>
+)};
+
 const ProposalMainForm = ({
   control,
   errors
@@ -48,7 +61,7 @@ const ProposalMainForm = ({
             placeholder="Title of new proposal"
             error={errors.title?.message}
             control={control}
-            defaultValue={''}
+            defaultValue={""}
           />
         </Grid>
         <Grid item xs={12}>
@@ -56,28 +69,27 @@ const ProposalMainForm = ({
             as={<SnowTextField />}
             rows={15}
             multiline={true}
-            name='description'
-            label={
-              <>
-              Description of new proposal<Typography variant='subtitle' className={classes.required}> * </Typography>
-              </>
-            }
-            placeholder='Description of new proposal'
+            name="description"
+            label={<LabelOfNewProposal label="Description of new proposal" />}
+            placeholder="Description of new proposal"
             error={errors.data?.message}
             control={control}
-            defaultValue={''}
+            defaultValue={""}
           />
         </Grid>
         <Typography className={classes.required}> * </Typography>
-        <Typography variant='caption'>Required fields</Typography>
+        <Typography variant="caption">Required fields</Typography>
 
         <Grid item xs={12} className={classes.buttonContainer}>
-          {snowconeBalance < minimumForProposal &&
-            <Typography variant="body1" className={classes.required}>{`You must have ${minimumForProposal.toLocaleString()}+ xSNOB to submit`}</Typography>
-          }
+          {snowconeBalance < minimumForProposal && (
+            <Typography
+              variant="body1"
+              className={classes.required}
+            >{`You must have ${minimumForProposal.toLocaleString()}+ xSNOB to submit`}</Typography>
+          )}
           <ContainedButton
-            type='submit'
-            color='primary'
+            type="submit"
+            color="primary"
             disabled={snowconeBalance < minimumForProposal}
             className={classes.button}
           >
@@ -86,7 +98,7 @@ const ProposalMainForm = ({
         </Grid>
       </Grid>
     </Card>
-  )
+  );
 }
 
 export default memo(ProposalMainForm)
