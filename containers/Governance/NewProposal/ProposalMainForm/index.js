@@ -51,7 +51,7 @@ const ProposalMainForm = ({ control, errors }) => {
           <Controller
             as={<SnowTextField />}
             name="title"
-            label={<TitleOfNewProposal label="Title of new proposal" />}
+            label={<LabelOfNewProposal label="Title of new proposal" />}
             placeholder="Title of new proposal"
             error={errors.title?.message}
             control={control}

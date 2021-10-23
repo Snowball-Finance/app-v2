@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import moment from 'moment'; //ToDo: cut off moment
+import { DateTime } from "luxon";
 
 import getTransactionInfo from 'utils/helpers/getTransactionInfo';
 import { formatNumber } from 'utils/helpers/format';
@@ -68,7 +68,7 @@ const TransactionItem = ({ transaction }) => {
             {`$ ${formatNumber(transaction.valueUSD, 2)}`}
           </span>
           <br />
-          {moment(transaction.createdAt).fromNow()}
+          {DateTime.fromISO(transaction.createdAt).toRelative()}{" "}
         </Typography>
       </div>
     </div>
