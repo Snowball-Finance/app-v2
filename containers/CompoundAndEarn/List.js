@@ -19,7 +19,7 @@ const List = ({ pools, modal, setModal }) => {
   const isBottom = useCallback((ref) => {
     if (!ref.current) return false;
     return ref.current.getBoundingClientRect().bottom <= window.innerHeight
-  }, [])
+  },[])
 
   const loadMore = useCallback(() => {
     const next = (page + 1) % maxPage
@@ -28,7 +28,13 @@ const List = ({ pools, modal, setModal }) => {
     setItems([...items, ...nexItems])
     setPage(next)
     setLoading(false)
-  }, [maxPage, page, items, setPage])
+  },[maxPage,page, setPage, items])
+
+  useEffect(() => {
+    setPage(0)
+    setItems([])
+    setinitialLoad(true)
+  },[pools])
 
   useEffect(()=> {
     if(initialLoad) {
@@ -67,4 +73,4 @@ const List = ({ pools, modal, setModal }) => {
   )
 }
 
-export default List
+export default memo(List)
