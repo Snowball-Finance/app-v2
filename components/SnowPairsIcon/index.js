@@ -38,17 +38,18 @@ const SnowPairsIcon = ({ pairsIcon, size, className }) => {
   return <Box display='flex'>{pairsIcon.map((pair, index) => {
     if (pair) {
       const src = `https://raw.githubusercontent.com/Snowball-Finance/bridge-tokens/main/avalanche-tokens/${pair}/logo.png`;
-      
+
       return (
         <div key={pair} className={clsx(classes.tokenImage, className, {
           [classes.secondTokenIcon]: index > 0,
         })}>
-          <Image  
+          <Image
             alt="token"
             src={src}
             width={size || 50}
             height={size || 50}
             layout='responsive'
+
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = NO_IMAGE_PATH;

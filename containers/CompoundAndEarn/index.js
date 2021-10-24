@@ -4,14 +4,12 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
 import { makeStyles } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
-
 import { useAPIContext } from 'contexts/api-context';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
-import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
 import PageHeader from 'parts/PageHeader';
-import ListItem from './ListItem';
+import List  from './List';
 import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
 import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
 import getProperAction from 'utils/helpers/getProperAction';
@@ -40,7 +38,6 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
-  
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools,setLoadedDeprecated,setSortedUserPools,
     setUserPools } = useCompoundAndEarnContract();
@@ -60,7 +57,7 @@ const CompoundAndEarn = () => {
       setSortedUserPools(false);
       setLoadedSort(true);
     }
-  },[loadedSort,setSortedUserPools])
+  },[loadedSort,setSortedUserPools,classes])
 
   useEffect(() => {
     if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
@@ -122,7 +119,7 @@ const CompoundAndEarn = () => {
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
-    }    
+    }
 
     setLastSnowballInfo(sortedData);
     setSearch(value);
@@ -138,7 +135,7 @@ const CompoundAndEarn = () => {
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
-    }    
+    }
 
     setLastSnowballInfo(sortedData);
     setSearch('');
@@ -164,9 +161,11 @@ const CompoundAndEarn = () => {
           (item) => item.name.search(spiltItem.toUpperCase()) != -1
         );
       });
-      setLastSnowballInfo(filterData);    }
-    else setLastSnowballInfo(sortedData);
-    setType(event.target.value);
+      setLastSnowballInfo(filterData);
+       }else {
+         setLastSnowballInfo(sortedData);
+          setType(event.target.value);
+       }
   };
 
   const handleUserPoolChange = (event) => {
@@ -205,9 +204,12 @@ const CompoundAndEarn = () => {
           (item) => item.name.search(spiltItem.toUpperCase()) != -1
         );
       });
-      setLastSnowballInfo(filterData);    }
-    else setLastSnowballInfo(sortedData);
-    setPool(event.target.value);
+      setLastSnowballInfo(filterData);
+      } else{
+        setLastSnowballInfo(sortedData);
+        setPool(event.target.value);
+    }
+
   };
 
   if (snowballInfoQuery.error) {
@@ -215,7 +217,7 @@ const CompoundAndEarn = () => {
   }
 
   return (
-    <main className={classes.root}>
+  <main className={classes.root}>
       <PageHeader
         title='Compound and Earn SNOB now!'
         subHeader='Check your Investments'
@@ -253,20 +255,7 @@ const CompoundAndEarn = () => {
             PAIRS
           </Typography>
         </Grid>
-        {snowballInfoQuery.loading
-          ? (
-            <Grid item xs={12}>
-              <CompoundAndEarnSkeleton />
-            </Grid>
-          ) : (
-            lastSnowballInfo?.map((pool, index) => (
-                <Grid item key={index} xs={12}>
-                  {(!pool.deprecatedPool || !(pool.withdrew && pool.claimed)) && 
-                    <ListItem pool={pool} modal={modal} setModal={setModal}/>}
-                </Grid>
-              ))
-          )
-        }
+      {lastSnowballInfo.length >  0 && <List pools={lastSnowballInfo} modal={modal} setModal={setModal} firstLoad={true}/>}
       </Grid>
     </main>
   );
