@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Select, MenuItem, Paper } from '@material-ui/core';
 import clsx from 'clsx';
+import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,21 +20,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+const renderOptions = (options) => {
+  if (!options || !options.length) {
+    return <div>No data found</div>;
+  }
+
+  return options.map((option) => (
+    <MenuItem key={option.value} value={option.value}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {option.iconComponent && <>
+          {option.iconComponent}
+          <div style={{ width: '4px' }}></div>
+        </>} {option.label}
+      </div>
+    </MenuItem>
+  ));
+};
+
 const Selects = React.forwardRef(
   ({ error, className, value, onChange, style, options, startIcon }, ref) => {
     const classes = useStyles();
 
-    const renderOptions = () => {
-      if (!options || !options.length) {
-        return <div>No data found</div>;
-      }
-
-      return options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ));
-    };
 
     return (
       <Paper
@@ -50,7 +58,7 @@ const Selects = React.forwardRef(
           onChange={onChange}
           disableUnderline
         >
-          {renderOptions()}
+          {renderOptions(options)}
         </Select>
         {!!error && (
           <Typography variant="subtitle2" color="error">

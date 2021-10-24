@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    
+
   },
   pairInfoStyle: {
     marginLeft: theme.spacing(1),
@@ -50,38 +50,37 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundInfo = ({
   pool,
+  amount = '0.00'
 }) => {
   const classes = useStyles();
-  const token0 = pool.token0.address;
-  const token1 = pool.token1.address;
-  const token2 = pool.token2.address;
-  const token3 = pool.token3.address;
-  console.log('pool ==>', pool);
-
+  const tokens = [pool.token0, pool.token1]
+  const [token0, token1] = tokens
+  const { address: address0, name: name0, symbol: symbol0 } = token0
+  const { address: address1, name: name1, symbol: symbol1 } = token1
   return (
     <>
       <ArrowDownIcon className={classes.downArrow} />
       <div className={classes.container}>
         <div className={classes.pairLine}>
-          <SnowPairsIcon pairsIcon={['0x5947BB275c521040051D82396192181b413227A3', '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7']} size={36} />
+          <SnowPairsIcon pairsIcon={[address0, address1]} size={36} />
           <div className={classes.pairInfoStyle}>
             <Typography variant='subtitle1'>To</Typography>
             <Typography variant='subtitle1' className={classes.bold}>
-              LINK-AVAX {pool.symbol}
+              {`${symbol0}-${symbol1}`} {pool.symbol}
             </Typography>
           </div>
-          <Typography className={classes.amountText}>0.00</Typography>
+          <Typography className={classes.amountText}>{amount}</Typography>
         </div>
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
           <Box className={classes.tokenLine}>
-            <SnowTokenIcon token='WAVAX' size={20} />
-            <Typography className={classes.pairInfoStyle}>AVAX</Typography>
+            <SnowTokenIcon token={symbol0} size={20} />
+            <Typography className={classes.pairInfoStyle}>{name0}</Typography>
             <Typography className={classes.amountText}>0.00</Typography>
           </Box>
           <Box className={classes.tokenLine} mb={1}>
-            <SnowTokenIcon token='LINK' size={20} />
-            <Typography className={classes.pairInfoStyle}>LINK</Typography>
+            <SnowTokenIcon token={symbol1} size={20} />
+            <Typography className={classes.pairInfoStyle}>{name1}</Typography>
             <Typography className={classes.amountText}>0.00</Typography>
           </Box>
           <Box className={classes.tokenLine} >

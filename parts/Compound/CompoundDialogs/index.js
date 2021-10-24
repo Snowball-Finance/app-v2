@@ -1,5 +1,4 @@
-import { memo, useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -14,12 +13,13 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
 import CompoundInfo from './CompoundInfo';
 import Details from './Details';
-import { roundDown } from 'utils/helpers/utility';
+import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
+import { SnowCheckbox } from 'components/UI/Checkbox';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
     minWidth: 200,
-    width: 420,
+    width: 510,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
     },
@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: `${theme.custom.palette.blueButton} !important`,
     }
   },
+  mt1: {
+    marginTop: theme.spacing(1)
+  },
   button: {
     textTransform: 'none',
     width: '100%',
@@ -71,79 +74,76 @@ const CompoundDialogs = ({
   handleClose,
 }) => {
   const classes = useStyles();
-  const [slider, setSlider] = useState(0);
-  const [amount, setAmount] = useState(0);
-  const [inputAmount, setinputAmount] = useState(0);
-  const [approved, setApproved] = useState(false);
-  const [error, setError] = useState(null);
- 
+
+  const [state, dispatch] = useReducer(compoundDialogReducer, {
+    title,
+    item,
+    sliderValue: 0,
+    amount: 0,
+    inputAmount: 0,
+    approved: false,
+    isInfiniteApprovalChecked: false,
+    error: null
+  })
+
   const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
-  useEffect(() =>{
-    if(!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw){
+  useEffect(() => {
+    if (!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw) {
       toast.dismiss();
     }
-  }),[isTransacting];
+  }), [isTransacting];
 
-  useEffect(() =>{
-    if(transactionStatus.depositStep === 2){
+  useEffect(() => {
+    if (transactionStatus.depositStep === 2) {
       handleClose();
     }
-    if(transactionStatus.withdrawStep === 3){
+    if (transactionStatus.withdrawStep === 3) {
       handleClose();
     }
-  }),[transactionStatus];
+  }), [transactionStatus];
 
-  const calculatePercentage = (amount) => {
-    return title != "Withdraw" ? amount / (item?.userLPBalance/10**item?.lpDecimals) * 100 : amount / (item?.userBalanceGauge/10**item?.lpDecimals) * 100
-  };
-
-  const calculatedBalance = (value) => {
-    return title != "Withdraw" ? item?.userLPBalance.mul(value).div(100) : item?.userBalanceGauge.mul(value).div(100);
-  };
 
   const enabledHandler = (isApproved = false) => {
-    return (isApproved? approved : !approved) || (amount == 0) ||
+    return (isApproved ? state.approved : !state.approved) || (state.amount == 0) ||
       isTransacting.approve || isTransacting.deposit;
   }
 
   const inputHandler = (event) => {
-    if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
-      const percentage = calculatePercentage(event.target.value);
-      const balance = title != "Withdraw" ? item?.userLPBalance/10**item?.lpDecimals : item?.userBalanceGauge/10**item?.lpDecimals;
-      if (balance >= event.target.value) {
-        setinputAmount(event.target.value);
-        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
-        setSlider(percentage);
-        setError(null);
-      } else {
-        setError(`Can't exceed the max limit`);
-      }
-    }else{
-      setAmount(ethers.BigNumber.from(0));
-      setinputAmount(0);
-    }
+    const value = event.target.value
+    dispatch({
+      type: compoundDialogActionTypes.setInputValue,
+      payload: value
+    })
   };
 
   const handleSliderChange = (value) => {
-    const usedBalance = calculatedBalance(value);
-    const inputAmount = (usedBalance/10**item?.lpDecimals);
-    setSlider(value);
-    setAmount(usedBalance);
-    setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
-    setError(null);
+    dispatch({
+      type: compoundDialogActionTypes.setSliderValue,
+      payload: value
+    })
   };
 
-  const approveHandler = async () => {
-    try {
-      toast(<Toast message={'Checking for approval...'} toastType={'processing'}/>)
-      const result = await approve(item, amount)
-      if (result) {
-        setApproved(true);
+  const handleApproveClick = () => {
+    dispatch({ type: compoundDialogActionTypes.setApproved, payload: approve(item, state.amount) })
+  }
+
+  const handleInfiniteApprovalCheckboxChange = (v) => {
+    dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
+  }
+  const reset = () => {
+    dispatch({
+      type: compoundDialogActionTypes.reset, payload: {
+        title,
+        item,
+        sliderValue: 0,
+        amount: 0,
+        inputAmount: 0,
+        approved: false,
+        isInfiniteApprovalChecked: false,
+        error: null
       }
-    } catch (error) {
-      console.log(error);
-    }
+    })
   }
 
   const renderButton = () => {
@@ -158,7 +158,10 @@ const CompoundDialogs = ({
                 fullWidth
                 disabled={enabledHandler(true)}
                 loading={isTransacting.approve}
-                onClick={approveHandler}
+                onClick={() => {
+                  toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
+                  handleApproveClick()
+                }}
               >
                 Approve
               </ContainedButton>
@@ -171,9 +174,9 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(false)}
                 loading={isTransacting.deposit}
                 onClick={() => {
-                    toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'}/>)
-                    deposit(item, amount)
-                  }
+                  toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />)
+                  deposit(item, state.amount)
+                }
                 }
               >
                 Deposit
@@ -185,19 +188,19 @@ const CompoundDialogs = ({
       case 'Withdraw': {
         return (
           <Grid item xs={12}>
-              <ContainedButton
-                className={clsx(classes.button)}
-                disableElevation
-                disabled={amount==0}
-                loading={isTransacting.withdraw}
-                onClick={() => {
-                  toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-                  withdraw(item, amount)
-                }}
-              >
-                Withdraw
-              </ContainedButton>
-            </Grid>
+            <ContainedButton
+              className={clsx(classes.button)}
+              disableElevation
+              disabled={state.amount == 0}
+              loading={isTransacting.withdraw}
+              onClick={() => {
+                toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
+                withdraw(item, state.amount)
+              }}
+            >
+              Withdraw
+            </ContainedButton>
+          </Grid>
         )
       }
       default:
@@ -210,29 +213,40 @@ const CompoundDialogs = ({
       open={open}
       title={title}
       onClose={() => handleClose()}
+
       dialogClass={classes.dialog}
       dialogTitleClass={classes.dialogTitle}
       titleTextClass={classes.dialogTitleText}
       closeIconClass={classes.dialogCloseIcon}
     >
       <Typography variant='subtitle2'>Select token to convert</Typography>
-      <div className={classes.container}>
+      <div className={classes.container} >
         <Details
           item={item}
           poolList={poolList}
           title={title}
-          amount={inputAmount}
+
+          amount={state.inputAmount}
+          onTokenChange={reset}
           inputHandler={inputHandler}
-          error={error}
+          error={state.error}
         />
 
-        <CompoundSlider value={slider} onChange={handleSliderChange} />
+        <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
         <CompoundInfo pool={pool} />
+        <SnowCheckbox
+          className={classes.mt1}
+          label="Infinite Approval"
+          isChecked={state.isInfiniteApprovalChecked}
+          onChange={handleInfiniteApprovalCheckboxChange}
+        />
         <div className={classes.buttonContainer}>
           {renderButton()}
         </div>
       </div>
-      <SnowStepBox transactionStatus={transactionStatus} title={title}/>
+      <div className={classes.mt1}>
+        <SnowStepBox transactionStatus={transactionStatus} title={title} />
+      </div>
     </SnowDialog>
   );
 };
