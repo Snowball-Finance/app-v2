@@ -19,7 +19,7 @@ import { SnowCheckbox } from 'components/UI/Checkbox';
 const useStyles = makeStyles((theme) => ({
   dialog: {
     minWidth: 200,
-    width: 420,
+    width: 510,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
     },
@@ -74,20 +74,18 @@ const CompoundDialogs = ({
   handleClose,
 }) => {
   const classes = useStyles();
-  // i will need the pool to extract the token infos
+
   const [state, dispatch] = useReducer(compoundDialogReducer, {
     title,
-    userData,
+    item,
     sliderValue: 0,
     amount: 0,
-
     inputAmount: 0,
-    selectedToken: pool.token0,
     approved: false,
     isInfiniteApprovalChecked: false,
     error: null
   })
-  console.log(userData)
+
   const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
   useEffect(() => {
@@ -111,7 +109,7 @@ const CompoundDialogs = ({
       isTransacting.approve || isTransacting.deposit;
   }
 
-  const handleInputChange = (event) => {
+  const inputHandler = (event) => {
     const value = event.target.value
     dispatch({
       type: compoundDialogActionTypes.setInputValue,
@@ -151,18 +149,27 @@ const CompoundDialogs = ({
     })
   }
 
-  useEffect(() => {
-    dispatch({ type: compoundDialogActionTypes.setUserData, payload: userData })
-    return () => {
+  const handleApproveClick = () => {
+    dispatch({ type: compoundDialogActionTypes.setApproved, payload: approve(item, state.amount) })
+  }
 
-    }
-  }, [userData])
-
-  // useEffect(() => {
-  //   return () => {
-
-  //   }
-  // }, [pool])
+  const handleInfiniteApprovalCheckboxChange = (v) => {
+    dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
+  }
+  const reset = () => {
+    dispatch({
+      type: compoundDialogActionTypes.reset, payload: {
+        title,
+        item,
+        sliderValue: 0,
+        amount: 0,
+        inputAmount: 0,
+        approved: false,
+        isInfiniteApprovalChecked: false,
+        error: null
+      }
+    })
+  }
 
   const renderButton = () => {
     switch (title) {
@@ -176,6 +183,7 @@ const CompoundDialogs = ({
                 fullWidth
                 disabled={enabledHandler(true)}
                 loading={isTransacting.approve}
+                onClick={approveHandler}
                 onClick={() => {
                   toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
                   handleApproveClick()
@@ -193,7 +201,7 @@ const CompoundDialogs = ({
                 loading={isTransacting.deposit}
                 onClick={() => {
                   toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />)
-                  deposit(userData, state.amount)
+                  deposit(item, state.amount)
                 }
                 }
               >
@@ -213,7 +221,7 @@ const CompoundDialogs = ({
               loading={isTransacting.withdraw}
               onClick={() => {
                 toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-                withdraw(userData, state.amount)
+                withdraw(item, state.amount)
               }}
             >
               Withdraw
@@ -238,23 +246,33 @@ const CompoundDialogs = ({
       closeIconClass={classes.dialogCloseIcon}
     >
       <Typography variant='subtitle2'>Select token to convert</Typography>
-      <div className={classes.container}>
+      <div className={classes.container} >
         <Details
           item={item}
           poolList={poolList}
           title={title}
-          amount={inputAmount}
+
+          amount={state.inputAmount}
+          onTokenChange={reset}
           inputHandler={inputHandler}
-          error={error}
+          error={state.error}
         />
 
-        <CompoundSlider value={slider} onChange={handleSliderChange} />
+        <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
         <CompoundInfo pool={pool} />
+        <SnowCheckbox
+          className={classes.mt1}
+          label="Infinite Approval"
+          isChecked={state.isInfiniteApprovalChecked}
+          onChange={handleInfiniteApprovalCheckboxChange}
+        />
         <div className={classes.buttonContainer}>
           {renderButton()}
         </div>
       </div>
-      <SnowStepBox transactionStatus={transactionStatus} title={title}/>
+      <div className={classes.mt1}>
+        <SnowStepBox transactionStatus={transactionStatus} title={title} />
+      </div>
     </SnowDialog>
   );
 };

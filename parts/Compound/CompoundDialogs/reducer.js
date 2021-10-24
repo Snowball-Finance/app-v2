@@ -7,14 +7,13 @@ export const compoundDialogActionTypes = {
     setInputValue: 'setInputValue',
     setApproved: 'setApproved',
     setInfiniteApprovalCheckboxValue: 'setInfiniteApprovalCheckboxValue',
-    setUserData: 'setUserData',
     reset: 'reset',
 
 }
 
 export const compoundDialogReducer = (state, action) => {
     const newState = { ...state }
-    const { title, userData } = newState
+    const { title, item } = newState
 
 
     switch (action.type) {
@@ -22,22 +21,18 @@ export const compoundDialogReducer = (state, action) => {
         case compoundDialogActionTypes.reset: {
             return { ...action.payload }
         }
+            break
+
+
         case compoundDialogActionTypes.setInfiniteApprovalCheckboxValue: {
             newState.isInfiniteApprovalChecked = action.payload
         }
             break
-        case compoundDialogActionTypes.setUserData: {
-            newState.userData = action.payload
-        }
-            break
-        case compoundDialogActionTypes.setApproved: {
-            newState.approved = action.payload
-        }
-            break
+
         case compoundDialogActionTypes.setSliderValue: {
             const value = action.payload
-            const usedBalance = calculatedBalance({ userData, title, value });
-            const inputAmount = (usedBalance / 10 ** userData?.lpDecimals);
+            const usedBalance = calculatedBalance({ item, title, value });
+            const inputAmount = (usedBalance / 10 ** item?.lpDecimals);
 
             newState.amount = usedBalance
             newState.inputAmount = inputAmount > 1e-6 ? inputAmount : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 })
@@ -49,8 +44,8 @@ export const compoundDialogReducer = (state, action) => {
         case compoundDialogActionTypes.setInputValue: {
             const value = action.payload
             if (value > 0 && !Object.is(NaN, value)) {
-                const percentage = calculatePercentage({ amount: value, userData, title });
-                const balance = title != "Withdraw" ? userData?.userLPBalance / 10 ** userData?.lpDecimals : userData?.userBalanceGauge / 10 ** userData?.lpDecimals;
+                const percentage = calculatePercentage({ amount: value, item, title });
+                const balance = title != "Withdraw" ? item?.userLPBalance / 10 ** item?.lpDecimals : item?.userBalanceGauge / 10 ** item?.lpDecimals;
                 if (balance >= value) {
                     newState.inputAmount = value
                     newState.amount = ethers.utils.parseUnits(roundDown(value).toString(), 18)
