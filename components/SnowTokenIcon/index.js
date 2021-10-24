@@ -26,7 +26,6 @@ const SnowTokenIcon = ({
   className,
 }) => {
   const classes = useStyles({ size });
-
   return (
     <div className={clsx(classes.tokenImage, className)}>
       <Image
