@@ -1,12 +1,13 @@
 import dynamic from 'next/dynamic'
 import React, { memo, useState, useRef, useEffect, useCallback } from 'react';
 import Loading from 'components/Skeletons/pool';
+import Skeleton from 'components/Skeletons/CompoundAndEarn'
 const ListItem = dynamic(() => import('./ListItem'), { loading: () => <Loading /> })
 import { Grid } from '@material-ui/core';
 
 const ITEMS_PER_PAGE = 10;
 
-const List = ({ pools, modal, setModal, firstLoad }) => {
+const List = ({ pools, modal, setModal }) => {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [initialLoad, setinitialLoad] = useState(true)
@@ -14,7 +15,6 @@ const List = ({ pools, modal, setModal, firstLoad }) => {
   const [page, setPage] = useState(0)
   const maxPage = Math.ceil(pools.length / ITEMS_PER_PAGE)
   const contentRef = useRef(null)
-  const [reset, setReset] = useState(firstLoad)
 
   const isBottom = useCallback((ref) => {
     if (!ref.current) return false;
@@ -28,7 +28,7 @@ const List = ({ pools, modal, setModal, firstLoad }) => {
     setItems([...items, ...nexItems])
     setPage(next)
     setLoading(false)
-  }, [maxPage, page, items, pools, setPage])
+  }, [maxPage, page, items, setPage])
 
   useEffect(()=> {
     if(initialLoad) {
@@ -40,7 +40,7 @@ const List = ({ pools, modal, setModal, firstLoad }) => {
   useEffect(() => {
     const onScroll = () => {
       if (!loading && hasMore && isBottom(contentRef)) {
-        loadMore(false);
+        loadMore();
       }
     }
     document.addEventListener('scroll', onScroll)
@@ -58,12 +58,13 @@ const List = ({ pools, modal, setModal, firstLoad }) => {
             </Grid>
           ))
           }
-          {loading && <Loading />}
+
         </Grid>
+        {hasMore && <Skeleton/>}
       </div>
 
     </>
   )
 }
 
-export default memo(List)
+export default List
