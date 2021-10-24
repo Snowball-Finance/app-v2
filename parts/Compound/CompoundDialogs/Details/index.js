@@ -1,15 +1,17 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
 import SnowPairsIcon from 'components/SnowPairsIcon';
-import SnowTextField from 'components/UI/TextFields/SnowTextField';
+import Selects from 'components/UI/Selects';
 
+import SnowTextField from 'components/UI/TextFields/SnowTextField';
+ 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'grid',
     gridTemplateColumns: '4fr 6fr',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: theme.spacing(1),
     border: `1px solid ${theme.custom.palette.border}`,
     borderRadius: 7,
@@ -51,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
   pairText: {
     textAlign: 'center',
   },
+  select: {
+    boxShadow: theme.custom.utils.boxShadow,
+  },
 }));
 
 const Details = ({
@@ -59,19 +64,42 @@ const Details = ({
   title,
   amount,
   error,
-  inputHandler
+  inputHandler,
+  onTokenChange
+
 }) => {
   const classes = useStyles();
-  const token0 = item.token0.address;
-  const token1 = item.token1.address;
-  const token2 = item.token2.address;
-  const token3 = item.token3.address;
+  // all the tokens, may need some modification if there are more token than 4
+  const rawTokens = [item.token0, item.token1, item.token2, item.token3]
+  // extract valid tokens
+  const tokens = rawTokens.filter((item) => item.address)
+  //create options for selects component
+  const options = tokens.map((item) => {
+    return {
+      iconComponent: <SnowPairsIcon pairsIcon={[item.address]} size={32} />,
+      label: item.name,
+      value: item.symbol,
+    }
+  })
+  //first token is selected by default
+  const [selectedToken, setSelectedToken] = useState(tokens[0])
+  // set the selected token and pass it to outside world if possible
+  const handleSelectChange = (e) => {
+    const value = e.target.value
+    const token = tokens.filter((item) => item.symbol === value)[0]
+    setSelectedToken(token)
+    onTokenChange && onTokenChange(token)
+  }
 
   return (
     <div className={classes.container}>
       <div className={classes.tokenSelect}>
-        <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={32} />
-        <Typography className={classes.tokenLabel} variant='subtitle2'>{item.name}</Typography>
+        <Selects
+          className={classes.select}
+          value={selectedToken.symbol}
+          {...{ options }}
+          onChange={handleSelectChange}
+        />
       </div>
       <div className={classes.inputContainer}>
         <SnowTextField
@@ -83,12 +111,12 @@ const Details = ({
           onChange={inputHandler}
         />
         {title != "Withdraw" ? <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userLPBalance / 10**item.lpDecimals).toLocaleString(
+          Available: {(item.userLPBalance / 10 ** item.lpDecimals).toLocaleString(
             undefined, { maximumSignificantDigits: 18 })} {item.symbol}
         </Typography> : <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userBalanceGauge / 10**item.lpDecimals).toLocaleString(
+          Available: {(item.userBalanceGauge / 10 ** item.lpDecimals).toLocaleString(
             undefined, { maximumSignificantDigits: 18 })} {item.symbol}
-        </Typography> }
+        </Typography>}
       </div>
     </div>
   );
