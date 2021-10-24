@@ -36,7 +36,7 @@ const ListItem = ({
   const [expanded, setExpanded] = useState(false);
   const [action, setAction] = useState({actionType:'Get_Token'});
   const { account } = useWeb3React();
-  const {loading, getBalanceInfoSinglePool, isTransacting 
+  const {loading, getBalanceInfoSinglePool, isTransacting
     , userPools } = useCompoundAndEarnContract();
 
   useEffect(()=>{
@@ -96,9 +96,10 @@ const ListItem = ({
       }
     }
     addTimer();
+    return () => setTimerRefresh(clearInterval(timerRefresh))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[expanded]);
-  
+
   useEffect(()=>{
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
@@ -109,12 +110,12 @@ const ListItem = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[pool,userPools]);
-  
+
   useEffect(()=> {
     const evalPool = userData ? userData : pool;
     let actionType,func;
     if(pool.token0){
-      const arrayAction = getProperAction(evalPool, setModal, 
+      const arrayAction = getProperAction(evalPool, setModal,
         evalPool.userLPBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
       func = arrayAction[1];
@@ -173,7 +174,7 @@ const ListItem = ({
             disabled={action?.actionType !== 'Details' && pool.deprecated}
             setUserData={setUserData}
             item={pool}
-          />           
+          />
         }
         summary={
           <DetailItem
