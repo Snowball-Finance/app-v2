@@ -7,6 +7,7 @@ export const compoundDialogActionTypes = {
     setInputValue: 'setInputValue',
     setApproved: 'setApproved',
     setInfiniteApprovalCheckboxValue: 'setInfiniteApprovalCheckboxValue',
+    setItem: 'setItem',
     reset: 'reset',
 
 }
@@ -21,14 +22,14 @@ export const compoundDialogReducer = (state, action) => {
         case compoundDialogActionTypes.reset: {
             return { ...action.payload }
         }
-            break
-
-
         case compoundDialogActionTypes.setInfiniteApprovalCheckboxValue: {
             newState.isInfiniteApprovalChecked = action.payload
         }
             break
-
+        case compoundDialogActionTypes.setItem: {
+            newState.item = action.payload
+        }
+            break
         case compoundDialogActionTypes.setSliderValue: {
             const value = action.payload
             const usedBalance = calculatedBalance({ item, title, value });
