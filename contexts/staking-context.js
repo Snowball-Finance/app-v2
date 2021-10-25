@@ -13,7 +13,7 @@ import SNOWBALL_ABI from "libs/abis/snowball.json";
 import SNOWCONE_ABI from "libs/abis/snowcone.json";
 import FEE_DISTRIBUTOR_ABI from "libs/abis/fee-distributor.json";
 import { usePrices } from "contexts/price-context";
-import { useAPIContext } from "./api-context";
+import { useLastSnowballInfo } from "./api-context";
 import { useProvider } from "./provider-context";
 import Toast from "components/Toast";
 import { getMultiContractData } from "libs/services/multicall";
@@ -25,9 +25,8 @@ export function StakingContractProvider({ children }) {
   const { provider } = useProvider();
   const { library, account } = useWeb3React();
   const { prices } = usePrices();
-  const { getLastSnowballInfo } = useAPIContext();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } =
-    getLastSnowballInfo();
+    useLastSnowballInfo();
 
   const [loading, setLoading] = useState(false);
   const [gauges, setGauges] = useState([]);

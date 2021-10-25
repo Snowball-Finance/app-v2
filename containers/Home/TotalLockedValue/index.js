@@ -10,7 +10,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 import { DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH } from 'utils/constants/image-paths';
 import DashboardTVLSkeletons from 'components/Skeletons/DashboardTVL';
-import { useAPIContext } from 'contexts/api-context';
+import { useLastSnowballInfo } from 'contexts/api-context';
 import { formatNumber } from 'utils/helpers/format';
 
 const BorderLinearProgress = withStyles((theme) => ({
@@ -62,8 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TotalLockedValue = () => {
   const classes = useStyles();
-  const { getLastSnowballInfo } = useAPIContext();
-  const snowballTVLQuery = getLastSnowballInfo();
+  const snowballTVLQuery = useLastSnowballInfo();
 
   if (snowballTVLQuery.error) {
     return <div>Something went wrong...</div>;

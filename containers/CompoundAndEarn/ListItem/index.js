@@ -36,7 +36,7 @@ const ListItem = ({
   const [expanded, setExpanded] = useState(false);
   const [action, setAction] = useState({actionType:'Get_Token'});
   const { account } = useWeb3React();
-  const {loading, getBalanceInfoSinglePool, isTransacting 
+  const {loading, getBalanceInfoSinglePool, isTransacting
     , userPools } = useCompoundAndEarnContract();
 
   useEffect(()=>{
@@ -95,7 +95,7 @@ const ListItem = ({
     addTimer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[expanded]);
-  
+
   useEffect(()=>{
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
@@ -106,12 +106,12 @@ const ListItem = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[pool,userPools]);
-  
+
   useEffect(()=> {
     const evalPool = userData ? userData : pool;
     let actionType,func;
     if(pool.token0){
-      const arrayAction = getProperAction(evalPool, setModal, 
+      const arrayAction = getProperAction(evalPool, setModal,
         evalPool.userLPBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
       func = arrayAction[1];
@@ -162,23 +162,20 @@ const ListItem = ({
         key={pool.address}
         className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
         onChanged={onChangedExpanded}
-        expandMoreIcon={
+      >
+        <CustomAccordion.ExpandMoreIcon>
           <CompoundActionButton
             type={action?.actionType}
             action={action?.func}
             disabled={action?.actionType !== 'Details' && pool.deprecated}
             setUserData={setUserData}
             item={pool}
-          />           
-        }
-        summary={
-          <DetailItem
-            item={pool}
-            userBoost={userBoost}
-            totalAPY={totalAPY}
           />
-        }
-        details={
+        </CustomAccordion.ExpandMoreIcon>
+        <CustomAccordion.Summary>
+          <DetailItem item={pool} userBoost={userBoost} totalAPY={totalAPY} />
+        </CustomAccordion.Summary>
+        <CustomAccordion.Details>
           <CompoundListDetail
             item={pool}
             userData={userData}
@@ -188,8 +185,10 @@ const ListItem = ({
             userBoost={userBoost}
             totalAPY={totalAPY}
           />
-        }
-      />
+        </CustomAccordion.Details>
+      </CustomAccordion>
+
+
       {modal.open && pool.address === modal.address && (
         <CompoundDialogs
           open={modal.open}

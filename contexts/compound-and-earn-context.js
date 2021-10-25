@@ -16,7 +16,7 @@ import SNOWGLOBE_ABI from "libs/abis/snowglobe.json";
 import GAUGE_ABI from "libs/abis/gauge.json";
 import { usePopup } from "contexts/popup-context";
 import { useContracts } from "contexts/contract-context";
-import { useAPIContext } from "contexts/api-context";
+import { useLastSnowballInfo, useAPIContext } from "contexts/api-context";
 import { isEmpty, getBalanceWithRetry } from "utils/helpers/utility";
 import MESSAGES from "utils/constants/messages";
 import ANIMATIONS from "utils/constants/animate-icons";
@@ -39,10 +39,10 @@ export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } =
     useContracts();
-  const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
+  const { getDeprecatedContracts } = useAPIContext();
   const { provider } = useProvider();
   const { prices } = usePrices();
-  const snowballInfoQuery = getLastSnowballInfo();
+  const snowballInfoQuery = useLastSnowballInfo();
   const deprecatedContractsQuery = getDeprecatedContracts();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } =
     snowballInfoQuery;

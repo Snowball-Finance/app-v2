@@ -9,6 +9,8 @@ import { createContext, useContext, useMemo, useCallback } from "react";
 
 const APIContext = createContext(null);
 
+export const useLastSnowballInfo = () => useQuery(LAST_SNOWBALL_INFO);
+
 export function APIProvider({ children }) {
   const getLastSnowballInfo = useCallback(
     () => useQuery(LAST_SNOWBALL_INFO),

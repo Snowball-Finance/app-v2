@@ -14,15 +14,15 @@ import UpgradeSteps from './UpgradeSteps'
 import { isEmpty } from 'utils/helpers/utility'
 import { Typography } from '@material-ui/core'
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
-import { useAPIContext } from 'contexts/api-context'
+import { useLastSnowballInfo } from 'contexts/api-context'
 import ANIMATIONS from 'utils/constants/animate-icons'
 
 const GeneralAlerts = () => {
   const { account, library } = useWeb3React()
   const { gauges } = useContracts()
   const { setPopUp } = usePopup()
-  const { getLastSnowballInfo } = useAPIContext()
-  const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = getLastSnowballInfo()
+  const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } =
+    useLastSnowballInfo();
 
   //upgrade gaugesv2
   const [upgradeGauge, setUpgradeGauge] = useState({upgrade:false,checked:false})
@@ -41,7 +41,7 @@ const GeneralAlerts = () => {
   )
 
   useEffect(() => {
-    if(!asked && account && userPools.length > 0 && gauges.length > 0 
+    if(!asked && account && userPools.length > 0 && gauges.length > 0
       && (upgradeGauge.checked && !(upgradeGauge.upgrade))){
         const checkUserPools = async () =>{
           if (userPools.length > 0) {
@@ -67,7 +67,7 @@ const GeneralAlerts = () => {
         <>
           <Typography>
            Some of your investments are compounding, but not receiving the SNOB
-                    rewards you&apos;re entitled to. Click below to resolve. 
+                    rewards you&apos;re entitled to. Click below to resolve.
           </Typography>
           <a target='_blank' rel="noreferrer" href="https://snowballs.gitbook.io/snowball-docs/products/compounding#the-benefits-of-compounding-with-snowball">
               Read More.

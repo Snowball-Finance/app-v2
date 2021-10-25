@@ -37,7 +37,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const dexTokenName = item.symbol == "S4D" ? "SNOB" : item.symbol;
 
   return (
-    <Grid 
+    <Grid
       container
       direction="column"
       display="flex"

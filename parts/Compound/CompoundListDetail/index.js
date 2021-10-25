@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal, 
+const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
   userData, setUserData }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -79,7 +79,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
 
   return (
     <div className={classes.root}>
-      <Grid 
+      <Grid
         className={classes.details}
         container
         direction="row"
@@ -106,7 +106,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           <Total item={item} userData={userData} />
         </Grid>
       </Grid>
-      <Grid 
+      <Grid
         className={classes.button}
         container
         direction="row"
@@ -114,12 +114,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         alignItems="flex-start"
         spacing={2}
       >
-        {!item.deprecatedPool && action?.actionType && 
+        {!item.deprecatedPool && action?.actionType &&
         <Grid item xs={12} lg={4}>
-          <CompoundActionButton 
-            type={action.actionType} 
-            action={action.func} 
-            endIcon={false} 
+          <CompoundActionButton
+            type={action.actionType}
+            action={action.func}
+            endIcon={false}
             disabled={item.deprecated}
             fullWidth={isSm ? true : false}
           />
@@ -149,7 +149,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
               toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
               claim(item).then(()=>{
                 if(!item.deprecatedPool){
-                  getBalanceInfoSinglePool(item.address).then((userData) => 
+                  getBalanceInfoSinglePool(item.address).then((userData) =>
                   setUserData(userData))
                 }
               })
