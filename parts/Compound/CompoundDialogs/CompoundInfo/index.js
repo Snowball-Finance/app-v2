@@ -69,6 +69,7 @@ const CompoundInfo = ({
 
 
   const halfAmount = amount / 2;
+
   const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField], amount: halfAmount * token[priceField] }))
 
   return (
