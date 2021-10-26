@@ -70,17 +70,18 @@ const CompoundDialogs = ({
   title,
   pool,
   poolList,
-  item,
+  userData,
   handleClose,
 }) => {
   const classes = useStyles();
-
+  // i will need the pool to extract the token infos
   const [state, dispatch] = useReducer(compoundDialogReducer, {
     title,
-    item,
+    userData,
     sliderValue: 0,
     amount: 0,
     inputAmount: 0,
+    selectedToken: pool.token0,
     approved: false,
     isInfiniteApprovalChecked: false,
     error: null
@@ -109,7 +110,7 @@ const CompoundDialogs = ({
       isTransacting.approve || isTransacting.deposit;
   }
 
-  const inputHandler = (event) => {
+  const handleInputChange = (event) => {
     const value = event.target.value
     dispatch({
       type: compoundDialogActionTypes.setInputValue,
@@ -150,7 +151,7 @@ const CompoundDialogs = ({
   }
 
   const handleApproveClick = () => {
-    dispatch({ type: compoundDialogActionTypes.setApproved, payload: approve(item, state.amount) })
+    dispatch({ type: compoundDialogActionTypes.setApproved, payload: approve(userData, state.amount) })
   }
 
   const handleInfiniteApprovalCheckboxChange = (v) => {
@@ -158,14 +159,15 @@ const CompoundDialogs = ({
   }
 
 
-  const reset = () => {
+  const handleTokenChange = (token) => {
     dispatch({
       type: compoundDialogActionTypes.reset, payload: {
         title,
-        item,
+        userData,
         sliderValue: 0,
         amount: 0,
         inputAmount: 0,
+        selectedToken: token,
         approved: false,
         isInfiniteApprovalChecked: false,
         error: null
@@ -173,13 +175,18 @@ const CompoundDialogs = ({
     })
   }
 
+  useEffect(() => {
+    dispatch({ type: compoundDialogActionTypes.setUserData, payload: userData })
+    return () => {
+
+    }
+  }, [userData])
+
   // useEffect(() => {
-  //   dispatch({ type: compoundDialogActionTypes.setItem, payload: item })
   //   return () => {
 
   //   }
-  // }, [item])
-
+  // }, [pool])
   const renderButton = () => {
     switch (title) {
       case 'Deposit': {
@@ -210,7 +217,7 @@ const CompoundDialogs = ({
                 loading={isTransacting.deposit}
                 onClick={() => {
                   toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />)
-                  deposit(item, state.amount)
+                  deposit(userData, state.amount)
                 }
                 }
               >
@@ -230,7 +237,7 @@ const CompoundDialogs = ({
               loading={isTransacting.withdraw}
               onClick={() => {
                 toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-                withdraw(item, state.amount)
+                withdraw(userData, state.amount)
               }}
             >
               Withdraw
@@ -257,13 +264,15 @@ const CompoundDialogs = ({
       <Typography variant='subtitle2'>Select token to convert</Typography>
       <div className={classes.container} >
         <Details
-          item={item}
-          poolList={poolList}
-          title={title}
-
+          {...{
+            userData,
+            poolList,
+            title,
+            pool
+          }}
           amount={state.inputAmount}
-          onTokenChange={reset}
-          inputHandler={inputHandler}
+          onTokenChange={handleTokenChange}
+          inputHandler={handleInputChange}
           error={state.error}
         />
 
