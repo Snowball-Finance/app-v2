@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-import clsx from 'clsx'
+import clsx from 'clsx';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -13,15 +13,15 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
-import { floatToBN } from 'utils/helpers/format'
+import { floatToBN } from 'utils/helpers/format';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   dialog: {
     minWidth: 200,
     width: 420,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-    }
+    },
   },
   dialogTitle: {
     background: 'none',
@@ -51,50 +51,47 @@ const useStyles = makeStyles((theme) => ({
   },
   greyButton: {
     background: '#BDBDBD',
-  }
+  },
 }));
 
-const CompoundDialogs = ({
-  open,
-  title,
-  item,
-  handleClose,
-}) => {
+const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
   const [inputAmount, setinputAmount] = useState(0);
   const [error, setError] = useState(null);
- 
+
   const { isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
-  useEffect(() =>{
-    if(!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw){
+  useEffect(() => {
+    if (!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw) {
       toast.dismiss();
     }
-  }),[isTransacting];
+  }),
+    [isTransacting];
 
-  useEffect(() =>{
-    if(transactionStatus.depositStep === 2){
+  useEffect(() => {
+    if (transactionStatus.depositStep === 2) {
       handleClose();
     }
-    if(transactionStatus.withdrawStep === 3){
+    if (transactionStatus.withdrawStep === 3) {
       handleClose();
     }
-  }),[transactionStatus];
+  }),
+    [transactionStatus];
 
-  const calculatePercentage = (amount) => {
-    return amount / (item?.userBalanceGauge / 10**item?.lpDecimals) * 100
+  const calculatePercentage = amount => {
+    return (amount / (item?.userBalanceGauge / 10 ** item?.lpDecimals)) * 100;
   };
 
-  const calculatedBalance = (value) => {
+  const calculatedBalance = value => {
     return item?.userBalanceGauge.mul(value).div(100);
   };
 
-  const inputHandler = (event) => {
-    if (event.target.value > 0 && !Object.is(NaN,event.target.value)) {
+  const inputHandler = event => {
+    if (event.target.value > 0 && !Object.is(NaN, event.target.value)) {
       const percentage = calculatePercentage(event.target.value);
-      const balance = item?.userBalanceGauge / 10**item?.lpDecimals;
+      const balance = item?.userBalanceGauge / 10 ** item?.lpDecimals;
       if (balance >= event.target.value) {
         setinputAmount(event.target.value);
         setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
@@ -109,20 +106,22 @@ const CompoundDialogs = ({
     }
   };
 
-  const handleSliderChange = (value) => {
+  const handleSliderChange = value => {
     const usedBalance = calculatedBalance(value);
-    const inputAmount = (usedBalance / 10**item?.lpDecimals);
+    const inputAmount = usedBalance / 10 ** item?.lpDecimals;
     setSlider(value);
     setAmount(usedBalance);
-    setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
+    setinputAmount(
+      inputAmount > 1e-6 ? inputAmount : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 }),
+    );
     setError(null);
   };
 
   const withdrawHandler = () => {
-    toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-    const withdrawAmount = floatToBN((amount / item.snowglobeRatio));
+    toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
+    const withdrawAmount = floatToBN(amount / item.snowglobeRatio);
     withdraw(item, withdrawAmount);
-  }
+  };
 
   return (
     <SnowDialog
@@ -132,16 +131,9 @@ const CompoundDialogs = ({
       dialogClass={classes.dialog}
       dialogTitleClass={classes.dialogTitle}
       titleTextClass={classes.dialogTitleText}
-      closeIconClass={classes.dialogCloseIcon}
-    >
+      closeIconClass={classes.dialogCloseIcon}>
       <div className={classes.container}>
-        <Details
-          item={item}
-          title={title}
-          amount={inputAmount}
-          inputHandler={inputHandler}
-          error={error}
-        />
+        <Details item={item} title={title} amount={inputAmount} inputHandler={inputHandler} error={error} />
 
         <CompoundSlider value={slider} onChange={handleSliderChange} />
         <Grid container spacing={1} className={classes.buttonContainer}>
@@ -149,18 +141,17 @@ const CompoundDialogs = ({
             <ContainedButton
               className={clsx(classes.button)}
               disableElevation
-              disabled={amount==0}
+              disabled={amount == 0}
               loading={isTransacting.withdraw}
-              onClick={withdrawHandler}
-            >
+              onClick={withdrawHandler}>
               Withdraw
             </ContainedButton>
           </Grid>
         </Grid>
       </div>
-      {<SnowStepBox transactionStatus={transactionStatus} title={title}/>}
+      <SnowStepBox transactionStatus={transactionStatus} title={title} />
     </SnowDialog>
   );
 };
 
-export default memo(CompoundDialogs);
+export default memo(CompoundWithdrawDialogs);
