@@ -80,6 +80,7 @@ const CompoundDialogs = ({
     userData,
     sliderValue: 0,
     amount: 0,
+
     inputAmount: 0,
     selectedToken: pool.token0,
     approved: false,
@@ -187,6 +188,7 @@ const CompoundDialogs = ({
 
   //   }
   // }, [pool])
+
   const renderButton = () => {
     switch (title) {
       case 'Deposit': {
@@ -277,7 +279,7 @@ const CompoundDialogs = ({
         />
 
         <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-        <CompoundInfo pool={pool} />
+        <CompoundInfo pool={pool} amount={state.inputAmount} activeToken={state.selectedToken} />
         <SnowCheckbox
           className={classes.mt1}
           label="Infinite Approval"
