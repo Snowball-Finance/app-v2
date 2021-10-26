@@ -30,6 +30,10 @@ export const compoundDialogReducer = (state, action) => {
             newState.userData = action.payload
         }
             break
+        case compoundDialogActionTypes.setApproved: {
+            newState.approved = action.payload
+        }
+            break
         case compoundDialogActionTypes.setSliderValue: {
             const value = action.payload
             const usedBalance = calculatedBalance({ userData, title, value });
