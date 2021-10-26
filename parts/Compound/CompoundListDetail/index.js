@@ -7,6 +7,7 @@ import ApyCalculation from './ApyCalculation';
 import SnobApyCalculation from './SnobApyCalculation';
 import Total from './Total';
 import CompoundDialogs from '../CompoundDialogs';
+import CompoundWithdrawDialogs from '../CompoundWithdrawDialogs';
 import getProperAction from 'utils/helpers/getProperAction';
 import CompoundActionButton from '../CompoundActionButton';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
@@ -77,7 +78,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
     setWithdraw(false);
   }
 
-  // const { setTransactionStatus } = useCompoundAndEarnContract();
+  const { setTransactionStatus } = useCompoundAndEarnContract();
 
   return (
     <div className={classes.root}>
@@ -165,7 +166,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
       )}
 
       {withdraw && (
-        <CompoundDialogs
+        <CompoundWithdrawDialogs
           open={withdraw_modal}
           title="Withdraw"
           handleClose={handleWithdraw}

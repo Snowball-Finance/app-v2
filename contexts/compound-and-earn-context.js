@@ -148,7 +148,7 @@ export function CompoundAndEarnProvider({ children }) {
 
     userLPBalance = lpData.balanceOf;
     lpDecimals = lpData.decimals;
-
+    let snowglobeRatio = floatToBN(1, 18);
     switch (item.kind) {
       case 'Snowglobe':
         userBalanceSnowglobe = snowglobeData.balanceOf;
@@ -158,7 +158,7 @@ export function CompoundAndEarnProvider({ children }) {
 
         totalSupply = snowglobeData.totalSupply;
 
-        let snowglobeRatio;
+        
         const snowglobeTotalBalance = snowglobeData.balance;
         if (snowglobeTotalBalance > 0) {
           snowglobeRatio = snowglobeData.getRatio;
@@ -217,7 +217,8 @@ export function CompoundAndEarnProvider({ children }) {
       SNOBValue,
       underlyingTokens,
       userBalanceSnowglobe,
-      userBalanceGauge: gauge ? gauge.staked : 0
+      userBalanceGauge: gauge ? gauge.staked : 0,
+      snowglobeRatio,
     };
 
   }
