@@ -87,7 +87,7 @@ const CompoundDialogs = ({
     isInfiniteApprovalChecked: false,
     error: null
   })
-
+  console.log(userData)
   const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
   useEffect(() => {
