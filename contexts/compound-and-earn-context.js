@@ -118,11 +118,12 @@ export function CompoundAndEarnProvider({ children }) {
       source: pool.source,
       symbol:
         pool.source === 'Trader Joe' ? 'JLP'
+          : pool.source === 'Teddy Cash' ? 'TLP'
           : pool.source === 'Banker Joe' ? 'BLP'
-            : pool.source === 'BENQI' ? 'QLP'
-              : pool.source === 'AAVE' ? 'ALP'
-                : pool.source === 'Pangolin' ? 'PGL'
-                  : 'SNOB',
+          : pool.source === 'BENQI' ? 'QLP'
+          : pool.source === 'AAVE' ? 'ALP'
+          : pool.source === 'Pangolin' ? 'PGL'
+          : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
