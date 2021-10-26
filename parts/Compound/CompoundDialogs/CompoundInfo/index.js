@@ -6,6 +6,7 @@ import Box from '@material-ui/core/Box';
 import ArrowDownIcon from 'components/Icons/ArrowDownIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import SnowTokenIcon from 'components/SnowTokenIcon';
+import { extractValidTokens } from '../utils';
 
 const useStyles = makeStyles((theme) => ({
   downArrow: {
@@ -50,39 +51,52 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundInfo = ({
   pool,
+  activeToken,
   amount = '0.00'
 }) => {
   const classes = useStyles();
-  const tokens = [pool.token0, pool.token1]
-  const [token0, token1] = tokens
-  const { address: address0, name: name0, symbol: symbol0 } = token0
-  const { address: address1, name: name1, symbol: symbol1 } = token1
+  const tokens = extractValidTokens({ obj: pool })
+
+  //extract priceField name
+  let priceField = ''
+  if (tokens[0]) {
+    for (const key in tokens[0]) {
+      if (key.toLowerCase().includes('price')) {
+        priceField = key
+      }
+    }
+  }
+
+
+  const halfAmount = amount / 2;
+  const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField], amount: halfAmount * token[priceField] }))
+
   return (
     <>
       <ArrowDownIcon className={classes.downArrow} />
       <div className={classes.container}>
         <div className={classes.pairLine}>
-          <SnowPairsIcon pairsIcon={[address0, address1]} size={36} />
+          <SnowPairsIcon pairsIcon={tokensWithPriceAndAmount.map(token => token.address)} size={36} />
           <div className={classes.pairInfoStyle}>
             <Typography variant='subtitle1'>To</Typography>
             <Typography variant='subtitle1' className={classes.bold}>
-              {`${symbol0}-${symbol1}`} {pool.symbol}
+              {tokensWithPriceAndAmount.map(token => token.symbol).join('-')} {pool.symbol}
             </Typography>
           </div>
           <Typography className={classes.amountText}>{amount}</Typography>
         </div>
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
-          <Box className={classes.tokenLine}>
-            <SnowTokenIcon token={symbol0} size={20} />
-            <Typography className={classes.pairInfoStyle}>{name0}</Typography>
-            <Typography className={classes.amountText}>0.00</Typography>
-          </Box>
-          <Box className={classes.tokenLine} mb={1}>
-            <SnowTokenIcon token={symbol1} size={20} />
-            <Typography className={classes.pairInfoStyle}>{name1}</Typography>
-            <Typography className={classes.amountText}>0.00</Typography>
-          </Box>
+          {
+            tokensWithPriceAndAmount.map((token, index) => {
+              return (<Box key={index} className={classes.tokenLine} mb={index === tokensWithPriceAndAmount.length - 1 ? 1 : 0}>
+                <SnowTokenIcon token={token.symbol} size={20} />
+                <Typography className={classes.pairInfoStyle}>{token.name}</Typography>
+                <Typography className={classes.amountText}>{token.amount}</Typography>
+              </Box>)
+            })
+          }
+
           <Box className={classes.tokenLine} >
             <Typography>Protocol</Typography>
             <Typography className={classes.bold}>{pool.source}</Typography>
