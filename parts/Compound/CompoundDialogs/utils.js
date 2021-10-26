@@ -9,3 +9,7 @@ export const extractValidTokens = ({ obj }) => {
     // extract valid tokens
     return rawTokens.filter((el) => el.address)
 }
+export const hexToFloat = ({ hex, decimal }) => {
+    return (hex / 10 ** decimal).toLocaleString(
+        undefined, { maximumSignificantDigits: 18 })
+}
