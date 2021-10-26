@@ -131,6 +131,8 @@ const CompoundDialogs = ({
   const handleInfiniteApprovalCheckboxChange = (v) => {
     dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
   }
+
+
   const reset = () => {
     dispatch({
       type: compoundDialogActionTypes.reset, payload: {
@@ -145,6 +147,13 @@ const CompoundDialogs = ({
       }
     })
   }
+
+  // useEffect(() => {
+  //   dispatch({ type: compoundDialogActionTypes.setItem, payload: item })
+  //   return () => {
+
+  //   }
+  // }, [item])
 
   const renderButton = () => {
     switch (title) {
