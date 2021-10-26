@@ -45,32 +45,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal, 
+const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
   userData, setUserData }) => {
   const classes = useStyles();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
     defaultMatches: true,
   });
-  const [action,setAction] = useState({actionType:'Get_Token'});
+  const [action, setAction] = useState({ actionType: 'Get_Token' });
 
   const { withdraw, claim, isTransacting, getBalanceInfoSinglePool } = useCompoundAndEarnContract();
 
-  useEffect(()=>{
+  useEffect(() => {
     const evalPool = userData ? userData : item;
-    if(item.token0){
+    if (item.token0) {
       let actionType, func;
       [actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, 0, true);
-      setAction({actionType,func});
+      setAction({ actionType, func });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userData,item]);
+  }, [userData, item]);
 
   const handleClose = () => {
     setModal({ open: false, title: '' });
   };
-  let dailyAPR = item.dailyAPR > 999999?999999:item.dailyAPR;
-  let yearlyAPY = item.yearlyAPY > 999999?999999:item.yearlyAPY;
+  let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
+  let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 
   const [withdraw_modal, setWithdraw] = useState(false);
   const handleWithdraw = () => {
@@ -81,7 +81,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
 
   return (
     <div className={classes.root}>
-      <Grid 
+      <Grid
         className={classes.details}
         container
         direction="row"
@@ -89,15 +89,15 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
         alignItems="flex-start"
         spacing={2}
       >
-       {!item.deprecatedPool && <Grid item xs={12} lg={4}>
+        {!item.deprecatedPool && <Grid item xs={12} lg={4}>
           <ApyCalculation
             kind={item.kind}
             dailyAPR={dailyAPR}
             yearlyAPY={yearlyAPY}
           />
         </Grid>}
-        <Grid item xs={12} lg={4}>
-          <SnobApyCalculation
+        {!item.deprecatedPool && <Grid item xs={12} lg={4}>
+          <SnobAbyCalculation
             kind={item.kind}
             isDeprecated={item.deprecatedPool}
             snobAPR={item.gaugeInfo?.snobYearlyAPR}
@@ -110,27 +110,29 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           <Total item={item} userData={userData} />
         </Grid>
       </Grid>
-      <div
+      <Grid
         className={classes.button}
       >
-        {!item.deprecatedPool && action?.actionType && 
-          <CompoundActionButton 
-            type={action.actionType} 
-            action={action.func} 
-            endIcon={false} 
-            disabled={item.deprecated}
-            fullWidth={isSm ? true : false}
-          />
-        }
+        {!item.deprecatedPool && action?.actionType &&
+          <Grid item xs={12} lg={4}>
+            <CompoundActionButton
+              type={action.actionType}
+              action={action.func}
+              endIcon={false}
+              disabled={item.deprecated}
+              fullWidth={isSm ? true : false}
+            />
+          </Grid>}
+        <Grid item xs={12} lg={4}>
           <ContainedButton
             disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
             onClick={() => {
-              toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
-              claim(item).then(()=>{
-                if(!item.deprecatedPool){
-                  getBalanceInfoSinglePool(item.address).then((userData) => 
-                  setUserData(userData))
+              toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'} />)
+              claim(item).then(() => {
+                if (!item.deprecatedPool) {
+                  getBalanceInfoSinglePool(item.address).then((userData) =>
+                    setUserData(userData))
                 }
               })
             }}
@@ -155,12 +157,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
           </ContainedButton>
       </div>
 
-      {withdraw && (
+      {withdraw && withdraw_modal && (
         <CompoundDialogs
           open={withdraw_modal}
           title="Withdraw"
           handleClose={handleWithdraw}
-          item={userData}
+          userData={userData}
         />
       )}
     </div>
