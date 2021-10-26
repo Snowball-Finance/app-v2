@@ -8,7 +8,7 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '100%'
+    width: '100%',
   },
 }));
 
@@ -22,21 +22,21 @@ const Accordion = withStyles({
 const AccordionSummary = withStyles((theme) => ({
   root: {
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
-    backgroundColor: theme.palette.background.primary
+    backgroundColor: theme.palette.background.primary,
   },
   expandIcon: {
     transform: 'none !important',
     [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    }
+      width: '100%',
+    },
   },
 }))(MuiAccordionSummary);
 
 const AccordionDetails = withStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.background.primary
+    backgroundColor: theme.palette.background.primary,
   },
 }))(MuiAccordionDetails);
 
@@ -46,13 +46,18 @@ const CustomAccordion = ({
   summary,
   details,
   expandMoreIcon,
-  onChanged
+  onChanged,
+  expanded,
 }) => {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.root, className)} style={style}>
-      <Accordion defaultExpanded={false} onChange={onChanged}>
+      <Accordion
+        defaultExpanded={false}
+        onChange={onChanged}
+        expanded={expanded}
+      >
         <AccordionSummary
           expandIcon={expandMoreIcon || <ExpandMoreIcon />}
           aria-controls="panel1c-content"

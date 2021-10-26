@@ -46,7 +46,7 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
-  const [rowHeight, setRowHeight] = useState(80);
+  const [selectedRowIndexs, setSelectedRowIndexs] = useState([]);
   const cache = useRef(
     new CellMeasurerCache({
       fixedWidth: true,
@@ -112,8 +112,9 @@ const CompoundAndEarn = () => {
   }, [userDeprecatedPools, loadedDeprecated, sortedUserPools]);
 
   useEffect(() => {
-    const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } =
-      snowballInfoQuery;
+    const {
+      data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {},
+    } = snowballInfoQuery;
 
     if (isEmpty(userPools)) {
       let sortedData = [...poolsInfo];
@@ -138,14 +139,6 @@ const CompoundAndEarn = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
-
-  useEffect(() => {
-    if(isSm) {
-      setRowHeight(220);
-    } else {
-      setRowHeight(80);
-    }
-  }, [isSm]);
 
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length
@@ -258,6 +251,31 @@ const CompoundAndEarn = () => {
     setPool(event.target.value);
   };
 
+  const getRowHeight = (params) => {
+    const initialResponsiveHeight = isSm ? 240 : 80;
+    const expandedHeight = isSm ? 520 : 220;
+
+    return selectedRowIndexs.includes(params.index)
+      ? initialResponsiveHeight + expandedHeight
+      : initialResponsiveHeight;
+  };
+
+  const handleRowClick = (index) => {
+    const findSelectedIndex = selectedRowIndexs.findIndex(
+      (item) => item === index
+    );
+    const selectedRowIndexsArray = [...selectedRowIndexs];
+    if (findSelectedIndex > -1) {
+      selectedRowIndexsArray.splice(findSelectedIndex, 1);
+      setSelectedRowIndexs(selectedRowIndexsArray);
+    } else {
+      selectedRowIndexsArray.push(index);
+      setSelectedRowIndexs(selectedRowIndexsArray);
+    }
+    listRef.current.recomputeRowHeights(index);
+    listRef.current.forceUpdateGrid();
+  };
+
   if (snowballInfoQuery.error) {
     return <div>Something went wrong!!</div>;
   }
@@ -311,10 +329,10 @@ const CompoundAndEarn = () => {
                   ref={listRef}
                   width={width}
                   height={height}
-                  rowHeight={rowHeight}
+                  rowHeight={getRowHeight}
                   deferredMeasurementCache={cache.current}
                   rowCount={lastSnowballInfo.length}
-                  overscanRowCount={3}
+                  overscanRowCount={10}
                   rowRenderer={({ key, index, style, parent }) => {
                     const pool = lastSnowballInfo[index];
 
@@ -326,13 +344,19 @@ const CompoundAndEarn = () => {
                         columnIndex={0}
                         rowIndex={index}
                       >
-                        <Grid item xs={12} style={style}>
+                        <Grid
+                          item
+                          xs={12}
+                          style={style}
+                          onClick={() => handleRowClick(index)}
+                        >
                           {(!pool?.deprecatedPool ||
                             !(pool?.withdrew && pool?.claimed)) && (
                             <ListItem
                               pool={pool}
                               modal={modal}
                               setModal={setModal}
+                              isExpanded={selectedRowIndexs.includes(index)}
                             />
                           )}
                         </Grid>
