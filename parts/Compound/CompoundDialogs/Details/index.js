@@ -6,7 +6,7 @@ import SnowPairsIcon from 'components/SnowPairsIcon';
 import Selects from 'components/UI/Selects';
 
 import SnowTextField from 'components/UI/TextFields/SnowTextField';
-import { extractValidTokens } from '../utils';
+import { extractValidTokens, hexToFloat } from '../utils';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
@@ -61,8 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Available = ({ isDeposit, userData, classes }) => {
 	return <Typography variant='caption' className={classes.balanceText}>
-		Available: {(userData[isDeposit ? 'userLPBalance' : 'userBalanceGauge'] / 10 ** userData.lpDecimals).toLocaleString(
-			undefined, { maximumSignificantDigits: 18 })} {userData.symbol}
+		Available: {hexToFloat({ hex: userData[isDeposit ? 'userLPBalance' : 'userBalanceGauge'], decimal: userData.lpDecimals })} {userData.symbol}
 	</Typography>
 }
 
