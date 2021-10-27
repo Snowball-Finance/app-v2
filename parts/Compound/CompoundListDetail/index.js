@@ -143,12 +143,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY , modal, setModal,
             disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
             loading={isTransacting.pageview}
             onClick={() => {
-              //if(item.deprecatedPool){
-              withdraw(item);
-              //}else{
-              // setTransactionStatus({ withdrawStep: 0 });
-              //  setWithdraw(true)
-              //}
+              if (item.deprecatedPool){
+                withdraw(item);
+              } else {
+                setTransactionStatus({ withdrawStep: 0 });
+                setWithdraw(true)
+              }
             }}
             fullWidth={isSm ? true : false}
           >
