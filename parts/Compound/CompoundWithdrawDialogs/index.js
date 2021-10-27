@@ -13,7 +13,6 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
-import { floatToBN } from 'utils/helpers/format';
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -119,8 +118,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
-    const withdrawAmount = floatToBN(amount / item.snowglobeRatio);
-    withdraw(item, withdrawAmount);
+    withdraw(item, amount);
   };
 
   return (
