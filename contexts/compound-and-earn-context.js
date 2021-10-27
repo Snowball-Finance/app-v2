@@ -128,47 +128,33 @@ export function CompoundAndEarnProvider({ children }) {
       const snowglobeInfo = deprecatedData[pool.contractAddresses[0]];
       const gaugeInfo = deprecatedData[pool.contractAddresses[1]];
 
-      let userDeposited = gaugeInfo.balanceOf / 1e18;
-      const balanceInToken = snowglobeInfo.balanceOf / 1e18;
-      if (pool.kind === "Snowglobe") {
-        userDeposited += balanceInToken;
-      }
+    return {
+      address: pool.contractAddresses[0],
+      gaugeInfo: {
+        address: pool.contractAddresses[1]
+      },
+      userBalanceSnowglobe: balanceInToken,
+      name: pool.pair,
+      kind: pool.kind,
+      source: pool.source,
+      symbol:
+        pool.source === 'Trader Joe' ? 'JLP'
+          : pool.source === 'Teddy Cash' ? 'TLP'
+          : pool.source === 'Banker Joe' ? 'BLP'
+          : pool.source === 'BENQI' ? 'QLP'
+          : pool.source === 'AAVE' ? 'ALP'
+          : pool.source === 'Pangolin' ? 'PGL'
+          : 'SNOB',
+      userDepositedLP: userDeposited,
+      SNOBHarvestable: SNOBHarvestable / 1e18,
+      SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
+      claimed: (!SNOBHarvestable > 0),
+      withdrew: (!userDeposited > 0),
+      deprecatedPool: true
+    }
+  }
 
-      const SNOBHarvestable = gaugeInfo.earned;
-      //return if it has nothing deposited
-      if (+userDeposited === 0 && +SNOBHarvestable === 0) {
-        return;
-      }
-
-      return {
-        address: pool.contractAddresses[0],
-        gaugeInfo: {
-          address: pool.contractAddresses[1],
-        },
-        userBalanceSnowglobe: balanceInToken,
-        name: pool.pair,
-        kind: pool.kind,
-        source: pool.source,
-        symbol:
-          pool.source === "Trader Joe"
-            ? "JLP"
-            : pool.source === "Banker Joe"
-            ? "BLP"
-            : pool.source === "BENQI"
-            ? "QLP"
-            : pool.source === "AAVE"
-            ? "ALP"
-            : pool.source === "Pangolin"
-            ? "PGL"
-            : "SNOB",
-        userDepositedLP: userDeposited,
-        SNOBHarvestable: SNOBHarvestable / 1e18,
-        SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
-        claimed: !SNOBHarvestable > 0,
-        withdrew: !userDeposited > 0,
-        deprecatedPool: true,
-      };
-    },
+    ,
     [prices]
   );
 
@@ -457,34 +443,26 @@ export function CompoundAndEarnProvider({ children }) {
         console.log(error);
       }
       setIsTransacting({ approve: false });
-    },
-    [_approve, gauges, setIsTransacting, setPopUp, library, account]
-  );
+      return true;
 
-  const deposit = useCallback(
-    async (item, amount, onlyGauge = false) => {
-      if (!account) {
-        setPopUp({
-          title: "Network Error",
-          icon: ANIMATIONS.WARNING.VALUE,
-          text: MESSAGES.METAMASK_NOT_CONNECTED,
-        });
-        return false;
-      }
+  }, [setIsTransacting,setPopUp ]);
 
-      setIsTransacting({ deposit: true });
-      try {
-        if (item.kind === "Snowglobe") {
-          const lpContract = new ethers.Contract(
-            item.lpAddress,
-            ERC20_ABI,
-            library.getSigner()
-          );
-          const snowglobeContract = new ethers.Contract(
-            item.address,
-            SNOWGLOBE_ABI,
-            library.getSigner()
-          );
+  const deposit = useCallback(async (item, amount, onlyGauge = false) => {
+    if (!account) {
+      setPopUp({
+        title: 'Network Error',
+        icon: ANIMATIONS.WARNING.VALUE,
+        text: MESSAGES.METAMASK_NOT_CONNECTED
+      })
+      return false;
+    }
+
+    setIsTransacting({ deposit: true });
+    try {
+      if (transactionStatus.depositStep === 0) {
+        if (item.kind === 'Snowglobe') {
+          const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
+          const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
 
           const balance = await lpContract.balanceOf(account);
           amount = amount.gt(balance) ? balance : amount;
@@ -494,83 +472,31 @@ export function CompoundAndEarnProvider({ children }) {
             const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
             if (!transactionSnowglobeDeposit.status) {
               setPopUp({
-                title: "Transaction Error",
+                title: 'Transaction Error',
                 icon: ANIMATIONS.ERROR.VALUE,
-                text: `Error depositing into Snowglobe`,
+                text: `Error depositing into Snowglobe`
               });
               return;
             }
           }
-          setTransactionStatus({
-            approvalStep: 2,
-            depositStep: 1,
-            withdrawStep: 0,
-          });
-        } else {
-          const tokenContract = new ethers.Contract(
-            item.address,
-            ERC20_ABI,
-            library.getSigner()
-          );
+          setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
+
+        }else{
+          const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
 
           const balance = await tokenContract.balanceOf(account);
           amount = amount.gt(balance) ? balance : amount;
         }
-
-        const gauge = gauges.find(
-          (gauge) =>
-            gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase()
-        );
-        const gaugeContract = new ethers.Contract(
-          gauge.address,
-          GAUGE_ABI,
-          library.getSigner()
-        );
-
-        let gaugeDeposit;
-        if (item.kind === "Snowglobe") {
-          gaugeDeposit = await gaugeContract.depositAll();
-        } else {
-          gaugeDeposit = await gaugeContract.deposit(amount);
-        }
-
-        const transactionGaugeDeposit = await gaugeDeposit.wait(1);
-        if (!transactionGaugeDeposit.status) {
-          setPopUp({
-            title: "Transaction Error",
-            icon: ANIMATIONS.ERROR.VALUE,
-            text: `Error depositing into Gauge`,
-          });
-          return;
-        } else {
-          const linkTx = getLink(
-            `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionGaugeDeposit.transactionHash}`,
-            "Check on C-Chain Explorer."
-          );
-          setPopUp({
-            title: "Deposit Complete",
-            icon: ANIMATIONS.SUCCESS.VALUE,
-            text: linkTx,
-          });
-        }
-        setTransactionStatus({
-          approvalStep: 2,
-          depositStep: 2,
-          withdrawStep: 0,
-        });
-        //refresh data only after 2sec to our node have time to catch up with network
-        setTimeout(async () => {
-          getBalanceInfosAllPools(await getGaugeProxyInfo());
-          setSortedUserPools(false);
-        }, 2000);
-      } catch (error) {
+      }
+      setIsTransacting({ deposit: false });
+       } catch (error) {
         setPopUp({
           title: "Transaction Error",
           icon: ANIMATIONS.ERROR.VALUE,
           text: `Error Depositing: ${error.message}`,
         });
+        console.log(error);
       }
-      setIsTransacting({ deposit: false });
     },
     [
       setIsTransacting,

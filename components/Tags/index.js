@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.aave_purple,
     color: theme.custom.palette.aave_purple,
   },
+  TLP: {
+    backgroundColor: theme.custom.palette.transparent.teddy_yellow,
+    color: theme.custom.palette.teddy_yellow,
+  }
 }));
 
 const Tags = ({ children, style, className, type }) => {
