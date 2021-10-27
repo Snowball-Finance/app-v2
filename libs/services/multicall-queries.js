@@ -1,6 +1,7 @@
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import LP_ABI from 'libs/abis/lp-token.json';
+import ERC20_ABI from 'libs/abis/main/erc20.json';
 import { ContractCall } from 'libs/services/multicall';
 
 
@@ -36,6 +37,17 @@ const getGaugeCalls = (pool, account) => {
   return [gaugeTokenCalls, gaugeCalls];
 }
 
+const getTokensBalance = (tokenList, account) => {
+  const tokenCalls = [];
+  tokenList.forEach(token => tokenCalls.push(new ContractCall(token, ERC20_ABI)));
+
+  tokenCalls.forEach((contract,idx) => {
+    contract.setCall("balanceOf",[account],`token${idx}`);
+  });
+
+  return tokenCalls;
+}
+
 const getDeprecatedCalls = (pool, account) => {
   const snowglobeCalls = new ContractCall(pool.contractAddresses[0], SNOWGLOBE_ABI);
   const gaugeCalls = new ContractCall(pool.contractAddresses[1], GAUGE_ABI);
@@ -50,5 +62,6 @@ const getDeprecatedCalls = (pool, account) => {
 export {
   getGaugeCalls,
   getPoolCalls,
-  getDeprecatedCalls
+  getDeprecatedCalls,
+  getTokensBalance
 }
