@@ -80,9 +80,8 @@ const CompoundDialogs=({
 		userData,
 		sliderValue: 0,
 		amount: 0,
-
 		inputAmount: 0,
-		selectedToken: pool.token0,
+		selectedToken: userData.token0,
 		approved: false,
 		isInfiniteApprovalChecked: false,
 		error: null

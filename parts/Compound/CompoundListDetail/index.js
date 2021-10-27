@@ -159,7 +159,8 @@ const CompoundListDetail=({item,userBoost,totalAPY,modal,setModal,
 				<CompoundDialogs
 					open={modal.open}
 					title={modal.title}
-					item={userData}
+					userData={userData}
+					pool={item}
 					handleClose={handleClose}
 				/>
 			)}
@@ -169,7 +170,8 @@ const CompoundListDetail=({item,userBoost,totalAPY,modal,setModal,
 					open={withdraw_modal}
 					title="Withdraw"
 					handleClose={handleWithdraw}
-					item={userData}
+					userData={userData}
+					pool={item}
 				/>
 			)}
 		</div>
