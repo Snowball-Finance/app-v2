@@ -362,32 +362,34 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ deposit: true });
     try {
-      if (item.kind === 'Snowglobe') {
-        const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
-        const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-
-        const balance = await lpContract.balanceOf(account);
-        amount = amount.gt(balance) ? balance : amount;
-
-        if (amount.gt(0x00) && !onlyGauge) {
-          const snowglobeDeposit = await snowglobeContract.deposit(amount);
-          const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
-          if (!transactionSnowglobeDeposit.status) {
-            setPopUp({
-              title: 'Transaction Error',
-              icon: ANIMATIONS.ERROR.VALUE,
-              text: `Error depositing into Snowglobe`
-            });
-            return;
+      if (transactionStatus.depositStep === 0) {
+        if (item.kind === 'Snowglobe') {
+          const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
+          const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
+  
+          const balance = await lpContract.balanceOf(account);
+          amount = amount.gt(balance) ? balance : amount;
+  
+          if (amount.gt(0x00) && !onlyGauge) {
+            const snowglobeDeposit = await snowglobeContract.deposit(amount);
+            const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
+            if (!transactionSnowglobeDeposit.status) {
+              setPopUp({
+                title: 'Transaction Error',
+                icon: ANIMATIONS.ERROR.VALUE,
+                text: `Error depositing into Snowglobe`
+              });
+              return;
+            }
           }
+          setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
+  
+        }else{
+          const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
+  
+          const balance = await tokenContract.balanceOf(account);
+          amount = amount.gt(balance) ? balance : amount;
         }
-        setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
-
-      }else{
-        const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
-
-        const balance = await tokenContract.balanceOf(account);
-        amount = amount.gt(balance) ? balance : amount;
       }
 
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
