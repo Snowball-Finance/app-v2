@@ -13,7 +13,6 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
-import { floatToBN } from 'utils/helpers/format';
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -91,7 +90,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
   const inputHandler = event => {
     if (event.target.value > 0 && !Object.is(NaN, event.target.value)) {
       const percentage = calculatePercentage(event.target.value);
-      const balance = item?.userBalanceGauge / 10 ** item?.lpDecimals;
+      const balance = (item?.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item?.lpDecimals;
       if (balance >= event.target.value) {
         setinputAmount(event.target.value);
         setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
@@ -108,7 +107,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const handleSliderChange = value => {
     const usedBalance = calculatedBalance(value);
-    const inputAmount = usedBalance / 10 ** item?.lpDecimals;
+    const inputAmount = (usedBalance * (item.snowglobeRatio / 1e18)) / 10 ** item?.lpDecimals;
     setSlider(value);
     setAmount(usedBalance);
     setinputAmount(
@@ -119,8 +118,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
-    const withdrawAmount = floatToBN(amount / item.snowglobeRatio);
-    withdraw(item, withdrawAmount);
+    withdraw(item, amount);
   };
 
   return (

@@ -8,7 +8,7 @@ import SnowPairsIcon from 'components/SnowPairsIcon';
 import SnowTextField from 'components/UI/TextFields/SnowTextField';
 import Tags from 'components/Tags';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   inputContainer: {
     border: '1px solid rgba(108, 117, 125, 0.12)',
     borderRadius: 7,
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& input': {
       textAlign: 'end',
-      fontSize: theme.typography.h4.fontSize
+      fontSize: theme.typography.h4.fontSize,
     },
   },
   balanceText: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    paddingRight: 20
+    paddingRight: 20,
   },
   pairContainer: {
     display: 'flex',
@@ -42,18 +42,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Details = ({
-  item,
-  amount,
-  error,
-  inputHandler
-}) => {
+const Details = ({ item, amount, error, inputHandler }) => {
   const classes = useStyles();
   const token0 = item.token0.address;
   const token1 = item.token1.address;
   const token2 = item.token2.address;
   const token3 = item.token3.address;
-  const dexTokenName = item.symbol == "S4D" ? "SNOB" : item.symbol;
+  const dexTokenName = item.symbol == 'S4D' ? 'SNOB' : item.symbol;
 
   return (
     <>
@@ -84,8 +79,11 @@ const Details = ({
           onChange={inputHandler}
         />
         <Typography variant='caption' className={classes.balanceText}>
-          Available: {(item.userBalanceGauge / 10 ** item.lpDecimals).toLocaleString(
-          undefined, { maximumSignificantDigits: 18 })} {token1 ? item.symbol : item.name}
+          Available:{' '}
+          {((item.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item.lpDecimals).toLocaleString(undefined, {
+            maximumSignificantDigits: 18,
+          })}{' '}
+          {token1 ? item.symbol : item.name}
         </Typography>
       </div>
     </>
