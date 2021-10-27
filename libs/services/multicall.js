@@ -16,9 +16,9 @@ class ContractCall{
         }
     }
 
-    setCall(methodName, methodParams){
+    setCall(methodName, methodParams, methodId = ""){
         const call = {
-            reference: `${methodName}Call`,
+            reference: `${methodName}${methodId}`,
             methodName: methodName,
             methodParameters: [...methodParams] 
         };
@@ -42,9 +42,9 @@ const getMultiContractData = async (provider, contractArray) => {
             call.results[name].callsReturnContext.forEach(values => { 
                 //I don`t want an array when the result is not an array
                 if(values.returnValues.length > 1){
-                    result[values.methodName] = convertMBNtoEthersBN(values.returnValues);
+                    result[values.reference] = convertMBNtoEthersBN(values.returnValues);
                 }else{
-                    result[values.methodName] = convertMBNtoEthersBN(values.returnValues)[0];
+                    result[values.reference] = convertMBNtoEthersBN(values.returnValues)[0];
                 }
             });
             resultSet[name] = result;

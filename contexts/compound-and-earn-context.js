@@ -19,7 +19,7 @@ import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
-import { getDeprecatedCalls, getGaugeCalls, getPoolCalls } from 'libs/services/multicall-queries';
+import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -256,8 +256,23 @@ export function CompoundAndEarnProvider({ children }) {
       const poolCalls = getPoolCalls(givenPool, account);
       const poolData = await getMultiContractData(provider, poolCalls);
 
+      //update token Balance
+      let tokenCalls;
+      if(givenPool.token1.address){
+        tokenCalls = getTokensBalance([givenPool.token0.address,givenPool.token1.address], account);
+      }else{
+        tokenCalls = getTokensBalance([givenPool.token0.address], account);
+      }
+
+      const tokenData = await getMultiContractData(provider, tokenCalls);
+
       //update user pool state
-      const poolInfo = generatePoolInfo(givenPool, [gaugeInfo], poolData);
+      let poolInfo = generatePoolInfo(givenPool, [gaugeInfo], poolData, tokenData);
+
+      poolInfo.token0Balance = tokenData.balanceOftoken0;
+      if(tokenData.balanceOftoken1){
+        poolInfo.token1Balance = tokenData.balanceOftoken1;
+      }
 
       getBalanceInfo();
 
