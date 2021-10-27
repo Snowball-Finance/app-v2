@@ -125,6 +125,23 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
           </Grid>}
         <Grid item xs={12} lg={4}>
           <ContainedButton
+            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
+            loading={isTransacting.pageview}
+            onClick={() => {
+              //if(item.deprecatedPool){
+              withdraw(item);
+              //}else{
+              // setTransactionStatus({ withdrawStep: 0 });
+              //  setWithdraw(true)
+              //}
+            }}
+            fullWidth={isSm ? true : false}
+          >
+            Withdraw
+          </ContainedButton>
+        </Grid>
+        <Grid item xs={12} lg={4}>
+          <ContainedButton
             disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
             onClick={() => {
@@ -140,22 +157,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
           >
             Claim
           </ContainedButton>
-          <ContainedButton
-            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
-            loading={isTransacting.pageview}
-            onClick={() => {
-              //if(item.deprecatedPool){
-              withdraw(item);
-              //}else{
-              // setTransactionStatus({ withdrawStep: 0 });
-              //  setWithdraw(true)
-              //}
-            }}
-            fullWidth={isSm ? true : false}
-          >
-            Withdraw
-          </ContainedButton>
-      </div>
+        </Grid>
+      </Grid>
 
       {withdraw && withdraw_modal && (
         <CompoundDialogs
