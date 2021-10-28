@@ -269,9 +269,9 @@ export function CompoundAndEarnProvider({ children }) {
       //update user pool state
       let poolInfo = generatePoolInfo(givenPool, [gaugeInfo], poolData, tokenData);
 
-      poolInfo.token0Balance = tokenData.balanceOftoken0;
-      if(tokenData.balanceOftoken1){
-        poolInfo.token1Balance = tokenData.balanceOftoken1;
+      poolInfo.token0Balance = tokenData[poolInfo.token0.address].balanceOftoken0;
+      if(poolInfo.token1.address){
+        poolInfo.token1Balance = tokenData[poolInfo.token1.address].balanceOftoken1;
       }
 
       getBalanceInfo();
