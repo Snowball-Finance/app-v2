@@ -1,8 +1,9 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 import { BNToFloat, formatNumber } from 'utils/helpers/format';
-import SnowPairsIcon from 'components/SnowPairsIcon';
+import UnderlyingTokenItem from './UnderlyingTokenItem';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -10,13 +11,14 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-  upper: {
+  greyBorder: {
     width: '100%',
     borderRadius: 10,
     borderWidth: 0.8,
     borderStyle: 'solid',
     borderColor: theme.custom.palette.border,
     padding: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   lower: {
     width: '100%',
@@ -37,10 +39,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     }
   },
-  underlyingTokensLine: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   boldSubtitle: {
     fontWeight: 600,
   },
@@ -51,13 +49,7 @@ const Total = ({ item, userData }) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.upper}>
-        <div className={classes.container}>
-          <Typography>SNOB (Claimable)</Typography>
-          <Typography><b>{formatNumber(userData?.SNOBHarvestable || 0.00, 2)}</b> (${formatNumber(userData?.SNOBValue || 0.00, 2)})</Typography>
-        </div>
-      </div>
-
+      <Box fontWeight={600}>Pool Information</Box>
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
@@ -67,25 +59,44 @@ const Total = ({ item, userData }) => {
         {!item.deprecatedPool &&<div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-              ((userData?.userBalanceSnowglobe ? BNToFloat(userData?.userBalanceSnowglobe,userData?.lpDecimals) : 0) +
-              (userData?.userBalanceGauge/10**userData?.lpDecimals)) / 
-              BNToFloat(userData?.totalSupply,userData?.lpDecimals) * 100 || 0.00, 5)}
-            %</Typography>
-        </div>}
-        {userData?.underlyingTokens ? <div className={classes.infoContainer}>
-          <Typography variant="body2">{userData.underlyingTokens ? `Underlying tokens` : ``}</Typography>
-          <Typography variant="subtitle2" className={classes.underlyingTokensLine}> <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token0.address]} size={25} />
-            {formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)} | <SnowPairsIcon pairsIcon={[userData?.underlyingTokens?.token1.address]} size={25} />
-            {formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)} </Typography>
-        </div> : null}
-        <div className={classes.container}>
-          {/*  <Typography variant="body2" className={classes.boldSubtitle}>
-            Total earned
+            ((userData?.userBalanceSnowglobe ? BNToFloat(userData?.userBalanceSnowglobe,userData?.lpDecimals) : 0) +
+            (userData?.userBalanceGauge/10**userData?.lpDecimals)) / 
+            BNToFloat(userData?.totalSupply,userData?.lpDecimals) * 100 || 0.00, 5)} %
           </Typography>
-          <Typography variant="subtitle2" className={classes.boldSubtitle}>
-            ${formatNumber((userPool?.userDepositedLP-userPool?.lpLogged/1e18)*item.pricePoolToken) || 0}
-          </Typography> */}
+        </div>}
+        <div className={classes.container}>
+          <Typography variant='subtitle2'>&nbsp;</Typography>
         </div>
+        {item.kind !== 'Stablevault' && (userData?.underlyingTokens || item?.token0?.address) &&
+          <div className={classes.greyBorder}>
+            <div className={classes.container}>
+              {userData?.underlyingTokens ?
+                <>
+                  <UnderlyingTokenItem
+                    pairsIcon={[userData?.underlyingTokens?.token0.address]}
+                    amount={formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)}
+                    symbol={userData?.underlyingTokens?.token0.symbol} />
+                  <UnderlyingTokenItem
+                    pairsIcon={[userData?.underlyingTokens?.token1.address]}
+                    amount={formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
+                    symbol={userData?.underlyingTokens?.token1.symbol} />
+                </>:
+                <>
+                  {item?.token0?.address &&
+                    <UnderlyingTokenItem
+                      pairsIcon={[item.token0.address]}
+                      amount={0}
+                      symbol={item.token0.symbol} />}
+                  {item?.token1?.address &&
+                    <UnderlyingTokenItem
+                      pairsIcon={[item.token1.address]}
+                      amount={0}
+                      symbol={item.token1.symbol} />
+                  }
+                </>
+              }
+            </div>
+          </div>}
       </div>
     </div>
   );
