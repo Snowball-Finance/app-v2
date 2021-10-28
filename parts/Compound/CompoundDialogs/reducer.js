@@ -1,6 +1,7 @@
-import { calculatedBalance, calculatePercentage } from "./utils"
+import { calculatedBalance, calculatePercentage, extractValidTokens } from "./utils"
 import { ethers } from 'ethers';
 import { roundDown } from "utils/helpers/utility";
+import { BNToFloat } from "utils/helpers/format";
 
 export const compoundDialogActionTypes = {
     setSliderValue: 'setSliderValue',
@@ -14,19 +15,29 @@ export const compoundDialogActionTypes = {
 
 export const compoundDialogReducer = (state, action) => {
     const newState = { ...state }
-    const { title, userData } = newState
+    const { title, userData, selectedToken } = newState
 
 
     switch (action.type) {
 
         case compoundDialogActionTypes.reset: {
-            return { ...action.payload }
+            return { ...newState, ...action.payload }
         }
         case compoundDialogActionTypes.setInfiniteApprovalCheckboxValue: {
             newState.isInfiniteApprovalChecked = action.payload
         }
             break
         case compoundDialogActionTypes.setUserData: {
+
+            const tokens = extractValidTokens({ obj: userData }).map((token, index) => {
+                const key = ('token' + index + 'Balance')
+                //set the balance for selected token
+                if (token.symbol === selectedToken.symbol) {
+                    newState.selectedToken = { ...selectedToken, balance: userData[key] }
+                }
+                return { ...token, balance: userData[key] }
+            })
+            newState.tokens = tokens
             newState.userData = action.payload
         }
             break
@@ -36,13 +47,15 @@ export const compoundDialogReducer = (state, action) => {
             break
         case compoundDialogActionTypes.setSliderValue: {
             const value = action.payload
-            const usedBalance = calculatedBalance({ userData, title, value });
-            const inputAmount = (usedBalance / 10 ** userData?.lpDecimals);
-
-            newState.amount = usedBalance
-            newState.inputAmount = inputAmount > 1e-6 ? inputAmount : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 })
-            newState.error = null
-            newState.sliderValue = action.payload
+            const usedBalance = selectedToken.balance.mul(value).div(100)
+            if (selectedToken.balance && (BNToFloat(usedBalance) > 0 || value === 0)) {
+                const inputAmount = (usedBalance / 10 ** userData?.lpDecimals)
+                newState.mixedTokenValue = calculatedBalance({ userData, title, value })
+                newState.amount = usedBalance
+                newState.inputAmount = inputAmount > 1e-6 ? inputAmount : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 })
+                newState.error = null
+                newState.sliderValue = action.payload
+            }
         }
             break
 
