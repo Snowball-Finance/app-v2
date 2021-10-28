@@ -1,11 +1,11 @@
-import {memo,useEffect,useReducer} from 'react';
-import {toast} from 'react-toastify';
-import {makeStyles} from '@material-ui/core/styles';
+import { memo, useEffect, useReducer } from 'react';
+import { toast } from 'react-toastify';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import {Grid} from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import clsx from 'clsx'
 
-import {useCompoundAndEarnContract} from 'contexts/compound-and-earn-context';
+import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
 import SnowStepBox from 'components/SnowStepBox';
 import SnowDialog from 'components/SnowDialog';
@@ -13,10 +13,12 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
 import CompoundInfo from './CompoundInfo';
 import Details from './Details';
-import {compoundDialogReducer,compoundDialogActionTypes} from './reducer'
-import {SnowCheckbox} from 'components/UI/Checkbox';
+import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
+import { SnowCheckbox } from 'components/UI/Checkbox';
+import { calculatedBalance } from './utils';
+import { floatToBN } from 'utils/helpers/format';
 
-const useStyles=makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
 	dialog: {
 		minWidth: 200,
 		width: 510,
@@ -43,10 +45,10 @@ const useStyles=makeStyles((theme) => ({
 		padding: theme.spacing(1),
 	},
 	buttonContainer: {
-		margin: theme.spacing(1,0,0,0),
+		margin: theme.spacing(1, 0, 0, 0),
 	},
 	modalButton: {
-		padding: theme.spacing(2,0),
+		padding: theme.spacing(2, 0),
 		textTransform: 'none',
 		'&:disabled': {
 			backgroundColor: `${theme.custom.palette.blueButton} !important`,
@@ -58,14 +60,14 @@ const useStyles=makeStyles((theme) => ({
 	button: {
 		textTransform: 'none',
 		width: '100%',
-		padding: theme.spacing(2,0),
+		padding: theme.spacing(2, 0),
 	},
 	greyButton: {
 		background: '#BDBDBD',
 	}
 }));
 
-const CompoundDialogs=({
+const CompoundDialogs = ({
 	open,
 	title,
 	pool,
@@ -73,67 +75,70 @@ const CompoundDialogs=({
 	userData,
 	handleClose,
 }) => {
-	const classes=useStyles();
+	const classes = useStyles();
 	// i will need the pool to extract the token infos
-	const [state,dispatch]=useReducer(compoundDialogReducer,{
+	const [state, dispatch] = useReducer(compoundDialogReducer, {
 		title,
 		userData,
 		sliderValue: 0,
 		amount: 0,
 		inputAmount: 0,
+		mixedTokenValue: 0,
+		calculatedInvestingTokensAmount: [],
+		tokens: [],
 		selectedToken: userData.token0,
 		approved: false,
 		isInfiniteApprovalChecked: false,
 		error: null
 	})
-	console.log(userData)
-	const {approve,deposit,isTransacting,transactionStatus,withdraw}=useCompoundAndEarnContract();
+
+	const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
 	useEffect(() => {
-		if(!isTransacting.deposit&&!isTransacting.approve&&!isTransacting.withdraw) {
+		if (!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw) {
 			toast.dismiss();
 		}
-	}),[isTransacting];
+	}), [isTransacting];
 
 	useEffect(() => {
-		if(transactionStatus.depositStep===2) {
+		if (transactionStatus.depositStep === 2) {
 			handleClose();
 		}
-		if(transactionStatus.withdrawStep===3) {
+		if (transactionStatus.withdrawStep === 3) {
 			handleClose();
 		}
-	}),[transactionStatus];
+	}), [transactionStatus];
 
 
-	const enabledHandler=(isApproved=false) => {
-		return (isApproved? state.approved:!state.approved)||(state.amount==0)||
-			isTransacting.approve||isTransacting.deposit;
+	const enabledHandler = (isApproved = false) => {
+		return (isApproved ? state.approved : !state.approved) || (state.amount == 0) ||
+			isTransacting.approve || isTransacting.deposit;
 	}
 
-	const handleInputChange=(event) => {
-		const value=event.target.value
+	const handleInputChange = (event) => {
+		const value = event.target.value
 		dispatch({
 			type: compoundDialogActionTypes.setInputValue,
 			payload: value
 		})
 	};
 
-	const handleSliderChange=(value) => {
+	const handleSliderChange = (value) => {
 		dispatch({
 			type: compoundDialogActionTypes.setSliderValue,
 			payload: value
 		})
 	};
 
-	const handleApproveClick=async () => {
+	const handleApproveClick = async () => {
 
 		try {
 			toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
-			const result=await approve(item,amount)
-			if(result) {
-				dispatch({type: compoundDialogActionTypes.setApproved,payload: true})
+			const result = await approve(item, amount)
+			if (result) {
+				dispatch({ type: compoundDialogActionTypes.setApproved, payload: true })
 			}
-		} catch(error) {
+		} catch (error) {
 			console.log(error);
 		}
 
@@ -141,19 +146,21 @@ const CompoundDialogs=({
 
 	}
 
-	const handleInfiniteApprovalCheckboxChange=(v) => {
-		dispatch({type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue,payload: v})
+	const handleInfiniteApprovalCheckboxChange = (v) => {
+		dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
 	}
 
 
-	const handleTokenChange=(token) => {
+	const handleTokenChange = (token) => {
 		dispatch({
-			type: compoundDialogActionTypes.reset,payload: {
+			type: compoundDialogActionTypes.reset, payload: {
 				title,
 				userData,
 				sliderValue: 0,
 				amount: 0,
 				inputAmount: 0,
+				mixedTokenValue: 0,
+				calculatedInvestingTokensAmount: [],
 				selectedToken: token,
 				approved: false,
 				isInfiniteApprovalChecked: false,
@@ -163,11 +170,11 @@ const CompoundDialogs=({
 	}
 
 	useEffect(() => {
-		dispatch({type: compoundDialogActionTypes.setUserData,payload: userData})
+		dispatch({ type: compoundDialogActionTypes.setUserData, payload: userData })
 		return () => {
 
 		}
-	},[userData])
+	}, [userData])
 
 	// useEffect(() => {
 	//   return () => {
@@ -175,8 +182,8 @@ const CompoundDialogs=({
 	//   }
 	// }, [pool])
 
-	const renderButton=() => {
-		switch(title) {
+	const renderButton = () => {
+		switch (title) {
 			case 'Deposit': {
 				return (
 					<Grid container spacing={2}>
@@ -204,7 +211,7 @@ const CompoundDialogs=({
 								loading={isTransacting.deposit}
 								onClick={() => {
 									toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />)
-									deposit(userData,state.amount)
+									deposit(userData, state.amount)
 								}
 								}
 							>
@@ -220,11 +227,11 @@ const CompoundDialogs=({
 						<ContainedButton
 							className={clsx(classes.button)}
 							disableElevation
-							disabled={state.amount==0}
+							disabled={state.amount == 0}
 							loading={isTransacting.withdraw}
 							onClick={() => {
 								toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-								withdraw(userData,state.amount)
+								withdraw(userData, state.amount)
 							}}
 						>
 							Withdraw
@@ -253,10 +260,9 @@ const CompoundDialogs=({
 				<Details
 					{...{
 						userData,
-						poolList,
-						title,
-						pool
 					}}
+					selectedToken={state.selectedToken}
+					tokens={state.tokens}
 					amount={state.inputAmount}
 					onTokenChange={handleTokenChange}
 					inputHandler={handleInputChange}
@@ -264,7 +270,13 @@ const CompoundDialogs=({
 				/>
 
 				<CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-				<CompoundInfo pool={pool} amount={state.inputAmount} activeToken={state.selectedToken} />
+				<CompoundInfo
+					pool={pool}
+					userData={state.userData}
+					tokens={state.tokens}
+					selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
+					mixedTokenValue={calculatedBalance({ userData, title, value: state.sliderValue })} amount={state.inputAmount}
+					activeToken={state.selectedToken} />
 				<SnowCheckbox
 					className={classes.mt1}
 					label="Infinite Approval"

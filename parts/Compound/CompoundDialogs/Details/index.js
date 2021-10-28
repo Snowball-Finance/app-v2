@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
@@ -6,7 +6,7 @@ import SnowPairsIcon from 'components/SnowPairsIcon';
 import Selects from 'components/UI/Selects';
 
 import SnowTextField from 'components/UI/TextFields/SnowTextField';
-import { extractValidTokens, hexToFloat } from '../utils';
+import { BNToFloat } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
@@ -59,17 +59,16 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const Available = ({ isDeposit, userData, classes }) => {
+const Available = ({ token, decimal, classes }) => {
 	return <Typography variant='caption' className={classes.balanceText}>
-		Available: {hexToFloat({ hex: userData[isDeposit ? 'userLPBalance' : 'userBalanceGauge'], decimal: userData.lpDecimals })} {userData.symbol}
+		Available: {BNToFloat(token.balance._hex, decimal)} {token.symbol}
 	</Typography>
 }
 
 const Details = ({
 	userData,
-	poolList,
-	pool,
-	title,
+	tokens,
+	selectedToken,
 	amount,
 	error,
 	inputHandler,
@@ -78,7 +77,6 @@ const Details = ({
 }) => {
 	const classes = useStyles();
 
-	const tokens = extractValidTokens({ obj: userData })
 
 	//create options for selects component
 	const options = tokens.map((el) => {
@@ -89,13 +87,12 @@ const Details = ({
 		}
 	})
 	//first token is selected by default
-	const [selectedToken, setSelectedToken] = useState(tokens[0])
+
 
 	// set the selected token and pass it to outside world if possible
 	const handleSelectChange = (e) => {
 		const value = e.target.value
 		const token = tokens.filter((el) => el.symbol === value)[0]
-		setSelectedToken(token)
 		onTokenChange && onTokenChange(token)
 	}
 
@@ -118,7 +115,7 @@ const Details = ({
 					error={error}
 					onChange={inputHandler}
 				/>
-				<Available isDeposit={title !== "Withdraw"} {...{ userData, classes }} />
+				{selectedToken.balance && <Available   {...{ classes }} token={selectedToken} decimal={userData.lpDecimals} />}
 			</div>
 		</div>
 	);

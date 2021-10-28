@@ -6,7 +6,8 @@ import Box from '@material-ui/core/Box';
 import ArrowDownIcon from 'components/Icons/ArrowDownIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import SnowTokenIcon from 'components/SnowTokenIcon';
-import { extractValidTokens } from '../utils';
+import { BNToFloat, floatToBN } from 'utils/helpers/format';
+import { divide, multiply } from 'precise-math';
 
 const useStyles = makeStyles((theme) => ({
   downArrow: {
@@ -51,18 +52,32 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundInfo = ({
   pool,
-  activeToken,
-  amount = '0.00'
+  mixedTokenValue,
+  userData,
+  selectedTokenWithAmount,
+  tokens,
 }) => {
   const classes = useStyles();
-  const tokens = extractValidTokens({ obj: pool })
 
 
   let priceField = 'pangolinPrice'
 
-  const halfAmount = amount / 2;
+  const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField] }))
+  const selectedTokenPrice = floatToBN(tokensWithPriceAndAmount.filter((item) => item.symbol === selectedTokenWithAmount.symbol)[0].price)
+  const halfOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(2)
 
-  const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField], amount: halfAmount * token[priceField] }))
+  const amountOfUsdToPut = BNToFloat(selectedTokenPrice) * BNToFloat(halfOfSelectedToken)
+
+  const tokensWithAmountToPut = tokensWithPriceAndAmount.map((item) => {
+    return ({
+      ...item,
+      amountToPut: divide(amountOfUsdToPut, item.price).toFixed(18)
+    })
+  })
+
+  const mixedTokensValue = divide(amountOfUsdToPut, pool.pricePoolToken)
+
+
 
   return (
     <>
@@ -76,16 +91,16 @@ const CompoundInfo = ({
               {tokensWithPriceAndAmount.map(token => token.symbol).join('-')} {pool.symbol}
             </Typography>
           </div>
-          <Typography className={classes.amountText}>{amount}</Typography>
+          <Typography className={classes.amountText}>{mixedTokensValue}</Typography>
         </div>
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
           {
-            tokensWithPriceAndAmount.map((token, index) => {
-              return (<Box key={index} className={classes.tokenLine} mb={index === tokensWithPriceAndAmount.length - 1 ? 1 : 0}>
+            tokensWithAmountToPut.map((token, index) => {
+              return (<Box key={index} className={classes.tokenLine} mb={index === tokensWithAmountToPut.length - 1 ? 1 : 0}>
                 <SnowTokenIcon token={token.symbol} size={20} />
                 <Typography className={classes.pairInfoStyle}>{token.name}</Typography>
-                <Typography className={classes.amountText}>{token.amount}</Typography>
+                <Typography className={classes.amountText}>{Number(token.amountToPut) > 0 ? Number(token.amountToPut) : '0.00'}</Typography>
               </Box>)
             })
           }
