@@ -10,7 +10,7 @@ import CardFormWrapper from 'parts/Card/CardFormWrapper'
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption'
 import { useFormStyles } from 'styles/use-styles'
 import getVaultInfo from 'utils/helpers/getVaultInfo'
-import { BNToFloat, floatToBN } from 'utils/helpers/format'
+import { floatToBN } from 'utils/helpers/format'
 import VaultAddLiquidityDialog from './VaultAddLiquidityDialog'
 
 const AddLiquidityForm = ({

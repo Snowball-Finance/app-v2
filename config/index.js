@@ -3,6 +3,8 @@ const IS_MAINNET = process.env.NETWORK === 'mainnet'
 
 const C_CHAIN_ID = IS_MAINNET ? 43114 : 43113
 
+const MAX_RETRIES = 5
+
 const CONTRACTS = IS_MAINNET
   ? {
     GOVERNANCE: '0x914556b16c1220e4af63084dB1acbD4e6f9c65Aa',
@@ -64,5 +66,6 @@ const CONTRACTS = IS_MAINNET
 export {
   IS_MAINNET,
   C_CHAIN_ID,
-  CONTRACTS
+  CONTRACTS,
+  MAX_RETRIES
 }

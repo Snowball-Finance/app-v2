@@ -12,6 +12,8 @@ import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
 import { useCompoundAndEarnContract } from './compound-and-earn-context'
+import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors'
+import { getBestStaticProvider } from 'utils/helpers/utility'
 import { useProvider } from './provider-context'
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI

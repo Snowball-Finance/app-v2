@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { createContext, useContext, useEffect, useState } from "react";
-import { AVALANCHE_MAINNET_PARAMS } from "utils/constants/connectors";
-
+import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 
 const ProviderContext = createContext(null);
 
