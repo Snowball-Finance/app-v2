@@ -77,7 +77,6 @@ const Details = ({
 }) => {
 	const classes = useStyles();
 
-
 	//create options for selects component
 	const options = tokens.map((el) => {
 		return {

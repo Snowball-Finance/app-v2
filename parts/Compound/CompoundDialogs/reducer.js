@@ -1,7 +1,8 @@
-import { calculatedBalance, calculatePercentage, extractValidTokens } from "./utils"
+import { calculatedBalance, extractValidTokens } from "./utils"
 import { ethers } from 'ethers';
 import { roundDown } from "utils/helpers/utility";
 import { BNToFloat } from "utils/helpers/format";
+import { divide, multiply } from "precise-math";
 
 export const compoundDialogActionTypes = {
     setSliderValue: 'setSliderValue',
@@ -29,13 +30,13 @@ export const compoundDialogReducer = (state, action) => {
             break
         case compoundDialogActionTypes.setUserData: {
 
-            const tokens = extractValidTokens({ obj: userData }).map((token, index) => {
+            const tokens = extractValidTokens({ obj: action.payload }).map((token, index) => {
                 const key = ('token' + index + 'Balance')
                 //set the balance for selected token
                 if (token.symbol === selectedToken.symbol) {
-                    newState.selectedToken = { ...selectedToken, balance: userData[key] }
+                    newState.selectedToken = { ...newState.selectedToken, balance: action.payload[key] }
                 }
-                return { ...token, balance: userData[key] }
+                return { ...token, balance: action.payload[key] }
             })
             newState.tokens = tokens
             newState.userData = action.payload
@@ -61,13 +62,13 @@ export const compoundDialogReducer = (state, action) => {
 
         case compoundDialogActionTypes.setInputValue: {
             const value = action.payload
-            if (value > 0 && !Object.is(NaN, value)) {
-                const percentage = calculatePercentage({ amount: value, userData, title });
-                const balance = title != "Withdraw" ? userData?.userLPBalance / 10 ** userData?.lpDecimals : userData?.userBalanceGauge / 10 ** userData?.lpDecimals;
+            const balance = BNToFloat(newState.selectedToken.balance)
+            if (value > 0 && !Object.is(NaN, value) && balance > 0) {
+                const percentage = multiply(divide(value, BNToFloat(newState.selectedToken.balance)), 100)
                 if (balance >= value) {
                     newState.inputAmount = value
                     newState.amount = ethers.utils.parseUnits(roundDown(value).toString(), 18)
-                    newState.sliderValue = percentage
+                    newState.sliderValue = Number(percentage.toString().split('.')[0])
                     newState.error = null
 
                 } else {
