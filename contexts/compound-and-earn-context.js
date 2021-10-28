@@ -76,7 +76,7 @@ export function CompoundAndEarnProvider({ children }) {
         const deprecatedUserBalance = [];
         deprecatedContracts.forEach(pool => {
           const deprecatedInfo = generateDeprecatedInfo(pool, deprecatedData);
-          if(deprecatedInfo){
+          if (deprecatedInfo) {
             deprecatedUserBalance.push(deprecatedInfo);
           }
         });
@@ -119,11 +119,11 @@ export function CompoundAndEarnProvider({ children }) {
       symbol:
         pool.source === 'Trader Joe' ? 'JLP'
           : pool.source === 'Teddy Cash' ? 'TLP'
-          : pool.source === 'Banker Joe' ? 'BLP'
-          : pool.source === 'BENQI' ? 'QLP'
-          : pool.source === 'AAVE' ? 'ALP'
-          : pool.source === 'Pangolin' ? 'PGL'
-          : 'SNOB',
+            : pool.source === 'Banker Joe' ? 'BLP'
+              : pool.source === 'BENQI' ? 'QLP'
+                : pool.source === 'AAVE' ? 'ALP'
+                  : pool.source === 'Pangolin' ? 'PGL'
+                    : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -258,9 +258,9 @@ export function CompoundAndEarnProvider({ children }) {
 
       //update token Balance
       let tokenCalls;
-      if(givenPool.token1.address){
-        tokenCalls = getTokensBalance([givenPool.token0.address,givenPool.token1.address], account);
-      }else{
+      if (givenPool.token1.address) {
+        tokenCalls = getTokensBalance([givenPool.token0.address, givenPool.token1.address], account);
+      } else {
         tokenCalls = getTokensBalance([givenPool.token0.address], account);
       }
 
@@ -270,7 +270,7 @@ export function CompoundAndEarnProvider({ children }) {
       let poolInfo = generatePoolInfo(givenPool, [gaugeInfo], poolData, tokenData);
 
       poolInfo.token0Balance = tokenData[poolInfo.token0.address].balanceOftoken0;
-      if(poolInfo.token1.address){
+      if (poolInfo.token1.address) {
         poolInfo.token1Balance = tokenData[poolInfo.token1.address].balanceOftoken1;
       }
 
@@ -294,10 +294,10 @@ export function CompoundAndEarnProvider({ children }) {
             console.log(error);
             useExact = true;
           })
-          const approval = await contract.approve(spender, 
-            useExact 
-            ? ethers.constants.MaxUint256 
-            : amount);
+          const approval = await contract.approve(spender,
+            useExact
+              ? ethers.constants.MaxUint256
+              : amount);
           const transactionApprove = await approval.wait(1);
           if (!transactionApprove.status) {
             setPopUp({
@@ -381,10 +381,10 @@ export function CompoundAndEarnProvider({ children }) {
         if (item.kind === 'Snowglobe') {
           const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
           const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-  
+
           const balance = await lpContract.balanceOf(account);
           amount = amount.gt(balance) ? balance : amount;
-  
+
           if (amount.gt(0x00) && !onlyGauge) {
             const snowglobeDeposit = await snowglobeContract.deposit(amount);
             const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
@@ -398,10 +398,10 @@ export function CompoundAndEarnProvider({ children }) {
             }
           }
           setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
-  
-        }else{
+
+        } else {
           const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
-  
+
           const balance = await tokenContract.balanceOf(account);
           amount = amount.gt(balance) ? balance : amount;
         }
@@ -411,12 +411,12 @@ export function CompoundAndEarnProvider({ children }) {
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
       let gaugeDeposit;
-      if(item.kind === 'Snowglobe'){
+      if (item.kind === 'Snowglobe') {
         gaugeDeposit = await gaugeContract.depositAll();
-      }else{
+      } else {
         gaugeDeposit = await gaugeContract.deposit(amount);
       }
-      
+
       const transactionGaugeDeposit = await gaugeDeposit.wait(1);
       if (!transactionGaugeDeposit.status) {
         setPopUp({

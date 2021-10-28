@@ -16,7 +16,6 @@ import Details from './Details';
 import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
 import { SnowCheckbox } from 'components/UI/Checkbox';
 import { calculatedBalance } from './utils';
-import { floatToBN } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
 	dialog: {
@@ -131,10 +130,9 @@ const CompoundDialogs = ({
 	};
 
 	const handleApproveClick = async () => {
-
 		try {
 			toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
-			const result = await approve(item, amount)
+			const result = await approve(userData, state.amount)
 			if (result) {
 				dispatch({ type: compoundDialogActionTypes.setApproved, payload: true })
 			}
@@ -168,13 +166,12 @@ const CompoundDialogs = ({
 			}
 		})
 	}
-
 	useEffect(() => {
 		dispatch({ type: compoundDialogActionTypes.setUserData, payload: userData })
 		return () => {
 
 		}
-	}, [userData])
+	}, [userData, userData.token0Balance])
 
 	// useEffect(() => {
 	//   return () => {
