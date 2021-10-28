@@ -57,16 +57,8 @@ const CompoundInfo = ({
   const classes = useStyles();
   const tokens = extractValidTokens({ obj: pool })
 
-  //extract priceField name
-  let priceField = ''
-  if (tokens[0]) {
-    for (const key in tokens[0]) {
-      if (key.toLowerCase().includes('price')) {
-        priceField = key
-      }
-    }
-  }
 
+  let priceField = 'pangolinPrice'
 
   const halfAmount = amount / 2;
 
