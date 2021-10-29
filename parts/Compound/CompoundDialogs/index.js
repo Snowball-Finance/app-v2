@@ -2,7 +2,7 @@ import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Grid } from '@material-ui/core';
+import { CircularProgress, Grid } from '@material-ui/core';
 import clsx from 'clsx'
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
@@ -16,6 +16,7 @@ import Details from './Details';
 import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
 import { SnowCheckbox } from 'components/UI/Checkbox';
 import { calculatedBalance } from './utils';
+import { storage, StorageKeys } from 'utils/storage';
 
 const useStyles = makeStyles((theme) => ({
 	dialog: {
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	greyButton: {
 		background: '#BDBDBD',
+	},
+	center: {
+		textAlign: 'center'
 	}
 }));
 
@@ -87,7 +91,7 @@ const CompoundDialogs = ({
 		tokens: [],
 		selectedToken: userData.token0,
 		approved: false,
-		isInfiniteApprovalChecked: false,
+		isInfiniteApprovalChecked: storage.read(StorageKeys.infiniteApproval, true),
 		error: null
 	})
 
@@ -132,7 +136,7 @@ const CompoundDialogs = ({
 	const handleApproveClick = async () => {
 		try {
 			toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
-			const result = await approve(userData, state.amount)
+			const result = await approve(userData, state.amount, undefined, storage.read(StorageKeys.infiniteApproval, true))
 			if (result) {
 				dispatch({ type: compoundDialogActionTypes.setApproved, payload: true })
 			}
@@ -145,6 +149,7 @@ const CompoundDialogs = ({
 	}
 
 	const handleInfiniteApprovalCheckboxChange = (v) => {
+
 		dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
 	}
 
@@ -161,7 +166,6 @@ const CompoundDialogs = ({
 				calculatedInvestingTokensAmount: [],
 				selectedToken: token,
 				approved: false,
-				isInfiniteApprovalChecked: false,
 				error: null
 			}
 		})
@@ -241,6 +245,7 @@ const CompoundDialogs = ({
 		}
 	};
 
+
 	return (
 		<SnowDialog
 			open={open}
@@ -252,41 +257,49 @@ const CompoundDialogs = ({
 			titleTextClass={classes.dialogTitleText}
 			closeIconClass={classes.dialogCloseIcon}
 		>
-			<Typography variant='subtitle2'>Select token to convert</Typography>
-			<div className={classes.container} >
-				<Details
-					{...{
-						userData,
-					}}
-					selectedToken={state.selectedToken}
-					tokens={state.tokens}
-					amount={state.inputAmount}
-					onTokenChange={handleTokenChange}
-					inputHandler={handleInputChange}
-					error={state.error}
-				/>
-
-				<CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-				<CompoundInfo
-					pool={pool}
-					userData={state.userData}
-					tokens={state.tokens}
-					selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
-					mixedTokenValue={calculatedBalance({ userData, title, value: state.sliderValue })} amount={state.inputAmount}
-					activeToken={state.selectedToken} />
-				<SnowCheckbox
-					className={classes.mt1}
-					label="Infinite Approval"
-					isChecked={state.isInfiniteApprovalChecked}
-					onChange={handleInfiniteApprovalCheckboxChange}
-				/>
-				<div className={classes.buttonContainer}>
-					{renderButton()}
+			{!state.selectedToken?.balance ? <>
+				<div className={classes.center} >
+					<CircularProgress size={24} />
 				</div>
-			</div>
-			<div className={classes.mt1}>
-				<SnowStepBox transactionStatus={transactionStatus} title={title} />
-			</div>
+			</> :
+				<>	<Typography variant='subtitle2'>Select token to convert</Typography>
+					<div className={classes.container} >
+
+						<Details
+							{...{
+								userData,
+							}}
+							selectedToken={state.selectedToken}
+							tokens={state.tokens}
+							amount={state.inputAmount}
+							onTokenChange={handleTokenChange}
+							inputHandler={handleInputChange}
+							error={state.error}
+						/>
+
+						<CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
+						<CompoundInfo
+							pool={pool}
+							userData={state.userData}
+							tokens={state.tokens}
+							selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
+							mixedTokenValue={calculatedBalance({ userData, title, value: state.sliderValue })} amount={state.inputAmount}
+							activeToken={state.selectedToken} />
+						<SnowCheckbox
+							className={classes.mt1}
+							label="Infinite Approval"
+							isChecked={state.isInfiniteApprovalChecked}
+							onChange={handleInfiniteApprovalCheckboxChange}
+						/>
+						<div className={classes.buttonContainer}>
+							{renderButton()}
+						</div>
+
+					</div>
+					<div className={classes.mt1}>
+						<SnowStepBox transactionStatus={transactionStatus} title={title} />
+					</div>
+				</>}
 		</SnowDialog>
 	);
 };
