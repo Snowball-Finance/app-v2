@@ -20,6 +20,7 @@ import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
+import { approveContractAction } from 'utils/contractHelpers/approve';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -283,39 +284,8 @@ export function CompoundAndEarnProvider({ children }) {
     }
   };
 
-  const _approve = async (contract, spender, amount) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const allowance = await contract.allowance(account, spender)
-        if (amount.gt(allowance)) {
-          let useExact = false;
-          await contract.estimateGas.approve(spender, ethers.constants.MaxUint256).catch((error) => {
-            // general fallback for tokens who restrict approval amounts
-            console.log(error);
-            useExact = true;
-          })
-          const approval = await contract.approve(spender,
-            useExact
-              ? ethers.constants.MaxUint256
-              : amount);
-          const transactionApprove = await approval.wait(1);
-          if (!transactionApprove.status) {
-            setPopUp({
-              title: 'Transaction Error',
-              text: `Error Approving`
-            });
-            reject(false);
-          }
-        }
-        resolve(true)
-      } catch (error) {
-        console.log(error);
-        reject(error);
-      }
-    })
-  }
 
-  const approve = async (item, amount, onlyGauge = false) => {
+  const approve = async (item, amount, onlyGauge = false, infiniteApproval = true) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -328,7 +298,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (item.kind === 'Stablevault') {
         const vaultContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
         const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
-        await _approve(vaultContract, gauge.address, amount);
+        await approveContractAction({ contract: vaultContract, spender: gauge.address, amount, account, infiniteApproval });
         setIsTransacting({ approve: false });
         setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
         return true;
@@ -346,11 +316,11 @@ export function CompoundAndEarnProvider({ children }) {
         snowglobeRatio = ethers.utils.parseUnits('1.1');
       }
       if (!onlyGauge) {
-        await _approve(lpContract, snowglobeContract.address, amount);
+        await approveContractAction({ contract: lpContract, spender: snowglobeContract.address, account, amount, infiniteApproval });
       }
       setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
 
-      await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
+      await approveContractAction({ contract: snowglobeContract, spender: gauge.address, account, amount: amount.mul(snowglobeRatio), infiniteApproval }, snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
       setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
       setIsTransacting({ approve: false });
       return true;

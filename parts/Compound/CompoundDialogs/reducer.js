@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { roundDown } from "utils/helpers/utility";
 import { BNToFloat } from "utils/helpers/format";
 import { divide, multiply } from "precise-math";
+import { storage, StorageKeys } from "utils/storage";
 
 export const compoundDialogActionTypes = {
     setSliderValue: 'setSliderValue',
@@ -25,6 +26,7 @@ export const compoundDialogReducer = (state, action) => {
             return { ...newState, ...action.payload }
         }
         case compoundDialogActionTypes.setInfiniteApprovalCheckboxValue: {
+            storage.write(StorageKeys.infiniteApproval, action.payload)
             newState.isInfiniteApprovalChecked = action.payload
         }
             break
