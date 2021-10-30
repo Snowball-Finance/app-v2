@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import Selects from 'components/UI/Selects';
@@ -10,10 +10,7 @@ import { BNToFloat } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
-		display: 'grid',
-		gridTemplateColumns: '4fr 6fr',
-		alignItems: 'center',
-		gap: theme.spacing(1),
+
 		border: `1px solid ${theme.custom.palette.border}`,
 		borderRadius: 7,
 		padding: theme.spacing(1),
@@ -96,16 +93,16 @@ const Details = ({
 	}
 
 	return (
-		<div className={classes.container}>
-			<div className={classes.tokenSelect}>
+		<Grid container className={classes.container}>
+			<Grid item sm={12} md={5} className={classes.tokenSelect}>
 				<Selects
 					className={classes.select}
 					value={selectedToken.symbol}
 					{...{ options }}
 					onChange={handleSelectChange}
 				/>
-			</div>
-			<div className={classes.inputContainer}>
+			</Grid>
+			<Grid item sm={12} md={7} className={classes.inputContainer}>
 				<SnowTextField
 					className={classes.input}
 					type='number'
@@ -115,8 +112,8 @@ const Details = ({
 					onChange={inputHandler}
 				/>
 				{selectedToken.balance && <Available   {...{ classes }} token={selectedToken} decimal={userData.lpDecimals} />}
-			</div>
-		</div>
+			</Grid>
+		</Grid>
 	);
 };
 

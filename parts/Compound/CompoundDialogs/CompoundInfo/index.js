@@ -5,9 +5,10 @@ import Box from '@material-ui/core/Box';
 
 import ArrowDownIcon from 'components/Icons/ArrowDownIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
-import SnowTokenIcon from 'components/SnowTokenIcon';
+import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
 import { divide, multiply } from 'precise-math';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   downArrow: {
@@ -15,6 +16,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     width: '100%',
+  },
+  flex: {
+    display: 'flex'
+  },
+  textRight: {
+    textAlign: 'right',
   },
   container: {
     marginTop: theme.spacing(1),
@@ -83,25 +90,33 @@ const CompoundInfo = ({
     <>
       <ArrowDownIcon className={classes.downArrow} />
       <div className={classes.container}>
-        <div className={classes.pairLine}>
-          <SnowPairsIcon pairsIcon={tokensWithPriceAndAmount.map(token => token.address)} size={36} />
-          <div className={classes.pairInfoStyle}>
-            <Typography variant='subtitle1'>To</Typography>
-            <Typography variant='subtitle1' className={classes.bold}>
-              {tokensWithPriceAndAmount.map(token => token.symbol).join('-')} {pool.symbol}
-            </Typography>
-          </div>
-          <Typography className={classes.amountText}>{mixedTokensValue}</Typography>
-        </div>
+        <Grid container className={classes.pairLine}>
+          <Grid item sm={12} md={6}>
+            <SnowPairsIcon pairsIcon={tokensWithPriceAndAmount.map(token => token.address)} size={36} />
+            <div className={classes.pairInfoStyle}>
+              <Typography variant='subtitle1'>To</Typography>
+              <Typography variant='subtitle1' className={classes.bold}>
+                {tokensWithPriceAndAmount.map(token => token.symbol).join('-')} {pool.symbol}
+              </Typography>
+            </div>
+          </Grid>
+          <Grid item sm={12} md={6} className={classes.textRight}>
+            <Typography className={classes.amountText}>{mixedTokensValue}</Typography>
+          </Grid>
+        </Grid>
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
           {
             tokensWithAmountToPut.map((token, index) => {
-              return (<Box key={index} className={classes.tokenLine} mb={index === tokensWithAmountToPut.length - 1 ? 1 : 0}>
-                <SnowTokenIcon token={token.symbol} size={20} />
-                <Typography className={classes.pairInfoStyle}>{token.name}</Typography>
-                <Typography className={classes.amountText}>{Number(token.amountToPut) > 0 ? Number(token.amountToPut) : '0.00'}</Typography>
-              </Box>)
+              return (<Grid container key={index} className={classes.tokenLine} style={{ marginBottom: index === tokensWithAmountToPut.length - 1 ? "6px" : "0px" }}>
+                <Grid item sm={12} md={6} className={classes.flex}>
+                  <SnowTokenIcon token={token.symbol} size={20} />
+                  <Typography className={classes.pairInfoStyle}>{token.name}</Typography>
+                </Grid>
+                <Grid item sm={12} md={6} className={classes.textRight} >
+                  <Typography className={classes.amountText}>{Number(token.amountToPut) > 0 ? Number(token.amountToPut) : '0.00'}</Typography>
+                </Grid>
+              </Grid>)
             })
           }
 
