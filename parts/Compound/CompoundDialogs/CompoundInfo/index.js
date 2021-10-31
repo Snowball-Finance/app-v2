@@ -54,7 +54,11 @@ const useStyles = makeStyles((theme) => ({
   },
   bold: {
     fontWeight: 600
-  }
+  },
+  flex: {
+    display: 'flex',
+    alignItems: 'center'
+  },
 }));
 
 const CompoundInfo = ({
@@ -91,7 +95,7 @@ const CompoundInfo = ({
       <ArrowDownIcon className={classes.downArrow} />
       <div className={classes.container}>
         <Grid container className={classes.pairLine}>
-          <Grid item sm={12} md={6}>
+          <Grid item sm={12} md={7} className={classes.flex}>
             <SnowPairsIcon pairsIcon={tokensWithPriceAndAmount.map(token => token.address)} size={36} />
             <div className={classes.pairInfoStyle}>
               <Typography variant='subtitle1'>To</Typography>
@@ -100,7 +104,7 @@ const CompoundInfo = ({
               </Typography>
             </div>
           </Grid>
-          <Grid item sm={12} md={6} className={classes.textRight}>
+          <Grid item sm={12} md={5} className={classes.textRight}>
             <Typography className={classes.amountText}>{mixedTokensValue}</Typography>
           </Grid>
         </Grid>
