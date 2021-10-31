@@ -95,12 +95,17 @@ const Details = ({
 	return (
 		<Grid container className={classes.container}>
 			<Grid item sm={12} md={5} className={classes.tokenSelect}>
-				<Selects
+				{options.length > 1 ? <Selects
 					className={classes.select}
 					value={selectedToken.symbol}
 					{...{ options }}
 					onChange={handleSelectChange}
-				/>
+				/> : <div style={{ display: 'flex', alignItems: 'center' }}>
+					{options[0].iconComponent && <>
+						{options[0].iconComponent}
+						<div style={{ width: '4px' }} />
+					</>} {options[0].label}
+				</div>}
 			</Grid>
 			<Grid item sm={12} md={7} className={classes.inputContainer}>
 				<SnowTextField
