@@ -155,7 +155,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
 				</ContainedButton>
 			</div>
 
-			{/* {modal.open && item.address === modal.address && !withdraw_modal && !withdraw && (
+			{/* {modal.open && item.address === modal.address && (
 				<CompoundDialogs
 					open={modal.open}
 					title={modal.title}
