@@ -157,8 +157,6 @@ const CompoundDialogs = ({
 	const handleTokenChange = (token) => {
 		dispatch({
 			type: compoundDialogActionTypes.reset, payload: {
-				title,
-				userData,
 				sliderValue: 0,
 				amount: 0,
 				inputAmount: 0,
