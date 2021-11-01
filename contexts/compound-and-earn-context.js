@@ -118,11 +118,12 @@ export function CompoundAndEarnProvider({ children }) {
       source: pool.source,
       symbol:
         pool.source === 'Trader Joe' ? 'JLP'
+          : pool.source === 'Teddy Cash' ? 'TLP'
           : pool.source === 'Banker Joe' ? 'BLP'
-            : pool.source === 'BENQI' ? 'QLP'
-              : pool.source === 'AAVE' ? 'ALP'
-                : pool.source === 'Pangolin' ? 'PGL'
-                  : 'SNOB',
+          : pool.source === 'BENQI' ? 'QLP'
+          : pool.source === 'AAVE' ? 'ALP'
+          : pool.source === 'Pangolin' ? 'PGL'
+          : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -361,32 +362,34 @@ export function CompoundAndEarnProvider({ children }) {
 
     setIsTransacting({ deposit: true });
     try {
-      if (item.kind === 'Snowglobe') {
-        const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
-        const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
-
-        const balance = await lpContract.balanceOf(account);
-        amount = amount.gt(balance) ? balance : amount;
-
-        if (amount.gt(0x00) && !onlyGauge) {
-          const snowglobeDeposit = await snowglobeContract.deposit(amount);
-          const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
-          if (!transactionSnowglobeDeposit.status) {
-            setPopUp({
-              title: 'Transaction Error',
-              icon: ANIMATIONS.ERROR.VALUE,
-              text: `Error depositing into Snowglobe`
-            });
-            return;
+      if (transactionStatus.depositStep === 0) {
+        if (item.kind === 'Snowglobe') {
+          const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
+          const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
+  
+          const balance = await lpContract.balanceOf(account);
+          amount = amount.gt(balance) ? balance : amount;
+  
+          if (amount.gt(0x00) && !onlyGauge) {
+            const snowglobeDeposit = await snowglobeContract.deposit(amount);
+            const transactionSnowglobeDeposit = await snowglobeDeposit.wait(1);
+            if (!transactionSnowglobeDeposit.status) {
+              setPopUp({
+                title: 'Transaction Error',
+                icon: ANIMATIONS.ERROR.VALUE,
+                text: `Error depositing into Snowglobe`
+              });
+              return;
+            }
           }
+          setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
+  
+        }else{
+          const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
+  
+          const balance = await tokenContract.balanceOf(account);
+          amount = amount.gt(balance) ? balance : amount;
         }
-        setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
-
-      }else{
-        const tokenContract = new ethers.Contract(item.address, ERC20_ABI, library.getSigner());
-
-        const balance = await tokenContract.balanceOf(account);
-        amount = amount.gt(balance) ? balance : amount;
       }
 
       const gauge = gauges.find((gauge) => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());

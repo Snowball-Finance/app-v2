@@ -35,6 +35,10 @@ export const POOLS = [
     label: 'Banker Joe Pools',
   },
   {
+    value: 'teddy',
+    label: 'Teddy Cash Pools',
+  },
+  {
     value: 'benqi',
     label: 'BENQI Pools',
   },
