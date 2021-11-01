@@ -153,7 +153,7 @@ const CompoundDialogs = ({
 		dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
 	}
 
-
+	console.log(userData)
 	const handleTokenChange = (token) => {
 		dispatch({
 			type: compoundDialogActionTypes.reset, payload: {

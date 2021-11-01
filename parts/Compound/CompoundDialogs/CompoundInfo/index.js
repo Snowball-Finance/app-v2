@@ -75,9 +75,9 @@ const CompoundInfo = ({
 
   const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField] }))
   const selectedTokenPrice = floatToBN(tokensWithPriceAndAmount.filter((item) => item.symbol === selectedTokenWithAmount.symbol)[0].price)
-  const halfOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(2)
+  const fractionOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(tokens.length)
 
-  const amountOfUsdToPut = multiply(BNToFloat(selectedTokenPrice), BNToFloat(halfOfSelectedToken))
+  const amountOfUsdToPut = multiply(BNToFloat(selectedTokenPrice), BNToFloat(fractionOfSelectedToken))
 
   const tokensWithAmountToPut = tokensWithPriceAndAmount.map((item) => {
     return ({
