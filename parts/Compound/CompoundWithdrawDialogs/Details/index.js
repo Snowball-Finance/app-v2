@@ -7,6 +7,7 @@ import SnowTokenIcon from 'components/SnowTokenIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import SnowTextField from 'components/UI/TextFields/SnowTextField';
 import Tags from 'components/Tags';
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles(theme => ({
   inputContainer: {
@@ -70,21 +71,32 @@ const Details = ({ item, amount, error, inputHandler }) => {
       </div>
 
       <div className={classes.inputContainer}>
-        <SnowTextField
-          className={classes.input}
-          type='number'
-          name='percent'
-          value={amount > 0 ? amount : 0}
-          error={error}
-          onChange={inputHandler}
-        />
-        <Typography variant='caption' className={classes.balanceText}>
-          Available:{' '}
-          {((item.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item.lpDecimals).toLocaleString(undefined, {
-            maximumSignificantDigits: 18,
-          })}{' '}
-          {token1 ? item.symbol : item.name}
-        </Typography>
+        {item.userBalanceGauge > 0 && (
+          <SnowTextField
+            className={classes.input}
+            type='number'
+            name='percent'
+            value={amount > 0 ? amount : 0}
+            error={error}
+            onChange={inputHandler}
+          />
+        )}
+        {item.userBalanceGauge > 0 ? (
+          <Typography variant='caption' className={classes.balanceText}>
+            Available:{' '}
+            {((item.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item.lpDecimals).toLocaleString(
+              undefined,
+              {
+                maximumSignificantDigits: 18,
+              },
+            )}{' '}
+            {token1 ? item.symbol : item.name}
+          </Typography>
+        ) : (
+          <Typography variant='h6' className={classes.balanceText}>
+            Available: {formatNumber(item?.userDepositedLP || 0.0, 5, true)} LP
+          </Typography>
+        )}
       </div>
     </>
   );
