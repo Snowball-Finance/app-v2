@@ -133,7 +133,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
       <div className={classes.container}>
         <Details item={item} title={title} amount={inputAmount} inputHandler={inputHandler} error={error} />
 
-        {item.userBalanceGauge > 0 && <CompoundSlider value={slider} onChange={handleSliderChange} />}
+        {item?.userBalanceGauge > 0 && <CompoundSlider value={slider} onChange={handleSliderChange} />}
         <Grid container spacing={1} className={classes.buttonContainer}>
           <Grid item xs={12}>
             <ContainedButton
@@ -147,7 +147,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
           </Grid>
         </Grid>
       </div>
-      {item.userBalanceGauge > 0 && <SnowStepBox transactionStatus={transactionStatus} title={title} />}
+      {item?.userBalanceGauge > 0 && <SnowStepBox transactionStatus={transactionStatus} title={title} />}
     </SnowDialog>
   );
 };

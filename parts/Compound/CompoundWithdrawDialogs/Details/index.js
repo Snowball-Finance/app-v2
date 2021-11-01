@@ -71,7 +71,7 @@ const Details = ({ item, amount, error, inputHandler }) => {
       </div>
 
       <div className={classes.inputContainer}>
-        {item.userBalanceGauge > 0 && (
+        {item?.userBalanceGauge > 0 && (
           <SnowTextField
             className={classes.input}
             type='number'
@@ -81,7 +81,7 @@ const Details = ({ item, amount, error, inputHandler }) => {
             onChange={inputHandler}
           />
         )}
-        {item.userBalanceGauge > 0 ? (
+        {item?.userBalanceGauge > 0 ? (
           <Typography variant='caption' className={classes.balanceText}>
             Available:{' '}
             {((item.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item.lpDecimals).toLocaleString(
