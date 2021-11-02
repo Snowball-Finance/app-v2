@@ -41,7 +41,7 @@ const BorderSlider = withStyles(() => ({
     border: '2px solid currentColor',
     marginTop: -8,
     marginLeft: -14,
-    '&:focus, &:hover, &$active': {
+    '&:focus, &:hover': {
       boxShadow: 'inherit',
     },
   },
