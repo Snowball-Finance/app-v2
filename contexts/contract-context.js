@@ -23,6 +23,7 @@ export function ContractProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [snowconeBalance, setSnowconeBalance] = useState(0);
+  const [AVAXBalance, setAVAXBalance] = useState(0);
   const [totalSnowcone, setTotalSnowcone] = useState(0);
   const { prices } = usePrices();
 
@@ -47,7 +48,9 @@ export function ContractProvider({ children }) {
       ]);
       const snowballBalanceValue = BNToFloat(snowballBalance, 18);
       const snowconeBalanceValue = BNToFloat(snowconeBalance, 18);
+      const avaxBalance = await provider.getBalance(account);
 
+      setAVAXBalance(BNToFloat(avaxBalance, 18));
       setSnowballBalance(snowballBalanceValue);
       setSnowconeBalance(snowconeBalanceValue);
       setTotalSnowcone(totalSnowconeValue);
@@ -103,6 +106,7 @@ export function ContractProvider({ children }) {
         snowballBalance,
         snowconeBalance,
         totalSnowcone,
+        AVAXBalance,
         getBalanceInfo,
         getGaugeProxyInfo
       }}
@@ -127,6 +131,7 @@ export function useContracts() {
     snowballBalance,
     snowconeBalance,
     totalSnowcone,
+    AVAXBalance,
     getBalanceInfo,
     getGaugeProxyInfo
   } = context
@@ -140,6 +145,7 @@ export function useContracts() {
     snowballBalance,
     snowconeBalance,
     totalSnowcone,
+    AVAXBalance,
     getBalanceInfo,
     getGaugeProxyInfo
   }
