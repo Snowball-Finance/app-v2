@@ -1,5 +1,9 @@
 import { ethers } from "ethers";
 
+export const approveContract = async ({ contract, spender, amount }) => {
+    return await contract.approve(spender, amount)
+}
+
 export const approveContractAction = async ({ contract, spender, amount, account, infiniteApproval = true }) => {
     const approvalNumber = infiniteApproval ? ethers.constants.MaxUint256 : amount
     return new Promise(async (resolve, reject) => {
@@ -15,10 +19,13 @@ export const approveContractAction = async ({ contract, spender, amount, account
                     console.log(error);
                     useExact = true;
                 })
-                const approval = await contract.approve(spender,
-                    useExact
+                const approval = await approveContract({
+                    contract,
+                    spender,
+                    amount: useExact
                         ? approvalNumber
-                        : amount);
+                        : amount
+                })
                 const transactionApprove = await approval.wait(1);
                 if (!transactionApprove.status) {
                     setPopUp({

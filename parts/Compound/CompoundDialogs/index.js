@@ -175,11 +175,7 @@ const CompoundDialogs = ({
 		}
 	}, [userData, userData.token0Balance])
 
-	// useEffect(() => {
-	//   return () => {
 
-	//   }
-	// }, [pool])
 
 	const renderButton = () => {
 		switch (title) {
