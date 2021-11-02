@@ -31,7 +31,9 @@ export const compoundDialogReducer = (state, action) => {
         }
             break
         case compoundDialogActionTypes.setUserData: {
-
+            if (newState.pool.kind === 'Stablevault') {
+                console.log('Stable vault')
+            }
             const tokens = extractValidTokens({ obj: action.payload }).map((token, index) => {
                 const key = ('token' + index + 'Balance')
                 //set the balance for selected token

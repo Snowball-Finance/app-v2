@@ -85,6 +85,7 @@ const CompoundDialogs = ({
 		userData,
 		sliderValue: 0,
 		amount: 0,
+		pool,
 		inputAmount: 0,
 		mixedTokenValue: 0,
 		calculatedInvestingTokensAmount: [],
@@ -153,7 +154,6 @@ const CompoundDialogs = ({
 		dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
 	}
 
-	console.log(userData)
 	const handleTokenChange = (token) => {
 		dispatch({
 			type: compoundDialogActionTypes.reset, payload: {
