@@ -109,9 +109,9 @@ const CompoundInfo = ({
           </Grid>
         </Grid>
         <div className={classes.estContainer}>
-          {tokens.length > 1 && <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>}
+          <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
           {
-            tokens.length > 1 && tokensWithAmountToPut.map((token, index) => {
+            tokensWithAmountToPut.map((token, index) => {
               return (<Grid container key={index} className={classes.tokenLine} style={{ marginBottom: index === tokensWithAmountToPut.length - 1 ? "6px" : "0px" }}>
                 <Grid item sm={12} md={6} className={classes.flex}>
                   <SnowTokenIcon token={token.symbol} size={20} />

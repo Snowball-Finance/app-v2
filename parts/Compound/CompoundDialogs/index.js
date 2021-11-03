@@ -17,6 +17,8 @@ import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
 import { SnowCheckbox } from 'components/UI/Checkbox';
 import { calculatedBalance } from './utils';
 import { storage, StorageKeys } from 'utils/storage';
+import { useContracts } from 'contexts/contract-context';
+import { usePrices } from 'contexts/price-context';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -78,6 +80,8 @@ const CompoundDialogs = ({
   userData,
   handleClose,
 }) => {
+
+
   const classes = useStyles();
   // i will need the pool to extract the token infos
   const [state, dispatch] = useReducer(compoundDialogReducer, {
@@ -268,13 +272,13 @@ const CompoundDialogs = ({
             />
 
             <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-            <CompoundInfo
+            {!userData.s4VaultToken && state.tokens.length > 1 && < CompoundInfo
               pool={pool}
               userData={state.userData}
               tokens={state.tokens}
               selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
               mixedTokenValue={calculatedBalance({ userData, title, value: state.sliderValue })} amount={state.inputAmount}
-              activeToken={state.selectedToken} />
+              activeToken={state.selectedToken} />}
             <SnowCheckbox
               className={classes.mt1}
               label="Infinite Approval"

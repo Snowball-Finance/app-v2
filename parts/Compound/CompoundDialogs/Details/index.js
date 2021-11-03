@@ -73,15 +73,22 @@ const Details = ({
 
 }) => {
 	const classes = useStyles();
-
+	const { s4VaultToken } = userData
 	//create options for selects component
-	const options = tokens.map((el) => {
+	let options = tokens.map((el) => {
 		return {
 			iconComponent: <SnowPairsIcon pairsIcon={[el.address]} size={32} />,
 			label: el.name,
 			value: el.symbol,
 		}
 	})
+	if (s4VaultToken) {
+		options = [{
+			iconComponent: <SnowPairsIcon pairsIcon={s4VaultToken.addresses} size={32} />,
+			label: s4VaultToken.name,
+			value: s4VaultToken.symbol,
+		}]
+	}
 	//first token is selected by default
 
 

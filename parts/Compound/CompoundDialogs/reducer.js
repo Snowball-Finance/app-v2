@@ -31,10 +31,11 @@ export const compoundDialogReducer = (state, action) => {
         }
             break
         case compoundDialogActionTypes.setUserData: {
-            if (newState.pool.kind === 'Stablevault') {
-                console.log('Stable vault')
-            }
-            const tokens = extractValidTokens({ obj: action.payload }).map((token, index) => {
+
+            let tokens = extractValidTokens({ obj: action.payload })
+
+
+            newState.tokens = tokens.map((token, index) => {
                 const key = ('token' + index + 'Balance')
                 //set the balance for selected token
                 if (token.symbol === selectedToken.symbol) {
@@ -42,8 +43,22 @@ export const compoundDialogReducer = (state, action) => {
                 }
                 return { ...token, balance: action.payload[key] }
             })
-            newState.tokens = tokens
+            let s4VaultToken;
+            if (newState.pool.kind === 'Stablevault') {
+                s4VaultToken = {
+                    addresses: tokens.map(token => token.address),
+                    // useless, just to have something in address field
+                    address: tokens[0].address,
+                    decimals: 18,
+                    pangolinPrice: action.payload.pricePoolToken,
+                    name: action.payload.name,
+                    symbol: action.payload.symbol,
+                    balance: action.payload.userLPBalance
+                }
+
+            }
             newState.userData = action.payload
+            newState.userData.s4VaultToken = s4VaultToken
         }
             break
         case compoundDialogActionTypes.setApproved: {
