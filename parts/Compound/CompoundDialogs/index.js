@@ -190,7 +190,6 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(true)}
                 loading={isTransacting.approve}
                 onClick={() => {
-                  toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
                   handleApproveClick()
                 }}
               >
