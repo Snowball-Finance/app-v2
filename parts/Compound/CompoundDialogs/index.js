@@ -204,7 +204,6 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(false)}
                 loading={isTransacting.deposit}
                 onClick={() => {
-                  toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />)
                   deposit(userData, state.amount)
                 }
                 }
