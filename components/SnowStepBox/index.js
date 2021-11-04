@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   upper: {
     width: '100%',
     borderRadius: 10,
@@ -43,29 +43,19 @@ const enumDeposit = {
   deposit2: 3,
   withdraw1: 4,
   withdraw2: 5,
-  withdraw3: 6
+  withdraw3: 6,
 };
 
-
-const SnowStepBox = ({
-    transactionStatus, title
-}) => {
-    const [colors, setColors] = useState([
-      '#DBEDFF',
-      '#DBEDFF',
-      '#DBEDFF',
-      '#DBEDFF',
-      '#DBEDFF',
-      '#DBEDFF',
-    ]);
+const SnowStepBox = ({ transactionStatus, title }) => {
+  const [colors, setColors] = useState(['#DBEDFF', '#DBEDFF', '#DBEDFF', '#DBEDFF', '#DBEDFF', '#DBEDFF']);
   const classes = useStyles();
 
   const color = {
-      enabled: '#28A2FF',
-      disabled:'#DBEDFF'
-  }
+    enabled: '#28A2FF',
+    disabled: '#DBEDFF',
+  };
 
-  useEffect(() =>{
+  useEffect(() => {
     var newStatus = [];
     newStatus.push(transactionStatus.approvalStep > 0 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.approvalStep > 1 ? color.enabled : color.disabled);
@@ -74,9 +64,9 @@ const SnowStepBox = ({
     newStatus.push(transactionStatus.withdrawStep > 0 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.withdrawStep > 1 ? color.enabled : color.disabled);
     newStatus.push(transactionStatus.withdrawStep > 2 ? color.enabled : color.disabled);
-    
-    setColors(newStatus); 
-  },[transactionStatus,color.disabled,color.enabled]);
+
+    setColors(newStatus);
+  }, [transactionStatus, color.disabled, color.enabled]);
 
   return (
     <div className={classes.root}>
@@ -88,22 +78,54 @@ const SnowStepBox = ({
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
-            {title != "Withdraw" ? <>
-            <Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.approval1]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.approval2]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.deposit1]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.deposit2]}} borderRadius="50%"/>
-            </> :  <><Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.withdraw1]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.withdraw2]}} borderRadius="50%"/>
-            <Box className={classes.ellipse} 
-              style={{background:colors[enumDeposit.withdraw3]}} borderRadius="50%"/>
-              </>}
+            {title != 'Withdraw' ? (
+              <>
+                <Box
+                  className={classes.ellipse}
+                  style={{ background: colors[enumDeposit.approval1] }}
+                  borderRadius='50%'
+                />
+                <Box
+                  className={classes.ellipse}
+                  style={{ background: colors[enumDeposit.approval2] }}
+                  borderRadius='50%'
+                />
+                <Box
+                  className={classes.ellipse}
+                  style={{ background: colors[enumDeposit.deposit1] }}
+                  borderRadius='50%'
+                />
+                <Box
+                  className={classes.ellipse}
+                  style={{ background: colors[enumDeposit.deposit2] }}
+                  borderRadius='50%'
+                />
+              </>
+            ) : (
+              <>
+                <Box display='flex' justifyContent='center' minWidth={112}>
+                  <Box
+                    className={classes.ellipse}
+                    mr={3}
+                    style={{ background: colors[enumDeposit.withdraw1] }}
+                    borderRadius='50%'
+                  />
+                  <Box
+                    className={classes.ellipse}
+                    style={{ background: colors[enumDeposit.withdraw2] }}
+                    ml={3}
+                    borderRadius='50%'
+                  />
+                </Box>
+                <Box display='flex' justifyContent='center' minWidth={112}>
+                  <Box
+                    className={classes.ellipse}
+                    style={{ background: colors[enumDeposit.withdraw3] }}
+                    borderRadius='50%'
+                  />
+                </Box>
+              </>
+            )}
           </div>
         </div>
         <div className={classes.lower}>
@@ -114,10 +136,9 @@ const SnowStepBox = ({
             </> : <Typography variant='caption'>{transactionStatus.withdrawStep}/3 Step</Typography>}
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   );
-
-}
+};
 
 export default memo(SnowStepBox);
