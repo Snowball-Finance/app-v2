@@ -40,7 +40,7 @@ const LP_ICONS = Object.freeze({
   'AAVE.e': '/assets/images/lp-icons/AAVE.png',
   'UNI.e': '/assets/images/lp-icons/AAVE.png',
   'YFI.e': '/assets/images/lp-icons/AAVE.png',
-  NoIcon: '/assets/images/no-image.png'
-})
+  NoIcon: '/assets/images/no-image.jpg',
+});
 
 export default LP_ICONS;
