@@ -20,6 +20,7 @@ const isEmpty = value => {
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const addAvalancheNetwork = () => {
+  console.log("addAvalancheNetwork")
   injected.getProvider().then(provider => {
     provider
       .request({
@@ -33,6 +34,7 @@ const addAvalancheNetwork = () => {
 };
 
 const handleConnectionError = (error) => {
+  console.log("handleConnectionError")
   if (error instanceof NoEthereumProviderError) {
     return {
       message: MESSAGES.CONNECT_NO_ETHEREUM_PROVIDER_ERROR,
