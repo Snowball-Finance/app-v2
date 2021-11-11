@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-import clsx from 'clsx'
+import clsx from 'clsx';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -15,7 +15,7 @@ import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   dialog: {
     minWidth: 200,
   },
@@ -47,56 +47,65 @@ const useStyles = makeStyles((theme) => ({
   },
   greyButton: {
     background: '#BDBDBD',
-  }
+  },
 }));
 
-const CompoundDialogs = ({
-  open,
-  title,
-  item,
-  handleClose,
-}) => {
+const CompoundDialogs = ({ open, title, item, handleClose }) => {
   const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
   const [inputAmount, setinputAmount] = useState(0);
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState(null);
- 
-  const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
-  useEffect(() =>{
-    if(!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw){
+  const { approve, deposit, isTransacting, transactionStatus, withdraw } =
+    useCompoundAndEarnContract();
+
+  useEffect(() => {
+    if (!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw) {
       toast.dismiss();
     }
-  }),[isTransacting];
+  }),
+    [isTransacting];
 
-  useEffect(() =>{
-    if(transactionStatus.depositStep === 2){
+  useEffect(() => {
+    if (transactionStatus.depositStep === 2) {
       handleClose();
     }
-    if(transactionStatus.withdrawStep === 3){
+    if (transactionStatus.withdrawStep === 3) {
       handleClose();
     }
-  }),[transactionStatus];
+  }),
+    [transactionStatus];
 
-  const calculatePercentage = (amount) => {
-    return title != "Withdraw" ? amount / (item?.userLPBalance/10**item?.lpDecimals) * 100 : amount / (item?.userBalanceGauge/10**item?.lpDecimals) * 100
+  const calculatePercentage = amount => {
+    return title != 'Withdraw'
+      ? (amount / (item?.userLPBalance / 10 ** item?.lpDecimals)) * 100
+      : (amount / (item?.userBalanceGauge / 10 ** item?.lpDecimals)) * 100;
   };
 
-  const calculatedBalance = (value) => {
-    return title != "Withdraw" ? item?.userLPBalance.mul(value).div(100) : item?.userBalanceGauge.mul(value).div(100);
+  const calculatedBalance = value => {
+    return title != 'Withdraw'
+      ? item?.userLPBalance.mul(value).div(100)
+      : item?.userBalanceGauge.mul(value).div(100);
   };
 
   const enabledHandler = (isApproved = false) => {
-    return (isApproved? approved : !approved) || (amount == 0) ||
-      isTransacting.approve || isTransacting.deposit;
-  }
+    return (
+      (isApproved ? approved : !approved) ||
+      amount == 0 ||
+      isTransacting.approve ||
+      isTransacting.deposit
+    );
+  };
 
-  const inputHandler = (event) => {
-    if(event.target.value > 0 && !Object.is(NaN,event.target.value)){
+  const inputHandler = event => {
+    if (event.target.value > 0 && !Object.is(NaN, event.target.value)) {
       const percentage = calculatePercentage(event.target.value);
-      const balance = title != "Withdraw" ? item?.userLPBalance/10**item?.lpDecimals : item?.userBalanceGauge/10**item?.lpDecimals;
+      const balance =
+        title != 'Withdraw'
+          ? item?.userLPBalance / 10 ** item?.lpDecimals
+          : item?.userBalanceGauge / 10 ** item?.lpDecimals;
       if (balance >= event.target.value) {
         setinputAmount(event.target.value);
         setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
@@ -105,89 +114,34 @@ const CompoundDialogs = ({
       } else {
         setError(`Can't exceed the max limit`);
       }
-    }else{
+    } else {
       setAmount(ethers.BigNumber.from(0));
       setinputAmount(0);
     }
   };
 
-  const handleSliderChange = (value) => {
+  const handleSliderChange = value => {
     const usedBalance = calculatedBalance(value);
-    const inputAmount = (usedBalance/10**item?.lpDecimals);
+    const inputAmount = usedBalance / 10 ** item?.lpDecimals;
     setSlider(value);
     setAmount(usedBalance);
-    setinputAmount(inputAmount > 1e-6? inputAmount : Number(inputAmount).toLocaleString('en-US',{maximumSignificantDigits:18}));
+    setinputAmount(
+      inputAmount > 1e-6
+        ? inputAmount
+        : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 }),
+    );
     setError(null);
   };
 
   const approveHandler = async () => {
     try {
-      toast(<Toast message={'Checking for approval...'} toastType={'processing'}/>)
-      const result = await approve(item, amount)
+      toast(<Toast message={'Checking for approval...'} toastType={'processing'} />);
+      const result = await approve(item, amount);
       if (result) {
         setApproved(true);
       }
     } catch (error) {
       console.log(error);
-    }
-  }
-
-  const renderButton = () => {
-    switch (title) {
-      case 'Deposit': {
-        return (
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <ContainedButton
-                className={clsx(classes.modalButton)}
-                disableElevation
-                fullWidth
-                disabled={enabledHandler(true)}
-                loading={isTransacting.approve}
-                onClick={approveHandler}
-              >
-                Approve
-              </ContainedButton>
-            </Grid>
-            <Grid item xs={6}>
-              <GradientButton
-                className={clsx(classes.modalButton)}
-                disableElevation
-                fullWidth
-                disabled={enabledHandler(false)}
-                loading={isTransacting.deposit}
-                onClick={() => {
-                    toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'}/>)
-                    deposit(item, amount)
-                  }
-                }
-              >
-                Deposit
-              </GradientButton>
-            </Grid>
-          </Grid>
-        );
-      }
-      case 'Withdraw': {
-        return (
-          <Grid item xs={12}>
-              <ContainedButton
-                className={clsx(classes.button)}
-                disableElevation
-                disabled={amount==0}
-                loading={isTransacting.withdraw}
-                onClick={() => {
-                  toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-                  withdraw(item, amount)
-                }}
-              >
-                Withdraw
-              </ContainedButton>
-            </Grid>
-        )
-      }
-      default:
-        return null;
     }
   };
 
@@ -199,8 +153,7 @@ const CompoundDialogs = ({
       dialogClass={classes.dialog}
       dialogTitleClass={classes.dialogTitle}
       titleTextClass={classes.dialogTitleText}
-      closeIconClass={classes.dialogCloseIcon}
-    >
+      closeIconClass={classes.dialogCloseIcon}>
       <div className={classes.container}>
         <Details
           item={item}
@@ -212,10 +165,36 @@ const CompoundDialogs = ({
 
         <CompoundSlider value={slider} onChange={handleSliderChange} />
         <Grid container spacing={1} className={classes.buttonContainer}>
-          {renderButton()}
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <ContainedButton
+                className={clsx(classes.modalButton)}
+                disableElevation
+                fullWidth
+                disabled={enabledHandler(true)}
+                loading={isTransacting.approve}
+                onClick={approveHandler}>
+                Approve
+              </ContainedButton>
+            </Grid>
+            <Grid item xs={6}>
+              <GradientButton
+                className={clsx(classes.modalButton)}
+                disableElevation
+                fullWidth
+                disabled={enabledHandler(false)}
+                loading={isTransacting.deposit}
+                onClick={() => {
+                  toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />);
+                  deposit(item, amount);
+                }}>
+                Deposit
+              </GradientButton>
+            </Grid>
+          </Grid>
         </Grid>
       </div>
-      {<SnowStepBox transactionStatus={transactionStatus} title={title}/>}
+      <SnowStepBox transactionStatus={transactionStatus} title={title} />
     </SnowDialog>
   );
 };
