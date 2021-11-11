@@ -17,6 +17,10 @@ const LINKS = Object.freeze({
     TITLE: 's4D Vault',
     HREF: '/s4d-vault'
   },
+  AXIAL: {
+    TITLE: 'Axial',
+    HREF: 'https://app.axial.exchange'
+  },
   STAKING: {
     TITLE: 'Staking',
     HREF: '/staking'
