@@ -31,6 +31,7 @@ const LP_ICONS = Object.freeze({
   JOE: '/assets/images/lp-icons/JOE.png',
   QI: '/assets/images/lp-icons/BENQI.png',
   BENQI: '/assets/images/lp-icons/BENQI.png',
+  AXLP: '/assets/images/lp-icons/AXIAL.png',
   'DAI.e': '/assets/images/lp-icons/DAI.png',
   'USDT.e': '/assets/images/lp-icons/USDT.png',
   'ETH.e': '/assets/images/lp-icons/ETH.png',
