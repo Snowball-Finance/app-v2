@@ -18,6 +18,7 @@ const SIDEBAR_MENU = [
       LINKS.S3D_VAULT,
       LINKS.S3F_VAULT,
       LINKS.S4D_VAULT,
+      LINKS.AXIAL,
     ]
   },
   {

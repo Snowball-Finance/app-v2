@@ -11,7 +11,7 @@ const AVALANCHE_MAINNET_PARAMS = {
       decimals: 18
   },
   rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-  blockExplorerUrls: ['https://cchain.explorer.avax.network/']
+  blockExplorerUrls: ['https://snowtrace.io/']
 }
 
 const walletlink = new WalletLinkConnector({
