@@ -6,6 +6,7 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
 import { VOTE_HAND_IMAGE_PATH } from 'utils/constants/image-paths'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
+import LINKS from 'utils/constants/links'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,6 +71,7 @@ const VoteHandHeader = () => {
       </Typography>
       <ContainedButton
         className={classes.subHeaderButton}
+        href={LINKS.GITBOOK_DOCS.COMMUNITY_PROPOSALS.HREF}
         size='small'
         disableElevation
         endIcon={<HelpOutlineIcon />}
