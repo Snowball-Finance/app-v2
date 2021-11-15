@@ -137,6 +137,8 @@ export function CompoundAndEarnProvider({ children }) {
           ? 'ALP'
           : pool.source === 'Pangolin'
           ? 'PGL'
+          : pool.source === 'Axial'
+          ? 'AXLP'
           : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,

@@ -103,6 +103,7 @@ const lightTheme = responsiveFontSizes(
         snob_blue: '#28A2FF',
         s3d_blue: '#1891FC',
         s3f_green: '#39CD33',
+        axlp_skyblue: '#30386b',
         border: '#D8D6DE',
         sidebarIcon: '#55535d',
         tokenPairTableHeader: '#C8E6FE',
@@ -121,7 +122,8 @@ const lightTheme = responsiveFontSizes(
           teddy_yellow: 'rgba(21, 221, 231, 0.12)',
           sherpa_red: 'rgba(252, 61, 74, 0.12)',
           aave_purple: 'rgba(182, 80, 158, 0.12)',
-          green: 'rgba(40, 199, 111, 0.12)'
+          green: 'rgba(40, 199, 111, 0.12)',
+          axlp_skyblue: 'rgba(48, 56, 107, 0.12)',
         },
         actions: {
           Details: '#0085EB',
@@ -246,6 +248,7 @@ const darkTheme = responsiveFontSizes(
         snob_blue: '#28A2FF',
         s3d_blue: '#1891FC',
         s3f_green: '#39CD33',
+        axlp_skyblue: '#ffffff',
         border: '#D8D6DE',
         sidebarIcon: '#55535d',
         tokenPairTableHeader: '#1E2848',
@@ -264,7 +267,8 @@ const darkTheme = responsiveFontSizes(
           teddy_yellow: 'rgba(255, 215, 0, 0.12)',
           sherpa_red: 'rgba(252, 61, 74, 0.12)',
           aave_purple: 'rgba(182, 80, 158, 0.12)',
-          green: 'rgba(40, 199, 111, 0.12)'
+          green: 'rgba(40, 199, 111, 0.12)',
+          axlp_skyblue: 'rgba(48, 56, 107, 1)',
         },
         actions: {
           Details: '#0085EB',

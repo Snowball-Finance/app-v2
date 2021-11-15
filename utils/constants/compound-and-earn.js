@@ -51,6 +51,10 @@ export const POOLS = [
     label: 'Snowball Pools',
   },
   {
+    value: 'axlp',
+    label: 'Axial Pools',
+  },
+  {
     value: 'claimable',
     label: 'Claimable Pools',
   }
