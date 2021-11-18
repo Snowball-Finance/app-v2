@@ -429,7 +429,7 @@ export function CompoundAndEarnProvider({ children }) {
       } else {
         const linkTx = getLink(
           `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionGaugeDeposit.transactionHash}`,
-          'Check on C-Chain Explorer.',
+          'Check on Snowtrace.',
         );
         setPopUp({
           title: 'Deposit Complete',
@@ -487,7 +487,7 @@ export function CompoundAndEarnProvider({ children }) {
           if (item.kind === 'Stablevault') {
             const linkTx = getLink(
               `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionGaugeWithdraw.transactionHash}`,
-              'Check on C-Chain Explorer.',
+              'Check on Snowtrace.',
             );
             setPopUp({
               title: 'Withdraw Complete',
@@ -541,7 +541,7 @@ export function CompoundAndEarnProvider({ children }) {
           }
           const linkTx = getLink(
             `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionSnowglobeWithdraw.transactionHash}`,
-            'Check on C-Chain Explorer.',
+            'Check on Snowtrace.',
           );
           setPopUp({
             title: 'Withdraw Complete',
@@ -609,7 +609,7 @@ export function CompoundAndEarnProvider({ children }) {
       if (transactionReward.status) {
         const linkTx = getLink(
           `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${transactionReward.transactionHash}`,
-          'Check on C-Chain Explorer.',
+          'Check on Snowtrace.',
         );
         setPopUp({
           title: 'Claim Complete',
