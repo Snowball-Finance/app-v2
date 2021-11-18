@@ -11,10 +11,16 @@ import { formatNumber } from 'utils/helpers/format'
 import { useAPIContext } from 'contexts/api-context'
 
 const useStyles = makeStyles((theme) => ({
+
   sherpaClaim: {
     marginTop: theme.spacing(2),
     backgroundColor: theme.custom.palette.sherpa_red
   },
+  axialClaim: {
+    marginTop: theme.spacing(2),
+    backgroundColor: theme.custom.palette.axial_blue,
+    color: theme.custom.palette.axial_gold
+  }
 }));
 
 const SnowClaim = () => {
@@ -22,7 +28,9 @@ const SnowClaim = () => {
     claim,
     userClaimable,
     sherpaClaim,
-    userSherpaClaimable
+    userSherpaClaimable,
+    axialClaim,
+    userAxialClaimable,
   } = useStakingContract();
 
   const classes = useStyles();
@@ -36,6 +44,11 @@ const SnowClaim = () => {
   const sherpaClaimable = useMemo(() =>
     userSherpaClaimable ? parseFloat(formatEther(userSherpaClaimable)) : null
     , [userSherpaClaimable]);
+
+  const axialClaimable = useMemo(() =>
+    userAxialClaimable ? parseFloat(formatEther(userAxialClaimable)) : null
+    , [userAxialClaimable]);
+    
   return (
     <CardWrapper title='Claim'>
       <Grid container spacing={2}>
@@ -57,7 +70,7 @@ const SnowClaim = () => {
             disabled={!claimable}
             onClick={claim}
           >
-            {`Claim ${formatNumber(claimable, 3)} Snowballs`}
+            {`Claim ${formatNumber(claimable, 4)} Snowballs`}
           </ContainedButton>
           {sherpaClaimable > 0 && 
             <ContainedButton
@@ -66,8 +79,19 @@ const SnowClaim = () => {
               disabled={!sherpaClaimable}
               onClick={sherpaClaim}
             >
-            {`Claim ${formatNumber(sherpaClaimable, 3)} Sherpa`}
+            {`Claim ${formatNumber(sherpaClaimable, 4)} SHERPA`}
             <SnowTokenIcon size={16} token='SHERPA'/>
+            </ContainedButton>
+          }
+          {axialClaimable > 0 &&
+            <ContainedButton
+              className = {classes.axialClaim}
+              fullWidth
+              disabled={!axialClaimable}
+              onClick={axialClaim}
+            >
+            {`Claim ${formatNumber(axialClaimable, 4)} AXIAL`}
+            <SnowTokenIcon size={16} token='AXLP'/>
             </ContainedButton>
           }
         </Grid>

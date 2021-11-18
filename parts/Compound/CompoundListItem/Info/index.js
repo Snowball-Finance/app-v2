@@ -6,6 +6,7 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 import Tags from 'components/Tags';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
+import LINKS from 'utils/constants/links'
 
 const useStyles = makeStyles((theme) => ({
   info: {
@@ -67,7 +68,7 @@ const Info = ({ icon, buttonText, boost }) => {
           size="small"
           disableElevation
           endIcon={<HelpOutlineIcon />}
-          href="https://snowballs.gitbook.io/snowball-docs/governance/xsnob/reward-boosting"
+          href={LINKS.GITBOOK_DOCS.REWARD_BOOSTING.HREF}
         >
           {buttonText}
         </ContainedButton>
