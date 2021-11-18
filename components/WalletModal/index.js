@@ -10,8 +10,7 @@ import WalletCard from 'components/WalletModal/WalletCard'
 import { walletlink, injected } from 'utils/constants/connectors'
 import ANIMATIONS from 'utils/constants/animate-icons'
 
-import { useMatomo } from '@datapunt/matomo-tracker-react'
-import { AnalyticActions, AnalyticCategories, createEvent } from "contexts/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 
 const DESKTOP_CONNECTORS = {
@@ -47,7 +46,7 @@ const WalletModal = ({
   onConnectWallet
 }) => {
 
-  const { trackEvent } = useMatomo()
+  const { trackEvent } = useAnalytics()
   useEffect(() => {
     if (open) {
       trackEvent(createEvent({

@@ -2,18 +2,18 @@ import { MatomoProvider, createInstance, useMatomo } from '@datapunt/matomo-trac
 import { useRouter } from "next/router";
 import { useEffect } from 'react'
 
+export const useAnalytics = () => {
+  const { trackPageView, trackEvent } = useMatomo()
+  return { trackPageView, trackEvent }
+}
+
+
 export const createEvent = ({
-  /**needed */
   category,
-  /**needed */
   action,
-  /**optional */
   name,
-  /**optional */
   value,
-  /**optional */
   documentTitle,
-  /**optional */
   href,
 
 }) => {
@@ -69,7 +69,7 @@ export const AnalyticsProvider = ({ children }) => {
 }
 export const Analytics = ({ children }) => {
   const router = useRouter();
-  const { trackPageView, } = useMatomo()
+  const { trackPageView, } = useAnalytics()
   if (typeof window !== "undefined") {
     trackPageView({
       href: router.pathname,

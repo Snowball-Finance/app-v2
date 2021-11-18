@@ -1,8 +1,7 @@
 
 import React, { memo } from 'react'
 import Link from 'next/link'
-import { useMatomo } from '@datapunt/matomo-tracker-react'
-import { AnalyticActions, AnalyticCategories, createEvent } from "contexts/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 
 const ButtonLink = React.forwardRef(({
@@ -14,12 +13,12 @@ const ButtonLink = React.forwardRef(({
   target,
   onClick,
 }, ref) => {
-  const { trackEvent } = useMatomo()
+  const { trackEvent } = useAnalytics()
 
 
   const handleClick = (e) => {
     trackEvent(createEvent({ action: AnalyticActions.click, category: AnalyticCategories.link, value: href }))
-    onClick(e)
+    onClick && onClick(e)
   }
 
   return <Link

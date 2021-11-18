@@ -3,8 +3,7 @@ import React, { memo } from 'react'
 import Link from 'next/link'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import { useMatomo } from '@datapunt/matomo-tracker-react'
-import { AnalyticActions, AnalyticCategories, createEvent } from "contexts/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 
 import clsx from 'clsx'
@@ -31,7 +30,7 @@ const LinkButton = ({
 }) => {
   const classes = useStyles();
 
-  const { trackEvent } = useMatomo()
+  const { trackEvent } = useAnalytics()
 
 
   const handleClick = (e) => {
