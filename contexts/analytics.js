@@ -2,10 +2,21 @@ import { MatomoProvider, createInstance, useMatomo } from '@datapunt/matomo-trac
 import { useRouter } from "next/router";
 import { useEffect } from 'react'
 
-export const useAnalytics = () => {
-  const { trackPageView, trackEvent } = useMatomo()
-  return { trackPageView, trackEvent }
+
+export const AnalyticCategories = {
+  investigation: 'investigation',
+  link: 'link',
+  modal: 'modal',
 }
+export const AnalyticActions = {
+  click: 'click-event',
+  wallet: 'wallet'
+}
+
+
+
+
+
 
 
 export const createEvent = ({
@@ -28,16 +39,6 @@ export const createEvent = ({
   }
 }
 
-export const AnalyticCategories = {
-  investigation: 'investigation',
-  link: 'link',
-  modal: 'modal',
-}
-export const AnalyticActions = {
-  click: 'click-event',
-  wallet: 'wallet'
-}
-
 const instance = createInstance({
   urlBase: 'https://LINK.TO.DOMAIN',
   siteId: 3,
@@ -57,6 +58,8 @@ const instance = createInstance({
     setRequestMethod: 'POST'
   }
 })
+
+
 
 export const AnalyticsProvider = ({ children }) => {
   return (
@@ -93,5 +96,10 @@ export const Analytics = ({ children }) => {
 
 
   return children
+}
+
+export const useAnalytics = () => {
+  const { trackPageView, trackEvent } = useMatomo()
+  return { trackPageView, trackEvent }
 }
 
