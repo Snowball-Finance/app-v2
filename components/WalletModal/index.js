@@ -1,5 +1,5 @@
 
-import { memo, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Grid, Typography, useMediaQuery, Link } from '@material-ui/core'
 import { useWeb3React } from '@web3-react/core'
@@ -9,6 +9,10 @@ import SnowDialog from 'components/SnowDialog'
 import WalletCard from 'components/WalletModal/WalletCard'
 import { walletlink, injected } from 'utils/constants/connectors'
 import ANIMATIONS from 'utils/constants/animate-icons'
+
+import { useMatomo } from '@datapunt/matomo-tracker-react'
+import { AnalyticActions, AnalyticCategories, createEvent } from "contexts/analytics";
+
 
 const DESKTOP_CONNECTORS = {
   'MetaMask': injected,
@@ -42,6 +46,21 @@ const WalletModal = ({
   onClose,
   onConnectWallet
 }) => {
+
+  const { trackEvent } = useMatomo()
+  useEffect(() => {
+    if (open) {
+      trackEvent(createEvent({
+        category: AnalyticCategories.modal,
+        action: AnalyticActions.wallet,
+        name: 'open'
+      }))
+    }
+    return () => {
+
+    }
+  }, [open])
+
   const { connector } = useWeb3React();
   const classes = useStyles();
   const theme = useTheme();
@@ -51,16 +70,16 @@ const WalletModal = ({
   const [openModal, setOpen] = useState(false)
 
   const walletSelectHandler = (currentConnector, name) => {
-    console.log(currentConnector,name);
-    if(name == 'Coin 98') {
+    console.log(currentConnector, name);
+    if (name == 'Coin 98') {
       if (!window.ethereum.isCoin98 && !window.coin98) {
         setOpen(true)
         return;
-      }else{
+      } else {
         onConnectWallet(currentConnector);
         onClose();
       }
-    }else{
+    } else {
       onConnectWallet(currentConnector);
       onClose();
     }
@@ -68,53 +87,53 @@ const WalletModal = ({
 
   return (
     <>
-    <SnowDialog
-      open={open}
-      onClose={onClose}
-      title='Connect Wallet'
-    >
-      <Grid 
-        container 
-        spacing={2} 
-        className={classes.installContainer} 
-        direction='row'
-        justify='center'
-        alignItems='stretch'
+      <SnowDialog
+        open={open}
+        onClose={onClose}
+        title='Connect Wallet'
       >
-        {Object.keys(walletConnectors).map(name => {
-          const currentConnector = walletConnectors[name]
-          return (
-            <Grid 
-              key={name} 
-              item
-              lg={4}
-              md={4}
-              xs={12} 
-              sm={12} 
-              onClick={() => walletSelectHandler(currentConnector,name)}
-            >
-              <WalletCard
-                selected={currentConnector === connector}
-                name={name}
-              />
-            </Grid>
-          )
-        })}
+        <Grid
+          container
+          spacing={2}
+          className={classes.installContainer}
+          direction='row'
+          justify='center'
+          alignItems='stretch'
+        >
+          {Object.keys(walletConnectors).map(name => {
+            const currentConnector = walletConnectors[name]
+            return (
+              <Grid
+                key={name}
+                item
+                lg={4}
+                md={4}
+                xs={12}
+                sm={12}
+                onClick={() => walletSelectHandler(currentConnector, name)}
+              >
+                <WalletCard
+                  selected={currentConnector === connector}
+                  name={name}
+                />
+              </Grid>
+            )
+          })}
 
-        <Grid item xs={12}>
-          <Typography variant='body1' className={classes.label}>New to avalanche</Typography>
-          <Link component='button' variant='body1' underline='none' className={classes.label}>+ Add Avalanche Network to Metamask</Link>
+          <Grid item xs={12}>
+            <Typography variant='body1' className={classes.label}>New to avalanche</Typography>
+            <Link component='button' variant='body1' underline='none' className={classes.label}>+ Add Avalanche Network to Metamask</Link>
+          </Grid>
         </Grid>
-      </Grid>
-    </SnowDialog>
-    <SnowConfirmDialog
-      open={openModal}
-      onClose={() => setOpen(false)}
-      title='Warning'
-      text="You need to install Coin98 Wallet Extention"
-      icon={ANIMATIONS.WARNING.VALUE}
-    />
-  </>
+      </SnowDialog>
+      <SnowConfirmDialog
+        open={openModal}
+        onClose={() => setOpen(false)}
+        title='Warning'
+        text="You need to install Coin98 Wallet Extention"
+        icon={ANIMATIONS.WARNING.VALUE}
+      />
+    </>
   );
 }
 
