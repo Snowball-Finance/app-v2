@@ -43,7 +43,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
       display="flex"
     >
         {item.deprecatedPool && <Typography align="center" color="error">
-          This pool is deprecated and don{`'`}t receive rewards anymore, please withdraw from it.
+          This pool is deprecated and doesn{`'`}t receive rewards anymore, please withdraw from it.
         </Typography>}
       <Grid
         container

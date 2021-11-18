@@ -48,7 +48,7 @@ const TransactionItem = ({ transaction }) => {
   );
 
   const redirectToExplorer = (hash) => {
-    window.open(`https://cchain.explorer.avax.network/tx/${hash}`, '_blank');
+    window.open(`https://snowtrace.io/tx/${hash}`, '_blank');
   };
 
   return (

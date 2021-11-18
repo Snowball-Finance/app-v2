@@ -22,7 +22,7 @@ const getProperAction = (item, setModal, balance, deposit = 0, details = false) 
 		action = ["Get_Token", () => { window.open(`${PangolinURL}/swap/${token1}`) }];
 	} else if (item.source == "Pangolin") {
 		action = ["Get_PGL", () => { window.open(`${PangolinURL}/add/${token1}/${token2}`) }];
-	} else if (item.source == "Trader Joe") {
+	} else if (item.source == "Trader Joe" || item.symbol == "AXLP"){
 		action = ["Get_JLP", () => { window.open(`${JoeURL}/pool/${token1}/${token2}`) }];
 	} else if (item.name == "S3D (USDT-BUSD-DAI)") {
 		action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];

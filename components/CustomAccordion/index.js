@@ -8,7 +8,7 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '100%'
+    width: '100%',
   },
 }));
 
@@ -19,45 +19,37 @@ const Accordion = withStyles({
   },
 })(MuiAccordion);
 
-const AccordionSummary = withStyles((theme) => ({
+const AccordionSummary = withStyles(theme => ({
   root: {
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
-    backgroundColor: theme.palette.background.primary
+    backgroundColor: theme.palette.background.primary,
   },
   expandIcon: {
     transform: 'none !important',
     [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    }
+      width: '100%',
+    },
   },
 }))(MuiAccordionSummary);
 
-const AccordionDetails = withStyles((theme) => ({
+const AccordionDetails = withStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.primary
+    backgroundColor: theme.palette.background.primary,
   },
 }))(MuiAccordionDetails);
 
-const CustomAccordion = ({
-  className,
-  style,
-  summary,
-  details,
-  expandMoreIcon,
-  onChanged
-}) => {
+const CustomAccordion = ({ className, style, summary, details, expandMoreIcon, onChanged }) => {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.root, className)} style={style}>
-      <Accordion defaultExpanded={false} onChange={onChanged}>
+      <Accordion defaultExpanded={false} onChange={onChanged} TransitionProps={{ unmountOnExit: true }}>
         <AccordionSummary
           expandIcon={expandMoreIcon || <ExpandMoreIcon />}
-          aria-controls="panel1c-content"
-          id="panel1c-header"
-        >
+          aria-controls='panel1c-content'
+          id='panel1c-header'>
           {summary}
         </AccordionSummary>
         <AccordionDetails>{details}</AccordionDetails>

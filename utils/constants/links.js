@@ -17,6 +17,10 @@ const LINKS = Object.freeze({
     TITLE: 's4D Vault',
     HREF: '/s4d-vault'
   },
+  AXIAL: {
+    TITLE: 'Axial',
+    HREF: 'https://app.axial.exchange'
+  },
   STAKING: {
     TITLE: 'Staking',
     HREF: '/staking'
@@ -37,6 +41,23 @@ const LINKS = Object.freeze({
     TITLE: 'Docs',
     HREF: 'https://snowballs.gitbook.io/snowball-docs/',
     IS_EXT_LINK: true
+  },
+  GITBOOK_DOCS: {
+    COMMUNITY_PROPOSALS: {
+      TITLE: 'Proposals',
+      HREF: 'https://snowballs.gitbook.io/snowball-docs/governance/community-proposals',
+      IS_EXT_LINK: true
+    },
+    COMPOUNDING: {
+      TITLE: 'Compounding',
+      HREF: 'https://snowballs.gitbook.io/snowball-docs/products/compounding#the-benefits-of-compounding-with-snowball',
+      IS_EXT_LINK: true
+    },
+    REWARD_BOOSTING: {
+      TITLE: 'Reward Boosting',
+      HREF: 'https://snowballs.gitbook.io/snowball-docs/governance/xsnob/reward-boosting',
+      IS_EXT_LINK: true
+    }
   },
   GITHUB: {
     TITLE: 'GitHub',
