@@ -94,7 +94,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
         (item?.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item?.lpDecimals;
       if (balance >= event.target.value) {
         setinputAmount(event.target.value);
-        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
+        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), item?.lpDecimals));
         setSlider(percentage);
         setError(null);
       } else {

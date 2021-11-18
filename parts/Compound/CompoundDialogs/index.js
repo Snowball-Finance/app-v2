@@ -108,7 +108,7 @@ const CompoundDialogs = ({ open, title, item, handleClose }) => {
           : item?.userBalanceGauge / 10 ** item?.lpDecimals;
       if (balance >= event.target.value) {
         setinputAmount(event.target.value);
-        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
+        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), item?.lpDecimals));
         setSlider(percentage);
         setError(null);
       } else {
