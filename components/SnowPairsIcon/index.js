@@ -43,7 +43,7 @@ const SnowPairsIcon = ({ pairsIcon, size, className, flat }) => {
         <div key={pair} className={clsx(classes.tokenImage, className, {
           [classes.secondTokenIcon]: index > 0,
         })}>
-          <Image
+          <ImageFallback
             alt="token"
             src={src}
             width={size || 50}
