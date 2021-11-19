@@ -5,13 +5,22 @@ import { useEffect, useRef } from 'react'
 
 export const AnalyticCategories = {
   investigation: 'investigation',
+  ui: "ui",
   link: 'link',
   subTab: 'subTab',
   modal: 'modal',
+  wallet: 'wallet',
+  error: 'error',
+  formSubmit: 'formSubmit'
 }
 export const AnalyticActions = {
   click: 'click-event',
-  wallet: 'wallet'
+  wallet: 'wallet',
+  addSnob: 'addSnob',
+  themeChange: 'themeChange',
+  submit: 'submit',
+  approve: 'approve',
+
 }
 
 
@@ -103,7 +112,7 @@ export const Analytics = ({ children }) => {
 }
 
 export const useAnalytics = () => {
-  const { trackPageView, trackEvent } = useMatomo()
-  return { trackPageView, trackEvent }
+  const { trackPageView, trackEvent, pushInstruction } = useMatomo()
+  return { trackPageView, trackEvent, pushInstruction }
 }
 

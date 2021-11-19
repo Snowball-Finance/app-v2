@@ -14,6 +14,7 @@ import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -52,6 +53,9 @@ const useStyles = makeStyles(theme => ({
 
 const CompoundDialogs = ({ open, title, item, handleClose }) => {
   const classes = useStyles();
+
+  const { trackEvent } = useAnalytics()
+
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
   const [inputAmount, setinputAmount] = useState(0);
@@ -142,6 +146,11 @@ const CompoundDialogs = ({ open, title, item, handleClose }) => {
       }
     } catch (error) {
       console.log(error);
+      trackEvent(createEvent({
+        category: AnalyticCategories.error,
+        action: AnalyticActions.wallet,
+        name: `submit ${amount}`,
+      }))
     }
   };
 
