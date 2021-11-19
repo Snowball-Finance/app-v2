@@ -7,6 +7,7 @@ export const AnalyticCategories = {
   investigation: 'investigation',
   ui: "ui",
   link: 'link',
+  button: 'button',
   subTab: 'subTab',
   modal: 'modal',
   wallet: 'wallet',
@@ -15,6 +16,7 @@ export const AnalyticCategories = {
   s4d: 's4d',
   s3d: 's3d',
   s3f: 's3f',
+  transaction: 'transaction',
 }
 export const AnalyticActions = {
   click: 'click-event',
