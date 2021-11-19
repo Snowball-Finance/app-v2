@@ -1,6 +1,6 @@
 import { MatomoProvider, createInstance, useMatomo } from '@datapunt/matomo-tracker-react'
 import { useRouter } from "next/router";
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 
 export const AnalyticCategories = {
@@ -74,11 +74,13 @@ export const AnalyticsProvider = ({ children }) => {
 }
 export const Analytics = ({ children }) => {
   const router = useRouter();
+  const initialized = useRef(false)
   const { trackPageView } = useAnalytics()
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && initialized.current === false) {
     trackPageView({
       href: router.pathname,
     });
+    initialized.current = true
   }
 
   useEffect(() => {
