@@ -32,12 +32,6 @@ export const AnalyticActions = {
   remove: 'remove',
 }
 
-
-
-
-
-
-
 export const createEvent = ({
   category,
   action,
@@ -45,7 +39,6 @@ export const createEvent = ({
   value,
   documentTitle,
   href,
-
 }) => {
   return {
     category,
@@ -54,7 +47,6 @@ export const createEvent = ({
     value, // optional, numerical value
     documentTitle, // optional
     href, // optional
-
   }
 }
 
@@ -79,8 +71,6 @@ const instance = createInstance({
   }
 })
 
-
-
 export const AnalyticsProvider = ({ children }) => {
   return (
     <MatomoProvider value={instance}>
@@ -90,6 +80,7 @@ export const AnalyticsProvider = ({ children }) => {
     </MatomoProvider>
   )
 }
+
 export const Analytics = ({ children }) => {
   const router = useRouter();
   const initialized = useRef(false)
@@ -121,7 +112,7 @@ export const Analytics = ({ children }) => {
 }
 
 export const useAnalytics = () => {
-  const { trackPageView, trackEvent, pushInstruction } = useMatomo()
-  return { trackPageView, trackEvent, pushInstruction }
+  const { trackPageView, trackEvent } = useMatomo()
+  return { trackPageView, trackEvent }
 }
 

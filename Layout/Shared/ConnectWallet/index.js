@@ -33,15 +33,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ConnectWallet = () => {
   const classes = useStyles()
-  const { pushInstruction } = useAnalytics()
   const { setIsWalletDialog } = useWallets()
   const { account, active, error, deactivate } = useWeb3React();
 
-  useEffect(() => {
-    if (account && active) {
-      pushInstruction('setUserId', account);
-    }
-  }, [account, active])
 
   const walletHandler = () => {
     if ((active || error)) {
