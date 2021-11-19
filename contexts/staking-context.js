@@ -39,12 +39,15 @@ export function StakingContractProvider({ children }) {
   const [totalLocked, setTotalLocked] = useState(0);
   const [userClaimable, setUserClaimable] = useState(0);
   const [userSherpaClaimable, setUserSherpaClaimable] = useState(0);
+  const [userAxialClaimable, setUserAxialClaimable] = useState(0);
 
   const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library, provider])
   const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library, provider])
   const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library, provider])
   const feeDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
   const sherpaDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SHERPA_FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
+  const axialDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.AXIAL_FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
+
   const lockedValue = useMemo(() => prices.SNOB * BNToFloat(totalSupply), [prices?.SNOB, totalSupply])
   const totalSnowballValue = useMemo(() => prices.SNOB * BNToFloat(totalLocked), [prices?.SNOB, totalLocked])
   const unlockTime = useMemo(() => {
@@ -55,11 +58,11 @@ export function StakingContractProvider({ children }) {
   const isExpired = useMemo(() => unlockTime < new Date(), [unlockTime]);
 
   useEffect(() => {
-    if (!isEmpty(feeDistributorContract) && !isEmpty(sherpaDistributorContract)) {
+    if (!isEmpty(feeDistributorContract) && !isEmpty(sherpaDistributorContract) && !isEmpty(axialDistributorContract)) {
       getFeeDistributorInfo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feeDistributorContract, sherpaDistributorContract])
+  }, [feeDistributorContract, sherpaDistributorContract, axialDistributorContract])
 
   useEffect(() => {
     if (!isEmpty(gaugeProxyContract) && (!isEmpty(pools)) && provider) {
@@ -87,6 +90,9 @@ export function StakingContractProvider({ children }) {
 
       const sherpaClaimable = await sherpaDistributorContract.callStatic['claim(address)'](account, { gasLimit: 1000000 })
       setUserSherpaClaimable(sherpaClaimable.toString() ? sherpaClaimable : null);
+
+      const axialClaimable = await axialDistributorContract.callStatic['claim(address)'](account, { gasLimit: 1000000 })
+      setUserAxialClaimable(axialClaimable.toString() ? axialClaimable : null);
     } catch (error) {
       console.log('[Error] getFeeDistributorInfo => ', error)
     }
@@ -120,6 +126,21 @@ export function StakingContractProvider({ children }) {
       }
     } catch (error) {
       console.log('[Error] sherpaClaim => ', error)
+    }
+    setLoading(false)
+  }
+  const axialClaim = async () => {
+    setLoading(true)
+    try {
+      const gasLimit = await axialDistributorContract.estimateGas['claim()']();
+      const tokenClaim = await axialDistributorContract['claim()']({ gasLimit });
+      const transactionClaim = await tokenClaim.wait(1)
+
+      if (transactionClaim.status) {
+        await getFeeDistributorInfo();
+      }
+    } catch (error) {
+      console.log('[Error] axialClaim => ', error)
     }
     setLoading(false)
   }
@@ -353,6 +374,8 @@ export function StakingContractProvider({ children }) {
         setGauges,
         userSherpaClaimable,
         sherpaClaim,
+        userAxialClaimable,
+        axialClaim,
         gaugeProxyContract,
         getGaugeProxyInfo
       }}
@@ -394,6 +417,8 @@ export function useStakingContract() {
     setGauges,
     userSherpaClaimable,
     sherpaClaim,
+    userAxialClaimable,
+    axialClaim,
     gaugeProxyContract,
     getGaugeProxyInfo
   } = context
@@ -424,6 +449,8 @@ export function useStakingContract() {
     setGauges,
     userSherpaClaimable,
     sherpaClaim,
+    userAxialClaimable,
+    axialClaim,
     gaugeProxyContract,
     getGaugeProxyInfo
   }

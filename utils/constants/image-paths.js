@@ -16,7 +16,7 @@ const DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/das
 const DASHBOARD_TOTAL_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/dashboard-total.png'
 const COMPOUND_AND_EARN_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/compound-and-earn.png'
 const VOTE_POWER_BACKGROUND_IMAGE_PATH = '/assets/images/backgrounds/vote-power.png'
-const NO_IMAGE_PATH = '/assets/images/no-image.png'
+const NO_IMAGE_PATH = '/assets/images/no-image.jpg'
 
 export {
   LOGO_IMAGE_PATH,

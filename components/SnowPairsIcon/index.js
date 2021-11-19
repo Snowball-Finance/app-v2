@@ -1,21 +1,20 @@
 import { memo } from 'react';
-import Image from 'next/image';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-import { NO_IMAGE_PATH } from 'utils/constants/image-paths';
+import ImageFallback from 'components/UI/ImageFallback';
 import orderBasePair from 'utils/helpers/orderBasePair';
 import { iconSrcWithAddress } from 'utils/helpers/iconSrcWithAddress';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   secondTokenIcon: {
     marginLeft: theme.spacing(-2),
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(-1),
-    }
+    },
   },
-  tokenImage: (props) => ({
+  tokenImage: props => ({
     width: props.size || 50,
     height: props.size || 50,
     borderRadius: '50%',
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     '& img': {
       borderRadius: '50%',
       objectFit: 'contain',
-    }
+    },
   }),
 }));
 

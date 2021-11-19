@@ -46,8 +46,15 @@ const enumDeposit = {
   withdraw3: 6,
 };
 
-const SnowStepBox = ({ transactionStatus, title }) => {
-  const [colors, setColors] = useState(['#DBEDFF', '#DBEDFF', '#DBEDFF', '#DBEDFF', '#DBEDFF', '#DBEDFF']);
+const SnowStepBox = ({ transactionStatus, title, isStableVault }) => {
+  const [colors, setColors] = useState([
+    '#DBEDFF',
+    '#DBEDFF',
+    '#DBEDFF',
+    '#DBEDFF',
+    '#DBEDFF',
+    '#DBEDFF',
+  ]);
   const classes = useStyles();
 
   const color = {
@@ -104,18 +111,28 @@ const SnowStepBox = ({ transactionStatus, title }) => {
             ) : (
               <>
                 <Box display='flex' justifyContent='center' minWidth={112}>
-                  <Box
-                    className={classes.ellipse}
-                    mr={3}
-                    style={{ background: colors[enumDeposit.withdraw1] }}
-                    borderRadius='50%'
-                  />
-                  <Box
-                    className={classes.ellipse}
-                    style={{ background: colors[enumDeposit.withdraw2] }}
-                    ml={3}
-                    borderRadius='50%'
-                  />
+                  {isStableVault ? (
+                    <Box
+                      className={classes.ellipse}
+                      style={{ background: colors[enumDeposit.withdraw1] }}
+                      borderRadius='50%'
+                    />
+                  ) : (
+                    <>
+                      <Box
+                        className={classes.ellipse}
+                        mr={3}
+                        style={{ background: colors[enumDeposit.withdraw1] }}
+                        borderRadius='50%'
+                      />
+                      <Box
+                        className={classes.ellipse}
+                        style={{ background: colors[enumDeposit.withdraw2] }}
+                        ml={3}
+                        borderRadius='50%'
+                      />
+                    </>
+                  )}
                 </Box>
                 <Box display='flex' justifyContent='center' minWidth={112}>
                   <Box
@@ -130,10 +147,31 @@ const SnowStepBox = ({ transactionStatus, title }) => {
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
-            {title != "Withdraw" ? <>
-            <Typography variant='caption'>{transactionStatus.approvalStep}/2 Step</Typography>
-            <Typography variant='caption'>{transactionStatus.depositStep}/2 Step</Typography>
-            </> : <Typography variant='caption'>{transactionStatus.withdrawStep}/3 Step</Typography>}
+            {title != 'Withdraw' ? (
+              <>
+                <Typography className={classes.subtitle}>
+                  {transactionStatus.approvalStep}/2 Step
+                </Typography>
+                <Typography className={classes.subtitle}>
+                  {transactionStatus.depositStep}/2 Step
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography className={classes.subtitle}>
+                  {isStableVault
+                    ? transactionStatus.withdrawStep / 2
+                    : transactionStatus.withdrawStep <= 2
+                    ? transactionStatus.withdrawStep
+                    : 2}
+                  /{isStableVault ? 1 : 2} Step
+                </Typography>
+                <Typography className={classes.subtitle}>
+                  {transactionStatus.withdrawStep <= 2 ? 0 : transactionStatus.withdrawStep - 2}/1
+                  Step
+                </Typography>
+              </>
+            )}
           </div>
         </div>
       </div>

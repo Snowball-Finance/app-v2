@@ -20,7 +20,7 @@ import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
 import { usePrices } from 'contexts/price-context';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   dialog: {
     minWidth: 200,
     width: 510,
@@ -148,7 +148,7 @@ const CompoundDialogs = ({
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleInfiniteApprovalCheckboxChange = (v) => {
     dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })

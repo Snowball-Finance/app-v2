@@ -16,6 +16,7 @@ import { Typography } from '@material-ui/core'
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context'
 import { useAPIContext } from 'contexts/api-context'
 import ANIMATIONS from 'utils/constants/animate-icons'
+import LINKS from 'utils/constants/links'
 
 const GeneralAlerts = () => {
   const { account, library } = useWeb3React()
@@ -69,8 +70,8 @@ const GeneralAlerts = () => {
             Some of your investments are compounding, but not receiving the SNOB
             rewards you&apos;re entitled to. Click below to resolve.
           </Typography>
-          <a target='_blank' rel="noreferrer" href="https://snowballs.gitbook.io/snowball-docs/products/compounding#the-benefits-of-compounding-with-snowball">
-            Read More.
+          <a target='_blank' rel="noreferrer" href={LINKS.GITBOOK_DOCS.COMPOUNDING.HREF}>
+              Read More.
           </a>
         </>);
       setModal({

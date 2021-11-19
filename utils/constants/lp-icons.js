@@ -31,6 +31,7 @@ const LP_ICONS = Object.freeze({
   JOE: '/assets/images/lp-icons/JOE.png',
   QI: '/assets/images/lp-icons/BENQI.png',
   BENQI: '/assets/images/lp-icons/BENQI.png',
+  AXLP: '/assets/images/lp-icons/AXIAL.png',
   'DAI.e': '/assets/images/lp-icons/DAI.png',
   'USDT.e': '/assets/images/lp-icons/USDT.png',
   'ETH.e': '/assets/images/lp-icons/ETH.png',
@@ -40,7 +41,7 @@ const LP_ICONS = Object.freeze({
   'AAVE.e': '/assets/images/lp-icons/AAVE.png',
   'UNI.e': '/assets/images/lp-icons/AAVE.png',
   'YFI.e': '/assets/images/lp-icons/AAVE.png',
-  NoIcon: '/assets/images/no-image.png'
-})
+  NoIcon: '/assets/images/no-image.jpg',
+});
 
 export default LP_ICONS;

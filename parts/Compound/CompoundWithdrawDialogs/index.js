@@ -90,10 +90,11 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
   const inputHandler = event => {
     if (event.target.value > 0 && !Object.is(NaN, event.target.value)) {
       const percentage = calculatePercentage(event.target.value);
-      const balance = (item?.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item?.lpDecimals;
+      const balance =
+        (item?.userBalanceGauge * (item.snowglobeRatio / 1e18)) / 10 ** item?.lpDecimals;
       if (balance >= event.target.value) {
         setinputAmount(event.target.value);
-        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), 18));
+        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), item?.lpDecimals));
         setSlider(percentage);
         setError(null);
       } else {
@@ -111,7 +112,9 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
     setSlider(value);
     setAmount(usedBalance);
     setinputAmount(
-      inputAmount > 1e-6 ? inputAmount : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 }),
+      inputAmount > 1e-6
+        ? inputAmount
+        : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 }),
     );
     setError(null);
   };
@@ -131,7 +134,13 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
       titleTextClass={classes.dialogTitleText}
       closeIconClass={classes.dialogCloseIcon}>
       <div className={classes.container}>
-        <Details item={item} title={title} amount={inputAmount} inputHandler={inputHandler} error={error} />
+        <Details
+          item={item}
+          title={title}
+          amount={inputAmount}
+          inputHandler={inputHandler}
+          error={error}
+        />
 
         {item?.userBalanceGauge > 0 && <CompoundSlider value={slider} onChange={handleSliderChange} />}
         <Grid container spacing={1} className={classes.buttonContainer}>
@@ -142,12 +151,12 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
               disabled={amount == 0 && (item?.userDepositedLP === 0 || item?.withdrew || !item)}
               loading={isTransacting.withdraw}
               onClick={withdrawHandler}>
-              Withdraw
+              {transactionStatus.withdrawStep < 2 ? 'Withdraw' : 'Claim'}
             </ContainedButton>
           </Grid>
         </Grid>
       </div>
-      {item?.userBalanceGauge > 0 && <SnowStepBox transactionStatus={transactionStatus} title={title} />}
+      {item?.userBalanceGauge > 0 && <SnowStepBox transactionStatus={transactionStatus} title={title} isStableVault={item?.kind === 'Stablevault'} />}
     </SnowDialog>
   );
 };
