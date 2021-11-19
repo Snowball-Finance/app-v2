@@ -11,7 +11,10 @@ export const AnalyticCategories = {
   modal: 'modal',
   wallet: 'wallet',
   error: 'error',
-  formSubmit: 'formSubmit'
+  formSubmit: 'formSubmit',
+  s4d: 's4d',
+  s3d: 's3d',
+  s3f: 's3f',
 }
 export const AnalyticActions = {
   click: 'click-event',
@@ -20,7 +23,11 @@ export const AnalyticActions = {
   themeChange: 'themeChange',
   submit: 'submit',
   approve: 'approve',
-
+  add: 'add',
+  s4d: 's4d',
+  s3d: 's3d',
+  s3f: 's3f',
+  remove: 'remove',
 }
 
 
