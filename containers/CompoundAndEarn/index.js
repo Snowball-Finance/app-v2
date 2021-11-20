@@ -108,7 +108,7 @@ const CompoundAndEarn = () => {
   const handleSearch = (value) => {
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
-      : lastSnowballModifiedInfo.length
+      : lastSnowballModifiedInfo?.length
         ? [...lastSnowballModifiedInfo]
         : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
 
