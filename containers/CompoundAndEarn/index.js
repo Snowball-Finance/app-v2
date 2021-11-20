@@ -106,6 +106,11 @@ const CompoundAndEarn = () => {
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
+    if (!value) {
+      handleCancelSearch();
+      return;
+    }
+
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo?.length
