@@ -106,7 +106,9 @@ const CompoundAndEarn = () => {
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
+    console.log('[handleSearch] ==>', value);
     if (!value) {
+      console.log('!value == true');
       handleCancelSearch();
       return;
     }
