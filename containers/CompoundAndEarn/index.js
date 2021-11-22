@@ -223,11 +223,11 @@ const CompoundAndEarn = () => {
     return <div>Something went wrong!!</div>;
   }
 
-  const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool]);
+  const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool, handleCancelSearch]);
 
   const searchTermInputHandler = value => {
-    delayFilterData(value);
     setSearch(value);
+    delayFilterData(value);
   }
 
   return (
