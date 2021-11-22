@@ -30,7 +30,7 @@ const ListItem = ({
   setModal
 }) => {
   const classes = useStyles();
-  const { gauges, snowconeBalance, totalSnowcone } = useContracts();
+  const { gauges, snowconeBalance, totalSnowcone, AVAXBalance } = useContracts();
   const [timerRefresh, setTimerRefresh] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [userData, setUserData] = useState();
@@ -113,7 +113,7 @@ const ListItem = ({
     let actionType, func;
     if (pool.token0) {
       const arrayAction = getProperAction(evalPool, setModal,
-        evalPool.userLPBalance, evalPool.userDepositedLP);
+        evalPool.userLPBalance, AVAXBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
       func = arrayAction[1];
     } else {

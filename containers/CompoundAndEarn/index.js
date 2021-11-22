@@ -7,6 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 
 import { useAPIContext } from 'contexts/api-context';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { useContracts } from 'contexts/contract-context';
 import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
@@ -44,6 +45,8 @@ const CompoundAndEarn = () => {
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools, setLoadedDeprecated, setSortedUserPools,
     setUserPools } = useCompoundAndEarnContract();
+  
+  const { AVAXBalance } = useContracts();
 
   const [modal, setModal] = useState({ open: false, title: '', address: '' });
   const [search, setSearch] = useState('');
@@ -177,7 +180,7 @@ const CompoundAndEarn = () => {
 
     if (event.target.value === 'myPools') {
       const filteredDataWithTokensToInvested = filteredData.filter((item) => {
-        const [actionType] = getProperAction(item, null, item.userLPBalance, item.usdValue);
+        const [actionType] = getProperAction(item, null, item.userLPBalance, AVAXBalance, item.usdValue);
         return actionType === 'Deposit';
       });
       const filteredDataWithDepositLP = filteredData.filter(
