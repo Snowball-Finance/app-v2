@@ -109,7 +109,7 @@ const CompoundAndEarn = () => {
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
-    console.log('[handleSearch] ==>', value);
+    console.log('[handleSearch] ==>', value, lastSnowballModifiedInfo, ', filterDataByProtocol ==>', filterDataByProtocol);
     if (!value) {
       console.log('!value == true');
       handleCancelSearch();
@@ -226,8 +226,8 @@ const CompoundAndEarn = () => {
   const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool]);
 
   const searchTermInputHandler = value => {
-    setSearch(value);
     delayFilterData(value);
+    setSearch(value);
   }
 
   return (
