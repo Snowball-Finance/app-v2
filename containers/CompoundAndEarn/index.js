@@ -56,7 +56,6 @@ const CompoundAndEarn = () => {
 
   //reset state when index opened
   useEffect(()=>{
-    console.log('[useEffect] 3 loadedSort,setSortedUserPools ==>', loadedSort,setSortedUserPools);    
     if(!loadedSort){
       setSortedUserPools(false);
       setLoadedSort(true);
@@ -64,7 +63,6 @@ const CompoundAndEarn = () => {
   },[loadedSort,setSortedUserPools])
 
   useEffect(() => {
-    console.log('[useEffect] 1 userDeprecatedPools,loadedDeprecated,sortedUserPools ==>', userDeprecatedPools,loadedDeprecated,sortedUserPools);
     if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
       let newArray = [...userPools];
       userDeprecatedPools.forEach((pool) => {
@@ -83,7 +81,6 @@ const CompoundAndEarn = () => {
   },[userDeprecatedPools,loadedDeprecated,sortedUserPools]);
 
   useEffect(() => {
-    console.log('[useEffect] 2 snowballInfoQuery, userPools, account, sortedUserPools ==>', snowballInfoQuery, userPools, account, sortedUserPools);
     const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } = snowballInfoQuery;
 
     if (isEmpty(userPools)) {
@@ -109,9 +106,7 @@ const CompoundAndEarn = () => {
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
-    console.log('[handleSearch] ==>', value, lastSnowballModifiedInfo, ', filterDataByProtocol ==>', filterDataByProtocol);
     if (!value) {
-      console.log('!value == true');
       handleCancelSearch();
       return;
     }
@@ -143,7 +138,6 @@ const CompoundAndEarn = () => {
       : lastSnowballModifiedInfo.length
         ? [...lastSnowballModifiedInfo]
         : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
-    console.log('[handleCancelSearch] type, filterData ==>', type, filterData, account);
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
