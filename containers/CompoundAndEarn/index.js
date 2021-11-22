@@ -110,12 +110,13 @@ const CompoundAndEarn = () => {
       handleCancelSearch();
       return;
     }
-
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo?.length
         ? [...lastSnowballModifiedInfo]
-        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+        : snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo?.length
+          ? [...snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo]
+          : [];
 
     const splittedValue = value.split(' ');
     splittedValue.forEach((spiltItem) => {
@@ -137,7 +138,9 @@ const CompoundAndEarn = () => {
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
         ? [...lastSnowballModifiedInfo]
-        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+        : snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo?.length
+          ? [...snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo]
+          : [];
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
@@ -217,7 +220,7 @@ const CompoundAndEarn = () => {
     return <div>Something went wrong!!</div>;
   }
 
-  const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool, lastSnowballModifiedInfo, filterDataByProtocol]);
+  const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool, lastSnowballModifiedInfo, filterDataByProtocol, snowballInfoQuery]);
 
   const searchTermInputHandler = value => {
     setSearch(value);
