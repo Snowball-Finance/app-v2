@@ -1,9 +1,10 @@
 import { calculatedBalance, extractValidTokens } from "./utils"
 import { ethers } from 'ethers';
 import { roundDown } from "utils/helpers/utility";
-import { BNToFloat } from "utils/helpers/format";
+import { BNToFloat, floatToBN } from "utils/helpers/format";
 import { divide, multiply } from "precise-math";
 import { storage, StorageKeys } from "utils/storage";
+import { WAVAX } from "utils/constants/addresses";
 
 export const compoundDialogActionTypes = {
     setSliderValue: 'setSliderValue',
@@ -19,7 +20,6 @@ export const compoundDialogReducer = (state, action) => {
     const newState = { ...state }
     const { title, userData, selectedToken } = newState
 
-
     switch (action.type) {
 
         case compoundDialogActionTypes.reset: {
@@ -33,15 +33,35 @@ export const compoundDialogReducer = (state, action) => {
         case compoundDialogActionTypes.setUserData: {
 
             let tokens = extractValidTokens({ obj: action.payload })
-
+            //if there's wrapped AVAX single staking
+            if(tokens.length === 1 && tokens.find(o => o.address === WAVAX)) {
+                tokens.push({
+                    addresses: ["0x0"],
+                    address: "0x0",
+                    decimals: 18,
+                    pangolinPrice: action.payload.pricePoolToken,
+                    name: "Avalanche",
+                    symbol: "AVAX",
+                    balance: action.payload.userAVAXBalance
+                })
+                newState.hasAVAX = true
+            }
 
             newState.tokens = tokens.map((token, index) => {
-                const key = ('token' + index + 'Balance')
                 //set the balance for selected token
-                if (token.symbol === selectedToken.symbol) {
-                    newState.selectedToken = { ...newState.selectedToken, balance: action.payload[key] }
+                const key = ('token' + index + 'Balance')
+                //not AVAX
+                let balance
+                if(token.address !== "0x0") {
+                    balance = action.payload[key]
+                } else {
+                    balance = floatToBN(action.payload.userAVAXBalance)
                 }
-                return { ...token, balance: action.payload[key] }
+    
+                if (token.symbol === selectedToken.symbol) {
+                    newState.selectedToken = { ...newState.selectedToken, balance }
+                }
+                return { ...token, balance }
             })
             let s4VaultToken;
             if (newState.pool.kind === 'Stablevault') {

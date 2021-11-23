@@ -81,12 +81,12 @@ const CompoundDialogs = ({
   handleClose,
 }) => {
 
-
   const classes = useStyles();
   // i will need the pool to extract the token infos
   const [state, dispatch] = useReducer(compoundDialogReducer, {
     title,
     userData,
+    userAVAXBalance: 0,
     sliderValue: 0,
     amount: 0,
     pool,
@@ -100,19 +100,17 @@ const CompoundDialogs = ({
     error: null
   })
 
-  const { approve, deposit, isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting, transactionStatus } = useCompoundAndEarnContract();
+  const { AVAXBalance } = useContracts();
 
   useEffect(() => {
-    if (!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw) {
+    if (!isTransacting.deposit && !isTransacting.approve) {
       toast.dismiss();
     }
   }), [isTransacting];
 
   useEffect(() => {
     if (transactionStatus.depositStep === 2) {
-      handleClose();
-    }
-    if (transactionStatus.withdrawStep === 3) {
       handleClose();
     }
   }), [transactionStatus];
@@ -169,13 +167,11 @@ const CompoundDialogs = ({
     })
   }
   useEffect(() => {
-    dispatch({ type: compoundDialogActionTypes.setUserData, payload: userData })
+    dispatch({ type: compoundDialogActionTypes.setUserData, payload: {...userData, userAVAXBalance: AVAXBalance} })
     return () => {
 
     }
-  }, [userData, userData.token0Balance])
-
-
+  }, [userData, userData.token0Balance, AVAXBalance])
 
   const renderButton = () => {
     switch (title) {
@@ -204,7 +200,7 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(false)}
                 loading={isTransacting.deposit}
                 onClick={() => {
-                  deposit(userData, state.amount)
+                  deposit(userData, state.amount, false, false, state.selectedToken.address === "0x0")
                 }
                 }
               >
@@ -213,24 +209,6 @@ const CompoundDialogs = ({
             </Grid>
           </Grid>
         );
-      }
-      case 'Withdraw': {
-        return (
-          <Grid item xs={12}>
-            <ContainedButton
-              className={clsx(classes.button)}
-              disableElevation
-              disabled={state.amount == 0}
-              loading={isTransacting.withdraw}
-              onClick={() => {
-                toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />)
-                withdraw(userData, state.amount)
-              }}
-            >
-              Withdraw
-            </ContainedButton>
-          </Grid>
-        )
       }
       default:
         return null;
@@ -249,11 +227,11 @@ const CompoundDialogs = ({
       titleTextClass={classes.dialogTitleText}
       closeIconClass={classes.dialogCloseIcon}
     >
-      {!state.selectedToken?.balance ? <>
+      {/*!state.selectedToken?.balance ? <>
         <div className={classes.center} >
           <CircularProgress size={24} />
         </div>
-      </> :
+      </> : */
         <>	<Typography variant='subtitle2'>Select token to convert</Typography>
           <div className={classes.container} >
 
@@ -270,7 +248,7 @@ const CompoundDialogs = ({
             />
 
             <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-            {!userData.s4VaultToken && state.tokens.length > 1 && < CompoundInfo
+            {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
               pool={pool}
               userData={state.userData}
               tokens={state.tokens}

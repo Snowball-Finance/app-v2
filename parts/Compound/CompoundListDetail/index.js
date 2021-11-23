@@ -6,13 +6,13 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import ApyCalculation from './ApyCalculation';
 import SnobApyCalculation from './SnobApyCalculation';
 import Total from './Total';
-import CompoundDialogs from '../CompoundDialogs';
 import CompoundWithdrawDialogs from '../CompoundWithdrawDialogs';
 import getProperAction from 'utils/helpers/getProperAction';
 import CompoundActionButton from '../CompoundActionButton';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
+import { useContracts } from 'contexts/contract-context';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -55,13 +55,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
 	});
 	const [action, setAction] = useState({ actionType: 'Get_Token' });
 
-	const { withdraw, claim, isTransacting, getBalanceInfoSinglePool } = useCompoundAndEarnContract();
+	const { withdraw, claim, isTransacting, getBalanceInfoSinglePool, setTransactionStatus } = useCompoundAndEarnContract();
+	const { AVAXBalance } = useContracts();
 
 	useEffect(() => {
 		const evalPool = userData ? userData : item;
 		if (item.token0) {
 			let actionType, func;
-			[actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, 0, true);
+			[actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, AVAXBalance, 0, true);
 			setAction({ actionType, func });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,12 +144,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
 					disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
 					loading={isTransacting.pageview}
 					onClick={() => {
-						//if(item.deprecatedPool){
+						if(item.deprecatedPool){
 						withdraw(item);
-						//}else{
-						// setTransactionStatus({ withdrawStep: 0 });
-						//  setWithdraw(true)
-						//}
+						}else{
+							setTransactionStatus({ withdrawStep: 0 });
+							setWithdraw(true)
+						}
 					}}
 					fullWidth={isSm ? true : false}
 				>
@@ -156,15 +157,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
 				</ContainedButton>
 			</div>
 
-
-
 			{withdraw && userData && withdraw_modal && (
-				<CompoundDialogs
+				<CompoundWithdrawDialogs
 					open={withdraw_modal}
 					title="Withdraw"
 					handleClose={handleWithdraw}
-					userData={userData}
-					pool={item}
+					item={userData}
 				/>
 			)}
 		</div>

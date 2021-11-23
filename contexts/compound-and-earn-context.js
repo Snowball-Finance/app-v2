@@ -21,6 +21,7 @@ import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { approveContractAction } from 'utils/contractHelpers/approve';
+import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -383,7 +384,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ approve: false });
   };
 
-  const deposit = async (item, amount, onlyGauge = false) => {
+  const deposit = async (item, amount, onlyGauge = false, useZapper = false, isNativeAVAX = false) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -397,10 +398,23 @@ export function CompoundAndEarnProvider({ children }) {
     try {
       if (transactionStatus.depositStep === 0) {
         if (item.kind === 'Snowglobe') {
+          //if this deposit is native we need to wrap it
+          if(isNativeAVAX) {
+            const wrapped = await wrapAVAX(amount, library.getSigner());
+            if(!wrapped){
+              setPopUp({
+                title: 'Transaction Error',
+                icon: ANIMATIONS.ERROR.VALUE,
+                text: `Error wrapping AVAX`,
+              });
+              return;
+            }
+          }
+
           const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
           const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
 
-          const balance = await lpContract.balanceOf(account);
+          const balance = await getBalanceWithRetry(lpContract, account);
           amount = amount.gt(balance) ? balance : amount;
 
           if (amount.gt(0x00) && !onlyGauge) {
