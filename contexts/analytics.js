@@ -49,7 +49,7 @@ export const createEvent = ({
   }
 }
 
-const urlBase = '//analytics.snowapi.net/'
+const urlBase = process.env.ANALYTICS_ENDPOINT
 
 const instance = createInstance({
   urlBase,
