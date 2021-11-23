@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useCallback } from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
@@ -15,7 +15,7 @@ import ListItem from './ListItem';
 import { TYPES, POOLS } from 'utils/constants/compound-and-earn';
 import { sortingByType, sortingByUserPool } from 'utils/helpers/sorting';
 import getProperAction from 'utils/helpers/getProperAction';
-import { isEmpty } from 'utils/helpers/utility';
+import { isEmpty, debounce } from 'utils/helpers/utility';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,11 +106,17 @@ const CompoundAndEarn = () => {
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
 
   const handleSearch = (value) => {
+    if (!value) {
+      handleCancelSearch();
+      return;
+    }
     let filterData = filterDataByProtocol.length
       ? [...filterDataByProtocol]
-      : lastSnowballModifiedInfo.length
+      : lastSnowballModifiedInfo?.length
         ? [...lastSnowballModifiedInfo]
-        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+        : snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo?.length
+          ? [...snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo]
+          : [];
 
     const splittedValue = value.split(' ');
     splittedValue.forEach((spiltItem) => {
@@ -125,7 +131,6 @@ const CompoundAndEarn = () => {
     }    
 
     setLastSnowballInfo(sortedData);
-    setSearch(value);
   };
 
   const handleCancelSearch = () => {
@@ -133,8 +138,9 @@ const CompoundAndEarn = () => {
       ? [...filterDataByProtocol]
       : lastSnowballModifiedInfo.length
         ? [...lastSnowballModifiedInfo]
-        : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
-
+        : snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo?.length
+          ? [...snowballInfoQuery?.data?.LastSnowballInfo?.poolsInfo]
+          : [];
     let sortedData = sortingByType(type, filterData);
     if (account) {
       sortedData = sortingByUserPool(type, filterData);
@@ -214,6 +220,13 @@ const CompoundAndEarn = () => {
     return <div>Something went wrong!!</div>;
   }
 
+  const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool, lastSnowballModifiedInfo, filterDataByProtocol, snowballInfoQuery]);
+
+  const searchTermInputHandler = value => {
+    setSearch(value);
+    delayFilterData(value);
+  }
+
   return (
     <main className={classes.root}>
       <PageHeader
@@ -226,7 +239,7 @@ const CompoundAndEarn = () => {
             className={classes.input}
             value={search}
             placeholder='Search your favorite pairs'
-            onChange={(newValue) => handleSearch(newValue)}
+            onChange={searchTermInputHandler}
             onCancelSearch={handleCancelSearch}
           />
         </Grid>
