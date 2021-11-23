@@ -25,11 +25,6 @@ import { ProviderProvider } from 'contexts/provider-context'
 
 
 function MyApp({ Component, pageProps }) {
-
-
-
-
-
   const apolloClient = useApollo(pageProps.initialApolloState);
 
   return (

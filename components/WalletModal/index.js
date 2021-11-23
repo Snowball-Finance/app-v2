@@ -12,7 +12,6 @@ import ANIMATIONS from 'utils/constants/animate-icons'
 
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
-
 const DESKTOP_CONNECTORS = {
   'MetaMask': injected,
   'Coinbase Wallet': walletlink,

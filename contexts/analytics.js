@@ -2,7 +2,6 @@ import { MatomoProvider, createInstance, useMatomo } from '@datapunt/matomo-trac
 import { useRouter } from "next/router";
 import { useEffect, useRef } from 'react'
 
-
 export const AnalyticCategories = {
   investigation: 'investigation',
   ui: "ui",
@@ -50,9 +49,9 @@ export const createEvent = ({
   }
 }
 
-const urlBase = '//analytics.snowapi.net/'
+const urlBase = process.env.ANALYTICS_ENDPOINT
 
-const instance = createInstance({
+const matomoInstance = createInstance({
   urlBase,
   siteId: '1',
   trackerUrl: `${urlBase}matomo.php`, // optional, default value: `${urlBase}matomo.php`
@@ -73,7 +72,7 @@ const instance = createInstance({
 
 export const AnalyticsProvider = ({ children }) => {
   return (
-    <MatomoProvider value={instance}>
+    <MatomoProvider value={matomoInstance}>
       <Analytics>
         {children}
       </Analytics>

@@ -52,10 +52,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const CompoundDialogs = ({ open, title, item, handleClose }) => {
-  const classes = useStyles();
-
   const { trackEvent } = useAnalytics()
 
+  const classes = useStyles();
   const [slider, setSlider] = useState(0);
   const [amount, setAmount] = useState(0);
   const [inputAmount, setinputAmount] = useState(0);
