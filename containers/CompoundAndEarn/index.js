@@ -43,7 +43,7 @@ const CompoundAndEarn = () => {
   
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools,setLoadedDeprecated,setSortedUserPools,
-    setUserPools } = useCompoundAndEarnContract();
+    setUserPools, transactionUpdateLoading } = useCompoundAndEarnContract();
 
   const [modal, setModal] = useState({ open: false, title: '', address:'' });
   const [search, setSearch] = useState('');
@@ -253,7 +253,7 @@ const CompoundAndEarn = () => {
             PAIRS
           </Typography>
         </Grid>
-        {snowballInfoQuery.loading
+        {(snowballInfoQuery.loading || transactionUpdateLoading)
           ? (
             <Grid item xs={12}>
               <CompoundAndEarnSkeleton />
