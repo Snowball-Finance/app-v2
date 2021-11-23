@@ -49,9 +49,9 @@ export const createEvent = ({
   }
 }
 
-const urlBase = process.env.ANALYTICS_ENDPOINT
+const urlBase = '//analytics.snowapi.net/'
 
-const matomoInstance = createInstance({
+const instance = createInstance({
   urlBase,
   siteId: '1',
   trackerUrl: `${urlBase}matomo.php`, // optional, default value: `${urlBase}matomo.php`
@@ -72,7 +72,7 @@ const matomoInstance = createInstance({
 
 export const AnalyticsProvider = ({ children }) => {
   return (
-    <MatomoProvider value={matomoInstance}>
+    <MatomoProvider value={instance}>
       <Analytics>
         {children}
       </Analytics>
