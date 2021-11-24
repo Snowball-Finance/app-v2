@@ -1,6 +1,7 @@
 import React, { memo, useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { Grid } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 import Loading from 'components/Skeletons/pool';
 import Skeleton from 'components/Skeletons/CompoundAndEarn';
 
@@ -53,7 +54,7 @@ const List = ({ pools, modal, setModal }) => {
 
   return (
     <>
-      <div ref={contentRef}>
+      <Box ref={contentRef} width={1}>
         <Grid container spacing={2}>
           {items.map((pool) => (
             <Grid item key={pool.address} xs={12}>
@@ -64,7 +65,7 @@ const List = ({ pools, modal, setModal }) => {
           ))}
         </Grid>
         {hasMore && <Skeleton />}
-      </div>
+      </Box>
     </>
   );
 };
