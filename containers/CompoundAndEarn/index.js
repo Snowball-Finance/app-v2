@@ -269,7 +269,7 @@ const CompoundAndEarn = () => {
             PAIRS
           </Typography>
         </Grid>
-        {!lastSnowballInfo.length > 0
+        {!lastSnowballInfo.length > 0 || transactionUpdateLoading || snowballInfoQuery.loading
           ? (
             <Grid item xs={12}>
               <CompoundAndEarnSkeleton />
