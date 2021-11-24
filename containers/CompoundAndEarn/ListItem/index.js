@@ -55,7 +55,10 @@ const ListItem = ({
 
   //refresh LP data if the accordion is expanded
   const onChangedExpanded = (event,expanded) => {
-    setExpanded(expanded);
+    const targetName = event.target.getAttribute('name');
+    if (targetName !== 'custom-popover') {
+      setExpanded(expanded);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
 
@@ -161,6 +164,7 @@ const ListItem = ({
       <CustomAccordion
         key={pool.address}
         className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
+        expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
           <CompoundActionButton
