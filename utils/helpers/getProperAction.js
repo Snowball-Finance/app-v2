@@ -22,7 +22,7 @@ const getProperAction = (item, setModal, balance, deposit = 0, details = false) 
 	} else if (!item.token1?.address && item.symbol !== "AXLP") {
 		action = ["Get_Token", () => { window.open(`${PangolinURL}/swap/${token1}`) }];
 	} else if (item.symbol == "AXLP" && item.name !== "AVAX-AXIAL"){
-		action = ["Get_Token", () => { window.open(`${AxialURL}/pools`) }];
+		action = ["Get_Token", () => { window.open(`${AxialURL}/pools/${item.name.toLowerCase()}/deposit`) }];
 	} else if (item.source == "Pangolin") {
 		action = ["Get_PGL", () => { window.open(`${PangolinURL}/add/${token1}/${token2}`) }];
 	} else if (item.source == "Trader Joe" || item.name == "AVAX-AXIAL"){
