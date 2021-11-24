@@ -37,7 +37,7 @@ const ListItem = ({
   const [expanded, setExpanded] = useState(false);
   const [action, setAction] = useState({ actionType: 'Get_Token' });
   const { account } = useWeb3React();
-  const { loading, getBalanceInfoSinglePool, isTransacting
+  const {loading, getBalanceInfoSinglePool, isTransacting
     , userPools } = useCompoundAndEarnContract();
 
   useEffect(() => {
@@ -55,8 +55,11 @@ const ListItem = ({
   }, [refresh]);
 
   //refresh LP data if the accordion is expanded
-  const onChangedExpanded = (event, expanded) => {
-    setExpanded(expanded);
+  const onChangedExpanded = (event,expanded) => {
+    const targetName = event.target.getAttribute('name');
+    if (targetName !== 'custom-popover') {
+      setExpanded(expanded);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
 
@@ -94,10 +97,11 @@ const ListItem = ({
       }
     }
     addTimer();
+    return () => setTimerRefresh(clearInterval(timerRefresh))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expanded]);
+  },[expanded]);
 
-  useEffect(() => {
+  useEffect(()=>{
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
     if (userPool) {
@@ -160,7 +164,8 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({ [classes.accordionContainer]: action?.actionType === 'Details' })}
+        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
+        expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
           <CompoundActionButton
