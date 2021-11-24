@@ -1,10 +1,9 @@
+import { memo } from 'react';
+import { Typography, Tooltip } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { memo } from 'react'
-import { Typography, Tooltip } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-
-import { usePrices } from 'contexts/price-context'
-import { formatNumber } from 'utils/helpers/format'
+import { usePrices } from 'contexts/price-context';
+import { formatNumber } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
   rootGreen: {
@@ -46,34 +45,28 @@ const useStyles = makeStyles((theme) => ({
   balanceContainer: {
     display: 'flex',
     alignItems: 'center',
-    margin: theme.spacing('auto', 1)
+    margin: theme.spacing('auto', 1),
   },
-  
-}))
+}));
 
 const SnobChange = () => {
-  const classes = useStyles()
+  const classes = useStyles();
   const { prices } = usePrices();
 
   return (
     <div className={classes.balanceContainer}>
-      <div
-          className={prices.SNOB24HChange > 0 ? classes.rootGreen : classes.rootRed}
-        >
+      <div className={prices.SNOB24HChange > 0 ? classes.rootGreen : classes.rootRed}>
         <Tooltip title='Price Change 24h' arrow>
           <Typography
-            color={'textPrimary'}
-            className={(prices.SNOB24HChange > 0 ? classes.balanceGreen: classes.balanceRed)}
+            color='textPrimary'
+            className={prices.SNOB24HChange > 0 ? classes.balanceGreen : classes.balanceRed}
           >
-            {(prices.SNOB24HChange > 0 ? '+': '')+formatNumber(prices.SNOB24HChange, 2)}%
+            {(prices.SNOB24HChange > 0 ? '+' : '') + formatNumber(prices.SNOB24HChange, 2)}%
           </Typography>
         </Tooltip>
-          
-
       </div>
-      
     </div>
-  )
-}
+  );
+};
 
-export default memo(SnobChange)
+export default memo(SnobChange);

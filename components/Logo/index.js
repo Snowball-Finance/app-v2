@@ -1,13 +1,16 @@
+import { memo } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { memo } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { makeStyles } from '@material-ui/core/styles'
-
-import LINKS from 'utils/constants/links'
-import { LOGO_IMAGE_PATH, LOGO_LABEL_IMAGE_PATH, LOGO_DARK_LABEL_IMAGE_PATH } from 'utils/constants/image-paths'
-import clsx from 'clsx'
-import { useDarkMode } from 'contexts/ui-context'
+import LINKS from 'utils/constants/links';
+import {
+  LOGO_IMAGE_PATH,
+  LOGO_LABEL_IMAGE_PATH,
+  LOGO_DARK_LABEL_IMAGE_PATH,
+} from 'utils/constants/image-paths';
+import clsx from 'clsx';
+import { useDarkMode } from 'contexts/ui-context';
 
 const useStyles = makeStyles(() => ({
   picture: {
@@ -16,7 +19,7 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     alignItems: 'center',
-    textDecoration: 'unset'
+    textDecoration: 'unset',
   },
   img: {
     height: 40,
@@ -24,25 +27,23 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Logo = ({
-  isLabel = false,
-  className,
-  ...rest
-}) => {
+const Logo = ({ isLabel = false, className, ...rest }) => {
   const classes = useStyles();
   const { darkMode } = useDarkMode();
 
-  const imagePath = isLabel ? darkMode ? LOGO_DARK_LABEL_IMAGE_PATH : LOGO_LABEL_IMAGE_PATH : LOGO_IMAGE_PATH
+  const imagePath = isLabel
+    ? darkMode
+      ? LOGO_DARK_LABEL_IMAGE_PATH
+      : LOGO_LABEL_IMAGE_PATH
+    : LOGO_IMAGE_PATH;
 
   return (
-    <Link href={LINKS.HOME.HREF}>
-      <a className={clsx(classes.container, className)}>
-        <div className={classes.picture} {...rest}>
-          <Image src={imagePath} width={160} height={40} layout='fixed' alt='logo' />
-        </div>
-      </a>
+    <Link href={LINKS.HOME.HREF} className={clsx(classes.container, className)}>
+      <div className={classes.picture} {...rest}>
+        <Image src={imagePath} width={160} height={40} layout='fixed' alt='logo' />
+      </div>
     </Link>
-  )
-}
+  );
+};
 
 export default memo(Logo);
