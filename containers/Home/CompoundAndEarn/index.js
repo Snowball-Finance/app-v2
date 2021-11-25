@@ -14,6 +14,7 @@ import {
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
   METAMASK_IMAGE_PATH
 } from 'utils/constants/image-paths'
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -83,6 +84,8 @@ const CompoundAndEarn = () => {
   const { snowballBalance, gauges, snowconeBalance } = useContracts();
   const { prices } = usePrices();
 
+  const { trackEvent } = useAnalytics()
+
   const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   const addMetamask = async () => {
@@ -101,7 +104,16 @@ const CompoundAndEarn = () => {
             },
           },
         })
+        trackEvent(createEvent({
+          category: AnalyticCategories.wallet,
+          action: AnalyticActions.addSnob,
+          name: 'added'
+        }))
       } catch (error) {
+        trackEvent(createEvent({
+          category: AnalyticCategories.error,
+          action: AnalyticActions.addSnob,
+        }))
         console.log('Error => addMetamask')
       }
     }
@@ -114,7 +126,7 @@ const CompoundAndEarn = () => {
     });
     const balanceUSD = +(total * prices.SNOB).toFixed(2);
     setPendingHarvest({ amount: total.toFixed(2), balanceUSD });
-  }, [gauges,prices]);
+  }, [gauges, prices]);
 
   return (
     <Card className={classes.card}>
@@ -168,7 +180,7 @@ const CompoundAndEarn = () => {
             {formatNumber(snowconeBalance, 2)} xSNOB
           </Typography>
         </div>
-        
+
         <ContainedButton
           color='secondary'
           className={classes.addMetamask}

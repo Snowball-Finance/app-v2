@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Hidden, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -7,6 +7,7 @@ import { useWallets } from 'contexts/wallet-context'
 import SnowIdenticon from 'components/SnowIdenticon'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import getEllipsis from 'utils/helpers/getEllipsis'
+import { useAnalytics } from "contexts/analytics"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,6 +36,7 @@ const ConnectWallet = () => {
   const { setIsWalletDialog } = useWallets()
   const { account, active, error, deactivate } = useWeb3React();
 
+
   const walletHandler = () => {
     if ((active || error)) {
       deactivate();
@@ -53,13 +55,13 @@ const ConnectWallet = () => {
           <Typography
             color='textPrimary'
             className={classes.account}
-          >  
-          <Hidden xsDown>
-            <span className={classes.accountAddress}>
-              {getEllipsis(account || '')}
-            </span>
-            
-          </Hidden>
+          >
+            <Hidden xsDown>
+              <span className={classes.accountAddress}>
+                {getEllipsis(account || '')}
+              </span>
+
+            </Hidden>
           </Typography>
           <SnowIdenticon value={account} />
 

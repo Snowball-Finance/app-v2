@@ -45,7 +45,6 @@ const CustomPopover = ({
   // const [mouseOverPopover, setMouseOverPopover] = useState(false);
 
   const handleOpenActions = (event) => {
-    event.stopPropagation();
     setOpen(true);
   };
 
@@ -77,15 +76,15 @@ const CustomPopover = ({
   return (
     <>
       <HelpOutlineIcon
+        name='custom-popover'
         className={classes.icon}
         ref={anchorRef}
         aria-controls={open ? 'menu-list-grow' : undefined}
-        aria-haspopup="true"
+        aria-haspopup='true'
         onClick={handleOpenActions}
         // onMouseEnter={handleOpenActions}
         // onMouseLeave={handleCloseActions}
       />
-      <ClickAwayListener onClickAway={handleClosePopover}>
       <Popper
         placement='top'
         open={open}
@@ -93,15 +92,16 @@ const CustomPopover = ({
         role={undefined}
         transition
       >
-        <Paper
-          className={clsx(classes.paper, contentClassName)}
-          // onMouseEnter={handleEnterPopover}
-          // onMouseLeave={handleClosePopover}
-        >
-          {children}
-        </Paper>
+        <ClickAwayListener onClickAway={handleClosePopover}>
+          <Paper
+            className={clsx(classes.paper, contentClassName)}
+            // onMouseEnter={handleEnterPopover}
+            // onMouseLeave={handleClosePopover}
+          >
+            {children}
+          </Paper>
+        </ClickAwayListener>
       </Popper>
-      </ClickAwayListener>
     </>
   );
 };

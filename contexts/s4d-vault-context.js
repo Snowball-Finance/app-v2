@@ -15,6 +15,7 @@ import { useCompoundAndEarnContract } from './compound-and-earn-context'
 import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors'
 import { getBestStaticProvider } from 'utils/helpers/utility'
 import { useProvider } from './provider-context'
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics"
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
@@ -29,6 +30,9 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
+
+  const { trackEvent } = useAnalytics()
+
   const { provider } = useProvider();
   const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
   const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
@@ -326,7 +330,7 @@ export function S4dVaultContractProvider({ children }) {
       const tusdAmount = data[2].value;
       const usdtAmount = data[3].value;
       let totalAmount = 0;
-      for(let i=0; i<4; i++) {
+      for (let i = 0; i < 4; i++) {
         totalAmount += BNToFloat(data[i].value, data[i].token.decimal);
       }
 
@@ -346,7 +350,7 @@ export function S4dVaultContractProvider({ children }) {
       }
     } catch (error) {
       console.log('[Error] getWithdrawAmount => ', error)
-      return { minToMintValue: 0, discount: 0, ratio: 0, usdValue: 0,totalAmount: 0 };
+      return { minToMintValue: 0, discount: 0, ratio: 0, usdValue: 0, totalAmount: 0 };
     }
   }
 
@@ -460,11 +464,20 @@ export function S4dVaultContractProvider({ children }) {
 
       if (transactionAddLiquidity.status) {
         //refresh the pool status for the user be able to deposit
-        setTimeout(()=> getBalanceInfosAllPools(),2000);
+        setTimeout(() => getBalanceInfosAllPools(), 2000);
         await getInit();
       }
+      trackEvent(createEvent({
+        action: AnalyticActions.add,
+        category: AnalyticCategories.s4d,
+      }))
     } catch (error) {
       console.log('[Error] addLiquidity => ', error)
+      trackEvent(createEvent({
+        action: AnalyticActions.s4d,
+        name: `${error}`,
+        category: AnalyticCategories.error,
+      }))
     }
     setLoading(false)
   }
@@ -516,6 +529,10 @@ export function S4dVaultContractProvider({ children }) {
       if (transactionRemoveLiquidity.status) {
         await getInit();
       }
+      trackEvent(createEvent({
+        action: AnalyticActions.remove,
+        category: AnalyticCategories.s4d,
+      }))
     } catch (error) {
       console.log('[Error] removeLiquidity => ', error)
     }
