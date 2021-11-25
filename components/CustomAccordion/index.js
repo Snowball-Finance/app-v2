@@ -40,12 +40,12 @@ const AccordionDetails = withStyles(theme => ({
   },
 }))(MuiAccordionDetails);
 
-const CustomAccordion = ({ className, style, summary, details, expandMoreIcon, onChanged }) => {
+const CustomAccordion = ({ className, style, summary, details, expandMoreIcon, expanded, onChanged }) => {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.root, className)} style={style}>
-      <Accordion defaultExpanded={false} onChange={onChanged} TransitionProps={{ unmountOnExit: true }}>
+      <Accordion defaultExpanded={false} expanded={expanded} onChange={onChanged} TransitionProps={{ unmountOnExit: true }}>
         <AccordionSummary
           expandIcon={expandMoreIcon || <ExpandMoreIcon />}
           aria-controls='panel1c-content'

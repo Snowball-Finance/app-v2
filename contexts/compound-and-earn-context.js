@@ -20,11 +20,15 @@ import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls } from 'libs/services/multicall-queries';
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
+
+  const { trackEvent } = useAnalytics()
+
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo, setGaugeCalls } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
@@ -51,6 +55,7 @@ export function CompoundAndEarnProvider({ children }) {
     depositStep: 0,
     withdrawStep: 0,
   });
+  const [transactionUpdateLoading, setTransactionUpdateLoading] = useState(false);
 
   useEffect(() => {
     //only fetch total information when the userpools are empty
@@ -128,18 +133,18 @@ export function CompoundAndEarnProvider({ children }) {
         pool.source === 'Trader Joe'
           ? 'JLP'
           : pool.source === 'Teddy Cash'
-          ? 'TLP'
-          : pool.source === 'Banker Joe'
-          ? 'BLP'
-          : pool.source === 'BENQI'
-          ? 'QLP'
-          : pool.source === 'AAVE'
-          ? 'ALP'
-          : pool.source === 'Pangolin'
-          ? 'PGL'
-          : pool.source === 'Axial'
-          ? 'AXLP'
-          : 'SNOB',
+            ? 'TLP'
+            : pool.source === 'Banker Joe'
+              ? 'BLP'
+              : pool.source === 'BENQI'
+                ? 'QLP'
+                : pool.source === 'AAVE'
+                  ? 'ALP'
+                  : pool.source === 'Pangolin'
+                    ? 'PGL'
+                    : pool.source === 'Axial'
+                      ? 'AXLP'
+                      : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -310,6 +315,11 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         resolve(true);
+        trackEvent(createEvent({
+          category: AnalyticCategories.wallet,
+          action: AnalyticActions.approve,
+          name: `${amount}`,
+        }))
       } catch (error) {
         console.log(error);
         reject(error);
@@ -440,7 +450,9 @@ export function CompoundAndEarnProvider({ children }) {
       setTransactionStatus({ approvalStep: 2, depositStep: 2, withdrawStep: 0 });
       //refresh data only after 2sec to our node have time to catch up with network
       setTimeout(async () => {
-        getBalanceInfosAllPools(await getGaugeProxyInfo());
+        setTransactionUpdateLoading(true);
+        await getBalanceInfosAllPools(await getGaugeProxyInfo());
+        setTransactionUpdateLoading(false);
         setSortedUserPools(false);
       }, 2000);
     } catch (error) {
@@ -503,7 +515,9 @@ export function CompoundAndEarnProvider({ children }) {
                 setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
                 //refresh data only after 2sec to our node have time to catch up with network
                 setTimeout(async () => {
+                  setTransactionUpdateLoading(true);
                   await getBalanceInfosAllPools(await getGaugeProxyInfo());
+                  setTransactionUpdateLoading(false);
                   setSortedUserPools(false);
                 }, 2000);
               }
@@ -559,7 +573,9 @@ export function CompoundAndEarnProvider({ children }) {
             setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async () => {
+              setTransactionUpdateLoading(true);
               await getBalanceInfosAllPools(await getGaugeProxyInfo());
+              setTransactionUpdateLoading(false);
               setSortedUserPools(false);
             }, 2000);
           } catch (error) {
@@ -644,6 +660,7 @@ export function CompoundAndEarnProvider({ children }) {
       value={{
         loading,
         isTransacting,
+        transactionUpdateLoading,
         userPools,
         transactionStatus,
         approve,
@@ -674,6 +691,7 @@ export function useCompoundAndEarnContract() {
   const {
     loading,
     isTransacting,
+    transactionUpdateLoading,
     userPools,
     transactionStatus,
     approve,
@@ -694,6 +712,7 @@ export function useCompoundAndEarnContract() {
   return {
     loading,
     isTransacting,
+    transactionUpdateLoading,
     userPools,
     transactionStatus,
     approve,

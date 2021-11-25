@@ -110,6 +110,17 @@ const getBestStaticProvider = async (library) => {
   }
 }
 
+const debounce = (func, wait) => {
+  let timeout;
+  return args => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      timeout = null;
+      func(args);
+    }, wait);
+  };
+}
+
 export {
   isServer,
   isEmpty,
@@ -120,5 +131,6 @@ export {
   handleConnectionError,
   metaMaskInstallHandler,
   getBalanceWithRetry,
-  getBestStaticProvider
+  getBestStaticProvider,
+  debounce,
 }
