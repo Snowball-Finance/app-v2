@@ -8,6 +8,7 @@ module.exports = {
     IPFS_API_URL: process.env.IPFS_API_URL,
     APIADDR: process.env.APIADDR,
     DEVAPIADDR: process.env.DEVAPIADDR,
+    ANALYTICS_ENDPOINT: process.env.ANALYTICS_ENDPOINT,
   },
   webpack: (config, { dev }) => {
     if (dev) {

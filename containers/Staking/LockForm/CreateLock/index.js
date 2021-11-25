@@ -18,6 +18,7 @@ import {
   getWeekDiff,
 } from 'utils/helpers/date';
 import { estimateXSnobForDate } from 'utils/helpers/stakeDate'
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics"
 
 const useStyles = makeStyles(() => ({
   form: {
@@ -31,6 +32,7 @@ const dateAfter = getDayOffset(new Date(), 7);
 const dateBefore = getDayOffset(new Date(), 365 * 2);
 
 const CreateLock = () => {
+  const { trackEvent } = useAnalytics()
   const classes = useStyles();
   const { snowballBalance, createLock } = useStakingContract();
 
@@ -95,11 +97,21 @@ const CreateLock = () => {
     }
   }, [watchAllFields?.date])
 
+  const handleFormSubmit = () => {
+    handleSubmit(onSubmit)
+    trackEvent(createEvent({
+      action: AnalyticActions.click,
+      category: AnalyticCategories.formSubmit,
+      name: 'createLock',
+    }))
+  }
+
+
   return (
     <form
       noValidate
       className={classes.form}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleFormSubmit}
     >
       <Typography
         variant='body1'
