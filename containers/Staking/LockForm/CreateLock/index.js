@@ -97,7 +97,7 @@ const CreateLock = () => {
     }
   }, [watchAllFields?.date])
 
-  const handleFormSubmit = () => {
+  const logSubmit = () => {
 
     trackEvent(createEvent({
       action: AnalyticActions.click,
@@ -185,7 +185,7 @@ const CreateLock = () => {
           <ContainedButton
             fullWidth
             type='submit'
-            onClick={() => handleFormSubmit()}
+            onClick={() => logSubmit()}
           >
             Approve and Create Lock
           </ContainedButton>
