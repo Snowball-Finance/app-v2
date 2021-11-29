@@ -51,7 +51,7 @@ const ListItem = ({
     }
     refreshData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[refresh]);
+  },[refresh, account]);
 
   //refresh LP data if the accordion is expanded
   const onChangedExpanded = (event,expanded) => {
@@ -76,7 +76,7 @@ const ListItem = ({
 
   useEffect(() => {
     const addTimer = async () =>{
-      if (expanded && !pool.deprecatedPool) {
+      if ((account || expanded) && !pool.deprecatedPool) {
         //reset state
         if (timerRefresh) {
           setRefresh(false);
@@ -98,7 +98,7 @@ const ListItem = ({
     addTimer();
     return () => setTimerRefresh(clearInterval(timerRefresh))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[expanded]);
+  },[expanded, account]);
 
   useEffect(()=>{
     const userPool = userPools.find(
@@ -125,7 +125,7 @@ const ListItem = ({
     }
     setAction({actionType,func});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userData,pool]);
+  },[userData, pool, account]);
 
   const selectedGauge = useMemo(() => gauges.find((gauge) =>
     {

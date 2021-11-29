@@ -61,7 +61,7 @@ export function CompoundAndEarnProvider({ children }) {
     //only fetch total information when the userpools are empty
     //otherwise we always want to update by single pool to have
     //a more performatic approach
-    if (account && !isEmpty(gauges) && !isEmpty(prices) && userPools.length === 0) {
+    if (account && pools?.length) {
       setLoading(true);
       getBalanceInfosAllPools(gauges);
     }
