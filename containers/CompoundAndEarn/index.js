@@ -63,6 +63,11 @@ const CompoundAndEarn = () => {
     }
   },[loadedSort,setSortedUserPools,classes])
 
+  useEffect(()=>{
+    setLoadedSort(true);
+    setSortedUserPools(false);
+  }, [account])
+
   useEffect(() => {
     if (userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools) {
       let newArray = [...userPools];
@@ -92,9 +97,8 @@ const CompoundAndEarn = () => {
       setType('apy');
       setPool('all');
       return
-    }
+    } else if (account || !sortedUserPools) {
 
-    if (!sortedUserPools) {
       const sortedData = sortingByUserPool(type, userPools);
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);

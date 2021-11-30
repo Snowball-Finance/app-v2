@@ -5,6 +5,7 @@ import StableVaultIcon from 'components/Icons/StableVaultIcon'
 import CompoundAndEarnIcon from 'components/Icons/CompoundAndEarnIcon'
 import NftMarketplaceIcon from 'components/Icons/NftMarketplaceIcon'
 import VoteIcon from 'components/Icons/VoteIcon'
+import GraduationCapIcon from 'components/Icons/GraduationCapIcon'
 
 const SIDEBAR_MENU = [
   {
@@ -36,6 +37,10 @@ const SIDEBAR_MENU = [
   {
     ICON: NftMarketplaceIcon,
     ...LINKS.NFT_MARKETPLACE
+  },
+  {
+    ICON: GraduationCapIcon,
+    ...LINKS.GITBOOK_DOCS.DEFI_UNIVERSITY
   },
   {
     ICON: BookOpen,

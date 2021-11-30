@@ -5,6 +5,7 @@ import { Button, CircularProgress } from '@material-ui/core'
 import clsx from 'clsx'
 
 import ButtonLink from 'components/UI/Buttons/ButtonLink'
+import { AnalyticActions, AnalyticCategories, useAnalytics, createEvent } from "contexts/analytics"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,6 +37,16 @@ const ContainedButton = React.forwardRef(({
   ...rest
 }, ref) => {
   const classes = useStyles();
+  const { trackEvent } = useAnalytics()
+
+  const handleClick = () => {
+    trackEvent(createEvent({
+      action: AnalyticActions.click,
+      ...(rest.href && { name: `${hash}`, }),
+      category: rest.href ? AnalyticCategories.link : AnalyticCategories.button,
+    }))
+    rest.onClick && rest.onClick()
+  }
 
   return (
     <Button
@@ -53,6 +64,7 @@ const ContainedButton = React.forwardRef(({
       disabled={loading || disabled}
       startIcon={loading && <CircularProgress size={24} />}
       {...rest}
+      onClick={handleClick}
     >
       {children}
     </Button>

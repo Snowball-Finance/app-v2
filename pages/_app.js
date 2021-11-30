@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/client'
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
+import { AnalyticsProvider } from 'contexts/analytics'
 import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
@@ -21,6 +22,7 @@ import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
+
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
@@ -56,36 +58,38 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
-      <SnowWeb3Provider>
-        <ApolloProvider client={apolloClient}>
-          <DarkModeProvider>
-            <ThemeProvider>
-              <ProviderProvider>
-                <WalletProvider>
-                  <PopupProvider>
-                    <APIProvider>
-                      <PriceProvider>
-                        <StakingContractProvider>
-                          <ContractProvider>
-                            <CompoundAndEarnProvider>
-                              <CssBaseline />
-                              <Layout>
-                                <Component {...pageProps} />
-                                <GeneralAlerts />
-                              </Layout>
-                            </CompoundAndEarnProvider>
-                            <ToastContainer position={'bottom-right'} />
-                          </ContractProvider>
-                        </StakingContractProvider>
-                      </PriceProvider>
-                    </APIProvider>
-                  </PopupProvider>
-                </WalletProvider>
-              </ProviderProvider>
-            </ThemeProvider>
-          </DarkModeProvider>
-        </ApolloProvider>
-      </SnowWeb3Provider>
+      <AnalyticsProvider>
+        <SnowWeb3Provider>
+          <ApolloProvider client={apolloClient}>
+            <DarkModeProvider>
+              <ThemeProvider>
+                <ProviderProvider>
+                  <WalletProvider>
+                    <PopupProvider>
+                      <APIProvider>
+                        <PriceProvider>
+                          <StakingContractProvider>
+                            <ContractProvider>
+                              <CompoundAndEarnProvider>
+                                <CssBaseline />
+                                <Layout>
+                                  <Component {...pageProps} />
+                                  <GeneralAlerts />
+                                </Layout>
+                              </CompoundAndEarnProvider>
+                              <ToastContainer position={'bottom-right'} />
+                            </ContractProvider>
+                          </StakingContractProvider>
+                        </PriceProvider>
+                      </APIProvider>
+                    </PopupProvider>
+                  </WalletProvider>
+                </ProviderProvider>
+              </ThemeProvider>
+            </DarkModeProvider>
+          </ApolloProvider>
+        </SnowWeb3Provider>
+      </AnalyticsProvider>
     </>
   )
 }

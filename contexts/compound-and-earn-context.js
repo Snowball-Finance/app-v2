@@ -19,14 +19,18 @@ import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
-import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { approveContractAction } from 'utils/contractHelpers/approve';
 import { wrapAVAX } from 'utils/helpers/wrapAVAX';
+import { getDeprecatedCalls, getGaugeCalls, getPoolCalls } from 'libs/services/multicall-queries';
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
+
+  const { trackEvent } = useAnalytics()
+
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo, setGaugeCalls } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
@@ -59,7 +63,7 @@ export function CompoundAndEarnProvider({ children }) {
     //only fetch total information when the userpools are empty
     //otherwise we always want to update by single pool to have
     //a more performatic approach
-    if (account && !isEmpty(gauges) && !isEmpty(prices) && userPools.length === 0) {
+    if (account && pools?.length) {
       setLoading(true);
       getBalanceInfosAllPools(gauges);
     }
@@ -131,18 +135,18 @@ export function CompoundAndEarnProvider({ children }) {
         pool.source === 'Trader Joe'
           ? 'JLP'
           : pool.source === 'Teddy Cash'
-          ? 'TLP'
-          : pool.source === 'Banker Joe'
-          ? 'BLP'
-          : pool.source === 'BENQI'
-          ? 'QLP'
-          : pool.source === 'AAVE'
-          ? 'ALP'
-          : pool.source === 'Pangolin'
-          ? 'PGL'
-          : pool.source === 'Axial'
-          ? 'AXLP'
-          : 'SNOB',
+            ? 'TLP'
+            : pool.source === 'Banker Joe'
+              ? 'BLP'
+              : pool.source === 'BENQI'
+                ? 'QLP'
+                : pool.source === 'AAVE'
+                  ? 'ALP'
+                  : pool.source === 'Pangolin'
+                    ? 'PGL'
+                    : pool.source === 'Axial'
+                      ? 'AXLP'
+                      : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -328,6 +332,11 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         resolve(true);
+        trackEvent(createEvent({
+          category: AnalyticCategories.wallet,
+          action: AnalyticActions.approve,
+          name: `${amount}`,
+        }))
       } catch (error) {
         console.log(error);
         reject(error);

@@ -18,7 +18,7 @@ import { SnowCheckbox } from 'components/UI/Checkbox';
 import { calculatedBalance } from './utils';
 import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
-import { usePrices } from 'contexts/price-context';
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -80,6 +80,7 @@ const CompoundDialogs = ({
   userData,
   handleClose,
 }) => {
+  const { trackEvent } = useAnalytics()
 
   const classes = useStyles();
   // i will need the pool to extract the token infos
@@ -145,6 +146,11 @@ const CompoundDialogs = ({
       }
     } catch (error) {
       console.log(error);
+      trackEvent(createEvent({
+        category: AnalyticCategories.error,
+        action: AnalyticActions.wallet,
+        name: `submit ${amount}`,
+      }))
     }
   };
 
