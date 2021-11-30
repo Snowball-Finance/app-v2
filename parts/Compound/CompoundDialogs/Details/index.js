@@ -76,16 +76,20 @@ const Details = ({
 	const { s4VaultToken } = userData
 	//create options for selects component
 	let options = tokens.map((el) => {
-		return {
-			iconComponent: <SnowPairsIcon pairsIcon={[el.address]} size={32} />,
-			label: el.name,
+		const result = { 
+			label: el.name.length > 25 ? el.symbol : el.name,
 			value: el.symbol,
+			iconComponent: null
 		}
+		result.iconComponent = el.isLpToken 
+			? <SnowPairsIcon pairsIcon={[...tokens.filter(o=> !o.isLpToken && !o.isNativeAVAX).map(o=> o.address)]} size={32} />
+			: <SnowPairsIcon pairsIcon={[el.address]} size={32} />
+		return result
 	})
 	if (s4VaultToken) {
 		options = [{
 			iconComponent: <SnowPairsIcon pairsIcon={s4VaultToken.addresses} size={32} />,
-			label: s4VaultToken.name,
+			label: s4VaultToken.name.length > 25 ? s4VaultToken.symbol : s4VaultToken.name,
 			value: s4VaultToken.symbol,
 		}]
 	}

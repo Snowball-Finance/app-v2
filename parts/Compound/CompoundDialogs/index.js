@@ -95,7 +95,7 @@ const CompoundDialogs = ({
     mixedTokenValue: 0,
     calculatedInvestingTokensAmount: [],
     tokens: [],
-    selectedToken: userData.token0,
+    selectedToken: userData?.token0,
     approved: false,
     isInfiniteApprovalChecked: storage.read(StorageKeys.infiniteApproval, true),
     error: null
@@ -177,7 +177,7 @@ const CompoundDialogs = ({
     return () => {
 
     }
-  }, [userData, userData.token0Balance, AVAXBalance])
+  }, [userData, userData?.token0Balance, AVAXBalance])
 
   const renderButton = () => {
     switch (title) {
@@ -206,7 +206,13 @@ const CompoundDialogs = ({
                 disabled={enabledHandler(false)}
                 loading={isTransacting.deposit}
                 onClick={() => {
-                  deposit(userData, state.amount, false, false, state.selectedToken.address === "0x0")
+                  deposit(
+                    userData, //general user data
+                    state.amount, //amount to deposit
+                    false, //onlygauge
+                    false, //usezapper
+                    state.selectedToken.address === "0x0" //is native avax
+                    )
                 }
                 }
               >
@@ -257,7 +263,7 @@ const CompoundDialogs = ({
             {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
               pool={pool}
               userData={state.userData}
-              tokens={state.tokens}
+              tokens={state.tokens} //we still need to filter the lptoken out
               selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
               mixedTokenValue={calculatedBalance({ userData, title, value: state.sliderValue })} amount={state.inputAmount}
               activeToken={state.selectedToken} />}

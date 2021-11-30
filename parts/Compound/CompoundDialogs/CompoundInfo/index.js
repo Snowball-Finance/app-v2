@@ -9,6 +9,7 @@ import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
 import { divide, multiply } from 'precise-math';
 import { Grid } from '@material-ui/core';
+import { usePrices } from 'contexts/price-context';
 
 const useStyles = makeStyles((theme) => ({
   downArrow: {
@@ -69,13 +70,21 @@ const CompoundInfo = ({
   tokens,
 }) => {
   const classes = useStyles();
+  const { prices } = usePrices();
 
-
+  const filteredTokens = tokens.filter(o => !o.isLpToken && !o.isNativeAVAX)
   let priceField = 'pangolinPrice'
 
-  const tokensWithPriceAndAmount = tokens.map((token) => ({ ...token, price: token[priceField] }))
-  const selectedTokenPrice = floatToBN(tokensWithPriceAndAmount.filter((item) => item.symbol === selectedTokenWithAmount.symbol)[0].price)
-  const fractionOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(tokens.length)
+  const tokensWithPriceAndAmount = filteredTokens.map((token) => ({ ...token, price: token[priceField] }))
+  let selectedTokenPrice
+  const fractionOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(filteredTokens.length)
+  if(selectedTokenWithAmount.isLpToken) {
+    selectedTokenPrice = floatToBN(userData.pricePoolToken)
+  } else if (selectedTokenWithAmount.isNativeAVAX) {
+    selectedTokenPrice = floatToBN(prices.AVAX)
+  } else {
+    selectedTokenPrice = floatToBN(tokensWithPriceAndAmount.filter((item) => item.symbol === selectedTokenWithAmount.symbol)[0].price)
+  }
 
   const amountOfUsdToPut = multiply(BNToFloat(selectedTokenPrice), BNToFloat(fractionOfSelectedToken))
 
@@ -86,16 +95,16 @@ const CompoundInfo = ({
     })
   })
 
-  const mixedTokensValue = divide(amountOfUsdToPut, pool.pricePoolToken)
-
-
+  const mixedTokensValue = selectedTokenWithAmount.isLpToken 
+  ? selectedTokenWithAmount.amount
+  : divide(amountOfUsdToPut, pool.pricePoolToken)
 
   return (
     <>
       <ArrowDownIcon className={classes.downArrow} />
       <div className={classes.container}>
-        <Grid container className={classes.pairLine}>
-          <Grid item sm={12} md={7} className={classes.flex}>
+      {!selectedTokenWithAmount.isLpToken && (<Grid container className={classes.pairLine}>
+        <Grid item sm={12} md={7} className={classes.flex}>
             <SnowPairsIcon pairsIcon={tokensWithPriceAndAmount.map(token => token.address)} size={36} />
             <div className={classes.pairInfoStyle}>
               <Typography variant='subtitle1'>To</Typography>
@@ -107,7 +116,7 @@ const CompoundInfo = ({
           <Grid item sm={12} md={5} className={classes.textRight}>
             <Typography className={classes.amountText}>{mixedTokensValue}</Typography>
           </Grid>
-        </Grid>
+        </Grid>)}
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
           {
@@ -115,7 +124,7 @@ const CompoundInfo = ({
               return (<Grid container key={index} className={classes.tokenLine} style={{ marginBottom: index === tokensWithAmountToPut.length - 1 ? "6px" : "0px" }}>
                 <Grid item sm={12} md={6} className={classes.flex}>
                   <SnowTokenIcon token={token.symbol} size={20} />
-                  <Typography className={classes.pairInfoStyle}>{token.name}</Typography>
+                  <Typography className={classes.pairInfoStyle}>{token.symbol}</Typography>
                 </Grid>
                 <Grid item sm={12} md={6} className={classes.textRight} >
                   <Typography className={classes.amountText}>{Number(token.amountToPut) > 0 ? Number(token.amountToPut) : '0.00'}</Typography>

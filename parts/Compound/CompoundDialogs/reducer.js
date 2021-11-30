@@ -33,8 +33,26 @@ export const compoundDialogReducer = (state, action) => {
         case compoundDialogActionTypes.setUserData: {
 
             let tokens = extractValidTokens({ obj: action.payload })
-            //if there's wrapped AVAX single staking
-            if(tokens.length === 1 && tokens.find(o => o.address === WAVAX)) {
+
+            if (tokens.length > 1 && action.payload.kind === "Snowglobe") {
+                //if its an LP
+                tokens.push({
+                    addresses: [action.payload.lpAddress],
+                    address: action.payload.lpAddress,
+                    decimals: action.payload.lpDecimals,
+                    pangolinPrice: action.payload.pricePoolToken,
+                    name: action.payload.name,
+                    symbol: action.payload.symbol,
+                    balance: action.payload.userLPBalance,
+                    isLpToken: true
+                })
+            }
+            //we probably want to change this later on the API to inform us when a token is a metatoken
+            if (
+                action.payload.kind !== "Stablevault" 
+                && action.payload.source !== "Axial"
+            ) {
+                newState.hasAVAX = (tokens.length === 1 && tokens[0].address.toLowerCase() === WAVAX.toLowerCase())
                 tokens.push({
                     addresses: ["0x0"],
                     address: "0x0",
@@ -42,20 +60,23 @@ export const compoundDialogReducer = (state, action) => {
                     pangolinPrice: action.payload.pricePoolToken,
                     name: "Avalanche",
                     symbol: "AVAX",
-                    balance: action.payload.userAVAXBalance
+                    balance: action.payload.userAVAXBalance,
+                    isNativeAVAX: true
                 })
-                newState.hasAVAX = true
             }
+
 
             newState.tokens = tokens.map((token, index) => {
                 //set the balance for selected token
                 const key = ('token' + index + 'Balance')
                 //not AVAX
                 let balance
-                if(token.address !== "0x0") {
-                    balance = action.payload[key]
-                } else {
+                if(token.address === "0x0") {
                     balance = floatToBN(action.payload.userAVAXBalance)
+                } else if(token.isLpToken){
+                    balance = action.payload.userLPBalance
+                } else {
+                    balance = action.payload[key]
                 }
     
                 if (token.symbol === selectedToken.symbol) {
@@ -75,7 +96,6 @@ export const compoundDialogReducer = (state, action) => {
                     symbol: action.payload.symbol,
                     balance: action.payload.userLPBalance
                 }
-
             }
             newState.userData = action.payload
             newState.userData.s4VaultToken = s4VaultToken

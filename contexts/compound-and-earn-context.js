@@ -21,7 +21,7 @@ import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
 import { approveContractAction } from 'utils/contractHelpers/approve';
 import { wrapAVAX } from 'utils/helpers/wrapAVAX';
-import { getDeprecatedCalls, getGaugeCalls, getPoolCalls } from 'libs/services/multicall-queries';
+import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
