@@ -31,12 +31,11 @@ const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, deta
 		action = ["Get_Token", () => { window.open(`${PangolinURL}/swap/${token1}`) }];
 	} else if (item.symbol == "AXLP" && item.name !== "AVAX-AXIAL"){
 		action = ["Get_Token", () => { window.open(`${AxialURL}/pools/${item.name.toLowerCase()}/deposit`) }];
-	} else if (item.source == "Pangolin") {
-		action = ["Get_PGL", () => { window.open(`${PangolinURL}/add/${token1}/${token2}`) }];
-	} else if (item.source == "Trader Joe" || item.name == "AVAX-AXIAL"){
-		action = ["Get_JLP", () => { window.open(`${JoeURL}/pool/${token1}/${token2}`) }];
-	}
-	else if (item.name == "S3D (USDT-BUSD-DAI)") {
+	} else if (
+		item.source == "Pangolin"
+	|| (item.source == "Trader Joe" || item.name == "AVAX-AXIAL")) {
+		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })];
+	} else if (item.name == "S3D (USDT-BUSD-DAI)") {
 		action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];
 	} else if (item.name == "S3F (FRAX-TUSD-USDT)") {
 		action = ["Get_s3F", (router) => { router.push(LINKS.S3F_VAULT.HREF) }];

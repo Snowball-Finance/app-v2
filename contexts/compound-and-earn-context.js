@@ -368,7 +368,6 @@ export function CompoundAndEarnProvider({ children }) {
         return true;
       }
 
-      const lpContract = new ethers.Contract(addressFromZapper ?? item.lpAddress, ERC20_ABI, library.getSigner());
       const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
       const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
@@ -380,13 +379,14 @@ export function CompoundAndEarnProvider({ children }) {
         snowglobeRatio = ethers.utils.parseUnits('1.1');
       }
       if (!onlyGauge) {
+        const lpContract = new ethers.Contract(addressFromZapper ?? item.lpAddress, ERC20_ABI, library.getSigner());
         const spender = addressFromZapper ? getZapperContract(item) : snowglobeContract.address;
 
         await approveContractAction({ contract: lpContract, spender, account, amount, infiniteApproval });
       }
       setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
 
-      await approveContractAction({ contract: snowglobeContract, spender: gauge.address, account, amount: amount.mul(snowglobeRatio), infiniteApproval }, snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
+      await approveContractAction({ contract: snowglobeContract, spender: gauge.address, account, amount: amount.mul(snowglobeRatio), infiniteApproval });
       setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
       setIsTransacting({ approve: false });
       return true;
@@ -429,7 +429,7 @@ export function CompoundAndEarnProvider({ children }) {
         //1% slippage
         const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
 
-        const zapTx = await zappersContract.zapInAVAX(amount, item.address, amountMinToken, WAVAX);
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, {value: amount});
         return zapTx;
       } else {
         let routerAddress;
@@ -444,26 +444,25 @@ export function CompoundAndEarnProvider({ children }) {
             throw new Error("Router not found for this pool");
         }
         //simulate a swap between WAVAX and TOKEN0 to know how much it is worth
-        const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.signer());
+        const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
 
         let amountOut, tokenPos
         try {
-          amountOut = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+          [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
           tokenPos = 0;
         } catch (error) {
           //if there`s no path WAVAX/TOKEN0 we try token1
-          amountOut = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
+          [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
           tokenPos = 1;
         }
 
         const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${tokenPos}`].address, amountOut);
         //1% slippage
         const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
-        const zapTx = await zappersContract.zapInAVAX(amount, item.address, amountMinToken, item[`token${tokenPos}`].address);
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item[`token${tokenPos}`].address, {value: amount});
         
         return zapTx;
       }
-
     }
   }
 

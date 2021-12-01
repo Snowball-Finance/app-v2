@@ -123,7 +123,7 @@ const CompoundInfo = ({
             tokensWithAmountToPut.map((token, index) => {
               return (<Grid container key={index} className={classes.tokenLine} style={{ marginBottom: index === tokensWithAmountToPut.length - 1 ? "6px" : "0px" }}>
                 <Grid item sm={12} md={6} className={classes.flex}>
-                  <SnowTokenIcon token={token.symbol} size={20} />
+                <SnowPairsIcon pairsIcon={[token.address]} size={20} />
                   <Typography className={classes.pairInfoStyle}>{token.symbol}</Typography>
                 </Grid>
                 <Grid item sm={12} md={6} className={classes.textRight} >

@@ -10,21 +10,10 @@ export const approveContractAction = async ({ contract, spender, amount, account
         try {
             const allowance = await contract.allowance(account, spender)
             if (amount.gt(allowance)) {
-                let useExact = false;
-                await contract.estimateGas.approve(
-                    spender,
-                    ethers.constants.MaxUint256
-                ).catch((error) => {
-                    // general fallback for tokens who restrict approval amounts
-                    console.log(error);
-                    useExact = true;
-                })
                 const approval = await approveContract({
                     contract,
                     spender,
-                    amount: useExact
-                        ? approvalNumber
-                        : amount
+                    amount: approvalNumber
                 })
                 const transactionApprove = await approval.wait(1);
                 if (!transactionApprove.status) {

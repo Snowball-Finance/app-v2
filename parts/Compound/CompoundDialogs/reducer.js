@@ -49,7 +49,8 @@ export const compoundDialogReducer = (state, action) => {
             //we probably want to change this later on the API to inform us when a token is a metatoken
             if (
                 action.payload.kind !== "Stablevault" 
-                && action.payload.source !== "Axial"
+                //we can remove this once the zapper contract is able to zap non wavax pairs
+                && tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase()) 
             ) {
                 newState.hasAVAX = (tokens.length === 1 && tokens[0].address.toLowerCase() === WAVAX.toLowerCase())
                 tokens.push({

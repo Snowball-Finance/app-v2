@@ -139,11 +139,14 @@ const CompoundDialogs = ({
   const handleApproveClick = async () => {
     try {
       toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
+      const addressToZap = state.selectedToken.isLpToken || state.hasAVAX || state.tokens.length < 2 
+        ? null 
+        : state.selectedToken.address;
       const result = await approve(
         userData,
         state.amount,
-        state.selectedToken.isLpToken ? null : state.selectedToken.address,
-        false,
+        addressToZap,
+        state.selectedToken.isNativeAVAX,
         storage.read(StorageKeys.infiniteApproval)
       )
       if (result) {
@@ -185,6 +188,10 @@ const CompoundDialogs = ({
   }, [userData, userData?.token0Balance, AVAXBalance])
 
   const renderButton = () => {
+    const addressToZap = state.selectedToken.isLpToken || state.hasAVAX || state.tokens.length < 2 
+    ? null 
+    : state.selectedToken.address;
+    
     switch (title) {
       case 'Deposit': {
         return (
@@ -214,7 +221,7 @@ const CompoundDialogs = ({
                   deposit(
                     userData, //general user data
                     state.amount, //amount to deposit
-                    state.selectedToken.isLpToken ? null : state.selectedToken.address,
+                    addressToZap,
                     false, //onlygauge
                     state.selectedToken.address === "0x0" //is native avax
                     )
