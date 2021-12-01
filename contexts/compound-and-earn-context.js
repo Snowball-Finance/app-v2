@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
+import { WAVAX } from "utils/constants/addresses";
 
 import { IS_MAINNET } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
@@ -8,6 +9,7 @@ import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import SNOWGLOBE_ZAPPERS_ABI from 'libs/abis/snowglobezap';
+import AMM_ROUTER_ABI from 'libs/abis/ammrouter.json';
 import { usePopup } from 'contexts/popup-context';
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
@@ -410,6 +412,58 @@ export function CompoundAndEarnProvider({ children }) {
 
       const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
       return zapTx;
+    } else { 
+      //if the pair uses WAVAX we want to go through it because it costs less gas!!
+      let hasWAVAX, WAVAXPos;
+      if(item.token0.address === WAVAX) {
+        hasWAVAX = true;
+        WAVAXPos = 0;
+      } else if (item.token1.address === WAVAX) {
+        hasWAVAX = true;
+        WAVAXPos = 1;
+      }
+
+      if(hasWAVAX){
+        const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${WAVAXPos}`].address, amount);
+
+        //1% slippage
+        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
+
+        const zapTx = await zappersContract.zapInAVAX(amount, item.address, amountMinToken, WAVAX);
+        return zapTx;
+      } else {
+        let routerAddress;
+        switch(item.source) {
+          case "Trader Joe": case "Axial":
+            routerAddress = CONTRACTS.ROUTER_TRADERJOE;
+            break;
+          case "Pangolin":
+            routerAddress = CONTRACTS.ROUTER_PANGOLIN;
+            break;
+          default:
+            throw new Error("Router not found for this pool");
+        }
+        //simulate a swap between WAVAX and TOKEN0 to know how much it is worth
+        const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.signer());
+
+        let amountOut, tokenPos
+        try {
+          amountOut = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+          tokenPos = 0;
+        } catch (error) {
+          //if there`s no path WAVAX/TOKEN0 we try token1
+          amountOut = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
+          tokenPos = 1;
+        }
+
+        const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${tokenPos}`].address, amountOut);
+        //1% slippage
+        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
+        const zapTx = await zappersContract.zapInAVAX(amount, item.address, amountMinToken, item[`token${tokenPos}`].address);
+        
+        return zapTx;
+      }
+
     }
   }
 
