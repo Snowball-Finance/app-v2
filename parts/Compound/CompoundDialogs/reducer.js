@@ -13,7 +13,6 @@ export const compoundDialogActionTypes = {
     setInfiniteApprovalCheckboxValue: 'setInfiniteApprovalCheckboxValue',
     setUserData: 'setUserData',
     reset: 'reset',
-
 }
 
 export const compoundDialogReducer = (state, action) => {
@@ -64,7 +63,6 @@ export const compoundDialogReducer = (state, action) => {
                     isNativeAVAX: true
                 })
             }
-
 
             newState.tokens = tokens.map((token, index) => {
                 //set the balance for selected token

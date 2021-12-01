@@ -116,7 +116,6 @@ const CompoundDialogs = ({
     }
   }), [transactionStatus];
 
-
   const enabledHandler = (isApproved = false) => {
     return (isApproved ? state.approved : !state.approved) || (state.amount == 0) ||
       isTransacting.approve || isTransacting.deposit;
@@ -140,7 +139,13 @@ const CompoundDialogs = ({
   const handleApproveClick = async () => {
     try {
       toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
-      const result = await approve(userData, state.amount, undefined, storage.read(StorageKeys.infiniteApproval, true))
+      const result = await approve(
+        userData,
+        state.amount,
+        state.selectedToken.isLpToken ? null : state.selectedToken.address,
+        false,
+        storage.read(StorageKeys.infiniteApproval)
+      )
       if (result) {
         dispatch({ type: compoundDialogActionTypes.setApproved, payload: true })
       }
@@ -209,8 +214,8 @@ const CompoundDialogs = ({
                   deposit(
                     userData, //general user data
                     state.amount, //amount to deposit
+                    state.selectedToken.isLpToken ? null : state.selectedToken.address,
                     false, //onlygauge
-                    false, //usezapper
                     state.selectedToken.address === "0x0" //is native avax
                     )
                 }

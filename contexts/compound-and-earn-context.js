@@ -7,6 +7,7 @@ import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
+import SNOWGLOBE_ZAPPERS_ABI from 'libs/abis/snowglobezap';
 import { usePopup } from 'contexts/popup-context';
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
@@ -14,6 +15,7 @@ import { isEmpty, getBalanceWithRetry } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
+import { getZapperContract } from 'utils/helpers/getZapperContract';
 import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
@@ -23,6 +25,7 @@ import { approveContractAction } from 'utils/contractHelpers/approve';
 import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
+import { CONTRACTS } from 'config';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -63,7 +66,7 @@ export function CompoundAndEarnProvider({ children }) {
     //only fetch total information when the userpools are empty
     //otherwise we always want to update by single pool to have
     //a more performatic approach
-    if (account && pools?.length) {
+    if (account && pools?.length > 0 && !isEmpty(gauges)) {
       setLoading(true);
       getBalanceInfosAllPools(gauges);
     }
@@ -344,7 +347,7 @@ export function CompoundAndEarnProvider({ children }) {
     });
   };
 
-  const approve = async (item, amount, onlyGauge = false, infiniteApproval = true) => {
+  const approve = async (item, amount, addressFromZapper, onlyGauge = false, infiniteApproval = true) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -363,7 +366,7 @@ export function CompoundAndEarnProvider({ children }) {
         return true;
       }
 
-      const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
+      const lpContract = new ethers.Contract(addressFromZapper ?? item.lpAddress, ERC20_ABI, library.getSigner());
       const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
       const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
@@ -375,7 +378,9 @@ export function CompoundAndEarnProvider({ children }) {
         snowglobeRatio = ethers.utils.parseUnits('1.1');
       }
       if (!onlyGauge) {
-        await approveContractAction({ contract: lpContract, spender: snowglobeContract.address, account, amount, infiniteApproval });
+        const spender = addressFromZapper ? getZapperContract(item) : snowglobeContract.address;
+
+        await approveContractAction({ contract: lpContract, spender, account, amount, infiniteApproval });
       }
       setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
 
@@ -394,7 +399,26 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ approve: false });
   };
 
-  const deposit = async (item, amount, onlyGauge = false, useZapper = false, isNativeAVAX = false) => {
+  const zapIntoSnowglobe = async (amount, baseTokenAddress, item, isNativeAVAX) => {
+    const zapperAddress = getZapperContract(item);
+    const zappersContract = new ethers.Contract(zapperAddress, SNOWGLOBE_ZAPPERS_ABI, library.getSigner());
+    if(!isNativeAVAX){ 
+      const estimateSwap = await zappersContract.estimateSwap(item.address, baseTokenAddress, amount);
+
+      //1% slippage
+      const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
+
+      const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
+      const txResult = await zapTx.wait(1);
+      if (!txResult.status) {
+        return false;
+      }
+      setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
+      return true;
+    }
+  }
+
+  const deposit = async (item, amount, addressFromZapper, onlyGauge = false, isNativeAVAX = false) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -405,8 +429,19 @@ export function CompoundAndEarnProvider({ children }) {
     }
 
     setIsTransacting({ deposit: true });
-    try {
-      if (transactionStatus.depositStep === 0) {
+    try {    
+      //We want to go straight for the zapper
+      if(addressFromZapper) {
+        const result = await zapIntoSnowglobe(amount, addressFromZapper, item, addressFromZapper === "0x0");
+        if(!result){
+          setPopUp({
+            title: 'Transaction Error',
+            icon: ANIMATIONS.ERROR.VALUE,
+            text: `Error Zapping into Snowglobe`,
+          });
+          return;
+        }
+      } else if (transactionStatus.depositStep === 0) {
         if (item.kind === 'Snowglobe') {
           //if this deposit is native we need to wrap it
           if(isNativeAVAX) {
