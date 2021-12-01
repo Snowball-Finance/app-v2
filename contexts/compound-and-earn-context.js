@@ -409,12 +409,7 @@ export function CompoundAndEarnProvider({ children }) {
       const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
 
       const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
-      const txResult = await zapTx.wait(1);
-      if (!txResult.status) {
-        return false;
-      }
-      setTransactionStatus({ approvalStep: 2, depositStep: 1, withdrawStep: 0 });
-      return true;
+      return zapTx;
     }
   }
 
@@ -428,19 +423,12 @@ export function CompoundAndEarnProvider({ children }) {
       return false;
     }
 
+    let gaugeDeposit;
     setIsTransacting({ deposit: true });
     try {    
       //We want to go straight for the zapper
       if(addressFromZapper) {
-        const result = await zapIntoSnowglobe(amount, addressFromZapper, item, addressFromZapper === "0x0");
-        if(!result){
-          setPopUp({
-            title: 'Transaction Error',
-            icon: ANIMATIONS.ERROR.VALUE,
-            text: `Error Zapping into Snowglobe`,
-          });
-          return;
-        }
+        gaugeDeposit = await zapIntoSnowglobe(amount, addressFromZapper, item, addressFromZapper === "0x0");
       } else if (transactionStatus.depositStep === 0) {
         if (item.kind === 'Snowglobe') {
           //if this deposit is native we need to wrap it
@@ -486,11 +474,10 @@ export function CompoundAndEarnProvider({ children }) {
       const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
-      let gaugeDeposit;
-      if (item.kind === 'Snowglobe') {
-        gaugeDeposit = await gaugeContract.depositAll();
-      } else {
-        gaugeDeposit = await gaugeContract.deposit(amount);
+      if(!addressFromZapper){
+        gaugeDeposit = item.kind === 'Snowglobe' 
+          ? await gaugeContract.depositAll()
+          : gaugeDeposit = await gaugeContract.deposit(amount);
       }
 
       const transactionGaugeDeposit = await gaugeDeposit.wait(1);
