@@ -465,7 +465,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   };
 
-  const withdraw = async (item, amount = 0) => {
+  const withdraw = async (item, amount = 0, allowClaim = undefined) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -567,7 +567,7 @@ export function CompoundAndEarnProvider({ children }) {
 
         if (item.deprecatedPool) {
           item.withdrew = true;
-        } else {
+        } else if (allowClaim) {
           try {
             const result = await claim(item, true);
             setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
