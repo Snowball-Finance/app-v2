@@ -71,99 +71,115 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 
-	const [withdraw_modal, setWithdraw] = useState(false);
-	const handleWithdraw = () => {
-		setWithdraw(false);
-	}
+  const [withdraw_modal, setWithdraw] = useState(false);
+  const handleCloseWithdraw = () => {
+    setWithdraw(false);
+  };
 
 	// const { setTransactionStatus } = useCompoundAndEarnContract();
 
-	return (
-		<div className={classes.root}>
-			<Grid
-				className={classes.details}
-				container
-				direction="row"
-				justify="space-between"
-				alignItems="flex-start"
-				spacing={2}
-			>
-				{!item.deprecatedPool && <Grid item xs={12} lg={4}>
-					<ApyCalculation
-						kind={item.kind}
-						dailyAPR={dailyAPR}
-						yearlyAPY={yearlyAPY}
-					/>
-				</Grid>}
-				<Grid item xs={12} lg={4}>
-					<SnobApyCalculation
-						kind={item.kind}
-						isDeprecated={item.deprecatedPool}
-						snobAPR={item.gaugeInfo?.snobYearlyAPR}
-						totalAPY={totalAPY}
-						userBoost={userBoost}
-						userData={userData}
-					/>
-				</Grid>
-				<Grid item xs={12} lg={4}>
-					<Total item={item} userData={userData} />
-				</Grid>
-			</Grid>
-			<div
-				className={classes.button}
-			>
-				{!item.deprecatedPool && action?.actionType &&
-					<CompoundActionButton
-						type={action.actionType}
-						action={action.func}
-						endIcon={false}
-						disabled={item.deprecated}
-						fullWidth={isSm ? true : false}
-					/>
-				}
-				<ContainedButton
-					disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
-					loading={isTransacting.pageview}
-					onClick={() => {
-						toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'} />)
-						claim(item).then(() => {
-							if (!item.deprecatedPool) {
-								getBalanceInfoSinglePool(item.address).then((userData) =>
-									setUserData(userData))
-							}
-						})
-					}}
-					fullWidth={isSm ? true : false}
-				>
-					Claim
-				</ContainedButton>
-				<ContainedButton
-					disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
-					loading={isTransacting.pageview}
-					onClick={() => {
-						if(item.deprecatedPool){
-						withdraw(item);
-						}else{
-							setTransactionStatus({ withdrawStep: 0 });
-							setWithdraw(true)
-						}
-					}}
-					fullWidth={isSm ? true : false}
-				>
-					Withdraw
-				</ContainedButton>
-			</div>
+  const handleClaim = async () => {
+    toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
+    try {
+      if(!item.deprecatedPool){
+        await claim(item);
+        const userData = await getBalanceInfoSinglePool(item.address);
+        setUserData(userData);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
-			{withdraw && userData && withdraw_modal && (
-				<CompoundWithdrawDialogs
-					open={withdraw_modal}
-					title="Withdraw"
-					handleClose={handleWithdraw}
-					item={userData}
-				/>
-			)}
-		</div>
-	);
+  const handleWithdraw = () => {
+    if (item.deprecatedPool){
+      withdraw(item);
+    } else {
+      setTransactionStatus({ withdrawStep: 0 });
+      setWithdraw(true)
+    }
+  }
+
+  return (
+    <div className={classes.root}>
+      <Grid 
+        className={classes.details}
+        container
+        direction="row"
+        justify="space-between"
+        alignItems="flex-start"
+        spacing={2}
+      >
+       {!item.deprecatedPool && <Grid item xs={12} lg={4}>
+          <ApyCalculation
+            kind={item.kind}
+            dailyAPR={dailyAPR}
+            yearlyAPY={yearlyAPY}
+          />
+        </Grid>}
+        <Grid item xs={12} lg={4}>
+          <SnobApyCalculation
+            kind={item.kind}
+            isDeprecated={item.deprecatedPool}
+            snobAPR={item.gaugeInfo?.snobYearlyAPR}
+            totalAPY={totalAPY}
+            userBoost={userBoost}
+            userData={userData}
+          />
+        </Grid>
+        <Grid item xs={12} lg={4}>
+          <Total item={item} userData={userData} />
+        </Grid>
+      </Grid>
+      <div
+        className={classes.button}
+      >
+        {!item.deprecatedPool && action?.actionType && 
+          <CompoundActionButton 
+            type={action.actionType} 
+            action={action.func} 
+            endIcon={false} 
+            disabled={item.deprecated}
+            fullWidth={isSm ? true : false}
+          />
+        }
+          <ContainedButton
+            disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
+            loading={isTransacting.pageview}
+            onClick={handleClaim}
+            fullWidth={isSm ? true : false}
+          >
+            Claim
+          </ContainedButton>
+          <ContainedButton
+            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
+            loading={isTransacting.pageview}
+            onClick={handleWithdraw}
+            fullWidth={isSm ? true : false}
+          >
+            Withdraw
+          </ContainedButton>
+      </div>
+
+      {modal.open && item.address === modal.address && (
+        <CompoundDialogs
+          open={modal.open}
+          title={modal.title}
+          item={userData}
+          handleClose={handleClose}
+        />
+      )}
+
+      {withdraw && (
+        <CompoundWithdrawDialogs
+          open={withdraw_modal}
+          title="Withdraw"
+          handleClose={handleCloseWithdraw}
+          item={userData}
+        />
+      )}
+    </div>
+  );
 };
 
 export default memo(CompoundListDetail);

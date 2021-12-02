@@ -848,7 +848,6 @@ export function CompoundAndEarnProvider({ children }) {
         icon: ANIMATIONS.ERROR.VALUE,
         text: `Error claiming from Gauge ${error.message}`,
       });
-      return;
     }
     if (!withdraw) {
       setIsTransacting({ pageview: false });
