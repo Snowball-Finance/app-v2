@@ -71,12 +71,30 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 
-	const [withdraw_modal, setWithdraw] = useState(false);
-	const handleWithdraw = () => {
-		setWithdraw(false);
-	}
+  const [withdraw_modal, setWithdraw] = useState(false);
+  const handleCloseWithdraw = () => {
+    setWithdraw(false);
+  };
 
 	// const { setTransactionStatus } = useCompoundAndEarnContract();
+
+  const handleClaim = async () => {
+    toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
+    try {
+      if(!item.deprecatedPool){
+        await claim(item);
+        const userData = await getBalanceInfoSinglePool(item.address);
+        setUserData(userData);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  const handleWithdraw = () => {
+    setTransactionStatus({ withdrawStep: 0 });
+    setWithdraw(true)
+  }
 
 	return (
 		<div className={classes.root}>
@@ -121,47 +139,34 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 						fullWidth={isSm ? true : false}
 					/>:<></>
 				}
-				<ContainedButton
-					disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
-					loading={isTransacting.pageview}
-					onClick={() => {
-						toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'} />)
-						claim(item).then(() => {
-							if (!item.deprecatedPool) {
-								getBalanceInfoSinglePool(item.address).then((userData) =>
-									setUserData(userData))
-							}
-						})
-					}}
-					fullWidth={isSm ? true : false}
-				>
-					Claim
-				</ContainedButton>
+				{!item.deprecatedPool ?
+					<ContainedButton
+						disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
+						loading={isTransacting.pageview}
+						onClick={handleClaim}
+						fullWidth={isSm ? true : false}
+					>
+						Claim
+					</ContainedButton>:
+					<div />
+				}
 				<ContainedButton
 					disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
 					loading={isTransacting.pageview}
-					onClick={() => {
-						if(item.deprecatedPool){
-						withdraw(item);
-						}else{
-							setTransactionStatus({ withdrawStep: 0 });
-							setWithdraw(true)
-						}
-					}}
+					onClick={handleWithdraw}
 					fullWidth={isSm ? true : false}
 				>
 					Withdraw
 				</ContainedButton>
 			</div>
-
-			{withdraw && userData && withdraw_modal && (
-				<CompoundWithdrawDialogs
-					open={withdraw_modal}
-					title="Withdraw"
-					handleClose={handleWithdraw}
-					item={userData}
-				/>
-			)}
+			{(withdraw && userData && withdraw_modal) && (
+        <CompoundWithdrawDialogs
+          open={withdraw_modal}
+          title="Withdraw"
+          handleClose={handleCloseWithdraw}
+          item={userData}
+        />
+      )}
 		</div>
 	);
 };
