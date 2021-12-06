@@ -99,14 +99,14 @@ const GeneralAlerts = () => {
                 ...prev
               }
             });
-            await approve(pool, pendingPools[idx].userBalanceSnowglobe, true);
+            await approve(pool, pendingPools[idx].userBalanceSnowglobe, null, true, false);
             setUpgradingStep((prev) => {
               return {
                 current: prev.current++,
                 ...prev
               }
             });
-            await deposit(pool, pendingPools[idx].userBalanceSnowglobe, true);
+            await deposit(pool, pendingPools[idx].userBalanceSnowglobe, null, true, false);
           }
         }
         setTimeout(() => { window.location.reload(); }, 2000);

@@ -111,7 +111,10 @@ export const compoundDialogReducer = (state, action) => {
                 const inputAmount = (usedBalance / 10 ** userData?.lpDecimals)
                 newState.mixedTokenValue = calculatedBalance({ userData, title, value })
                 newState.amount = usedBalance
-                newState.inputAmount = inputAmount > 1e-6 ? inputAmount : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 })
+                newState.inputAmount = inputAmount > 1e-6 
+                    ? inputAmount 
+                    : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 })
+                    
                 newState.error = null
                 newState.sliderValue = action.payload
             }
