@@ -77,6 +77,10 @@ const CompoundDialogs = ({
   userData,
   handleClose,
 }) => {
+  if(!userData) {
+    return null;
+  }
+  
   const { trackEvent } = useAnalytics()
 
   const classes = useStyles();

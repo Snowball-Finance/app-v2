@@ -58,7 +58,7 @@ export const compoundDialogReducer = (state, action) => {
                     address: "0x0",
                     decimals: 18,
                     pangolinPrice: action.payload.pricePoolToken,
-                    name: "Avalanche",
+                    name: "AVAX",
                     symbol: "AVAX",
                     balance: action.payload.userAVAXBalance,
                     isNativeAVAX: true
