@@ -127,7 +127,7 @@ const Details = ({
 					error={error}
 					onChange={inputHandler}
 				/>
-				{selectedToken.balance && <Available   {...{ classes }} token={selectedToken} decimal={userData.lpDecimals} />}
+				{selectedToken.balance && <Available   {...{ classes }} token={selectedToken} decimal={selectedToken.decimals} />}
 			</Grid>
 		</Grid>
 	);
