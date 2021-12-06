@@ -187,6 +187,25 @@ const CompoundDialogs = ({
     }
   }, [userData, userData?.token0Balance, AVAXBalance])
 
+  useEffect(() => {
+    const idx = state.tokens.findIndex(o => o.isLpToken)
+    if(idx > -1) {
+      //defaults lp token
+      dispatch({
+        type: compoundDialogActionTypes.reset, payload: {
+          sliderValue: 0,
+          amount: 0,
+          inputAmount: 0,
+          mixedTokenValue: 0,
+          calculatedInvestingTokensAmount: [],
+          selectedToken: state.tokens[idx],
+          approved: false,
+          error: null
+        }
+      })
+    }
+  }, [state.tokens])
+
   const renderButton = () => {
     const addressToZap = state.selectedToken.isLpToken || state.hasAVAX || state.tokens.length < 2 
     ? null 
