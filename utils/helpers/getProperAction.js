@@ -9,7 +9,6 @@ const AxialURL = 'https://app.axial.exchange/#';
 const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, details = false) => {
 	let action = [];
 	const token1 = item.token0?.address == WAVAX ? "AVAX" : item.token0?.address?.toLowerCase();
-	const token2 = item.token1?.address == WAVAX ? "AVAX" : item.token1?.address?.toLowerCase();
 	
 	if(!item.token1?.address && item.token0?.address === WAVAX) {
 		if(balance > 0) {

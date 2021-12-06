@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
+const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	userData, setUserData }) => {
 	const classes = useStyles();
 	const theme = useTheme();
@@ -68,9 +68,6 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, modal, setModal,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData, item]);
 
-	const handleClose = () => {
-		setModal({ open: false, title: '' });
-	};
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 

@@ -2,8 +2,7 @@ import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { CircularProgress, Grid } from '@material-ui/core';
-import clsx from 'clsx'
+import { Grid } from '@material-ui/core';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -15,7 +14,6 @@ import CompoundInfo from './CompoundInfo';
 import Details from './Details';
 import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
 import { SnowCheckbox } from 'components/UI/Checkbox';
-import { calculatedBalance } from './utils';
 import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
@@ -76,7 +74,6 @@ const CompoundDialogs = ({
   open,
   title,
   pool,
-  poolList,
   userData,
   handleClose,
 }) => {
@@ -296,7 +293,6 @@ const CompoundDialogs = ({
               userData={state.userData}
               tokens={state.tokens} //we still need to filter the lptoken out
               selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
-              mixedTokenValue={calculatedBalance({ userData, title, value: state.sliderValue })} amount={state.inputAmount}
               activeToken={state.selectedToken} />}
             <SnowCheckbox
               className={classes.mt1}

@@ -37,7 +37,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { trackEvent } = useAnalytics()
 
   const { library, account } = useWeb3React();
-  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo, setGaugeCalls } = useContracts();
+  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
   const { provider } = useProvider();
   const { prices } = usePrices();
@@ -674,7 +674,7 @@ export function CompoundAndEarnProvider({ children }) {
           item.withdrew = true;
         } else {
           try {
-            const result = await claim(item, true);
+            await claim(item, true);
             setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async () => {

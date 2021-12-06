@@ -25,7 +25,6 @@ const useStyles = makeStyles(() => ({
 
 const ListItem = ({
   pool,
-  poolList,
   modal,
   setModal
 }) => {
@@ -187,7 +186,6 @@ const ListItem = ({
           <CompoundListDetail
             item={pool}
             userData={userData}
-            modal={modal}
             setModal={setModal}
             setUserData={setUserData}
             userBoost={userBoost}
@@ -200,7 +198,6 @@ const ListItem = ({
           title={modal.title}
           open={modal.open}
           pool={pool}
-          poolList={poolList}
           userData={userData}
           handleClose={() => setModal({ open: false, title: '' })}
         />

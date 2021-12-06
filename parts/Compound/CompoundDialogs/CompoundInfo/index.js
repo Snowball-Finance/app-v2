@@ -5,7 +5,6 @@ import Box from '@material-ui/core/Box';
 
 import ArrowDownIcon from 'components/Icons/ArrowDownIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
-import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
 import { divide, multiply } from 'precise-math';
 import { Grid } from '@material-ui/core';
@@ -64,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundInfo = ({
   pool,
-  mixedTokenValue,
   userData,
   selectedTokenWithAmount,
   tokens,
