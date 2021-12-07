@@ -92,12 +92,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
   };
 
   const handleWithdraw = () => {
-    if (item.deprecatedPool){
-      withdraw(item);
-    } else {
-      setTransactionStatus({ withdrawStep: 0 });
-      setWithdraw(true)
-    }
+    setTransactionStatus({ withdrawStep: 0 });
+    setWithdraw(true)
   }
 
   return (
@@ -170,7 +166,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
         />
       )}
 
-      {withdraw && (
+      {(withdraw && withdraw_modal) && (
         <CompoundWithdrawDialogs
           open={withdraw_modal}
           title="Withdraw"

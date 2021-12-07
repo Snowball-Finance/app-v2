@@ -172,13 +172,11 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
           </Grid>
         </Grid>
       </div>
-      {item?.userBalanceGauge > 0 &&
-        <SnowStepBox
-          isClaimChecked={isClaimChecked}
-          transactionStatus={transactionStatus}
-          title={title}
-          isStableVault={item?.kind === 'Stablevault'} />
-      }
+      <SnowStepBox
+        isClaimChecked={isClaimChecked}
+        transactionStatus={transactionStatus}
+        title={title}
+        isStableVault={item?.kind === 'Stablevault'} />
     </SnowDialog>
   );
 };
