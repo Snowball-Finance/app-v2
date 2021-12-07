@@ -13,6 +13,7 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import CompoundSlider from './CompoundSlider';
 import Details from './Details';
 import { roundDown } from 'utils/helpers/utility';
+import { SnowCheckbox } from 'components/UI/SnowCheckbox';
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -59,6 +60,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
   const [amount, setAmount] = useState(0);
   const [inputAmount, setinputAmount] = useState(0);
   const [error, setError] = useState(null);
+  const [isClaimChecked, setClaimChecked] = useState(true);
 
   const { isTransacting, transactionStatus, withdraw } = useCompoundAndEarnContract();
 
@@ -73,11 +75,14 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
     if (transactionStatus.depositStep === 2) {
       handleClose();
     }
+    if (!isClaimChecked && transactionStatus.withdrawStep === 2) {
+      handleClose();
+    }
     if (transactionStatus.withdrawStep === 3) {
       handleClose();
     }
   }),
-    [transactionStatus];
+    [transactionStatus, isClaimChecked];
 
   const calculatePercentage = amount => {
     return (amount / (item?.userBalanceGauge / 10 ** item?.lpDecimals)) * 100;
@@ -121,8 +126,13 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
-    withdraw(item, amount);
+    withdraw(item, amount, isClaimChecked);
   };
+
+  const claimCheckHandler = (value) => {
+    console.log('[claimCheckHandler] ==>', value);
+    setClaimChecked(value);
+  }
 
   return (
     <SnowDialog
@@ -148,11 +158,17 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
             <ContainedButton
               className={clsx(classes.button)}
               disableElevation
-              disabled={amount == 0 && (item?.userDepositedLP === 0 || item?.withdrew || !item)}
+              disabled={amount == 0 || (item?.userDepositedLP === 0 || item?.withdrew || !item)}
               loading={isTransacting.withdraw}
               onClick={withdrawHandler}>
               {transactionStatus.withdrawStep < 2 ? 'Withdraw' : 'Claim'}
             </ContainedButton>
+          </Grid>
+          <Grid item xs={12}>
+            <SnowCheckbox
+              label='Claim Rewards'
+              isChecked={isClaimChecked}
+              onChange={claimCheckHandler} />
           </Grid>
         </Grid>
       </div>

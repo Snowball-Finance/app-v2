@@ -570,7 +570,7 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   };
 
-  const withdraw = async (item, amount = 0) => {
+  const withdraw = async (item, amount = 0, allowClaim = undefined) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -670,12 +670,14 @@ export function CompoundAndEarnProvider({ children }) {
           setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
         }
 
-        if (item.deprecatedPool) {
-          item.withdrew = true;
-        } else {
-          try {
-            await claim(item, true);
-            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
+        try {
+          if (item.deprecatedPool) {
+            item.withdrew = true;
+          } else {
+            if (allowClaim) {
+              await claim(item, true);
+              setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
+            }
             //refresh data only after 2sec to our node have time to catch up with network
             setTimeout(async () => {
               setTransactionUpdateLoading(true);
@@ -683,9 +685,9 @@ export function CompoundAndEarnProvider({ children }) {
               setTransactionUpdateLoading(false);
               setSortedUserPools(false);
             }, 2000);
-          } catch (error) {
-            console.log(error);
           }
+        } catch (error) {
+          console.log(error);
         }
       }
     } catch (error) {
