@@ -164,12 +164,14 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
               {transactionStatus.withdrawStep < 2 ? 'Withdraw' : 'Claim'}
             </ContainedButton>
           </Grid>
-          <Grid item xs={12}>
-            <SnowCheckbox
-              label='Claim Rewards'
-              isChecked={isClaimChecked}
-              onChange={claimCheckHandler} />
-          </Grid>
+          {!item.deprecatedPool &&
+            <Grid item xs={12}>
+              <SnowCheckbox
+                label='Claim Rewards'
+                isChecked={isClaimChecked}
+                onChange={claimCheckHandler} />
+            </Grid>
+          }
         </Grid>
       </div>
       <SnowStepBox
