@@ -14,8 +14,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.lightBlue
   },
   upsideDown: {
-    animation: "spin 0.5s linear",
-    transform: "rotateZ(0deg)"
+    transform: "rotate(0deg)"
   },
   divider: {
     height: '1px',
@@ -62,6 +61,10 @@ const AdvancedTransactionOption = ({
     handleShow(!state.showAdvanced)
   }
 
+  const handleClick = (e) => {
+    e.target.select()
+  }
+
   return (
     <>
       <div className={classes.container}>
@@ -83,12 +86,6 @@ const AdvancedTransactionOption = ({
               d="M14.8252 0C16.077 0 16.3783 0.827943 15.487 1.86207L8.80565 9.61494C8.35999 10.1321 7.63098 10.1246 7.19174 9.61494L0.510262 1.86207C-0.376016 0.833678 -0.0777447 0 1.17205 0L14.8252 0Z"
               fill="#3290FE" />
           </svg>
-          <style>{`
-            @keyframes spin {
-                 0% { transform: rotate(-90deg); }
-                 100% { transform: rotate(0deg); }
-            }
-        `}</style>
           Advanced Options
           <Divider
             flexItem
@@ -108,6 +105,7 @@ const AdvancedTransactionOption = ({
               className={classes.input}
               value={state.slippage}
               inputProps={{ max: 50 }}
+              onClick={handleClick}
               onChange={inputHandler}
               onKeyDown={e => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()} />
             {useApproval && <SnowCheckbox

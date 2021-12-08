@@ -77,7 +77,7 @@ const Details = ({
 	//create options for selects component
 	let options = tokens.map((el) => {
 		const result = { 
-			label: el.name.length > 25 ? el.symbol : el.name,
+			label: el.isLpToken ? el.name : el.symbol,
 			value: el.symbol,
 			iconComponent: null
 		}

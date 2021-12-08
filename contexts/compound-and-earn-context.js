@@ -456,9 +456,9 @@ export function CompoundAndEarnProvider({ children }) {
           tokenPos = 1;
         }
 
-        const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${tokenPos}`].address, amountOut);
+        const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${tokenPos}`].address, amountOut.div(2));
         //1% slippage
-        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
+        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
         const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item[`token${tokenPos}`].address, {value: amount});
         
         return zapTx;
@@ -578,6 +578,61 @@ export function CompoundAndEarnProvider({ children }) {
     }
     setIsTransacting({ deposit: false });
   };
+
+  const calculateSwapAmountOut = async (useAVAX, amount, item) => {
+    let routerAddress;
+    switch(item.source) {
+      case "Trader Joe": case "Axial":
+        routerAddress = CONTRACTS.ROUTER_TRADERJOE;
+        break;
+      case "Pangolin":
+        routerAddress = CONTRACTS.ROUTER_PANGOLIN;
+        break;
+      default:
+        throw new Error("Router not found for this pool");
+    }
+
+    const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
+
+    let baseToken, swappedToken, amountToSwap
+    if(useAVAX){
+      let hasWAVAX, otherTokenPos;
+      if(item.token0.address.toLowerCase() === WAVAX.toLowerCase()) {
+        hasWAVAX = true;
+        otherTokenPos = 1;
+      } else if (item.token1.address.toLowerCase() === WAVAX.toLowerCase()) {
+        hasWAVAX = true;
+        otherTokenPos = 0;
+      }
+      if(hasWAVAX){
+        baseToken = WAVAX;
+        swappedToken = item[`token${otherTokenPos}`].address;
+        amountToSwap = amount;
+      } else {
+        try {
+          [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+          baseToken = item.token0.address;
+          swappedToken = item.token1.address;
+        } catch (error) {
+          //if there`s no path WAVAX/TOKEN0 we try token1
+          [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
+          baseToken = item.token1.address;
+          swappedToken = item.token0.address;
+        }
+      }
+    } else {
+      baseToken = item.token0.address;
+      swappedToken = item.token1.address;
+      amountToSwap = amount;
+    }
+
+    const [, estimateSwap] = await routerContract.getAmountsOut(amountToSwap.div(2), [baseToken, swappedToken]);
+
+    return {
+      [baseToken]: amountToSwap.div(2),
+      [swappedToken]: estimateSwap
+    }
+  }
 
   const withdraw = async (item, amount = 0, allowClaim = undefined) => {
     if (!account) {
@@ -792,6 +847,7 @@ export function CompoundAndEarnProvider({ children }) {
         setSortedUserPools,
         setUserPools,
         getBalanceInfosAllPools,
+        calculateSwapAmountOut,
       }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -823,6 +879,7 @@ export function useCompoundAndEarnContract() {
     setSortedUserPools,
     setUserPools,
     getBalanceInfosAllPools,
+    calculateSwapAmountOut,
   } = context;
 
   return {
@@ -844,5 +901,6 @@ export function useCompoundAndEarnContract() {
     setSortedUserPools,
     setUserPools,
     getBalanceInfosAllPools,
+    calculateSwapAmountOut,
   };
 }

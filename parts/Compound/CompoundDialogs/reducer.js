@@ -12,6 +12,7 @@ export const compoundDialogActionTypes = {
     setApproved: 'setApproved',
     setInfiniteApprovalCheckboxValue: 'setInfiniteApprovalCheckboxValue',
     setSlippage: 'setSlippage',
+    setPriceImpact: 'setPriceImpact',
     setShowAdvanced: 'setShowAdvanced',
     setUserData: 'setUserData',
     reset: 'reset',
@@ -63,17 +64,18 @@ export const compoundDialogReducer = (state, action) => {
                 })
             }
             //we probably want to change this later on the API to inform us when a token is a metatoken
+            const WAVAXToken = tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase());
             if (
                 action.payload.kind !== "Stablevault" 
                 //we can remove this once the zapper contract is able to zap non wavax pairs
                 && tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase()) 
             ) {
-                newState.hasAVAX = (tokens.length === 1 && tokens[0].address.toLowerCase() === WAVAX.toLowerCase())
+                newState.hasAVAX = (tokens.length === 1 && WAVAXToken)
                 tokens.push({
                     addresses: ["0x0"],
                     address: "0x0",
                     decimals: 18,
-                    pangolinPrice: action.payload.pricePoolToken,
+                    pangolinPrice: WAVAXToken.pangolinPrice,
                     name: "AVAX",
                     symbol: "AVAX",
                     balance: action.payload.userAVAXBalance,
@@ -120,10 +122,30 @@ export const compoundDialogReducer = (state, action) => {
             newState.approved = action.payload
         }
             break
+        case compoundDialogActionTypes.setPriceImpact: {
+            let lastUSDBalance, newUSDBalance = 0; 
+
+            newState.tokens.forEach((token) => {
+                const tokenPrice = token.pangolinPrice;
+                if(selectedToken.address.toLowerCase() === token.address.toLowerCase()) {
+                    lastUSDBalance = (action.payload.amount / 10 ** token.decimals) * tokenPrice;
+                }
+                if(action.payload.swap[token.address]){
+                    newUSDBalance += tokenPrice * (action.payload.swap[token.address] / 10 ** token.decimals);
+                }
+            })
+            if(newUSDBalance > lastUSDBalance) { 
+                newState.priceImpact = 0;
+            } else {
+                (newState.priceImpact = newUSDBalance / lastUSDBalance * 100) - 100;
+            }
+        }
+            break
         case compoundDialogActionTypes.setSliderValue: {
             const value = action.payload
             const usedBalance = selectedToken.balance.mul(value).div(100)
             if (selectedToken.balance && (BNToFloat(usedBalance) > 0 || value === 0)) {
+                
                 const inputAmount = (usedBalance / 10 ** selectedToken.decimals)
                 newState.mixedTokenValue = calculatedBalance({ userData, title, value })
                 newState.amount = usedBalance
