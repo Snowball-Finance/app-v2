@@ -401,14 +401,14 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ approve: false });
   };
 
-  const zapIntoSnowglobe = async (amount, baseTokenAddress, item, isNativeAVAX) => {
+  const zapIntoSnowglobe = async (amount, baseTokenAddress, item, isNativeAVAX, zapperSlippage) => {
     const zapperAddress = getZapperContract(item);
     const zappersContract = new ethers.Contract(zapperAddress, SNOWGLOBE_ZAPPERS_ABI, library.getSigner());
     if(!isNativeAVAX){ 
       const estimateSwap = await zappersContract.estimateSwap(item.address, baseTokenAddress, amount);
 
       //1% slippage
-      const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
+      const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
 
       const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
       return zapTx;
@@ -427,7 +427,7 @@ export function CompoundAndEarnProvider({ children }) {
         const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${WAVAXPos}`].address, amount);
 
         //1% slippage
-        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100));
+        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
 
         const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, {value: amount});
         return zapTx;
@@ -466,7 +466,14 @@ export function CompoundAndEarnProvider({ children }) {
     }
   }
 
-  const deposit = async (item, amount, addressFromZapper, onlyGauge = false, isNativeAVAX = false) => {
+  const deposit = async (
+      item,
+      amount,
+      addressFromZapper, 
+      onlyGauge = false, 
+      isNativeAVAX = false, 
+      zapperSlippage = 1
+    ) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -481,7 +488,9 @@ export function CompoundAndEarnProvider({ children }) {
     try {    
       //We want to go straight for the zapper
       if(addressFromZapper) {
-        gaugeDeposit = await zapIntoSnowglobe(amount, addressFromZapper, item, addressFromZapper === "0x0");
+        gaugeDeposit = await zapIntoSnowglobe(
+          amount, addressFromZapper, item, addressFromZapper === "0x0", zapperSlippage
+        );
       } else if (transactionStatus.depositStep === 0) {
         if (item.kind === 'Snowglobe') {
           //if this deposit is native we need to wrap it

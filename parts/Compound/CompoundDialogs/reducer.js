@@ -11,6 +11,8 @@ export const compoundDialogActionTypes = {
     setInputValue: 'setInputValue',
     setApproved: 'setApproved',
     setInfiniteApprovalCheckboxValue: 'setInfiniteApprovalCheckboxValue',
+    setSlippage: 'setSlippage',
+    setShowAdvanced: 'setShowAdvanced',
     setUserData: 'setUserData',
     reset: 'reset',
 }
@@ -26,7 +28,21 @@ export const compoundDialogReducer = (state, action) => {
         }
         case compoundDialogActionTypes.setInfiniteApprovalCheckboxValue: {
             storage.write(StorageKeys.infiniteApproval, action.payload)
-            newState.isInfiniteApprovalChecked = action.payload
+            newState.isInfiniteApproval = action.payload
+        }
+            break
+        case compoundDialogActionTypes.setShowAdvanced: {
+            storage.write(StorageKeys.showAdvanced, action.payload)
+            newState.showAdvanced = action.payload
+        }
+        case compoundDialogActionTypes.setSlippage: {
+            storage.write(StorageKeys.slippage, action.payload)
+            newState.slippage = action.payload
+        }
+            break
+        case compoundDialogActionTypes.setInfiniteApprovalCheckboxValue: {
+            storage.write(StorageKeys.infiniteApproval, action.payload)
+            newState.isInfiniteApproval = action.payload
         }
             break
         case compoundDialogActionTypes.setUserData: {

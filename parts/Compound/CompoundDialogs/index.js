@@ -13,10 +13,10 @@ import CompoundSlider from './CompoundSlider';
 import CompoundInfo from './CompoundInfo';
 import Details from './Details';
 import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
-import { SnowCheckbox } from 'components/UI/Checkbox';
 import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
+import AdvancedTransactionOption from 'parts/AdvancedTransactionOption';
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -53,9 +53,6 @@ const useStyles = makeStyles(theme => ({
     '&:disabled': {
       backgroundColor: `${theme.custom.palette.blueButton} !important`,
     }
-  },
-  mt1: {
-    marginTop: theme.spacing(1)
   },
   button: {
     textTransform: 'none',
@@ -98,7 +95,9 @@ const CompoundDialogs = ({
     tokens: [],
     selectedToken: userData?.token0,
     approved: false,
-    isInfiniteApprovalChecked: storage.read(StorageKeys.infiniteApproval, true),
+    isInfiniteApproval: storage.read(StorageKeys.infiniteApproval, true),
+    slippage: storage.read(StorageKeys.slippage, "1"),
+    showAdvanced: storage.read(StorageKeys.showAdvanced, false),
     error: null
   })
 
@@ -163,8 +162,17 @@ const CompoundDialogs = ({
     }
   };
 
-  const handleInfiniteApprovalCheckboxChange = (v) => {
+  const handleInfiniteApproval = (v) => {
     dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
+  }
+
+  const handleShowAdvanced = (v) => {
+    dispatch({ type: compoundDialogActionTypes.setShowAdvanced, payload: v })
+    dispatch({ type: compoundDialogActionTypes.setSlippage, payload: state.slippage })
+  }
+
+  const handleSlippage = (v) => {
+    dispatch({ type: compoundDialogActionTypes.setSlippage, payload: v })
   }
 
   const handleTokenChange = (token) => {
@@ -243,7 +251,8 @@ const CompoundDialogs = ({
                     state.amount, //amount to deposit
                     addressToZap,
                     false, //onlygauge
-                    state.selectedToken.address === "0x0" //is native avax
+                    state.selectedToken.address === "0x0", //is native avax
+                    state.slippage, //zappers slippage
                     )
                 }
                 }
@@ -298,11 +307,11 @@ const CompoundDialogs = ({
               tokens={state.tokens} //we still need to filter the lptoken out
               selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
               activeToken={state.selectedToken} />}
-            <SnowCheckbox
-              className={classes.mt1}
-              label="Infinite Approval"
-              isChecked={state.isInfiniteApprovalChecked}
-              onChange={handleInfiniteApprovalCheckboxChange}
+            <AdvancedTransactionOption
+              handleInfiniteApproval={handleInfiniteApproval}
+              handleSlippage={handleSlippage}
+              handleShow={handleShowAdvanced}
+              state={state}
             />
             <div className={classes.buttonContainer}>
               {renderButton()}

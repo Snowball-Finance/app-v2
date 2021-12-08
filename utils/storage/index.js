@@ -1,5 +1,7 @@
 export const StorageKeys = {
-    infiniteApproval: 'infiniteApproval'
+    infiniteApproval: 'infiniteApproval',
+    showAdvanced: 'showAdvanced',
+    slippage: 'slippage',
 }
 export const storage = {
     write: (key, data) => {

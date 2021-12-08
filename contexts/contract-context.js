@@ -70,6 +70,7 @@ export function ContractProvider({ children }) {
       setSnowballBalance(0)
       setSnowconeBalance(0)
       setTotalSnowcone(0)
+      setAVAXBalance(0)
     }
   }, [snowballContract, snowconeContract, account, getBalanceInfo, loading]);
 

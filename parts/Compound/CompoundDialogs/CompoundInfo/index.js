@@ -73,7 +73,7 @@ const CompoundInfo = ({
   const filteredTokens = tokens.filter(o => !o.isLpToken && !o.isNativeAVAX)
   let priceField = 'pangolinPrice'
 
-  const tokensWithPriceAndAmount = filteredTokens.map((token) => ({ ...token, price: token[priceField] }))
+  const tokensWithPriceAndAmount = filteredTokens.map((token) => ({ ...token, price: token[priceField]}))
   let selectedTokenPrice
   const fractionOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(filteredTokens.length)
   if(selectedTokenWithAmount.isLpToken) {
