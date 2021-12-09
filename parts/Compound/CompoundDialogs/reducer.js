@@ -62,25 +62,27 @@ export const compoundDialogReducer = (state, action) => {
                     balance: action.payload.userLPBalance,
                     isLpToken: true
                 })
+            } else if(tokens.length === 1 && action.payload.kind === "Snowglobe") {
+                tokens[0].isLpToken = true;
             }
             //we probably want to change this later on the API to inform us when a token is a metatoken
             const WAVAXToken = tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase());
             if (
                 action.payload.kind !== "Stablevault" 
-                //we can remove this once the zapper contract is able to zap non wavax pairs
-                && tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase()) 
             ) {
-                newState.hasAVAX = (tokens.length === 1 && WAVAXToken)
-                tokens.push({
-                    addresses: ["0x0"],
-                    address: "0x0",
-                    decimals: 18,
-                    pangolinPrice: WAVAXToken.pangolinPrice,
-                    name: "AVAX",
-                    symbol: "AVAX",
-                    balance: action.payload.userAVAXBalance,
-                    isNativeAVAX: true
-                })
+                if (tokens.length > 1 || WAVAXToken) {
+                    newState.hasAVAX = tokens.length === 1 && WAVAXToken;
+                    tokens.push({
+                        addresses: ["0x0"],
+                        address: "0x0",
+                        decimals: 18,
+                        pangolinPrice: Number(action.payload.prices.AVAX),
+                        name: "AVAX",
+                        symbol: "AVAX",
+                        balance: action.payload.userAVAXBalance,
+                        isNativeAVAX: true
+                    })
+                }
             }
 
             newState.tokens = tokens.map((token, index) => {
@@ -123,9 +125,14 @@ export const compoundDialogReducer = (state, action) => {
         }
             break
         case compoundDialogActionTypes.setPriceImpact: {
-            const selectedAddress = selectedToken.address === "0x0" 
+            const hasWAVAX = newState.tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase());
+
+            const selectedAddress = selectedToken.address === "0x0" && hasWAVAX  
                 ? WAVAX.toLowerCase()
-                : selectedToken.address.toLowerCase() 
+                : hasWAVAX ?
+                    selectedToken.address.toLowerCase() 
+                    : newState.tokens[0].address.toLowerCase()
+
             const baseToken = newState.tokens.find(
                 o => o.address.toLowerCase() === selectedAddress)
 

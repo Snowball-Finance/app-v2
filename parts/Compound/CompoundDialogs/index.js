@@ -17,6 +17,7 @@ import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption';
+import { usePrices } from 'contexts/price-context';
 
 const useStyles = makeStyles(theme => ({
   dialog: {
@@ -89,6 +90,7 @@ const CompoundDialogs = ({
   }
 
   const { trackEvent } = useAnalytics()
+  const { prices } = usePrices()
 
   const classes = useStyles();
   // i will need the pool to extract the token infos
@@ -211,7 +213,7 @@ const CompoundDialogs = ({
     })
   }
   useEffect(() => {
-    dispatch({ type: compoundDialogActionTypes.setUserData, payload: { ...userData, userAVAXBalance: AVAXBalance } })
+    dispatch({ type: compoundDialogActionTypes.setUserData, payload: { ...userData, userAVAXBalance: AVAXBalance, prices } })
     return () => {
 
     }
