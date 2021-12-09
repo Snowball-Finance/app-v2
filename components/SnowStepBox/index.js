@@ -46,7 +46,7 @@ const enumDeposit = {
   withdraw3: 6,
 };
 
-const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = false, singleApprove = false }) => {
+const SnowStepBox = ({ isClaimChecked, transactionStatus, title, isStableVault, singleDeposit = false, singleApprove = false }) => {
   const [colors, setColors] = useState([
     '#DBEDFF',
     '#DBEDFF',
@@ -87,9 +87,17 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = 
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
-          {title != "Withdraw" ? <><Typography variant='caption'>Approval Steps</Typography>
-          <Typography variant='caption'>Deposit Steps</Typography></> : <Typography variant='caption'>Withdraw Steps</Typography>}
-          
+          {title != 'Withdraw' ? (
+            <>
+              <Typography className={classes.title}>Approval Steps</Typography>
+              <Typography className={classes.title}>Deposit Steps</Typography>
+            </>
+          ) : (
+            <>
+              <Typography className={classes.title}>Withdraw Steps</Typography>
+              {isClaimChecked && <Typography className={classes.title}>Claim</Typography>}
+            </>
+          )}
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
@@ -150,13 +158,13 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = 
                     </>
                   )}
                 </Box>
-                <Box display='flex' justifyContent='center' minWidth={112}>
+                {isClaimChecked && <Box display='flex' justifyContent='center' minWidth={112}>
                   <Box
                     className={classes.ellipse}
                     style={{ background: colors[enumDeposit.withdraw3] }}
                     borderRadius='50%'
                   />
-                </Box>
+                </Box>}
               </>
             )}
           </div>
@@ -182,10 +190,10 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = 
                     : 2}
                   /{isStableVault ? 1 : 2} Step
                 </Typography>
-                <Typography className={classes.subtitle}>
+                {isClaimChecked && <Typography className={classes.subtitle}>
                   {transactionStatus.withdrawStep <= 2 ? 0 : transactionStatus.withdrawStep - 2}/1
                   Step
-                </Typography>
+                </Typography>}
               </>
             )}
           </div>
