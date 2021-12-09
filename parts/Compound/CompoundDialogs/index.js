@@ -363,8 +363,8 @@ return (
           <SnowStepBox
             transactionStatus={transactionStatus}
             title={title}
-            singleApprove={state.selectedToken.isNativeAVAX}
-            singleDeposit={!state.selectedToken.isLpToken}
+            singleApprove={state.selectedToken.isNativeAVAX && state.tokens.length > 2}
+            singleDeposit={!state.selectedToken.isLpToken && state.tokens.length > 2}
           />
         </div>
       </>}

@@ -76,13 +76,14 @@ const Details = ({
 	const { s4VaultToken } = userData
 	//create options for selects component
 	let options = tokens.map((el) => {
+		const tokenCount = tokens.filter(o => !o.isNativeAVAX).length;
 		const result = { 
-			label: el.isLpToken && tokens.length > 1 ? el.name : el.symbol,
+			label: el.isLpToken && tokenCount > 1 ? el.name : el.symbol,
 			value: el.symbol,
 			iconComponent: null
 		}
 		result.iconComponent = el.isLpToken 
-			? <SnowPairsIcon pairsIcon={[...tokens.filter(o=> (!(o.isLpToken) || !(tokens.length > 1)) && !o.isNativeAVAX).map(o=> o.address)]} size={32} />
+			? <SnowPairsIcon pairsIcon={[...tokens.filter(o=> (!(o.isLpToken) || !(tokenCount > 1)) && !o.isNativeAVAX).map(o=> o.address)]} size={32} />
 			: <SnowPairsIcon pairsIcon={[el.address]} size={32} />
 		return result
 	})
