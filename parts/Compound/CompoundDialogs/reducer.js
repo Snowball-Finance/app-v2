@@ -69,20 +69,19 @@ export const compoundDialogReducer = (state, action) => {
             const WAVAXToken = tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase());
             if (
                 action.payload.kind !== "Stablevault" 
+                && WAVAXToken
             ) {
-                if (tokens.length > 1 || WAVAXToken) {
-                    newState.hasAVAX = tokens.length === 1 && WAVAXToken;
-                    tokens.push({
-                        addresses: ["0x0"],
-                        address: "0x0",
-                        decimals: 18,
-                        pangolinPrice: Number(action.payload.prices.AVAX),
-                        name: "AVAX",
-                        symbol: "AVAX",
-                        balance: action.payload.userAVAXBalance,
-                        isNativeAVAX: true
-                    })
-                }
+                newState.hasAVAX = tokens.length === 1 && WAVAXToken;
+                tokens.push({
+                    addresses: ["0x0"],
+                    address: "0x0",
+                    decimals: 18,
+                    pangolinPrice: Number(action.payload.prices.AVAX),
+                    name: "AVAX",
+                    symbol: "AVAX",
+                    balance: action.payload.userAVAXBalance,
+                    isNativeAVAX: true
+                })
             }
 
             newState.tokens = tokens.map((token, index) => {

@@ -409,7 +409,6 @@ export function CompoundAndEarnProvider({ children }) {
       const estimateSwap = await zappersContract.estimateSwap(item.address, baseTokenAddress, amount);
 
       const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
-      console.log(+amountMinToken)
 
       const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
       return zapTx;
@@ -429,7 +428,6 @@ export function CompoundAndEarnProvider({ children }) {
 
         //1% slippage
         const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
-        console.log(+amountMinToken)
 
         const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, {value: amount});
         return zapTx;
@@ -448,21 +446,11 @@ export function CompoundAndEarnProvider({ children }) {
         //simulate a swap between WAVAX and TOKEN0 to know how much it is worth
         const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
 
-        let amountOut, tokenPos
-        try {
-          [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
-          tokenPos = 0;
-        } catch (error) {
-          //if there`s no path WAVAX/TOKEN0 we try token1
-          [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
-          tokenPos = 1;
-        }
+        const  [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
 
-        const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${tokenPos}`].address, amountOut.div(2));
-        //1% slippage
-        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
+        const amountMinToken = amountOut.sub(amountOut.div(100).mul(zapperSlippage));
         
-        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item[`token${tokenPos}`].address, {value: amount});
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item.token0.address, {value: amount});
         
         return zapTx;
       }
