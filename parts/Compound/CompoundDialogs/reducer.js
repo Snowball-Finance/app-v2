@@ -123,22 +123,23 @@ export const compoundDialogReducer = (state, action) => {
         }
             break
         case compoundDialogActionTypes.setPriceImpact: {
-            let lastUSDBalance, newUSDBalance = 0; 
+            let lastUSDBalance, newUSDBalance = 0
 
             newState.tokens.forEach((token) => {
                 const tokenPrice = token.pangolinPrice;
                 if(selectedToken.address.toLowerCase() === token.address.toLowerCase()) {
-                    lastUSDBalance = (action.payload.amount / 10 ** token.decimals) * tokenPrice;
+                    lastUSDBalance = (action.payload.amount / 10 ** token.decimals) * tokenPrice
                 }
                 if(action.payload.swap[token.address]){
-                    newUSDBalance += tokenPrice * (action.payload.swap[token.address] / 10 ** token.decimals);
+                    newUSDBalance += tokenPrice * (action.payload.swap[token.address] / 10 ** token.decimals)
                 }
             })
             if(newUSDBalance > lastUSDBalance) { 
-                newState.priceImpact = 0;
+                newState.priceImpact = 0
             } else {
-                (newState.priceImpact = newUSDBalance / lastUSDBalance * 100) - 100;
+                newState.priceImpact = 100-(newUSDBalance/(lastUSDBalance/100))
             }
+            newState.tokensSwapOut = action.payload.swap
         }
             break
         case compoundDialogActionTypes.setSliderValue: {

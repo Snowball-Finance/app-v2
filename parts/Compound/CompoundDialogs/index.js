@@ -2,7 +2,7 @@ import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -43,6 +43,15 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     padding: theme.spacing(1),
+  },
+  linedContainer: {
+    padding: theme.spacing(1, 1.5),
+    marginTop: theme.spacing(1),
+    borderRadius: 8,
+    border: `1px solid ${theme.custom.palette.border}`,
+  },
+  warningBox: {
+    backgroundColor: theme.custom.palette.joe_red
   },
   buttonContainer: {
     margin: theme.spacing(1, 0, 0, 0),
@@ -244,8 +253,7 @@ const CompoundDialogs = ({
       ? null
       : state.selectedToken.address;
 
-    if(state.priceImpact < 1){ 
-      return (
+      return state.priceImpact < 1 ? (
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <ContainedButton
@@ -284,9 +292,16 @@ const CompoundDialogs = ({
             </ContainedButton>
           </Grid>
         </Grid>
-      );
-    }
-  };
+      ) : (
+        <>
+        <div className={classes.linedContainer}>
+          <Box justifyContent="center" display="flex" className={classes.warningBox}> 
+            Price Impact too High!! Zapping disabled.
+          </Box>
+        </div>
+      </>
+    )
+  }
 
 return (
   <SnowDialog
@@ -325,7 +340,8 @@ return (
             userData={state.userData}
             tokens={state.tokens} //we still need to filter the lptoken out
             selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
-            activeToken={state.selectedToken} />}
+            activeToken={state.selectedToken}
+            swapAmountOut={state.tokensSwapOut} />}
           <AdvancedTransactionOption
             handleInfiniteApproval={handleInfiniteApproval}
             handleSlippage={handleSlippage}

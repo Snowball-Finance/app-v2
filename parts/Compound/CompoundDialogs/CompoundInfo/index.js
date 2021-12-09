@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -66,9 +66,11 @@ const CompoundInfo = ({
   userData,
   selectedTokenWithAmount,
   tokens,
+  swapAmountOut,
 }) => {
   const classes = useStyles();
   const { prices } = usePrices();
+  const [tokensWithAmountToPut,setTokensWAmount] = useState(null);
 
   const filteredTokens = tokens.filter(o => !o.isLpToken && !o.isNativeAVAX)
   let priceField = 'pangolinPrice'
@@ -86,12 +88,28 @@ const CompoundInfo = ({
 
   const amountOfUsdToPut = multiply(BNToFloat(selectedTokenPrice), BNToFloat(fractionOfSelectedToken))
 
-  const tokensWithAmountToPut = tokensWithPriceAndAmount.map((item) => {
-    return ({
-      ...item,
-      amountToPut: divide(amountOfUsdToPut, item.price).toFixed(18)
-    })
-  })
+  useEffect(() => {
+    setTokensWAmount(
+      tokensWithPriceAndAmount.map((item) => {
+        if(selectedTokenWithAmount.isLpToken){
+          return ({
+            ...item,
+            amountToPut: divide(amountOfUsdToPut, item.price).toFixed(18)
+          })
+        }else if(swapAmountOut){
+          return {
+            ...item,
+            amountToPut: BNToFloat(swapAmountOut[item.address], item.decimals)
+          }
+        }else{
+          return {
+            ...item,
+            amountToPut: 0
+          }
+        }
+      })
+    )
+  },[swapAmountOut, amountOfUsdToPut])
 
   const mixedTokensValue = selectedTokenWithAmount.isLpToken 
   ? selectedTokenWithAmount.amount
@@ -118,7 +136,7 @@ const CompoundInfo = ({
         <div className={classes.estContainer}>
           <Typography className={classes.bold} variant='subtitle1' gutterBottom>Est. pool allocation</Typography>
           {
-            tokensWithAmountToPut.map((token, index) => {
+            tokensWithAmountToPut?.map((token, index) => {
               return (<Grid container key={index} className={classes.tokenLine} style={{ marginBottom: index === tokensWithAmountToPut.length - 1 ? "6px" : "0px" }}>
                 <Grid item sm={12} md={6} className={classes.flex}>
                 <SnowPairsIcon pairsIcon={[token.address]} size={20} />
