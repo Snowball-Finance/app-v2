@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Select, MenuItem, Paper } from '@material-ui/core';
 import clsx from 'clsx';
-import SnowPairsIcon from 'components/SnowPairsIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.primary,
   },
+  icon: {
+    fill: theme.palette.secondary.main
+  }
 }));
 
 
@@ -56,6 +58,13 @@ const Selects = React.forwardRef(
           style={{ width: startIcon ? '80%' : '100%' }}
           value={value}
           onChange={onChange}
+          inputProps={
+            {
+              classes: {
+                icon: classes.icon
+              }
+            }
+          }
           disableUnderline
         >
           {renderOptions(options)}
