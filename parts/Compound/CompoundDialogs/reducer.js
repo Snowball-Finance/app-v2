@@ -123,22 +123,16 @@ export const compoundDialogReducer = (state, action) => {
         }
             break
         case compoundDialogActionTypes.setPriceImpact: {
-            let lastUSDBalance, newUSDBalance = 0
+            const selectedAddress = selectedToken.address === "0x0" 
+                ? WAVAX.toLowerCase()
+                : selectedToken.address.toLowerCase() 
+            const baseToken = newState.tokens.find(
+                o => o.address.toLowerCase() === selectedAddress)
 
-            newState.tokens.forEach((token) => {
-                const tokenPrice = token.pangolinPrice;
-                if(selectedToken.address.toLowerCase() === token.address.toLowerCase()) {
-                    lastUSDBalance = (action.payload.amount / 10 ** token.decimals) * tokenPrice
-                }
-                if(action.payload.swap[token.address]){
-                    newUSDBalance += tokenPrice * (action.payload.swap[token.address] / 10 ** token.decimals)
-                }
-            })
-            if(newUSDBalance > lastUSDBalance) { 
-                newState.priceImpact = 0
-            } else {
-                newState.priceImpact = 100-(newUSDBalance/(lastUSDBalance/100))
-            }
+            const totalTokens = (action.payload.swap[baseToken.address].reserve / 10 ** baseToken.decimals) 
+            const amount = (action.payload.swap[baseToken.address].amount / 10 ** baseToken.decimals) 
+
+            newState.priceImpact = (amount/totalTokens) * 100
             newState.tokensSwapOut = action.payload.swap
         }
             break

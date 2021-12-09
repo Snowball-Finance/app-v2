@@ -79,11 +79,13 @@ const CompoundInfo = ({
   let selectedTokenPrice
   const fractionOfSelectedToken = floatToBN(selectedTokenWithAmount.amount).div(filteredTokens.length)
   if(selectedTokenWithAmount.isLpToken) {
-    selectedTokenPrice = floatToBN(userData.pricePoolToken)
+    selectedTokenPrice = floatToBN(userData.pricePoolToken.toLocaleString("en-US",{ maximumFractionDigits: userData.lpDecimals }))
   } else if (selectedTokenWithAmount.isNativeAVAX) {
     selectedTokenPrice = floatToBN(prices.AVAX)
   } else {
-    selectedTokenPrice = floatToBN(tokensWithPriceAndAmount.filter((item) => item.symbol === selectedTokenWithAmount.symbol)[0].price)
+    selectedTokenPrice = floatToBN(tokensWithPriceAndAmount.filter(
+      (item) => item.symbol === selectedTokenWithAmount.symbol)[0].price.toLocaleString("en-US",{ maximumFractionDigits: selectedTokenWithAmount.decimals })
+      )
   }
 
   const amountOfUsdToPut = multiply(BNToFloat(selectedTokenPrice), BNToFloat(fractionOfSelectedToken))
@@ -96,10 +98,10 @@ const CompoundInfo = ({
             ...item,
             amountToPut: divide(amountOfUsdToPut, item.price).toFixed(18)
           })
-        }else if(swapAmountOut){
+        }else if(swapAmountOut[item.address]){
           return {
             ...item,
-            amountToPut: BNToFloat(swapAmountOut[item.address], item.decimals)
+            amountToPut: BNToFloat(swapAmountOut[item.address].amount, item.decimals)
           }
         }else{
           return {

@@ -49,9 +49,10 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     borderRadius: 8,
     border: `1px solid ${theme.custom.palette.border}`,
+    backgroundColor: theme.custom.palette.joe_red
   },
   warningBox: {
-    backgroundColor: theme.custom.palette.joe_red
+
   },
   buttonContainer: {
     margin: theme.spacing(1, 0, 0, 0),
@@ -105,7 +106,7 @@ const CompoundDialogs = ({
     tokensSwapOut: [],
     selectedToken: userData?.token0,
     approved: false,
-    isInfiniteApproval: storage.read(StorageKeys.infiniteApproval, true),
+    isInfiniteApproval: storage.read(StorageKeys.infiniteApproval, false),
     slippage: storage.read(StorageKeys.slippage, "1"),
     showAdvanced: storage.read(StorageKeys.showAdvanced, false),
     error: null
@@ -190,7 +191,7 @@ const CompoundDialogs = ({
       v = 50;
     }
 
-    dispatch({ type: compoundDialogActionTypes.setSlippage, payload: v })
+    dispatch({ type: compoundDialogActionTypes.setSlippage, payload: Math.floor(v) })
   }
 
   const handleTokenChange = (token) => {
@@ -204,7 +205,8 @@ const CompoundDialogs = ({
         selectedToken: token,
         approved: false,
         error: null,
-        priceImpact: 0
+        priceImpact: 0,
+        tokensSwapOut: []
       }
     })
   }
@@ -229,15 +231,18 @@ const CompoundDialogs = ({
           selectedToken: state.tokens[idx],
           approved: false,
           error: null,
-          priceImpact: 0
+          priceImpact: 0,
+          tokensSwapOut: []
         }
       })
     }
   }, [state.tokens])
 
   useEffect(() => {
-    if (state.amount > 0 && state.tokens.length > 1 && !state.hasAVAX) {
-      calculateSwapAmountOut(state.selectedToken.isNativeAVAX, state.amount, state.userData).then((result) => {
+    if (state.tokens.length > 1 && !state.hasAVAX && !state.selectedToken.isLpToken) {
+      calculateSwapAmountOut(
+        state.selectedToken.isNativeAVAX, state.amount, state.userData, state.selectedToken
+      ).then((result) => {
         dispatch({
           type: compoundDialogActionTypes.setPriceImpact, payload: {
             swap: result,
@@ -253,54 +258,46 @@ const CompoundDialogs = ({
       ? null
       : state.selectedToken.address;
 
-      return state.priceImpact < 1 ? (
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <ContainedButton
-              className={classes.modalButton}
-              disableElevation
-              fullWidth
-              disabled={enabledHandler(true)}
-              loading={isTransacting.approve}
-              onClick={() => {
-                handleApproveClick()
-              }}
-            >
-              Approve
-            </ContainedButton>
-          </Grid>
-          <Grid item xs={6}>
-            <ContainedButton
-              className={classes.modalButton}
-              disableElevation
-              fullWidth
-              disabled={enabledHandler(false)}
-              loading={isTransacting.deposit}
-              onClick={() => {
-                deposit(
-                  userData, //general user data
-                  state.amount, //amount to deposit
-                  addressToZap,
-                  false, //onlygauge
-                  state.selectedToken.address === "0x0", //is native avax
-                  state.slippage, //zappers slippage
-                )
-              }
-              }
-            >
-              Deposit
-            </ContainedButton>
-          </Grid>
+    return (
+    state.priceImpact < 5 && state.amount > 0 ? 
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <ContainedButton
+            className={classes.modalButton}
+            disableElevation
+            fullWidth
+            disabled={enabledHandler(true)}
+            loading={isTransacting.approve}
+            onClick={() => {
+              handleApproveClick()
+            }}
+          >
+            Approve
+          </ContainedButton>
         </Grid>
-      ) : (
-        <>
-        <div className={classes.linedContainer}>
-          <Box justifyContent="center" display="flex" className={classes.warningBox}> 
-            Price Impact too High!! Zapping disabled.
-          </Box>
-        </div>
-      </>
-    )
+        <Grid item xs={6}>
+          <ContainedButton
+            className={classes.modalButton}
+            disableElevation
+            fullWidth
+            disabled={enabledHandler(false)}
+            loading={isTransacting.deposit}
+            onClick={() => {
+              deposit(
+                userData, //general user data
+                state.amount, //amount to deposit
+                addressToZap,
+                false, //onlygauge
+                state.selectedToken.address === "0x0", //is native avax
+                state.slippage, //zappers slippage
+              )
+            }
+            }
+          >
+            Deposit
+          </ContainedButton>
+        </Grid>
+      </Grid> : null) 
   }
 
 return (
@@ -348,10 +345,15 @@ return (
             handleShow={handleShowAdvanced}
             state={state}
           />
+          {state.priceImpact > 1 && state.amount > 0 &&
+          <Grid className={classes.linedContainer} marginTop={2}>
+            <Box justifyContent="center" display="flex" className={classes.warningBox} > 
+              WARNING!! Price Impact too High!! {`${state.priceImpact.toFixed(2)}%`} 
+            </Box>
+          </Grid>} 
           <div className={classes.buttonContainer}>
             {renderButton()}
           </div>
-
         </div>
         <div className={classes.mt1}>
           <SnowStepBox

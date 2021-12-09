@@ -7,6 +7,7 @@ import { IS_MAINNET } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
+import LP_TOKEN_ABI from 'libs/abis/lp-token.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import SNOWGLOBE_ZAPPERS_ABI from 'libs/abis/snowglobezap';
 import AMM_ROUTER_ABI from 'libs/abis/ammrouter.json';
@@ -407,8 +408,8 @@ export function CompoundAndEarnProvider({ children }) {
     if(!isNativeAVAX){ 
       const estimateSwap = await zappersContract.estimateSwap(item.address, baseTokenAddress, amount);
 
-      //1% slippage
       const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
+      console.log(+amountMinToken)
 
       const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
       return zapTx;
@@ -428,6 +429,7 @@ export function CompoundAndEarnProvider({ children }) {
 
         //1% slippage
         const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
+        console.log(+amountMinToken)
 
         const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, {value: amount});
         return zapTx;
@@ -459,6 +461,7 @@ export function CompoundAndEarnProvider({ children }) {
         const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${tokenPos}`].address, amountOut.div(2));
         //1% slippage
         const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
+        
         const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item[`token${tokenPos}`].address, {value: amount});
         
         return zapTx;
@@ -579,7 +582,20 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ deposit: false });
   };
 
-  const calculateSwapAmountOut = async (useAVAX, amount, item) => {
+  const calculateSwapAmountOut = async (useAVAX, amount, item, selectedToken) => {
+    if(amount <= 0 || amount.eq("0x0")){
+      return {
+        [item.token0.address]: {
+          amount:ethers.BigNumber.from(0),
+          reserve:ethers.BigNumber.from(0)
+        },
+        [item.token1.address]: {
+          amount:ethers.BigNumber.from(0),
+          reserve:ethers.BigNumber.from(0)
+        }
+      }
+    }
+
     let routerAddress;
     switch(item.source) {
       case "Trader Joe": case "Axial":
@@ -594,7 +610,12 @@ export function CompoundAndEarnProvider({ children }) {
 
     const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
 
-    let baseToken, swappedToken, amountToSwap
+    //we need to get the reserves of this tokens to calculate the price impact
+    const lpContract = new ethers.Contract(item.lpAddress, LP_TOKEN_ABI, library.getSigner());
+    const reserves = await lpContract.getReserves();
+
+    let baseToken, swappedToken, amountToSwap, baseReserve, swappedReserve
+    
     if(useAVAX){
       let hasWAVAX, otherTokenPos;
       if(item.token0.address.toLowerCase() === WAVAX.toLowerCase()) {
@@ -604,8 +625,11 @@ export function CompoundAndEarnProvider({ children }) {
         hasWAVAX = true;
         otherTokenPos = 0;
       }
+      
       if(hasWAVAX){
         baseToken = WAVAX;
+        baseReserve = otherTokenPos === 0 ? reserves._reserve1 : reserves._reserve0;
+        swappedReserve = otherTokenPos === 0 ? reserves._reserve0 : reserves._reserve1;
         swappedToken = item[`token${otherTokenPos}`].address;
         amountToSwap = amount;
       } else {
@@ -613,24 +637,41 @@ export function CompoundAndEarnProvider({ children }) {
           [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
           baseToken = item.token0.address;
           swappedToken = item.token1.address;
+          baseReserve = reserves._reserve0;
+          swappedReserve = reserves._reserve1;
         } catch (error) {
           //if there`s no path WAVAX/TOKEN0 we try token1
           [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
           baseToken = item.token1.address;
           swappedToken = item.token0.address;
+          baseReserve = reserves._reserve1;
+          swappedReserve = reserves._reserve0;
         }
       }
     } else {
-      baseToken = item.token0.address;
-      swappedToken = item.token1.address;
+      if(item.token0.address === selectedToken.address) {
+        baseToken = item.token0.address;
+        swappedToken = item.token1.address;
+        baseReserve = reserves._reserve0;
+        swappedReserve = reserves._reserve1; 
+      } else if (item.token1.address === selectedToken.address){
+        baseToken = item.token1.address;
+        swappedToken = item.token0.address;
+        baseReserve = reserves._reserve1;
+        swappedReserve = reserves._reserve0;
+      }
       amountToSwap = amount;
     }
-
     const [, estimateSwap] = await routerContract.getAmountsOut(amountToSwap.div(2), [baseToken, swappedToken]);
-
     return {
-      [baseToken]: amountToSwap.div(2),
-      [swappedToken]: estimateSwap
+      [baseToken]: {
+        amount:amountToSwap.div(2),
+        reserve:baseReserve
+      },
+      [swappedToken]: {
+        amount:estimateSwap,
+        reserve:swappedReserve
+      }
     }
   }
 

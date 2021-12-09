@@ -75,6 +75,14 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = 
     setColors(newStatus);
   }, [transactionStatus, color.disabled, color.enabled]);
 
+  const getStep = (useSingle, step) => {
+    if(step > 0){
+      return useSingle ? step - 1 : step;
+    } else {
+      return step;
+    }
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.upper}>
@@ -158,10 +166,10 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = 
             {title != 'Withdraw' ? (
               <>
                 <Typography className={classes.subtitle}>
-                  {transactionStatus.approvalStep}/{singleApprove ? 1 : 2} Step
+                  {getStep(singleApprove, transactionStatus.approvalStep)}/{singleApprove ? 1 : 2} Step
                 </Typography>
                 <Typography className={classes.subtitle}>
-                  {transactionStatus.depositStep}/{singleDeposit ? 1 : 2} Step
+                  {getStep(singleDeposit, transactionStatus.depositStep)}/{singleDeposit ? 1 : 2} Step
                 </Typography>
               </>
             ) : (
