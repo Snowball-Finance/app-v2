@@ -2,7 +2,7 @@ import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Box, Grid } from '@material-ui/core';
+import { Box, CircularProgress, Grid } from '@material-ui/core';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -114,7 +114,8 @@ const CompoundDialogs = ({
     error: null
   })
 
-  const { approve, deposit, isTransacting, transactionStatus, calculateSwapAmountOut } = useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting, transactionStatus, calculateSwapAmountOut,
+  setTransactionStatus } = useCompoundAndEarnContract();
   const { AVAXBalance } = useContracts();
 
   useEffect(() => {
@@ -197,6 +198,7 @@ const CompoundDialogs = ({
   }
 
   const handleTokenChange = (token) => {
+    setTransactionStatus({approvalStep:0, depositStep:0})
     dispatch({
       type: compoundDialogActionTypes.reset, payload: {
         sliderValue: 0,
@@ -313,11 +315,11 @@ return (
     titleTextClass={classes.dialogTitleText}
     closeIconClass={classes.dialogCloseIcon}
   >
-    {/*!state.selectedToken?.balance ? <>
+    {!AVAXBalance ? <>
         <div className={classes.center} >
           <CircularProgress size={24} />
         </div>
-      </> : */
+      </> : 
       <>	<Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
 
