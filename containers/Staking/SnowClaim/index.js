@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { formatEther } from 'ethers/lib/utils'
 import { useStakingContract } from 'contexts/staking-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
-import SnowTokenIcon from 'components/SnowTokenIcon';
+import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon';
 import CardWrapper from '../CardWrapper'
 import { formatNumber } from 'utils/helpers/format'
 import { useAPIContext } from 'contexts/api-context'
@@ -40,7 +40,7 @@ const SnowClaim = () => {
   const claimable = useMemo(() =>
     userClaimable ? parseFloat(formatEther(userClaimable)) : null
     , [userClaimable]);
-  
+
   const sherpaClaimable = useMemo(() =>
     userSherpaClaimable ? parseFloat(formatEther(userSherpaClaimable)) : null
     , [userSherpaClaimable]);
@@ -72,9 +72,9 @@ const SnowClaim = () => {
           >
             {`Claim ${formatNumber(claimable, 4)} Snowballs`}
           </ContainedButton>
-          {sherpaClaimable > 0 && 
+          {sherpaClaimable > 0 &&
             <ContainedButton
-              className = {classes.sherpaClaim}
+              className={classes.sherpaClaim}
               fullWidth
               disabled={!sherpaClaimable}
               onClick={sherpaClaim}

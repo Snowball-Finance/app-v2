@@ -126,7 +126,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
-    withdraw(item, amount, isClaimChecked);
+    withdraw(item, amount ? amount : item.userBalanceSnowglobe, isClaimChecked);
   };
 
   const claimCheckHandler = (value) => {
@@ -158,7 +158,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
             <ContainedButton
               className={clsx(classes.button)}
               disableElevation
-              disabled={amount == 0 || (item?.userDepositedLP === 0 || item?.withdrew || !item)}
+              disabled={(amount == 0 && item?.userBalanceGauge > 0) || (item?.userDepositedLP === 0 || item?.withdrew || !item)}
               loading={isTransacting.withdraw}
               onClick={withdrawHandler}>
               {transactionStatus.withdrawStep < 2 ? 'Withdraw' : 'Claim'}

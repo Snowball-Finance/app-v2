@@ -1,12 +1,16 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
+import { WAVAX } from "utils/constants/addresses";
 
 import { IS_MAINNET } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
+import LP_TOKEN_ABI from 'libs/abis/lp-token.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
+import SNOWGLOBE_ZAPPERS_ABI from 'libs/abis/snowglobezap';
+import AMM_ROUTER_ABI from 'libs/abis/ammrouter.json';
 import { usePopup } from 'contexts/popup-context';
 import { useContracts } from 'contexts/contract-context';
 import { useAPIContext } from 'contexts/api-context';
@@ -14,13 +18,17 @@ import { isEmpty, getBalanceWithRetry } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
+import { getZapperContract } from 'utils/helpers/getZapperContract';
 import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
 import { usePrices } from './price-context';
 import { getLink } from 'utils/helpers/getLink';
 import { useProvider } from './provider-context';
 import { getMultiContractData } from 'libs/services/multicall';
-import { getDeprecatedCalls, getGaugeCalls, getPoolCalls } from 'libs/services/multicall-queries';
+import { approveContractAction } from 'utils/contractHelpers/approve';
+import { wrapAVAX } from 'utils/helpers/wrapAVAX';
+import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
+import { CONTRACTS } from 'config';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -30,7 +38,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { trackEvent } = useAnalytics()
 
   const { library, account } = useWeb3React();
-  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo, setGaugeCalls } = useContracts();
+  const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
   const { provider } = useProvider();
   const { prices } = usePrices();
@@ -61,7 +69,7 @@ export function CompoundAndEarnProvider({ children }) {
     //only fetch total information when the userpools are empty
     //otherwise we always want to update by single pool to have
     //a more performatic approach
-    if (account && pools?.length) {
+    if (account && pools?.length > 0 && !isEmpty(gauges)) {
       setLoading(true);
       getBalanceInfosAllPools(gauges);
     }
@@ -282,8 +290,23 @@ export function CompoundAndEarnProvider({ children }) {
       const poolCalls = getPoolCalls(givenPool, account);
       const poolData = await getMultiContractData(provider, poolCalls);
 
+      //update token Balance
+      let tokenCalls;
+      if (givenPool.token1.address) {
+        tokenCalls = getTokensBalance([givenPool.token0.address, givenPool.token1.address], account);
+      } else {
+        tokenCalls = getTokensBalance([givenPool.token0.address], account);
+      }
+
+      const tokenData = await getMultiContractData(provider, tokenCalls);
+
       //update user pool state
-      const poolInfo = generatePoolInfo(givenPool, [gaugeInfo], poolData);
+      let poolInfo = generatePoolInfo(givenPool, [gaugeInfo], poolData, tokenData);
+
+      poolInfo.token0Balance = tokenData[poolInfo.token0.address].balanceOftoken0;
+      if (poolInfo.token1.address) {
+        poolInfo.token1Balance = tokenData[poolInfo.token1.address].balanceOftoken1;
+      }
 
       getBalanceInfo();
 
@@ -327,7 +350,7 @@ export function CompoundAndEarnProvider({ children }) {
     });
   };
 
-  const approve = async (item, amount, onlyGauge = false) => {
+  const approve = async (item, amount, addressFromZapper, onlyGauge = false, infiniteApproval = true) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -346,7 +369,6 @@ export function CompoundAndEarnProvider({ children }) {
         return true;
       }
 
-      const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
       const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
       const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
@@ -358,11 +380,14 @@ export function CompoundAndEarnProvider({ children }) {
         snowglobeRatio = ethers.utils.parseUnits('1.1');
       }
       if (!onlyGauge) {
-        await _approve(lpContract, snowglobeContract.address, amount);
+        const lpContract = new ethers.Contract(addressFromZapper ?? item.lpAddress, ERC20_ABI, library.getSigner());
+        const spender = addressFromZapper ? getZapperContract(item) : snowglobeContract.address;
+
+        await approveContractAction({ contract: lpContract, spender, account, amount, infiniteApproval });
       }
       setTransactionStatus({ approvalStep: 1, depositStep: 0, withdrawStep: 0 });
 
-      await _approve(snowglobeContract, gauge.address, amount.mul(snowglobeRatio));
+      await approveContractAction({ contract: snowglobeContract, spender: gauge.address, account, amount: amount.mul(snowglobeRatio), infiniteApproval });
       setTransactionStatus({ approvalStep: 2, depositStep: 0, withdrawStep: 0 });
       setIsTransacting({ approve: false });
       return true;
@@ -377,7 +402,69 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ approve: false });
   };
 
-  const deposit = async (item, amount, onlyGauge = false) => {
+  const zapIntoSnowglobe = async (amount, baseTokenAddress, item, isNativeAVAX, zapperSlippage) => {
+    const zapperAddress = getZapperContract(item);
+    const zappersContract = new ethers.Contract(zapperAddress, SNOWGLOBE_ZAPPERS_ABI, library.getSigner());
+    if(!isNativeAVAX){ 
+      const estimateSwap = await zappersContract.estimateSwap(item.address, baseTokenAddress, amount);
+
+      const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
+
+      const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
+      return zapTx;
+    } else { 
+      //if the pair uses WAVAX we want to go through it because it costs less gas!!
+      let hasWAVAX, WAVAXPos;
+      if(item.token0.address === WAVAX) {
+        hasWAVAX = true;
+        WAVAXPos = 0;
+      } else if (item.token1.address === WAVAX) {
+        hasWAVAX = true;
+        WAVAXPos = 1;
+      }
+
+      if(hasWAVAX){
+        const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${WAVAXPos}`].address, amount);
+
+        //1% slippage
+        const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
+
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, {value: amount});
+        return zapTx;
+      } else {
+        let routerAddress;
+        switch(item.source) {
+          case "Trader Joe": case "Axial":
+            routerAddress = CONTRACTS.ROUTER_TRADERJOE;
+            break;
+          case "Pangolin":
+            routerAddress = CONTRACTS.ROUTER_PANGOLIN;
+            break;
+          default:
+            throw new Error("Router not found for this pool");
+        }
+        //simulate a swap between WAVAX and TOKEN0 to know how much it is worth
+        const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
+
+        const  [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+
+        const amountMinToken = amountOut.sub(amountOut.div(100).mul(zapperSlippage));
+        
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item.token0.address, {value: amount});
+        
+        return zapTx;
+      }
+    }
+  }
+
+  const deposit = async (
+      item,
+      amount,
+      addressFromZapper, 
+      onlyGauge = false, 
+      isNativeAVAX = false, 
+      zapperSlippage = 1
+    ) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -387,14 +474,33 @@ export function CompoundAndEarnProvider({ children }) {
       return false;
     }
 
+    let gaugeDeposit;
     setIsTransacting({ deposit: true });
-    try {
-      if (transactionStatus.depositStep === 0) {
+    try {    
+      //We want to go straight for the zapper
+      if(addressFromZapper) {
+        gaugeDeposit = await zapIntoSnowglobe(
+          amount, addressFromZapper, item, addressFromZapper === "0x0", zapperSlippage
+        );
+      } else if (transactionStatus.depositStep === 0) {
         if (item.kind === 'Snowglobe') {
+          //if this deposit is native we need to wrap it
+          if(isNativeAVAX) {
+            const wrapped = await wrapAVAX(amount, library.getSigner());
+            if(!wrapped){
+              setPopUp({
+                title: 'Transaction Error',
+                icon: ANIMATIONS.ERROR.VALUE,
+                text: `Error wrapping AVAX`,
+              });
+              return;
+            }
+          }
+
           const lpContract = new ethers.Contract(item.lpAddress, ERC20_ABI, library.getSigner());
           const snowglobeContract = new ethers.Contract(item.address, SNOWGLOBE_ABI, library.getSigner());
 
-          const balance = await lpContract.balanceOf(account);
+          const balance = await getBalanceWithRetry(lpContract, account);
           amount = amount.gt(balance) ? balance : amount;
 
           if (amount.gt(0x00) && !onlyGauge) {
@@ -421,11 +527,10 @@ export function CompoundAndEarnProvider({ children }) {
       const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
-      let gaugeDeposit;
-      if (item.kind === 'Snowglobe') {
-        gaugeDeposit = await gaugeContract.depositAll();
-      } else {
-        gaugeDeposit = await gaugeContract.deposit(amount);
+      if(!addressFromZapper){
+        gaugeDeposit = item.kind === 'Snowglobe' 
+          ? await gaugeContract.depositAll()
+          : gaugeDeposit = await gaugeContract.deposit(amount);
       }
 
       const transactionGaugeDeposit = await gaugeDeposit.wait(1);
@@ -464,6 +569,99 @@ export function CompoundAndEarnProvider({ children }) {
     }
     setIsTransacting({ deposit: false });
   };
+
+  const calculateSwapAmountOut = async (useAVAX, amount, item, selectedToken) => {
+    if(amount <= 0 || amount.eq("0x0")){
+      return {
+        [item.token0.address]: {
+          amount:ethers.BigNumber.from(0),
+          reserve:ethers.BigNumber.from(0)
+        },
+        [item.token1.address]: {
+          amount:ethers.BigNumber.from(0),
+          reserve:ethers.BigNumber.from(0)
+        }
+      }
+    }
+
+    let routerAddress;
+    switch(item.source) {
+      case "Trader Joe": case "Axial":
+        routerAddress = CONTRACTS.ROUTER_TRADERJOE;
+        break;
+      case "Pangolin":
+        routerAddress = CONTRACTS.ROUTER_PANGOLIN;
+        break;
+      default:
+        throw new Error("Router not found for this pool");
+    }
+
+    const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
+
+    //we need to get the reserves of this tokens to calculate the price impact
+    const lpContract = new ethers.Contract(item.lpAddress, LP_TOKEN_ABI, library.getSigner());
+    const reserves = await lpContract.getReserves();
+
+    let baseToken, swappedToken, amountToSwap, baseReserve, swappedReserve
+    
+    if(useAVAX){
+      let hasWAVAX, otherTokenPos;
+      if(item.token0.address.toLowerCase() === WAVAX.toLowerCase()) {
+        hasWAVAX = true;
+        otherTokenPos = 1;
+      } else if (item.token1.address.toLowerCase() === WAVAX.toLowerCase()) {
+        hasWAVAX = true;
+        otherTokenPos = 0;
+      }
+      
+      if(hasWAVAX){
+        baseToken = WAVAX;
+        baseReserve = otherTokenPos === 0 ? reserves._reserve1 : reserves._reserve0;
+        swappedReserve = otherTokenPos === 0 ? reserves._reserve0 : reserves._reserve1;
+        swappedToken = item[`token${otherTokenPos}`].address;
+        amountToSwap = amount;
+      } else {
+        try {
+          [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+          baseToken = item.token0.address;
+          swappedToken = item.token1.address;
+          baseReserve = reserves._reserve0;
+          swappedReserve = reserves._reserve1;
+        } catch (error) {
+          //if there`s no path WAVAX/TOKEN0 we try token1
+          [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
+          baseToken = item.token1.address;
+          swappedToken = item.token0.address;
+          baseReserve = reserves._reserve1;
+          swappedReserve = reserves._reserve0;
+        }
+      }
+    } else {
+      if(item.token0.address === selectedToken.address) {
+        baseToken = item.token0.address;
+        swappedToken = item.token1.address;
+        baseReserve = reserves._reserve0;
+        swappedReserve = reserves._reserve1; 
+      } else if (item.token1.address === selectedToken.address){
+        baseToken = item.token1.address;
+        swappedToken = item.token0.address;
+        baseReserve = reserves._reserve1;
+        swappedReserve = reserves._reserve0;
+      }
+      amountToSwap = amount;
+    }
+    const [, estimateSwap] = await routerContract.getAmountsOut(amountToSwap.div(2), [baseToken, swappedToken]);
+    return {
+      [baseToken]: {
+        amount:amountToSwap.div(2),
+        reserve:baseReserve
+      },
+      [swappedToken]: {
+        amount:estimateSwap,
+        reserve:swappedReserve
+      }
+    }
+  }
 
   const withdraw = async (item, amount = 0, allowClaim = undefined) => {
     if (!account) {
@@ -570,7 +768,7 @@ export function CompoundAndEarnProvider({ children }) {
             item.withdrew = true;
           } else {
             if (allowClaim) {
-              const result = await claim(item, true);
+              await claim(item, true);
               setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
             }
             //refresh data only after 2sec to our node have time to catch up with network
@@ -678,6 +876,7 @@ export function CompoundAndEarnProvider({ children }) {
         setSortedUserPools,
         setUserPools,
         getBalanceInfosAllPools,
+        calculateSwapAmountOut,
       }}>
       {children}
     </CompoundAndEarnContext.Provider>
@@ -709,6 +908,7 @@ export function useCompoundAndEarnContract() {
     setSortedUserPools,
     setUserPools,
     getBalanceInfosAllPools,
+    calculateSwapAmountOut,
   } = context;
 
   return {
@@ -730,5 +930,6 @@ export function useCompoundAndEarnContract() {
     setSortedUserPools,
     setUserPools,
     getBalanceInfosAllPools,
+    calculateSwapAmountOut,
   };
 }

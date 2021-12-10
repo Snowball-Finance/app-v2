@@ -103,8 +103,11 @@ const AddLiquidityForm = ({
           })}
           <Grid item xs={12}>
             <AdvancedTransactionOption
-              value={maxSlippage}
-              setValue={setMaxSlippage}
+              state={{
+                slippage:maxSlippage
+              }}
+              handleSlippage={setMaxSlippage}
+              useApproval={false}
             />
           </Grid>
           <Grid item xs={12}>

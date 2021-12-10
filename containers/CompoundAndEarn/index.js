@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useWeb3React } from '@web3-react/core';
 import { useAPIContext } from 'contexts/api-context';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
+import { useContracts } from 'contexts/contract-context';
 import CompoundAndEarnSkeleton from 'components/Skeletons/CompoundAndEarn';
 import SearchInput from 'components/UI/SearchInput';
 import Selects from 'components/UI/Selects';
@@ -39,11 +40,13 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+
+  const { AVAXBalance } = useContracts();
   const { userPools, userDeprecatedPools, loadedDeprecated,
     sortedUserPools,setLoadedDeprecated,setSortedUserPools,
     setUserPools, transactionUpdateLoading } = useCompoundAndEarnContract();
 
-  const [modal, setModal] = useState({ open: false, title: '', address:'' });
+  const [modal, setModal] = useState({ open: false, title: '', address: '' });
   const [search, setSearch] = useState('');
   const [type, setType] = useState('apy');
   const [userPool, setPool] = useState('all');
@@ -53,8 +56,8 @@ const CompoundAndEarn = () => {
   const [loadedSort, setLoadedSort] = useState(false);
 
   //reset state when index opened
-  useEffect(()=>{
-    if(!loadedSort){
+  useEffect(() => {
+    if (!loadedSort) {
       setSortedUserPools(false);
       setLoadedSort(true);
     }
@@ -66,13 +69,13 @@ const CompoundAndEarn = () => {
   }, [account])
 
   useEffect(() => {
-    if(userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools){
+    if (userDeprecatedPools.length > 0 && !loadedDeprecated && sortedUserPools) {
       let newArray = [...userPools];
       userDeprecatedPools.forEach((pool) => {
         //check if it's not duplicated
-        if(userPools.indexOf(
-          (element)=> element.address.toLowerCase() === pool.address.toLowerCase()
-        ) === -1){
+        if (userPools.indexOf(
+          (element) => element.address.toLowerCase() === pool.address.toLowerCase()
+        ) === -1) {
           newArray.push(pool);
         }
       })
@@ -81,7 +84,7 @@ const CompoundAndEarn = () => {
       setUserPools(newArray);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userDeprecatedPools,loadedDeprecated,sortedUserPools]);
+  }, [userDeprecatedPools, loadedDeprecated, sortedUserPools]);
 
   useEffect(() => {
     const { data: { LastSnowballInfo: { poolsInfo = [] } = {} } = {} } = snowballInfoQuery;
@@ -164,7 +167,7 @@ const CompoundAndEarn = () => {
       sortedData = sortingByUserPool(event.target.value, filterData);
     }
 
-    if(search !== "") {
+    if (search !== "") {
       filterData = sortedData;
       const splittedValue = search.split(' ');
       splittedValue.forEach((spiltItem) => {
@@ -186,7 +189,7 @@ const CompoundAndEarn = () => {
 
     if (event.target.value === 'myPools') {
       const filteredDataWithTokensToInvested = filteredData.filter((item) => {
-        const [actionType] = getProperAction(item, null, item.userLPBalance, item.usdValue);
+        const [actionType] = getProperAction(item, null, item.userLPBalance, AVAXBalance, item.usdValue);
         return actionType === 'Deposit';
       });
       const filteredDataWithDepositLP = filteredData.filter(
@@ -196,9 +199,9 @@ const CompoundAndEarn = () => {
         ...filteredDataWithDepositLP,
         ...filteredDataWithTokensToInvested,
       ];
-    } else if ( event.target.value === 'claimable') {
+    } else if (event.target.value === 'claimable') {
       filteredData = filteredData.filter(
-      (item) => item.SNOBHarvestable > 0
+        (item) => item.SNOBHarvestable > 0
       );
     } else if (event.target.value !== 'all' && event.target.value !== 'claimable') {
       filteredData = filteredData.filter((item) =>
@@ -207,7 +210,7 @@ const CompoundAndEarn = () => {
     }
     const sortedData = sortingByUserPool(type, filteredData);
     setFilterDataByProtocol(sortedData);
-    if(search !== "") {
+    if (search !== "") {
       let filterData = sortedData;
       const splittedValue = search.split(' ');
       splittedValue.forEach((spiltItem) => {

@@ -9,7 +9,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx'
 
-import SnowTokenIcon from 'components/SnowTokenIcon'
+import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon'
 
 const useStyles = makeStyles(theme => {
   return {

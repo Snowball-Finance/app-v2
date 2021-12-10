@@ -29,20 +29,20 @@ const ListItem = ({
   setModal
 }) => {
   const classes = useStyles();
-  const { gauges, snowconeBalance, totalSnowcone } = useContracts();
+  const { gauges, snowconeBalance, totalSnowcone, AVAXBalance } = useContracts();
   const [timerRefresh, setTimerRefresh] = useState(null);
   const [refresh, setRefresh] = useState(false);
-  const [userData,setUserData] = useState();
+  const [userData, setUserData] = useState();
   const [expanded, setExpanded] = useState(false);
-  const [action, setAction] = useState({actionType:'Get_Token'});
+  const [action, setAction] = useState({ actionType: 'Get_Token' });
   const { account } = useWeb3React();
   const {loading, getBalanceInfoSinglePool, isTransacting
     , userPools } = useCompoundAndEarnContract();
 
-  useEffect(()=>{
+  useEffect(() => {
     const refreshData = async () => {
-      if(refresh){
-        if(!loading && !modal.open && account && !isTransacting.pageview){
+      if (refresh) {
+        if (!loading && !modal.open && account && !isTransacting.pageview) {
           const balanceInfo = await getBalanceInfoSinglePool(pool.address);
           setUserData(balanceInfo);
         }
@@ -63,16 +63,16 @@ const ListItem = ({
   }
 
   useEffect(() => {
-    if(modal.open || isTransacting.pageview){
+    if (modal.open || isTransacting.pageview) {
       setRefresh(false);
       setTimerRefresh(clearInterval(timerRefresh));
-    }else if(expanded && !pool.deprecatedPool){
-      setTimerRefresh(setInterval(()=>{
+    } else if (expanded && !pool.deprecatedPool) {
+      setTimerRefresh(setInterval(() => {
         setRefresh(true);
-      },30000));
+      }, 30000));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[modal, isTransacting]);
+  }, [modal, isTransacting]);
 
   useEffect(() => {
     const addTimer = async () =>{
@@ -82,13 +82,13 @@ const ListItem = ({
           setRefresh(false);
           setTimerRefresh(clearInterval(timerRefresh));
         }
-        if(!modal.open && account && !isTransacting.pageview){
+        if (!modal.open && account && !isTransacting.pageview) {
           const balanceInfo = await getBalanceInfoSinglePool(pool.address);
           setUserData(balanceInfo);
         }
-        setTimerRefresh(setInterval(()=>{
+        setTimerRefresh(setInterval(() => {
           setRefresh(true);
-        },30000));
+        }, 30000));
       } else {
         if (timerRefresh) {
           setTimerRefresh(clearInterval(timerRefresh));
@@ -103,36 +103,35 @@ const ListItem = ({
   useEffect(()=>{
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
-    if(userPool){
+    if (userPool) {
       setUserData(userPool);
-    }else{
+    } else {
       setUserData(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[pool,userPools]);
+  }, [pool, userPools]);
 
-  useEffect(()=> {
+  useEffect(() => {
     const evalPool = userData ? userData : pool;
-    let actionType,func;
-    if(pool.token0){
+    let actionType, func;
+    if (pool.token0) {
       const arrayAction = getProperAction(evalPool, setModal,
-        evalPool.userLPBalance, evalPool.userDepositedLP);
+        evalPool.userLPBalance, AVAXBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
       func = arrayAction[1];
-    }else{
-      actionType="Details";
-      func = ()=>{};
+    } else {
+      actionType = "Details";
+      func = () => { };
     }
-    setAction({actionType,func});
+    setAction({ actionType, func });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userData, pool, account]);
 
-  const selectedGauge = useMemo(() => gauges.find((gauge) =>
-    {
-      if(pool.gaugeInfo){
-        return gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase();
-      }
-    }), [gauges, pool])
+  const selectedGauge = useMemo(() => gauges.find((gauge) => {
+    if (pool.gaugeInfo) {
+      return gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase();
+    }
+  }), [gauges, pool])
 
   const boost = useMemo(() => {
     if (isEmpty(selectedGauge) || (selectedGauge?.staked || 0) <= 0) {
@@ -149,11 +148,11 @@ const ListItem = ({
   }, [selectedGauge, snowconeBalance, totalSnowcone]);
 
   const totalAPY = useMemo(() => {
-    if(pool.gaugeInfo){
+    if (pool.gaugeInfo) {
       let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
       total = total > 999999 ? 999999 : total
       return total
-    }else{
+    } else {
       return 0
     }
   }, [boost, pool])
@@ -187,7 +186,6 @@ const ListItem = ({
           <CompoundListDetail
             item={pool}
             userData={userData}
-            modal={modal}
             setModal={setModal}
             setUserData={setUserData}
             userBoost={userBoost}
@@ -197,9 +195,10 @@ const ListItem = ({
       />
       {modal.open && pool.address === modal.address && (
         <CompoundDialogs
-          open={modal.open}
           title={modal.title}
-          item={userData}
+          open={modal.open}
+          pool={pool}
+          userData={userData}
           handleClose={() => setModal({ open: false, title: '' })}
         />
       )}
