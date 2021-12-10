@@ -6,6 +6,7 @@ import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import ApyCalculation from './ApyCalculation';
 import SnobApyCalculation from './SnobApyCalculation';
 import Total from './Total';
+import CompoundDialogs from '../CompoundDialogs';
 import CompoundWithdrawDialogs from '../CompoundWithdrawDialogs';
 import getProperAction from 'utils/helpers/getProperAction';
 import CompoundActionButton from '../CompoundActionButton';
