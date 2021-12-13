@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   underlyingTokensLine: {
     display: 'flex',
     alignItems: 'center',

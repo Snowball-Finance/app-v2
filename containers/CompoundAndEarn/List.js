@@ -4,6 +4,7 @@ import { Grid } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Loading from 'components/Skeletons/pool';
 import Skeleton from 'components/Skeletons/CompoundAndEarn';
+import { useWeb3React } from '@web3-react/core';
 
 const ListItem = dynamic(() => import('./ListItem'), {
   loading: () => <Loading />,
@@ -18,6 +19,7 @@ const List = ({ pools, modal, setModal }) => {
   const [page, setPage] = useState(1);
   const maxPage = Math.ceil(pools.length / ITEMS_PER_PAGE);
   const contentRef = useRef(null);
+  const { account } = useWeb3React();
 
   const isBottom = useCallback((ref) => {
     if (!ref.current) return false;
@@ -40,7 +42,7 @@ const List = ({ pools, modal, setModal }) => {
   useEffect(() => {
     setPage(1);
     setItems(pools.slice(0, ITEMS_PER_PAGE));
-  }, [pools]);
+  }, [pools, account]);
 
   useEffect(() => {
     const onScroll = () => {
