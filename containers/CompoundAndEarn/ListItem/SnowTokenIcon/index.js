@@ -26,12 +26,11 @@ const SnowTokenIcon = ({
   className,
 }) => {
   const classes = useStyles({ size });
-
   return (
     <div className={clsx(classes.tokenImage, className)}>
       <Image
         alt='token-icon'
-        src={LP_ICONS[token || "SNOB"]}
+        src={LP_ICONS[token] || LP_ICONS.SNOB}
         width={size}
         height={size}
         layout='fixed'

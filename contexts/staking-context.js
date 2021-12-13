@@ -18,12 +18,13 @@ import { useProvider } from './provider-context'
 import Toast from 'components/Toast';
 import { getMultiContractData } from 'libs/services/multicall';
 import { getGaugeCalls } from 'libs/services/multicall-queries';
+import { approveContract } from 'utils/contractHelpers/approve';
 
 const ContractContext = createContext(null)
 
 export function StakingContractProvider({ children }) {
   const { provider } = useProvider();
-  const { library,account } = useWeb3React();
+  const { library, account } = useWeb3React();
   const { prices } = usePrices();
   const { getLastSnowballInfo } = useAPIContext();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = getLastSnowballInfo();
@@ -40,15 +41,15 @@ export function StakingContractProvider({ children }) {
   const [userSherpaClaimable, setUserSherpaClaimable] = useState(0);
   const [userAxialClaimable, setUserAxialClaimable] = useState(0);
 
-  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library,provider])
-  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library,provider])
-  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library,provider])
+  const gaugeProxyContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.GAUGE_PROXYV2, GAUGE_PROXY_ABI, provider) : null, [library, provider])
+  const snowballContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, provider) : null, [library, provider])
+  const snowconeContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SNOWCONE, SNOWCONE_ABI, provider) : null, [library, provider])
   const feeDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
   const sherpaDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.SHERPA_FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
   const axialDistributorContract = useMemo(() => library ? new ethers.Contract(CONTRACTS.AXIAL_FEE_DISTRIBUTOR, FEE_DISTRIBUTOR_ABI, library.getSigner()) : null, [library])
 
   const lockedValue = useMemo(() => prices.SNOB * BNToFloat(totalSupply), [prices?.SNOB, totalSupply])
-  const totalSnowballValue = useMemo(() => prices.SNOB *BNToFloat(totalLocked), [prices?.SNOB, totalLocked])
+  const totalSnowballValue = useMemo(() => prices.SNOB * BNToFloat(totalLocked), [prices?.SNOB, totalLocked])
   const unlockTime = useMemo(() => {
     const date = new Date()
     return date.setTime(+(lockEndDate?.toString() || 0) * 1000)
@@ -145,7 +146,7 @@ export function StakingContractProvider({ children }) {
   }
 
   const retrieveGauge = async (pool, gaugesData, totalWeight) => {
-    if(!totalWeight){
+    if (!totalWeight) {
       totalWeight = await gaugeProxyContract.totalWeight();
     }
     const gaugeTokenData = gaugesData[pool.address];
@@ -160,7 +161,7 @@ export function StakingContractProvider({ children }) {
     const fullApy = 0;
 
     return {
-      token:pool.address,
+      token: pool.address,
       address,
       gaugeAddress: address,
       totalWeight: +totalWeight.toString(),
@@ -180,8 +181,8 @@ export function StakingContractProvider({ children }) {
     try {
       const totalWeight = await gaugeProxyContract.totalWeight();
       let contractCalls = [];
-      pools.forEach(item => {contractCalls = contractCalls.concat(getGaugeCalls(item, account))});
-      const gaugesData = await getMultiContractData(provider,contractCalls);
+      pools.forEach(item => { contractCalls = contractCalls.concat(getGaugeCalls(item, account)) });
+      const gaugesData = await getMultiContractData(provider, contractCalls);
 
       const gauges = await Promise.all(
         pools.map(async (pool) => {
@@ -253,7 +254,7 @@ export function StakingContractProvider({ children }) {
       const { balance, date } = data
       const amount = parseEther((balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
-      const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
+      const tokenApprove = await approveContract({ contract: snowballContractApprove, amount: ethers.constants.MaxUint256, spender: CONTRACTS.SNOWCONE })
       const transactionApprove = await tokenApprove.wait(1)
       if (!transactionApprove.status) {
         setLoading(false)
@@ -282,9 +283,9 @@ export function StakingContractProvider({ children }) {
       const amount = parseEther((data.balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
       const allowance = await snowballContractApprove.allowance(account, CONTRACTS.SNOWCONE);
-      if(amount.gt(allowance)) {
-        const tokenApprove = await snowballContractApprove.approve(CONTRACTS.SNOWCONE, ethers.constants.MaxUint256);
-        toast(<Toast message={'Waiting for approval...'} toastType={'processing'}/>);
+      if (amount.gt(allowance)) {
+        const tokenApprove = await approveContract({ contract: snowballContractApprove, spender: CONTRACTS.SNOWCONE, amount: ethers.constants.MaxUint256 });
+        toast(<Toast message={'Waiting for approval...'} toastType={'processing'} />);
         const transactionApprove = await tokenApprove.wait(1)
         if (!transactionApprove.status) {
           setLoading(false)

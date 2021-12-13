@@ -27,27 +27,13 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     padding: theme.spacing(0, 1, 1, 1),
   },
-  title: {
-    fontSize: '14px',
-    justifyItems: 'center',
-    minWidth: 112,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: '12px',
-    justifyItems: 'center',
-  },
   ellipse: {
     borderRadius: 16,
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderColor: '#DBEDFF',
-    padding: theme.spacing(1),
-    width: '15px',
-    height: '15px',
-    left: '47px',
-    top: '33px',
-  },
+    width: theme.spacing(2),
+    height: theme.spacing(2),
+    left: theme.spacing(6),
+    top: theme.spacing(4),
+  }
 }));
 
 const enumDeposit = {
@@ -60,7 +46,7 @@ const enumDeposit = {
   withdraw3: 6,
 };
 
-const SnowStepBox = ({ transactionStatus, title, isStableVault }) => {
+const SnowStepBox = ({ transactionStatus, title, isStableVault, singleDeposit = false, singleApprove = false }) => {
   const [colors, setColors] = useState([
     '#DBEDFF',
     '#DBEDFF',
@@ -89,46 +75,54 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault }) => {
     setColors(newStatus);
   }, [transactionStatus, color.disabled, color.enabled]);
 
+  const getStep = (useSingle, step) => {
+    if(step > 0){
+      return useSingle ? step - 1 : step;
+    } else {
+      return step;
+    }
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.upper}>
         <div className={classes.container}>
-          {title != 'Withdraw' ? (
-            <>
-              <Typography className={classes.title}>Approval Steps</Typography>
-              <Typography className={classes.title}>Deposit Steps</Typography>
-            </>
-          ) : (
-            <>
-              <Typography className={classes.title}>Withdraw Steps</Typography>
-              <Typography className={classes.title}>Claim</Typography>
-            </>
-          )}
+          {title != "Withdraw" ? <><Typography variant='caption'>Approval Steps</Typography>
+          <Typography variant='caption'>Deposit Steps</Typography></> : <Typography variant='caption'>Withdraw Steps</Typography>}
+          
         </div>
         <div className={classes.lower}>
           <div className={classes.container}>
             {title != 'Withdraw' ? (
               <>
-                <Box
-                  className={classes.ellipse}
-                  style={{ background: colors[enumDeposit.approval1] }}
-                  borderRadius='50%'
-                />
-                <Box
-                  className={classes.ellipse}
-                  style={{ background: colors[enumDeposit.approval2] }}
-                  borderRadius='50%'
-                />
-                <Box
-                  className={classes.ellipse}
-                  style={{ background: colors[enumDeposit.deposit1] }}
-                  borderRadius='50%'
-                />
-                <Box
-                  className={classes.ellipse}
-                  style={{ background: colors[enumDeposit.deposit2] }}
-                  borderRadius='50%'
-                />
+                <Box display='flex' justifyContent='center' minWidth={112}>
+                  {!singleApprove && <Box
+                    mr={3}
+                    className={classes.ellipse}
+                    style={{ background: colors[enumDeposit.approval1] }}
+                    borderRadius='50%'
+                  />}
+                  <Box
+                    ml={singleApprove ? 0 : 3}
+                    className={classes.ellipse}
+                    style={{ background: colors[enumDeposit.approval2] }}
+                    borderRadius='50%'
+                  />
+                </Box>
+                <Box display='flex' justifyContent='center' minWidth={112}>
+                  {!singleDeposit && <Box
+                    mr={3}
+                    className={classes.ellipse}
+                    style={{ background: colors[enumDeposit.deposit1] }}
+                    borderRadius='50%'
+                  />}
+                  <Box
+                    ml={singleDeposit ? 0 : 3}
+                    className={classes.ellipse}
+                    style={{ background: colors[enumDeposit.deposit2] }}
+                    borderRadius='50%'
+                  />
+                </Box>
               </>
             ) : (
               <>
@@ -172,10 +166,10 @@ const SnowStepBox = ({ transactionStatus, title, isStableVault }) => {
             {title != 'Withdraw' ? (
               <>
                 <Typography className={classes.subtitle}>
-                  {transactionStatus.approvalStep}/2 Step
+                  {getStep(singleApprove, transactionStatus.approvalStep)}/{singleApprove ? 1 : 2} Step
                 </Typography>
                 <Typography className={classes.subtitle}>
-                  {transactionStatus.depositStep}/2 Step
+                  {getStep(singleDeposit, transactionStatus.depositStep)}/{singleDeposit ? 1 : 2} Step
                 </Typography>
               </>
             ) : (

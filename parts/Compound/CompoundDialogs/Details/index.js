@@ -1,85 +1,137 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 
 import SnowPairsIcon from 'components/SnowPairsIcon';
+import Selects from 'components/UI/Selects';
+
 import SnowTextField from 'components/UI/TextFields/SnowTextField';
+import { BNToFloat } from 'utils/helpers/format';
 
 const useStyles = makeStyles((theme) => ({
-  inputContainer: {
-    border: '1px solid rgba(108, 117, 125, 0.12)',
-    borderRadius: 7,
-    padding: theme.spacing(1, 0),
-  },
-  input: {
-    '& .MuiOutlinedInput-root': {
-      border: 'none',
-    },
-    '& input': {
-      textAlign: 'end',
-      fontSize: theme.typography.h4.fontSize
-    },
-  },
-  balanceText: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    paddingRight: 20
-  },
-  pairContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(1),
-  },
-  pairText: {
-    textAlign: 'center',
-  },
+	container: {
+
+		border: `1px solid ${theme.custom.palette.border}`,
+		borderRadius: 7,
+		padding: theme.spacing(1),
+	},
+	tokenSelect: {
+		display: 'flex',
+		alignItems: 'center',
+	},
+	tokenLabel: {
+		marginLeft: theme.spacing(1),
+	},
+	inputContainer: {
+	},
+	input: {
+		'& .MuiOutlinedInput-root': {
+			border: 'none',
+		},
+		'& input': {
+			textAlign: 'end',
+			fontSize: theme.typography.h4.fontSize
+		},
+	},
+	balanceText: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'flex-end',
+		textAlign: 'right',
+		whiteSpace: 'nowrap',
+	},
+	pairContainer: {
+		display: 'flex',
+		alignItems: 'center',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		marginBottom: theme.spacing(1),
+	},
+	pairText: {
+		textAlign: 'center',
+	},
+	select: {
+		boxShadow: theme.custom.utils.boxShadow,
+	},
 }));
 
-const Details = ({
-  item,
-  title,
-  amount,
-  error,
-  inputHandler
-}) => {
-  const classes = useStyles();
-  const token0 = item.token0.address;
-  const token1 = item.token1.address;
-  const token2 = item.token2.address;
-  const token3 = item.token3.address;
-  console.log(item)
-  return (
-    <>
-      <div className={classes.pairContainer}>
-        <div>
-          <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
-        </div>
-        <div className={classes.pairText}>
-          <Typography variant='caption'>{title}</Typography>
-          <Typography variant='h6'>{item.name}</Typography>
-        </div>
-      </div>
+const Available = ({ token, decimal, classes }) => {
+	return <Typography variant='caption' className={classes.balanceText}>
+		Available: {BNToFloat(token.balance._hex, decimal)} {token.symbol}
+	</Typography>
+}
 
-      <div className={classes.inputContainer}>
-        <SnowTextField
-          className={classes.input}
-          type='number'
-          name='percent'
-          value={amount > 0 ? amount : 0}
-          error={error}
-          onChange={inputHandler}
-        />
-        <Typography variant='caption' className={classes.balanceText}>
-        Available: {((title === "Withdraw" ? item.userBalanceGauge : item.userLPBalance) / 10 ** item.lpDecimals).toLocaleString(
-          undefined, { maximumSignificantDigits: 18 })} {token1 ? item.symbol : item.name}
-        </Typography>
-      </div>
-    </>
-  );
+const Details = ({
+	userData,
+	tokens,
+	selectedToken,
+	amount,
+	error,
+	inputHandler,
+	onTokenChange
+
+}) => {
+	const classes = useStyles();
+	const { s4VaultToken } = userData
+	//create options for selects component
+	let options = tokens.map((el) => {
+		const tokenCount = tokens.filter(o => !o.isNativeAVAX).length;
+		const result = { 
+			label: el.isLpToken && tokenCount > 1 ? el.name : el.symbol,
+			value: el.symbol,
+			iconComponent: null
+		}
+		result.iconComponent = el.isLpToken 
+			? <SnowPairsIcon pairsIcon={[...tokens.filter(o=> (!(o.isLpToken) || !(tokenCount > 1)) && !o.isNativeAVAX).map(o=> o.address)]} size={32} />
+			: <SnowPairsIcon pairsIcon={[el.address]} size={32} />
+		return result
+	})
+	if (s4VaultToken) {
+		options = [{
+			iconComponent: <SnowPairsIcon pairsIcon={s4VaultToken.addresses} size={32} />,
+			label: s4VaultToken.name.length > 25 ? s4VaultToken.symbol : s4VaultToken.name,
+			value: s4VaultToken.symbol,
+		}]
+	}
+	//first token is selected by default
+
+
+	// set the selected token and pass it to outside world if possible
+	const handleSelectChange = (e) => {
+		const value = e.target.value
+		const token = tokens.filter((el) => el.symbol === value)[0]
+		onTokenChange && onTokenChange(token)
+	}
+
+	return (
+		<Grid container className={classes.container}>
+			<Grid item sm={12} md={5} className={classes.tokenSelect}>
+				{options.length > 1 ? <Selects
+					className={classes.select}
+					value={selectedToken.symbol}
+					{...{ options }}
+					onChange={handleSelectChange}
+				/> : <div style={{ display: 'flex', alignItems: 'center' }}>
+					{options[0].iconComponent && <>
+						{options[0].iconComponent}
+						<div style={{ width: '4px' }} />
+					</>} {options[0].label}
+				</div>}
+			</Grid>
+			<Grid item sm={12} md={7} className={classes.inputContainer}>
+				<SnowTextField
+					className={classes.input}
+					type='number'
+					name='percent'
+					value={amount > 0 ? amount : 0}
+					error={error}
+					onChange={inputHandler}
+				/>
+				{selectedToken.balance && <Available   {...{ classes }} token={selectedToken} decimal={selectedToken.decimals} />}
+			</Grid>
+		</Grid>
+	);
 };
 
 export default memo(Details);
