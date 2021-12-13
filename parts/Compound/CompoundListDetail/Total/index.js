@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { BNToFloat, formatNumber } from 'utils/helpers/format';
+import { BNToFloat, formatNumber, formatNumberByNotation } from 'utils/helpers/format';
 import UnderlyingTokenItem from './UnderlyingTokenItem';
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +53,7 @@ const Total = ({ item, userData }) => {
       <div className={classes.lower}>
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
-          <Typography variant="subtitle2">{formatNumber(userData?.userDepositedLP || 0.00, 5, true)
+          <Typography variant="subtitle2">{formatNumberByNotation(userData?.userDepositedLP || 0.00, 5, true)
           } LP {!item.deprecatedPool &&('($'+formatNumber(userData?.usdValue || 0.00)+')')}</Typography>
         </div>
         {!item.deprecatedPool &&<div className={classes.container}>
@@ -74,11 +74,11 @@ const Total = ({ item, userData }) => {
                 <>
                   <UnderlyingTokenItem
                     pairsIcon={[userData?.underlyingTokens?.token0.address]}
-                    amount={formatNumber(userData?.underlyingTokens?.token0.reserveOwned, 3, true)}
+                    amount={formatNumberByNotation(userData?.underlyingTokens?.token0.reserveOwned, 3, true)}
                     symbol={userData?.underlyingTokens?.token0.symbol} />
                   <UnderlyingTokenItem
                     pairsIcon={[userData?.underlyingTokens?.token1.address]}
-                    amount={formatNumber(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
+                    amount={formatNumberByNotation(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
                     symbol={userData?.underlyingTokens?.token1.symbol} />
                 </>:
                 <>

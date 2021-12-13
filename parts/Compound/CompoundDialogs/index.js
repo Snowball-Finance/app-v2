@@ -1,28 +1,37 @@
-import { memo, useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
-import clsx from 'clsx';
+import Typography from '@material-ui/core/Typography';
+import { Box, CircularProgress, Grid } from '@material-ui/core';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
 import SnowStepBox from 'components/SnowStepBox';
 import SnowDialog from 'components/SnowDialog';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import GradientButton from 'components/UI/Buttons/GradientButton';
 import CompoundSlider from './CompoundSlider';
+import CompoundInfo from './CompoundInfo';
 import Details from './Details';
-import { roundDown } from 'utils/helpers/utility';
+import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
+import { storage, StorageKeys } from 'utils/storage';
+import { useContracts } from 'contexts/contract-context';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
+import AdvancedTransactionOption from 'parts/AdvancedTransactionOption';
+import { usePrices } from 'contexts/price-context';
 
 const useStyles = makeStyles(theme => ({
   dialog: {
     minWidth: 200,
+    width: 510,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
   },
   dialogTitle: {
     background: 'none',
     justifyContent: 'left',
+    height: 48,
+    paddingBottom: 0,
   },
   dialogTitleText: {
     color: 'currentColor',
@@ -30,9 +39,21 @@ const useStyles = makeStyles(theme => ({
   },
   dialogCloseIcon: {
     color: 'currentColor',
+    top: theme.spacing(0.5),
+    right: theme.spacing(1.5),
   },
   container: {
     padding: theme.spacing(1),
+  },
+  linedContainer: {
+    padding: theme.spacing(1, 1.5),
+    marginTop: theme.spacing(1),
+    borderRadius: 8,
+    border: `1px solid ${theme.custom.palette.border}`,
+    backgroundColor: theme.custom.palette.joe_red
+  },
+  warningBox: {
+
   },
   buttonContainer: {
     margin: theme.spacing(1, 0, 0, 0),
@@ -40,6 +61,9 @@ const useStyles = makeStyles(theme => ({
   modalButton: {
     padding: theme.spacing(2, 0),
     textTransform: 'none',
+    '&:disabled': {
+      backgroundColor: `${theme.custom.palette.blueButton} !important`,
+    }
   },
   button: {
     textTransform: 'none',
@@ -49,99 +73,98 @@ const useStyles = makeStyles(theme => ({
   greyButton: {
     background: '#BDBDBD',
   },
+  center: {
+    textAlign: 'center'
+  }
 }));
 
-const CompoundDialogs = ({ open, title, item, handleClose }) => {
+const CompoundDialogs = ({
+  open,
+  title,
+  pool,
+  userData,
+  handleClose,
+}) => {
+  if (!userData) {
+    return null;
+  }
+
   const { trackEvent } = useAnalytics()
+  const { prices } = usePrices()
 
   const classes = useStyles();
-  const [slider, setSlider] = useState(0);
-  const [amount, setAmount] = useState(0);
-  const [inputAmount, setinputAmount] = useState(0);
-  const [approved, setApproved] = useState(false);
-  const [error, setError] = useState(null);
+  // i will need the pool to extract the token infos
+  const [state, dispatch] = useReducer(compoundDialogReducer, {
+    title,
+    userData,
+    userAVAXBalance: 0,
+    sliderValue: 0,
+    amount: 0,
+    pool,
+    inputAmount: 0,
+    mixedTokenValue: 0,
+    calculatedInvestingTokensAmount: [],
+    tokens: [],
+    tokensSwapOut: [],
+    selectedToken: userData?.token0,
+    approved: false,
+    isInfiniteApproval: storage.read(StorageKeys.infiniteApproval, false),
+    slippage: storage.read(StorageKeys.slippage, "1"),
+    showAdvanced: storage.read(StorageKeys.showAdvanced, false),
+    error: null
+  })
 
-  const { approve, deposit, isTransacting, transactionStatus, withdraw } =
-    useCompoundAndEarnContract();
+  const { approve, deposit, isTransacting, transactionStatus, calculateSwapAmountOut,
+  setTransactionStatus } = useCompoundAndEarnContract();
+  const { AVAXBalance } = useContracts();
 
   useEffect(() => {
-    if (!isTransacting.deposit && !isTransacting.approve && !isTransacting.withdraw) {
+    if (!isTransacting.deposit && !isTransacting.approve) {
       toast.dismiss();
     }
-  }),
-    [isTransacting];
+  }), [isTransacting];
 
   useEffect(() => {
     if (transactionStatus.depositStep === 2) {
       handleClose();
     }
-    if (transactionStatus.withdrawStep === 3) {
-      handleClose();
-    }
-  }),
-    [transactionStatus];
-
-  const calculatePercentage = amount => {
-    return title != 'Withdraw'
-      ? (amount / (item?.userLPBalance / 10 ** item?.lpDecimals)) * 100
-      : (amount / (item?.userBalanceGauge / 10 ** item?.lpDecimals)) * 100;
-  };
-
-  const calculatedBalance = value => {
-    return title != 'Withdraw'
-      ? item?.userLPBalance.mul(value).div(100)
-      : item?.userBalanceGauge.mul(value).div(100);
-  };
+  }), [transactionStatus];
 
   const enabledHandler = (isApproved = false) => {
-    return (
-      (isApproved ? approved : !approved) ||
-      amount == 0 ||
-      isTransacting.approve ||
-      isTransacting.deposit
-    );
+    return (isApproved ? state.approved : !state.approved) || (state.amount == 0) ||
+      isTransacting.approve || isTransacting.deposit;
+  }
+
+  const handleInputChange = (event) => {
+    const value = event.target.value
+    dispatch({
+      type: compoundDialogActionTypes.setInputValue,
+      payload: value
+    })
   };
 
-  const inputHandler = event => {
-    if (event.target.value > 0 && !Object.is(NaN, event.target.value)) {
-      const percentage = calculatePercentage(event.target.value);
-      const balance =
-        title != 'Withdraw'
-          ? item?.userLPBalance / 10 ** item?.lpDecimals
-          : item?.userBalanceGauge / 10 ** item?.lpDecimals;
-      if (balance >= event.target.value) {
-        setinputAmount(event.target.value);
-        setAmount(ethers.utils.parseUnits(roundDown(event.target.value).toString(), item?.lpDecimals));
-        setSlider(percentage);
-        setError(null);
-      } else {
-        setError(`Can't exceed the max limit`);
-      }
-    } else {
-      setAmount(ethers.BigNumber.from(0));
-      setinputAmount(0);
-    }
+  const handleSliderChange = (value) => {
+    dispatch({
+      type: compoundDialogActionTypes.setSliderValue,
+      payload: value,
+    })
   };
 
-  const handleSliderChange = value => {
-    const usedBalance = calculatedBalance(value);
-    const inputAmount = usedBalance / 10 ** item?.lpDecimals;
-    setSlider(value);
-    setAmount(usedBalance);
-    setinputAmount(
-      inputAmount > 1e-6
-        ? inputAmount
-        : Number(inputAmount).toLocaleString('en-US', { maximumSignificantDigits: 18 }),
-    );
-    setError(null);
-  };
-
-  const approveHandler = async () => {
+  const handleApproveClick = async () => {
     try {
-      toast(<Toast message={'Checking for approval...'} toastType={'processing'} />);
-      const result = await approve(item, amount);
+      toast(<Toast message={'Checking for approval...'} toastType={'processing'} />)
+      const addressToZap = state.selectedToken.isLpToken || state.hasAVAX || state.tokens.length < 2
+        ? null
+        : state.selectedToken.address;
+      const result = await approve(
+        userData,
+        state.amount,
+        addressToZap,
+        state.selectedToken.isNativeAVAX,
+        storage.read(StorageKeys.infiniteApproval)
+      )
       if (result) {
-        setApproved(true);
+        dispatch({ type: compoundDialogActionTypes.setApproved, payload: true })
       }
     } catch (error) {
       console.log(error);
@@ -153,58 +176,200 @@ const CompoundDialogs = ({ open, title, item, handleClose }) => {
     }
   };
 
-  return (
-    <SnowDialog
-      open={open}
-      title={title}
-      onClose={() => handleClose()}
-      dialogClass={classes.dialog}
-      dialogTitleClass={classes.dialogTitle}
-      titleTextClass={classes.dialogTitleText}
-      closeIconClass={classes.dialogCloseIcon}>
-      <div className={classes.container}>
-        <Details
-          item={item}
-          title={title}
-          amount={inputAmount}
-          inputHandler={inputHandler}
-          error={error}
-        />
+  const handleInfiniteApproval = (v) => {
+    dispatch({ type: compoundDialogActionTypes.setInfiniteApprovalCheckboxValue, payload: v })
+  }
 
-        <CompoundSlider value={slider} onChange={handleSliderChange} />
-        <Grid container spacing={1} className={classes.buttonContainer}>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <ContainedButton
-                className={clsx(classes.modalButton)}
-                disableElevation
-                fullWidth
-                disabled={enabledHandler(true)}
-                loading={isTransacting.approve}
-                onClick={approveHandler}>
-                Approve
-              </ContainedButton>
-            </Grid>
-            <Grid item xs={6}>
-              <GradientButton
-                className={clsx(classes.modalButton)}
-                disableElevation
-                fullWidth
-                disabled={enabledHandler(false)}
-                loading={isTransacting.deposit}
-                onClick={() => {
-                  toast(<Toast message={'Depositing your Tokens...'} toastType={'processing'} />);
-                  deposit(item, amount);
-                }}>
-                Deposit
-              </GradientButton>
-            </Grid>
-          </Grid>
+  const handleShowAdvanced = (v) => {
+    dispatch({ type: compoundDialogActionTypes.setShowAdvanced, payload: v })
+    dispatch({ type: compoundDialogActionTypes.setSlippage, payload: state.slippage })
+  }
+
+  const handleSlippage = (v) => {
+    if (!v) {
+      v = 1;
+    } else if (!Number(v)) {
+      return;
+    } else if (v > 50) {
+      v = 50;
+    }
+
+    dispatch({ type: compoundDialogActionTypes.setSlippage, payload: Math.floor(v) })
+  }
+
+  const handleTokenChange = (token) => {
+    setTransactionStatus({approvalStep:0, depositStep:0})
+    dispatch({
+      type: compoundDialogActionTypes.reset, payload: {
+        sliderValue: 0,
+        amount: 0,
+        inputAmount: 0,
+        mixedTokenValue: 0,
+        calculatedInvestingTokensAmount: [],
+        selectedToken: token,
+        approved: false,
+        error: null,
+        priceImpact: 0,
+        tokensSwapOut: []
+      }
+    })
+  }
+  useEffect(() => {
+    dispatch({ type: compoundDialogActionTypes.setUserData, payload: { ...userData, userAVAXBalance: AVAXBalance, prices } })
+    return () => {
+
+    }
+  }, [userData, userData?.token0Balance, AVAXBalance])
+
+  useEffect(() => {
+    const idx = state.tokens.findIndex(o => o.isLpToken)
+    if (idx > -1) {
+      //defaults lp token
+      dispatch({
+        type: compoundDialogActionTypes.reset, payload: {
+          sliderValue: 0,
+          amount: 0,
+          inputAmount: 0,
+          mixedTokenValue: 0,
+          calculatedInvestingTokensAmount: [],
+          selectedToken: state.tokens[idx],
+          approved: false,
+          error: null,
+          priceImpact: 0,
+          tokensSwapOut: []
+        }
+      })
+    }
+  }, [state.tokens])
+
+  useEffect(() => {
+    if (state.tokens.length > 1 && !state.hasAVAX && !state.selectedToken.isLpToken) {
+      calculateSwapAmountOut(
+        state.selectedToken.isNativeAVAX, state.amount, state.userData, state.selectedToken
+      ).then((result) => {
+        dispatch({
+          type: compoundDialogActionTypes.setPriceImpact, payload: {
+            swap: result,
+            amount: state.amount
+          }
+        })
+      })
+    }
+  }, [state.amount, calculateSwapAmountOut])
+
+  const renderButton = () => {
+    const addressToZap = state.selectedToken.isLpToken || state.hasAVAX || state.tokens.length < 2
+      ? null
+      : state.selectedToken.address;
+
+    return (
+    state.priceImpact < 5 && state.amount > 0 ? 
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <ContainedButton
+            className={classes.modalButton}
+            disableElevation
+            fullWidth
+            disabled={enabledHandler(true)}
+            loading={isTransacting.approve}
+            onClick={() => {
+              handleApproveClick()
+            }}
+          >
+            Approve
+          </ContainedButton>
         </Grid>
-      </div>
-      <SnowStepBox transactionStatus={transactionStatus} title={title} />
-    </SnowDialog>
-  );
+        <Grid item xs={6}>
+          <ContainedButton
+            className={classes.modalButton}
+            disableElevation
+            fullWidth
+            disabled={enabledHandler(false)}
+            loading={isTransacting.deposit}
+            onClick={() => {
+              deposit(
+                userData, //general user data
+                state.amount, //amount to deposit
+                addressToZap,
+                false, //onlygauge
+                state.selectedToken.address === "0x0", //is native avax
+                state.slippage, //zappers slippage
+              )
+            }
+            }
+          >
+            Deposit
+          </ContainedButton>
+        </Grid>
+      </Grid> : null) 
+  }
+
+return (
+  <SnowDialog
+    open={open}
+    title={title}
+    onClose={() => handleClose()}
+
+    dialogClass={classes.dialog}
+    dialogTitleClass={classes.dialogTitle}
+    titleTextClass={classes.dialogTitleText}
+    closeIconClass={classes.dialogCloseIcon}
+  >
+    {!AVAXBalance ? <>
+        <div className={classes.center} >
+          <CircularProgress size={24} />
+        </div>
+      </> : 
+      <>	<Typography variant='subtitle2'>Select token to convert</Typography>
+        <div className={classes.container} >
+
+          <Details
+            {...{
+              userData,
+            }}
+            selectedToken={state.selectedToken}
+            tokens={state.tokens}
+            amount={state.inputAmount}
+            onTokenChange={handleTokenChange}
+            inputHandler={handleInputChange}
+            error={state.error}
+          />
+
+          <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
+          {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
+            pool={pool}
+            userData={state.userData}
+            tokens={state.tokens} //we still need to filter the lptoken out
+            selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
+            activeToken={state.selectedToken}
+            swapAmountOut={state.tokensSwapOut} />}
+          <AdvancedTransactionOption
+            handleInfiniteApproval={handleInfiniteApproval}
+            handleSlippage={handleSlippage}
+            handleShow={handleShowAdvanced}
+            state={state}
+          />
+          {state.priceImpact > 1 && state.amount > 0 &&
+          <Grid className={classes.linedContainer} marginTop={2}>
+            <Box justifyContent="center" display="flex" className={classes.warningBox} > 
+              WARNING!! Price Impact too High!! {`${state.priceImpact.toFixed(2)}%`} 
+            </Box>
+          </Grid>} 
+          <div className={classes.buttonContainer}>
+            {renderButton()}
+          </div>
+        </div>
+        <div className={classes.mt1}>
+          <SnowStepBox
+            transactionStatus={transactionStatus}
+            title={title}
+            singleApprove={state.selectedToken.isNativeAVAX && state.tokens.length > 2}
+            singleDeposit={!state.selectedToken.isLpToken && state.tokens.length > 2}
+          />
+        </div>
+      </>}
+  </SnowDialog>
+);
 };
 
 export default memo(CompoundDialogs);

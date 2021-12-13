@@ -185,7 +185,7 @@ const CreateLock = () => {
           <ContainedButton
             fullWidth
             type='submit'
-            onClick={() => logSubmit()}
+            onClick={logSubmit}
           >
             Approve and Create Lock
           </ContainedButton>

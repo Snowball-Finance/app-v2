@@ -2,8 +2,7 @@ import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-
-import SnowTokenIcon from 'components/SnowTokenIcon';
+import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon';
 import SnowPairsIcon from 'components/SnowPairsIcon';
 import SnowTextField from 'components/UI/TextFields/SnowTextField';
 import Tags from 'components/Tags';

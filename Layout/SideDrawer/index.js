@@ -125,7 +125,7 @@ const SideDrawer = ({
             if (isEmpty(sidebar?.CHILDREN)) {
               return (
                 <React.Fragment key={sidebar.TITLE}>
-                  {sidebar.TITLE === LINKS.DOCS.TITLE && openDrawer &&
+                  {sidebar.TITLE === LINKS.GITBOOK_DOCS.DEFI_UNIVERSITY.TITLE && openDrawer &&
                     <Typography
                       color='textPrimary'
                       className={classes.subtitle}>
