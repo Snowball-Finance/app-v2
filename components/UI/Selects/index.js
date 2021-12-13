@@ -17,23 +17,33 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.primary,
   },
+  icon: {
+    fill: theme.palette.secondary.main
+  }
 }));
+
+
+const renderOptions = (options) => {
+  if (!options || !options.length) {
+    return <div>No data found</div>;
+  }
+
+  return options.map((option) => (
+    <MenuItem key={option.value} value={option.value}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {option.iconComponent && <>
+          {option.iconComponent}
+          <div style={{ width: '4px' }}></div>
+        </>} {option.label}
+      </div>
+    </MenuItem>
+  ));
+};
 
 const Selects = React.forwardRef(
   ({ error, className, value, onChange, style, options, startIcon }, ref) => {
     const classes = useStyles();
 
-    const renderOptions = () => {
-      if (!options || !options.length) {
-        return <div>No data found</div>;
-      }
-
-      return options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ));
-    };
 
     return (
       <Paper
@@ -48,9 +58,16 @@ const Selects = React.forwardRef(
           style={{ width: startIcon ? '80%' : '100%' }}
           value={value}
           onChange={onChange}
+          inputProps={
+            {
+              classes: {
+                icon: classes.icon
+              }
+            }
+          }
           disableUnderline
         >
-          {renderOptions()}
+          {renderOptions(options)}
         </Select>
         {!!error && (
           <Typography variant="subtitle2" color="error">

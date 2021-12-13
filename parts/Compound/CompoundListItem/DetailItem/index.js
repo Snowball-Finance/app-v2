@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Typography, Grid, useMediaQuery, Box } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
-import SnowTokenIcon from 'components/SnowTokenIcon';
+import SnowTokenIcon from 'containers/CompoundAndEarn/ListItem/SnowTokenIcon';
 import CustomPopover from 'components/CustomPopover';
 import Tags from 'components/Tags';
 import SnowPairsIcon from 'components/SnowPairsIcon';
@@ -37,14 +37,14 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
   const dexTokenName = item.symbol == "S4D" ? "SNOB" : item.symbol;
 
   return (
-    <Grid 
+    <Grid
       container
       direction="column"
       display="flex"
     >
-        {item.deprecatedPool && <Typography align="center" color="error">
-          This pool is deprecated and doesn{`'`}t receive rewards anymore, please withdraw from it.
-        </Typography>}
+      {item.deprecatedPool && <Typography align="center" color="error">
+        This pool is deprecated and doesn{`'`}t receive rewards anymore, please withdraw from it.
+      </Typography>}
       <Grid
         container
         direction="row"
@@ -74,7 +74,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         </Grid>
 
         <Grid item xs={12} lg={2}>
-        {!item.deprecatedPool && <Grid
+          {!item.deprecatedPool && <Grid
             container
             direction={isSm ? 'row' : 'column'}
             justify={isSm ? 'space-between' : 'flex-start'}
@@ -121,7 +121,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           </Grid>
         </Grid>}
 
-        {!item.deprecatedPool &&<Grid item xs={12} lg={2}>
+        {!item.deprecatedPool && <Grid item xs={12} lg={2}>
           <Grid
             container
             direction={isSm ? 'row' : 'column'}

@@ -57,7 +57,12 @@ const LINKS = Object.freeze({
       TITLE: 'Reward Boosting',
       HREF: 'https://snowballs.gitbook.io/snowball-docs/governance/xsnob/reward-boosting',
       IS_EXT_LINK: true
-    }
+    },
+    DEFI_UNIVERSITY: {
+      TITLE: 'Defi University',
+      HREF: 'https://snowballs.gitbook.io/snowball-docs/defi-university',
+      IS_EXT_LINK: true
+    },
   },
   GITHUB: {
     TITLE: 'GitHub',

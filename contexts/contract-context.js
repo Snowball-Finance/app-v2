@@ -20,9 +20,10 @@ export function ContractProvider({ children }) {
   const { setPopUp,setOpen } = usePopup();
   const { provider } = useProvider();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [snowconeBalance, setSnowconeBalance] = useState(0);
+  const [AVAXBalance, setAVAXBalance] = useState(0);
   const [totalSnowcone, setTotalSnowcone] = useState(0);
   const { prices } = usePrices();
 
@@ -47,7 +48,9 @@ export function ContractProvider({ children }) {
       ]);
       const snowballBalanceValue = BNToFloat(snowballBalance, 18);
       const snowconeBalanceValue = BNToFloat(snowconeBalance, 18);
+      const avaxBalance = await provider.getBalance(account);
 
+      setAVAXBalance(BNToFloat(avaxBalance, 18));
       setSnowballBalance(snowballBalanceValue);
       setSnowconeBalance(snowconeBalanceValue);
       setTotalSnowcone(totalSnowconeValue);
@@ -58,16 +61,18 @@ export function ContractProvider({ children }) {
   }, [account, snowballContract, snowconeContract])
 
   useEffect(() => {
-    if (!isEmpty(snowballContract) && !isEmpty(snowconeContract)) {
+    if (!isEmpty(snowballContract) && !isEmpty(snowconeContract) && loading) {
       getBalanceInfo()
+      setLoading(false);
     }
 
     if (isEmpty(account)) {
       setSnowballBalance(0)
       setSnowconeBalance(0)
       setTotalSnowcone(0)
+      setAVAXBalance(0)
     }
-  }, [snowballContract, snowconeContract, account, getBalanceInfo]);
+  }, [snowballContract, snowconeContract, account, getBalanceInfo, loading]);
 
   useEffect(() =>{
     if(error){
@@ -103,6 +108,7 @@ export function ContractProvider({ children }) {
         snowballBalance,
         snowconeBalance,
         totalSnowcone,
+        AVAXBalance,
         getBalanceInfo,
         getGaugeProxyInfo
       }}
@@ -127,6 +133,7 @@ export function useContracts() {
     snowballBalance,
     snowconeBalance,
     totalSnowcone,
+    AVAXBalance,
     getBalanceInfo,
     getGaugeProxyInfo
   } = context
@@ -140,6 +147,7 @@ export function useContracts() {
     snowballBalance,
     snowconeBalance,
     totalSnowcone,
+    AVAXBalance,
     getBalanceInfo,
     getGaugeProxyInfo
   }

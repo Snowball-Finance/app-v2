@@ -7,10 +7,7 @@ export function PriceProvider({ children }) {
   const [loading,setLoading] = useState(true);
   const [prices, setPrices] = useState({
     snowball: 0,
-    png: 0,
     wavax: 0,
-    busd: 0,
-    frax: 0,
   });
 
   useEffect(() => {
@@ -19,10 +16,7 @@ export function PriceProvider({ children }) {
       const { data: response } = await CoinGeckoClient.simple.price({
         ids: [
           'snowball-token',
-          'pangolin',
           'wrapped-avax',
-          'binance-usd',
-          'frax'
         ],
         vs_currencies: ['usd'],
         include_24hr_change: [true]
@@ -30,6 +24,7 @@ export function PriceProvider({ children }) {
 
       const prices = {
         SNOB: response['snowball-token']?.usd || 0,
+        AVAX: response['wrapped-avax']?.usd || 0,
         SNOB24HChange: response['snowball-token']?.usd_24h_change || 0,
       };
       setPrices(prices);
