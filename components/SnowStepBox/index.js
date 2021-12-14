@@ -33,6 +33,10 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(2),
     left: theme.spacing(6),
     top: theme.spacing(4),
+  },
+  title: {
+    textAlign: 'center',
+    minWidth: 112
   }
 }));
 
@@ -89,13 +93,13 @@ const SnowStepBox = ({ isClaimChecked, transactionStatus, title, isStableVault, 
         <div className={classes.container}>
           {title != 'Withdraw' ? (
             <>
-              <Typography className={classes.title}>Approval Steps</Typography>
-              <Typography className={classes.title}>Deposit Steps</Typography>
+              <Typography variant='caption' className={classes.title}>Approval Steps</Typography>
+              <Typography variant='caption' className={classes.title}>Deposit Steps</Typography>
             </>
           ) : (
             <>
-              <Typography className={classes.title}>Withdraw Steps</Typography>
-              {isClaimChecked && <Typography className={classes.title}>Claim</Typography>}
+              <Typography variant='caption' className={classes.title}>Withdraw Steps</Typography>
+              {isClaimChecked && <Typography variant='caption' className={classes.title}>Claim</Typography>}
             </>
           )}
         </div>
