@@ -140,6 +140,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
             fullWidth={isSm ? true : false}
           />
         }
+        {!item.deprecatedPool ?
           <ContainedButton
             disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
             loading={isTransacting.pageview}
@@ -147,18 +148,20 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
             fullWidth={isSm ? true : false}
           >
             Claim
-          </ContainedButton>
-          <ContainedButton
-            disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
-            loading={isTransacting.pageview}
-            onClick={handleWithdraw}
-            fullWidth={isSm ? true : false}
-          >
-            Withdraw
-          </ContainedButton>
+          </ContainedButton>:
+          <div />
+        }
+        <ContainedButton
+          disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
+          loading={isTransacting.pageview}
+          onClick={handleWithdraw}
+          fullWidth={isSm ? true : false}
+        >
+          Withdraw
+        </ContainedButton>
       </div>
 
-      {(withdraw && withdraw_modal) && (
+      {(withdraw && userData && withdraw_modal) && (
         <CompoundWithdrawDialogs
           open={withdraw_modal}
           title="Withdraw"

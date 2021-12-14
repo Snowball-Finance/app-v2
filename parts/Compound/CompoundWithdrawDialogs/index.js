@@ -126,7 +126,11 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
-    withdraw(item, amount ? amount : item.userBalanceSnowglobe, isClaimChecked);
+    if (item.deprecatedPool) {
+      withdraw(item);
+    } else {
+      withdraw(item, amount ? amount : item.userBalanceSnowglobe, isClaimChecked);
+    }
   };
 
   const claimCheckHandler = (value) => {
