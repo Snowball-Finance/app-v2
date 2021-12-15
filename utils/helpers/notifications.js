@@ -1,5 +1,5 @@
 export const getNotificationsFromStorage = () => {
-  return JSON.parse(localStorage.getItem('notifications')) || "[]";
+  return JSON.parse(localStorage.getItem('notifications')) || [];
 };
 
 export const setNotificationsOnStorage = (data) => {

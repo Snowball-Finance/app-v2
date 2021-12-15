@@ -111,7 +111,7 @@ const Notification = () => {
             </>
           }
         >
-          {notifications.map((item) => (
+          {notifications?.map((item) => (
             <NotificationListItem
               key={item.address}
               address={item.address}
