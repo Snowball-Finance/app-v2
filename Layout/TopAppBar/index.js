@@ -10,6 +10,7 @@ import SnobBalance from '../Shared/SnobBalance'
 import SnobPrice from '../Shared/SnobPrice'
 import SnobPriceChange from 'Layout/Shared/SnobPriceChange'
 import ThemeButton from 'Layout/Shared/ThemeButton'
+import Notification from '../Shared/Notification'
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -68,6 +69,7 @@ const TopAppBar = ({
 
       <Hidden xsDown>
         <div className={classes.rowContainer}>
+          <Notification />
           <SnobBalance />
           <ConnectWallet />
           <ThemeButton />
