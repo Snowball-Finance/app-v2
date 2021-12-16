@@ -30,7 +30,7 @@ import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
 import { CONTRACTS } from 'config';
-import { addNewNotification, deleteNotificationByAddress } from 'utils/helpers/notifications';
+import { useNotification } from 'contexts/notification-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -49,6 +49,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
 
   const { setPopUp } = usePopup();
+  const { addNewNotification, deleteNotificationByAddress } = useNotification();
 
   const [userPools, setUserPools] = useState([]);
   const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);

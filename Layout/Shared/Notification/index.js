@@ -1,4 +1,4 @@
-import { memo, useState, useEffect } from 'react';
+import { memo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Badge,
@@ -11,10 +11,7 @@ import {
 } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
-import {
-  readNotificationByAddress,
-  getNotificationsFromStorage,
-} from 'utils/helpers/notifications';
+import { useNotification } from 'contexts/notification-context';
 import NotificationListItem from './NotificationListItem';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,11 +29,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Notification = () => {
-  const initialNotifications = () => getNotificationsFromStorage();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [count, setCount] = useState(0);
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const { notifications, readNotificationByAddress } = useNotification();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,22 +45,6 @@ const Notification = () => {
     readNotificationByAddress(address);
   };
 
-  useEffect(() => {
-    const handler = () => {
-      const notificationsFromStorage = getNotificationsFromStorage();
-
-      if (notificationsFromStorage.length) {
-        setCount(notificationsFromStorage.length);
-        setNotifications(notificationsFromStorage);
-      }
-    };
-
-    window.addEventListener('storage', handler);
-    return () => {
-      window.removeEventListener('storage', handler);
-    };
-  }, [notifications]);
-
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
@@ -73,7 +52,7 @@ const Notification = () => {
     <>
       <Badge
         className={classes.iconButton}
-        badgeContent={count}
+        badgeContent={notifications.length}
         onClick={handleClick}
         color="primary"
       >
@@ -103,7 +82,11 @@ const Notification = () => {
                 </Grid>
 
                 <Grid item>
-                  <Chip label={`${count} new`} color="primary" size="small" />
+                  <Chip
+                    label={`${notifications.length} new`}
+                    color="primary"
+                    size="small"
+                  />
                 </Grid>
               </Grid>
 
