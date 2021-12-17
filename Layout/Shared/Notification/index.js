@@ -12,6 +12,7 @@ import {
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
 import { useNotification } from 'contexts/notification-context';
+import { CONTRACTS } from 'config';
 import NotificationListItem from './NotificationListItem';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 const Notification = () => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { notifications, readNotificationByAddress } = useNotification();
+  const { notifications } = useNotification();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,7 +43,10 @@ const Notification = () => {
   };
 
   const onMessageClick = (address) => {
-    readNotificationByAddress(address);
+    window.open(
+      `https://snowtrace.io/token/${CONTRACTS.SNOWBALL}?a=${address}`,
+      '_blank'
+    );
   };
 
   const open = Boolean(anchorEl);
