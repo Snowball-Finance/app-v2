@@ -114,7 +114,7 @@ const ListItem = ({
   useEffect(() => {
     const evalPool = userData ? userData : pool;
     let actionType, func;
-    if (pool.token0) {
+    if (pool.token0 && AVAXBalance !== 0) {
       const arrayAction = getProperAction(evalPool, setModal,
         evalPool.userLPBalance, AVAXBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
@@ -125,7 +125,7 @@ const ListItem = ({
     }
     setAction({ actionType, func });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userData, pool, account]);
+  }, [userData, pool, account, AVAXBalance]);
 
   const selectedGauge = useMemo(() => gauges.find((gauge) => {
     if (pool.gaugeInfo) {
