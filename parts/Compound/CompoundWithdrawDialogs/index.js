@@ -127,7 +127,7 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
     if (item.deprecatedPool) {
-      withdraw(item);
+      withdraw(item, null, isClaimChecked);
     } else {
       withdraw(item, amount ? amount : item.userBalanceSnowglobe, isClaimChecked);
     }
@@ -168,14 +168,12 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
               {transactionStatus.withdrawStep < 2 ? 'Withdraw' : 'Claim'}
             </ContainedButton>
           </Grid>
-          {!item.deprecatedPool &&
-            <Grid item xs={12}>
-              <SnowCheckbox
-                label='Claim Rewards'
-                isChecked={isClaimChecked}
-                onChange={claimCheckHandler} />
-            </Grid>
-          }
+          <Grid item xs={12}>
+            <SnowCheckbox
+              label='Claim Rewards'
+              isChecked={isClaimChecked}
+              onChange={claimCheckHandler} />
+          </Grid>
         </Grid>
       </div>
       <SnowStepBox
