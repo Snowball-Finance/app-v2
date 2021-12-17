@@ -115,7 +115,7 @@ const CompoundDialogs = ({
   })
 
   const { approve, deposit, isTransacting, transactionStatus, calculateSwapAmountOut,
-  setTransactionStatus } = useCompoundAndEarnContract();
+    setTransactionStatus } = useCompoundAndEarnContract();
   const { AVAXBalance } = useContracts();
 
   useEffect(() => {
@@ -198,7 +198,7 @@ const CompoundDialogs = ({
   }
 
   const handleTokenChange = (token) => {
-    setTransactionStatus({approvalStep:0, depositStep:0})
+    setTransactionStatus({ approvalStep: 0, depositStep: 0 })
     dispatch({
       type: compoundDialogActionTypes.reset, payload: {
         sliderValue: 0,
@@ -263,63 +263,57 @@ const CompoundDialogs = ({
       : state.selectedToken.address;
 
     return (
-    state.priceImpact < 5 && state.amount > 0 ? 
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <ContainedButton
-            className={classes.modalButton}
-            disableElevation
-            fullWidth
-            disabled={enabledHandler(true)}
-            loading={isTransacting.approve}
-            onClick={() => {
-              handleApproveClick()
-            }}
-          >
-            Approve
-          </ContainedButton>
-        </Grid>
-        <Grid item xs={6}>
-          <ContainedButton
-            className={classes.modalButton}
-            disableElevation
-            fullWidth
-            disabled={enabledHandler(false)}
-            loading={isTransacting.deposit}
-            onClick={() => {
-              deposit(
-                userData, //general user data
-                state.amount, //amount to deposit
-                addressToZap,
-                false, //onlygauge
-                state.selectedToken.address === "0x0", //is native avax
-                state.slippage, //zappers slippage
-              )
-            }
-            }
-          >
-            Deposit
-          </ContainedButton>
-        </Grid>
-      </Grid> : null) 
+      state.priceImpact < 5 && state.amount > 0 ?
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <ContainedButton
+              className={classes.modalButton}
+              disableElevation
+              fullWidth
+              disabled={enabledHandler(true)}
+              loading={isTransacting.approve}
+              onClick={() => {
+                handleApproveClick()
+              }}
+            >
+              Approve
+            </ContainedButton>
+          </Grid>
+          <Grid item xs={6}>
+            <ContainedButton
+              className={classes.modalButton}
+              disableElevation
+              fullWidth
+              disabled={enabledHandler(false)}
+              loading={isTransacting.deposit}
+              onClick={() => {
+                deposit(
+                  userData, //general user data
+                  state.amount, //amount to deposit
+                  addressToZap,
+                  false, //onlygauge
+                  state.selectedToken.address === "0x0", //is native avax
+                  state.slippage, //zappers slippage
+                )
+              }
+              }
+            >
+              Deposit
+            </ContainedButton>
+          </Grid>
+        </Grid> : null)
   }
 
-return (
-  <SnowDialog
-    open={open}
-    title={title}
-    onClose={() => handleClose()}
-
-    dialogClass={classes.dialog}
-    dialogTitleClass={classes.dialogTitle}
-    titleTextClass={classes.dialogTitleText}
-    closeIconClass={classes.dialogCloseIcon}
-  >
-    {!AVAXBalance ? <>
-        <div className={classes.center} >
-          <CircularProgress size={24} />
-        </div>
-      </> : 
+  return (
+    <SnowDialog
+      open={open}
+      title={title}
+      onClose={() => handleClose()}
+      dialogClass={classes.dialog}
+      dialogTitleClass={classes.dialogTitle}
+      titleTextClass={classes.dialogTitleText}
+      closeIconClass={classes.dialogCloseIcon}
+    >
       <>	<Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
 
@@ -350,11 +344,11 @@ return (
             state={state}
           />
           {state.priceImpact > 1 && state.amount > 0 &&
-          <Grid className={classes.linedContainer} marginTop={2}>
-            <Box justifyContent="center" display="flex" className={classes.warningBox} > 
-              WARNING!! Price Impact too High!! {`${state.priceImpact.toFixed(2)}%`} 
-            </Box>
-          </Grid>} 
+            <Grid className={classes.linedContainer} marginTop={2}>
+              <Box justifyContent="center" display="flex" className={classes.warningBox} >
+                WARNING!! Price Impact too High!! {`${state.priceImpact.toFixed(2)}%`}
+              </Box>
+            </Grid>}
           <div className={classes.buttonContainer}>
             {renderButton()}
           </div>
@@ -367,9 +361,9 @@ return (
             singleDeposit={!state.selectedToken.isLpToken && state.tokens.length > 2}
           />
         </div>
-      </>}
-  </SnowDialog>
-);
+      </>
+    </SnowDialog>
+  );
 };
 
 export default memo(CompoundDialogs);

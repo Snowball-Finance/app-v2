@@ -60,13 +60,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 
 	useEffect(() => {
 		const evalPool = userData ? userData : item;
-		if (item.token0) {
+		if (item.token0 && AVAXBalance !== 0) {
 			let actionType, func;
 			[actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, AVAXBalance, 0, true);
 			setAction({ actionType, func });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData, item]);
+	}, [userData, item, AVAXBalance]);
 
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
@@ -141,9 +141,9 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 					disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
 					loading={isTransacting.pageview}
 					onClick={() => {
-						if(item.deprecatedPool){
-						withdraw(item);
-						}else{
+						if (item.deprecatedPool) {
+							withdraw(item);
+						} else {
 							setTransactionStatus({ withdrawStep: 0 });
 							setWithdraw(true)
 						}

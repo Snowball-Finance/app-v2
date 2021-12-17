@@ -36,7 +36,7 @@ const ListItem = ({
   const [expanded, setExpanded] = useState(false);
   const [action, setAction] = useState({ actionType: 'Get_Token' });
   const { account } = useWeb3React();
-  const {loading, getBalanceInfoSinglePool, isTransacting
+  const { loading, getBalanceInfoSinglePool, isTransacting
     , userPools } = useCompoundAndEarnContract();
 
   useEffect(() => {
@@ -51,10 +51,10 @@ const ListItem = ({
     }
     refreshData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[refresh, account]);
+  }, [refresh, account]);
 
   //refresh LP data if the accordion is expanded
-  const onChangedExpanded = (event,expanded) => {
+  const onChangedExpanded = (event, expanded) => {
     const targetName = event.target.getAttribute('name');
     if (targetName !== 'custom-popover') {
       setExpanded(expanded);
@@ -75,7 +75,7 @@ const ListItem = ({
   }, [modal, isTransacting]);
 
   useEffect(() => {
-    const addTimer = async () =>{
+    const addTimer = async () => {
       if ((account || expanded) && !pool.deprecatedPool) {
         //reset state
         if (timerRefresh) {
@@ -98,9 +98,9 @@ const ListItem = ({
     addTimer();
     return () => setTimerRefresh(clearInterval(timerRefresh))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[expanded, account]);
+  }, [expanded, account]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
     if (userPool) {
@@ -114,7 +114,7 @@ const ListItem = ({
   useEffect(() => {
     const evalPool = userData ? userData : pool;
     let actionType, func;
-    if (pool.token0) {
+    if (pool.token0 && AVAXBalance !== 0) {
       const arrayAction = getProperAction(evalPool, setModal,
         evalPool.userLPBalance, AVAXBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
@@ -125,7 +125,7 @@ const ListItem = ({
     }
     setAction({ actionType, func });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userData, pool, account]);
+  }, [userData, pool, account, AVAXBalance]);
 
   const selectedGauge = useMemo(() => gauges.find((gauge) => {
     if (pool.gaugeInfo) {
@@ -163,7 +163,7 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
+        className={clsx({ [classes.accordionContainer]: action?.actionType === 'Details' })}
         expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
