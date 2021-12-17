@@ -69,6 +69,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	}, [userData, item,AVAXBalance]);
 
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
+	let weeklyAPY = item.weeklyAPY > 999999 ? 999999 : item.weeklyAPY;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 
 	const [withdraw_modal, setWithdraw] = useState(false);
@@ -92,6 +93,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 					<ApyCalculation
 						kind={item.kind}
 						dailyAPR={dailyAPR}
+						weeklyAPY={weeklyAPY}
 						yearlyAPY={yearlyAPY}
 					/>
 				</Grid>}
