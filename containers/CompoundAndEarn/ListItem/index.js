@@ -163,7 +163,7 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details' && AVAXBalance !== 0})}
+        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)})}
         expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
