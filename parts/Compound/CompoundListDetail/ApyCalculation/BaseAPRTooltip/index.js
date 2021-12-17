@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BaseAPRTooltip = ({ dailyAPR, weeklyAPY, yearlyAPY }) => {
+const BaseAPRTooltip = ({ dailyAPR }) => {
   const classes = useStyles();
 
   return (
