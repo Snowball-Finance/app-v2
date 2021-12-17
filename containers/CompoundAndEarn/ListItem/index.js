@@ -158,12 +158,12 @@ const ListItem = ({
   }, [boost, pool])
 
   const userBoost = `${(boost ? boost * 1.0 : 1.0).toFixed(2)}x`;
-
+  const highlighted= action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)
   return (
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)})}
+        className={clsx({[classes.accordionContainer]:highlighted})}
         expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
