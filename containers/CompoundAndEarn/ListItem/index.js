@@ -75,7 +75,7 @@ const ListItem = ({
   }, [modal, isTransacting]);
 
   useEffect(() => {
-    const addTimer = async () =>{
+    const addTimer = async () => {
       if ((account || expanded) && !pool.deprecatedPool) {
         //reset state
         if (timerRefresh) {
@@ -98,9 +98,9 @@ const ListItem = ({
     addTimer();
     return () => setTimerRefresh(clearInterval(timerRefresh))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[expanded, account]);
+  }, [expanded, account]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
     if (userPool) {
@@ -163,11 +163,11 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
+        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details' && AVAXBalance !== 0})}
         expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
-          <CompoundActionButton
+         AVAXBalance &&  <CompoundActionButton
             type={action?.actionType}
             action={action?.func}
             disabled={action?.actionType !== 'Details' && pool.deprecated}
