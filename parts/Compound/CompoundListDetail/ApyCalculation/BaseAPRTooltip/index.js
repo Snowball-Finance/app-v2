@@ -42,7 +42,7 @@ const BaseAPRTooltip = ({ dailyAPR, weeklyAPY, yearlyAPY }) => {
         </div>
         <div className={classes.right}>
           <Typography variant="subtitle2" className={classes.title}>
-            xx%
+            {typeof(dailyAPR) === 'number' ? (dailyAPR * 365 + 10)?.toFixed(2) : ''}%
           </Typography>
           <Typography variant="subtitle2" className={classes.title}>
             {typeof(dailyAPR) === 'number' ? (dailyAPR * 365)?.toFixed(2) : dailyAPR}%
