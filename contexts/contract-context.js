@@ -61,18 +61,24 @@ export function ContractProvider({ children }) {
   }, [account, snowballContract, snowconeContract])
 
   useEffect(() => {
-    if (!isEmpty(snowballContract) && !isEmpty(snowconeContract) && loading) {
-      getBalanceInfo()
+    if (!isEmpty(snowballContract) && !isEmpty(snowconeContract) 
+    && loading && account) {
+      getBalanceInfo();
       setLoading(false);
     }
 
-    if (isEmpty(account)) {
-      setSnowballBalance(0)
-      setSnowconeBalance(0)
-      setTotalSnowcone(0)
-      setAVAXBalance(0)
+    if (!loading) {
+      if(isEmpty(account)) {
+        setSnowballBalance(0);
+        setSnowconeBalance(0);
+        setTotalSnowcone(0);
+        setAVAXBalance(0);
+      } else { 
+        getBalanceInfo();
+      }
     }
-  }, [snowballContract, snowconeContract, account, getBalanceInfo, loading]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snowballContract, snowconeContract, account, getBalanceInfo]);
 
   useEffect(() =>{
     if(error){
