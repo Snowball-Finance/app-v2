@@ -75,7 +75,7 @@ const ListItem = ({
   }, [modal, isTransacting]);
 
   useEffect(() => {
-    const addTimer = async () =>{
+    const addTimer = async () => {
       if ((account || expanded) && !pool.deprecatedPool) {
         //reset state
         if (timerRefresh) {
@@ -98,9 +98,9 @@ const ListItem = ({
     addTimer();
     return () => setTimerRefresh(clearInterval(timerRefresh))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[expanded, account]);
+  }, [expanded, account]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const userPool = userPools.find(
       (p) => p?.address.toLowerCase() === pool.address.toLowerCase());
     if (userPool) {
@@ -114,7 +114,7 @@ const ListItem = ({
   useEffect(() => {
     const evalPool = userData ? userData : pool;
     let actionType, func;
-    if (pool.token0) {
+    if (pool.token0 && AVAXBalance !== 0) {
       const arrayAction = getProperAction(evalPool, setModal,
         evalPool.userLPBalance, AVAXBalance, evalPool.userDepositedLP);
       actionType = arrayAction[0];
@@ -125,7 +125,7 @@ const ListItem = ({
     }
     setAction({ actionType, func });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[userData, pool, account]);
+  }, [userData, pool, account, AVAXBalance]);
 
   const selectedGauge = useMemo(() => gauges.find((gauge) => {
     if (pool.gaugeInfo) {
@@ -158,16 +158,16 @@ const ListItem = ({
   }, [boost, pool])
 
   const userBoost = `${(boost ? boost * 1.0 : 1.0).toFixed(2)}x`;
-
+  const highlighted= action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)
   return (
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({[classes.accordionContainer]: action?.actionType === 'Details'})}
+        className={clsx({[classes.accordionContainer]:highlighted})}
         expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
-          <CompoundActionButton
+         AVAXBalance &&  <CompoundActionButton
             type={action?.actionType}
             action={action?.func}
             disabled={action?.actionType !== 'Details' && pool.deprecated}
