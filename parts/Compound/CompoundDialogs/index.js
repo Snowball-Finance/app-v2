@@ -198,7 +198,7 @@ const CompoundDialogs = ({
   }
 
   const handleTokenChange = (token) => {
-    setTransactionStatus({approvalStep:0, depositStep:0})
+    setTransactionStatus({ approvalStep: 0, depositStep: 0 })
     dispatch({
       type: compoundDialogActionTypes.reset, payload: {
         sliderValue: 0,
@@ -315,11 +315,6 @@ return (
     titleTextClass={classes.dialogTitleText}
     closeIconClass={classes.dialogCloseIcon}
   >
-    {!AVAXBalance ? <>
-        <div className={classes.center} >
-          <CircularProgress size={24} />
-        </div>
-      </> : 
       <>	<Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
 
@@ -367,7 +362,7 @@ return (
             singleDeposit={!state.selectedToken.isLpToken && state.tokens.length > 2}
           />
         </div>
-      </>}
+      </>
   </SnowDialog>
 );
 };
