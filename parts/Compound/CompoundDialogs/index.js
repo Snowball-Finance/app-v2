@@ -305,10 +305,9 @@ const CompoundDialogs = ({
 
   return (
     <SnowDialog
-      open={open}
-      title={title}
-      onClose={() => handleClose()}
-
+    open={open}
+    title={title}
+    onClose={() => handleClose()}
     dialogClass={classes.dialog}
     dialogTitleClass={classes.dialogTitle}
     titleTextClass={classes.dialogTitleText}
