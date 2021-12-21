@@ -9,6 +9,7 @@ import SnowPairsIcon from 'components/SnowPairsIcon';
 import Info from '../Info';
 import TVLTooltip from '../TVLTooltip';
 import APYTooltip from '../APYTooltip';
+import TotalAPYTooltip from '../TotalAPYTooltip';
 import { formatNumber } from 'utils/helpers/format';
 import {
   BOOST_INFO_IMAGE_PATH,
@@ -81,13 +82,9 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           >
             <Grid item>
               <Typography variant="body2">
-                {item.kind === 'Snowglobe' ? 'APY ' : 'APR '}
+                {item.kind === 'Snowglobe' ? 'Total APY ' : 'APR '}
                 <CustomPopover contentClassName={classes.popover}>
-                  <APYTooltip
-                    dailyAPY={item.dailyAPY}
-                    weeklyAPY={item.weeklyAPY}
-                    yearlyAPY={item.yearlyAPY}
-                  />
+                  <TotalAPYTooltip />
                 </CustomPopover>
               </Typography>
             </Grid>
