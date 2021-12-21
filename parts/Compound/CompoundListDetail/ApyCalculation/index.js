@@ -46,7 +46,7 @@ const ApyCalculation = ({
         {kind === 'Snowglobe' ? 'Compounded APY' : 'Fees APR'}
       </Typography>
       <div className={classes.container}>
-        <Typography variant="body2">Base APR</Typography>
+        <Typography variant="body2">Base APR&nbsp;</Typography>
         <CustomPopover contentClassName={classes.popover}>
           <BaseAPRTooltip
             dailyAPR={dailyAPR}
@@ -57,7 +57,7 @@ const ApyCalculation = ({
         </Typography>
       </div>
       {kind === 'Snowglobe' &&<div className={classes.container}>
-        <Typography variant="body2">Compounded APY</Typography>
+        <Typography variant="body2">Compounded APY&nbsp;</Typography>
         <CustomPopover contentClassName={classes.popover}>
           <APYTooltip
             dailyAPY={dailyAPR}

@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { formatNumber } from 'utils/helpers/format';
 import CustomPopover from 'components/CustomPopover';
-import TotalAPYTooltip from './TotalAPYTooltip';
 import SnobAPYTooltip from './SnobAPYTooltip';
 
 const useStyles = makeStyles(theme => ({
@@ -56,7 +55,7 @@ const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, 
           SNOB APR
         </Typography>
         <div className={classes.container}>
-          <Typography variant="body2">SNOB APR</Typography>
+          <Typography variant="body2">SNOB APR&nbsp;</Typography>
           <CustomPopover contentClassName={classes.popover}>
             <SnobAPYTooltip />
           </CustomPopover>
@@ -68,9 +67,6 @@ const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, 
         </div>
         <div className={classes.container}>
           <Typography variant="body2"><b>{kind === 'Snowglobe' ? 'Total APY' : 'Total APR'}</b></Typography>
-          <CustomPopover contentClassName={classes.popover}>
-            <TotalAPYTooltip />
-          </CustomPopover>
           <Typography variant="subtitle2" className={classes.percentValue}>{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
         </div>
       </>}
