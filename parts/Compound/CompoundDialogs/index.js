@@ -316,7 +316,6 @@ const CompoundDialogs = ({
   >
       <>	<Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
-
             <Details
               {...{
                 userData,
@@ -353,7 +352,6 @@ const CompoundDialogs = ({
               {renderButton()}
             </div>
           </div>
-        </div>
         <div className={classes.mt1}>
           <SnowStepBox
             transactionStatus={transactionStatus}
