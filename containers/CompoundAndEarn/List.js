@@ -66,7 +66,7 @@ const List = ({ pools, modal, setModal }) => {
             </Grid>
           ))}
         </Grid>
-        {hasMore && <Skeleton />}
+        {hasMore && <Box mt={1}><Skeleton /></Box>}
       </Box>
     </>
   );

@@ -309,18 +309,13 @@ const CompoundDialogs = ({
       title={title}
       onClose={() => handleClose()}
 
-      dialogClass={classes.dialog}
-      dialogTitleClass={classes.dialogTitle}
-      titleTextClass={classes.dialogTitleText}
-      closeIconClass={classes.dialogCloseIcon}
-    >
-      {!AVAXBalance ? <>
-        <div className={classes.center} >
-          <CircularProgress size={24} />
-        </div>
-      </> :
-        <>	<Typography variant='subtitle2'>Select token to convert</Typography>
-          <div className={classes.container} >
+    dialogClass={classes.dialog}
+    dialogTitleClass={classes.dialogTitle}
+    titleTextClass={classes.dialogTitleText}
+    closeIconClass={classes.dialogCloseIcon}
+  >
+      <>	<Typography variant='subtitle2'>Select token to convert</Typography>
+        <div className={classes.container} >
 
             <Details
               {...{
@@ -358,17 +353,18 @@ const CompoundDialogs = ({
               {renderButton()}
             </div>
           </div>
-          <div className={classes.mt1}>
-            <SnowStepBox
-              transactionStatus={transactionStatus}
-              title={title}
-              singleApprove={state.selectedToken.isNativeAVAX && state.tokens.length > 2}
-              singleDeposit={!state.selectedToken.isLpToken && state.tokens.length > 2}
-            />
-          </div>
-        </>}
-    </SnowDialog>
-  );
+        </div>
+        <div className={classes.mt1}>
+          <SnowStepBox
+            transactionStatus={transactionStatus}
+            title={title}
+            singleApprove={state.selectedToken.isNativeAVAX && state.tokens.length > 2}
+            singleDeposit={!state.selectedToken.isLpToken && state.tokens.length > 2}
+          />
+        </div>
+      </>
+  </SnowDialog>
+);
 };
 
 export default memo(CompoundDialogs);
