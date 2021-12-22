@@ -62,7 +62,7 @@ const ShopDetailDialog = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${item.supply || 0} / ${item.max || 0}`}
+            value={`${item.supply || 0} / ${!item.max || item.max === 999999 ? "-" : item.max}`}
           />
           <ListItem
             title='Artist'
