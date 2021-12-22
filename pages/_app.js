@@ -6,7 +6,6 @@ import { ApolloProvider } from '@apollo/client'
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
-import { AnalyticsProvider } from 'contexts/analytics'
 import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
@@ -22,10 +21,39 @@ import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
-
+import { analytics } from "utils/analytics"
+import { useRouter } from "next/router"
+import { useEffect, useRef } from "react"
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
+
+  const router = useRouter();
+  const initialized = useRef(false)
+  if (typeof window !== "undefined" && initialized.current === false) {
+    analytics.trackPageView({
+      href: router.pathname,
+    });
+    initialized.current = true
+  }
+
+  useEffect(() => {
+    if (typeof window === undefined) return;
+    const handleRouteChange = (url) => {
+      analytics.trackPageView({
+        href: url,
+      });
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    return () => {
+      if (typeof window === undefined) return;
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+
+
+
 
   return (
     <>
@@ -58,38 +86,36 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
-      <AnalyticsProvider>
-        <SnowWeb3Provider>
-          <ApolloProvider client={apolloClient}>
-            <DarkModeProvider>
-              <ThemeProvider>
-                <ProviderProvider>
-                  <WalletProvider>
-                    <PopupProvider>
-                      <APIProvider>
-                        <PriceProvider>
-                          <StakingContractProvider>
-                            <ContractProvider>
-                              <CompoundAndEarnProvider>
-                                <CssBaseline />
-                                <Layout>
-                                  <Component {...pageProps} />
-                                  <GeneralAlerts />
-                                </Layout>
-                              </CompoundAndEarnProvider>
-                              <ToastContainer position={'bottom-right'} />
-                            </ContractProvider>
-                          </StakingContractProvider>
-                        </PriceProvider>
-                      </APIProvider>
-                    </PopupProvider>
-                  </WalletProvider>
-                </ProviderProvider>
-              </ThemeProvider>
-            </DarkModeProvider>
-          </ApolloProvider>
-        </SnowWeb3Provider>
-      </AnalyticsProvider>
+      <SnowWeb3Provider>
+        <ApolloProvider client={apolloClient}>
+          <DarkModeProvider>
+            <ThemeProvider>
+              <ProviderProvider>
+                <WalletProvider>
+                  <PopupProvider>
+                    <APIProvider>
+                      <PriceProvider>
+                        <StakingContractProvider>
+                          <ContractProvider>
+                            <CompoundAndEarnProvider>
+                              <CssBaseline />
+                              <Layout>
+                                <Component {...pageProps} />
+                                <GeneralAlerts />
+                              </Layout>
+                            </CompoundAndEarnProvider>
+                            <ToastContainer position={'bottom-right'} />
+                          </ContractProvider>
+                        </StakingContractProvider>
+                      </PriceProvider>
+                    </APIProvider>
+                  </PopupProvider>
+                </WalletProvider>
+              </ProviderProvider>
+            </ThemeProvider>
+          </DarkModeProvider>
+        </ApolloProvider>
+      </SnowWeb3Provider>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Typography, Card, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -67,23 +67,51 @@ const ShopItem = ({
 }) => {
   const classes = useStyles();
   const { purchaseNFT } = useNFTContract();
+  const [isSaleAvailable, setSaleAvailable] = useState(false);
 
   const purchaseHandler = () => {
     purchaseNFT(nft)
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const now = new Date();
+      const epochTime = Math.round(now.getTime() / 1000);
+      const isAvailable = nft?.saleStartTime && nft?.saleDuration && epochTime
+        && epochTime >= nft.saleStartTime && epochTime < nft.saleStartTime + nft.saleDuration
+      setSaleAvailable(isAvailable);
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  const handleOnClick = () => {
+    window.open(nft?.fullSize);
   }
 
   return (
     <Card className={classes.card}>
       <Grid container spacing={2} className={classes.infoContainer}>
         <Grid item xs={12}>
-          <div className={classes.image}>
-            <Image
-              alt='NFT Image'
-              src={nft?.imgUrl || NO_IMAGE_PATH}
-              objectFit='contain'
-              layout='fill'
-            />
-          </div>
+          {nft?.isVideo?
+            <video
+              className={classes.image}
+              width='100%'
+              autoPlay
+              loop
+              muted
+              playsInline>
+              <source src={nft?.imgUrl || NO_IMAGE_PATH} type='video/mp4' />
+            </video>:
+            <div className={classes.image}>
+              <Image
+                alt='NFT Image'
+                src={nft?.imgUrl || NO_IMAGE_PATH}
+                objectFit='contain'
+                layout='fill'
+                onClick={() =>{ nft?.fullSize ? handleOnClick() : null}}
+              />
+            </div>
+          }
         </Grid>
         <Grid item xs={12}>
           <ListItem
@@ -100,7 +128,7 @@ const ShopItem = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${nft.supply || 0} / ${nft.max || 0}`}
+            value={`${nft.supply || 0} / ${!nft.max || nft.max === 999999 ? "-" : nft.max}`}
           />
           <ListItem
             title='Artist'
@@ -128,7 +156,7 @@ const ShopItem = ({
         </ContainedButton>
         <ContainedButton
           fullWidth
-          disabled={nft.max === nft.supply}
+          disabled={nft.max === nft.supply || !isSaleAvailable}
           startIcon={<ShoppingCart size={18} className={classes.shopingIcon} />}
           className={classes.button}
           onClick={purchaseHandler}

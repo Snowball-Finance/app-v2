@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.custom.palette.blue,
     cursor: 'pointer',
   },
+  popper: {
+    zIndex: 1200,
+  },
 }));
 
 const CustomPopover = ({
@@ -91,6 +94,7 @@ const CustomPopover = ({
         anchorEl={anchorRef.current}
         role={undefined}
         transition
+        className={classes.popper}
       >
         <ClickAwayListener onClickAway={handleClosePopover}>
           <Paper

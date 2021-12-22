@@ -2,6 +2,8 @@ import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { formatNumber } from 'utils/helpers/format';
+import CustomPopover from 'components/CustomPopover';
+import SnobAPYTooltip from './SnobAPYTooltip';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,6 +16,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    alignItems: 'center',
   },
   boldSubtitle: {
     fontWeight: 600,
@@ -31,6 +34,15 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1),
     }
   },
+  percentValue: {
+    marginLeft: 'auto',
+  },
+  popover: {
+    backgroundColor: theme.custom.palette.blueContainer,
+    '&::before': {
+      backgroundColor: theme.custom.palette.blueContainer,
+    },
+  },
 }));
 
 const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, userData }) => {
@@ -43,8 +55,11 @@ const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, 
           SNOB APR
         </Typography>
         <div className={classes.container}>
-          <Typography variant="body2">SNOB APR</Typography>
-          <Typography variant="subtitle2">{snobAPR?.toFixed(2)}%</Typography>
+          <Typography variant="body2">SNOB APR&nbsp;</Typography>
+          <CustomPopover contentClassName={classes.popover}>
+            <SnobAPYTooltip />
+          </CustomPopover>
+          <Typography variant="subtitle2" className={classes.percentValue}>{snobAPR?.toFixed(2)}%</Typography>
         </div>
         <div className={classes.container}>
           <Typography variant="body2">Boost</Typography>
@@ -52,7 +67,7 @@ const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, 
         </div>
         <div className={classes.container}>
           <Typography variant="body2"><b>{kind === 'Snowglobe' ? 'Total APY' : 'Total APR'}</b></Typography>
-          <Typography variant="subtitle2">{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
+          <Typography variant="subtitle2" className={classes.percentValue}>{typeof(totalAPY) === 'number' ? totalAPY?.toFixed(2) : totalAPY }%</Typography>
         </div>
       </>}
       <div className={classes.gradientBorder}>
