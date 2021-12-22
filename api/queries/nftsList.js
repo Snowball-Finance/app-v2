@@ -19,6 +19,7 @@ const NFTS_LIST = gql`
       isVideo
       saleDuration
       saleStartTime
+      fullSize
     }
   }
 `;

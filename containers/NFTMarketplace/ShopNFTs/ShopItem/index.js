@@ -84,6 +84,10 @@ const ShopItem = ({
     return () => clearTimeout(timer)
   }, [])
 
+  const handleOnClick = () => {
+    window.open(nft?.fullSize);
+  }
+
   return (
     <Card className={classes.card}>
       <Grid container spacing={2} className={classes.infoContainer}>
@@ -104,6 +108,7 @@ const ShopItem = ({
                 src={nft?.imgUrl || NO_IMAGE_PATH}
                 objectFit='contain'
                 layout='fill'
+                onClick={() =>{ nft?.fullSize ? handleOnClick() : null}}
               />
             </div>
           }
