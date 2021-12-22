@@ -7,7 +7,6 @@ import { useWallets } from 'contexts/wallet-context'
 import SnowIdenticon from 'components/SnowIdenticon'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import getEllipsis from 'utils/helpers/getEllipsis'
-import { useAnalytics } from "contexts/analytics"
 
 const useStyles = makeStyles((theme) => ({
   root: {

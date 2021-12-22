@@ -60,15 +60,16 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 
 	useEffect(() => {
 		const evalPool = userData ? userData : item;
-		if (item.token0) {
+		if (item.token0 && AVAXBalance!==0) {
 			let actionType, func;
 			[actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, AVAXBalance, 0, true);
 			setAction({ actionType, func });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData, item]);
+	}, [userData, item,AVAXBalance]);
 
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
+	let weeklyAPY = item.weeklyAPY > 999999 ? 999999 : item.weeklyAPY;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 
 	const [withdraw_modal, setWithdraw] = useState(false);
@@ -92,6 +93,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 					<ApyCalculation
 						kind={item.kind}
 						dailyAPR={dailyAPR}
+						weeklyAPY={weeklyAPY}
 						yearlyAPY={yearlyAPY}
 					/>
 				</Grid>}
@@ -112,14 +114,14 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 			<div
 				className={classes.button}
 			>
-				{!item.deprecatedPool && action?.actionType &&
+				{(!item.deprecatedPool && action?.actionType && AVAXBalance) ?
 					<CompoundActionButton
 						type={action.actionType}
 						action={action.func}
 						endIcon={false}
 						disabled={item.deprecated}
 						fullWidth={isSm ? true : false}
-					/>
+					/>:<></>
 				}
 				<ContainedButton
 					disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}

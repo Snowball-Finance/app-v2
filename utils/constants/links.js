@@ -63,6 +63,11 @@ const LINKS = Object.freeze({
       HREF: 'https://snowballs.gitbook.io/snowball-docs/defi-university',
       IS_EXT_LINK: true
     },
+    VOTE_ON_GAUGES: {
+      TITLE: 'Vote on Gauges',
+      HREF: 'https://snowballs.gitbook.io/snowball-docs/resources/guides/voting-on-gauges-with-xsnob',
+      IS_EXT_LINK: true
+    }
   },
   GITHUB: {
     TITLE: 'GitHub',
