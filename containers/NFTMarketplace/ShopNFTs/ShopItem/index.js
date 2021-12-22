@@ -123,7 +123,7 @@ const ShopItem = ({
         <Grid item xs={12}>
           <ListItem
             title='Minted'
-            value={`${nft.supply || 0} / ${nft.max || 0}`}
+            value={`${nft.supply || 0} / ${!nft.max || nft.max === 999999 ? "-" : nft.max}`}
           />
           <ListItem
             title='Artist'

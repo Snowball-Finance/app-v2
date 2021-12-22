@@ -16,6 +16,9 @@ const NFTS_LIST = gql`
       buyable
       baseCost
       bondCurve 
+      isVideo
+      saleDuration
+      saleStartTime
     }
   }
 `;
