@@ -21,11 +21,36 @@ import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
+import { useRouter } from "next/router"
+import { useEffect, useRef } from "react"
+import { analytics } from "utils/analytics"
 
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  const initialized=useRef(false);
   const apolloClient = useApollo(pageProps.initialApolloState);
 
+  useEffect(() => {
+    if (typeof window === undefined) return;
+    if(!(initialized.current)){
+      initialized.current=true;
+      analytics.trackPageView({
+        href: router.pathname,
+      });
+    }
+    const handleRouteChange = (url) => {
+      analytics.trackPageView({
+        href: url,
+      });
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      if (typeof window === undefined) return;
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+  
   return (
     <>
       <Head>
