@@ -10,7 +10,7 @@ import WalletCard from 'components/WalletModal/WalletCard'
 import { walletlink, injected } from 'utils/constants/connectors'
 import ANIMATIONS from 'utils/constants/animate-icons'
 
-import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 const DESKTOP_CONNECTORS = {
   'MetaMask': injected,
@@ -45,9 +45,10 @@ const WalletModal = ({
   onConnectWallet
 }) => {
 
+  const { trackEvent } = useAnalytics()
   useEffect(() => {
     if (open) {
-      analytics.trackEvent(createEvent({
+      trackEvent(createEvent({
         category: AnalyticCategories.modal,
         action: AnalyticActions.wallet,
         name: 'open'

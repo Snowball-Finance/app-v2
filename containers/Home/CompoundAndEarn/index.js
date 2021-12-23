@@ -14,7 +14,7 @@ import {
   DASHBOARD_COMPOUND_BACKGROUND_IMAGE_PATH,
   METAMASK_IMAGE_PATH
 } from 'utils/constants/image-paths'
-import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -83,6 +83,9 @@ const CompoundAndEarn = () => {
   const [pendingHarvest, setPendingHarvest] = useState({});
   const { snowballBalance, gauges, snowconeBalance } = useContracts();
   const { prices } = usePrices();
+
+  const { trackEvent } = useAnalytics()
+
   const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   const addMetamask = async () => {
@@ -101,13 +104,13 @@ const CompoundAndEarn = () => {
             },
           },
         })
-        analytics.trackEvent(createEvent({
+        trackEvent(createEvent({
           category: AnalyticCategories.wallet,
           action: AnalyticActions.addSnob,
           name: 'added'
         }))
       } catch (error) {
-        analytics.trackEvent(createEvent({
+        trackEvent(createEvent({
           category: AnalyticCategories.error,
           action: AnalyticActions.addSnob,
         }))
