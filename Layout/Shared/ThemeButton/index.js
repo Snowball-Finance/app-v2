@@ -3,7 +3,7 @@ import { Switch } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { useDarkMode } from 'contexts/ui-context';
-import { AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
+import { AnalyticCategories, createEvent, analytics } from "utils/analytics";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,13 +61,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ThemeButton = () => {
-  const { trackEvent } = useAnalytics()
   const classes = useStyles();
   const { darkMode, handleDarkModeChange } = useDarkMode();
 
   const themeHandler = () => {
     handleDarkModeChange();
-    trackEvent(createEvent({
+    analytics.trackEvent(createEvent({
       category: AnalyticCategories.ui,
       action: 'themeChangedToDark',
       value: darkMode ? 1 : 0

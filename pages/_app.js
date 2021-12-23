@@ -6,7 +6,6 @@ import { ApolloProvider } from '@apollo/client'
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
-import { AnalyticsProvider } from 'contexts/analytics'
 import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
@@ -58,7 +57,6 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
-      <AnalyticsProvider>
         <SnowWeb3Provider>
           <ApolloProvider client={apolloClient}>
             <DarkModeProvider>
@@ -89,7 +87,6 @@ function MyApp({ Component, pageProps }) {
             </DarkModeProvider>
           </ApolloProvider>
         </SnowWeb3Provider>
-      </AnalyticsProvider>
     </>
   )
 }

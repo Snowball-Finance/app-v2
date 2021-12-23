@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import getTransactionInfo from 'utils/helpers/getTransactionInfo';
 import { formatNumber } from 'utils/helpers/format';
-import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -42,9 +42,6 @@ const useStyles = makeStyles((theme) => ({
 
 const TransactionItem = ({ transaction }) => {
   const classes = useStyles();
-
-  const { trackEvent } = useAnalytics()
-
   const typeInfo = useMemo(
     () => getTransactionInfo(transaction.type.toLowerCase()),
     [transaction]
@@ -52,7 +49,7 @@ const TransactionItem = ({ transaction }) => {
 
   const redirectToExplorer = (hash) => {
     window.open(`https://snowtrace.io/tx/${hash}`, '_blank');
-    trackEvent(createEvent({
+    analytics.trackEvent(createEvent({
       action: AnalyticActions.click,
       name: `${hash}`,
       category: AnalyticCategories.transaction,
