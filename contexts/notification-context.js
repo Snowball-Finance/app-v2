@@ -4,6 +4,7 @@ const NotficationContext = createContext(null);
 
 const NotficationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+  const [notificationClicked, setNotificationClicked] = useState(null);
 
   useEffect(() => {
     const initialNotifications = getNotificationsFromStorage();
@@ -47,6 +48,26 @@ const NotficationProvider = ({ children }) => {
     setNotificationsOnStorage(storedNotifications);
   };
 
+  const checkPoolsByAddress = (address) => {
+    const storedNotifications = [...getNotificationsFromStorage()];
+    const index = storedNotifications.findIndex(
+      (item) => +item.address === +address
+    );
+    return index > -1;
+  };
+
+  const addPartialInvestment = (message) => {
+    setNotifications((prev) => [...prev, { message }]);
+  };
+
+  const removePartialInvestment = () => {
+    setNotifications([]);
+  };
+
+  const onNotificationClick = (data) => {
+    setNotificationClicked(data);
+  };
+
   return (
     <NotficationContext.Provider
       value={{
@@ -54,6 +75,11 @@ const NotficationProvider = ({ children }) => {
         addNewNotification,
         deleteNotificationByAddress,
         readNotificationByAddress,
+        checkPoolsByAddress,
+        addPartialInvestment,
+        removePartialInvestment,
+        onNotificationClick,
+        notificationClicked,
       }}
     >
       {children}
@@ -67,6 +93,11 @@ const useNotification = () => {
     addNewNotification,
     deleteNotificationByAddress,
     readNotificationByAddress,
+    checkPoolsByAddress,
+    addPartialInvestment,
+    removePartialInvestment,
+    onNotificationClick,
+    notificationClicked,
   } = useContext(NotficationContext);
 
   return {
@@ -74,6 +105,11 @@ const useNotification = () => {
     addNewNotification,
     deleteNotificationByAddress,
     readNotificationByAddress,
+    checkPoolsByAddress,
+    addPartialInvestment,
+    removePartialInvestment,
+    onNotificationClick,
+    notificationClicked,
   };
 };
 

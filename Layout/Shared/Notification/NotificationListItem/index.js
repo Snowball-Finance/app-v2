@@ -1,27 +1,29 @@
 import { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { ListItem, Avatar, Grid, Typography } from '@material-ui/core';
+import {
+  ListItem,
+  Avatar,
+  Grid,
+  Button,
+} from '@material-ui/core';
 import WarningIcon from '@material-ui/icons/WarningRounded';
-import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   notificationContainer: { cursor: 'pointer' },
   notificationIconContainer: {
     backgroundColor: theme.custom.palette.joe_red,
   },
-  read: {
-    backgroundColor: theme.custom.palette.lightGrey,
-  },
 }));
 
-const NotificationListView = ({ address, message, read, messageClick }) => {
+const NotificationListView = ({
+  message,
+  buttonText,
+  fixClick,
+}) => {
   const classes = useStyles();
 
   return (
-    <ListItem
-      className={clsx(classes.notificationContainer, { [classes.read]: !read })}
-      onClick={() => messageClick(address)}
-    >
+    <ListItem className={classes.notificationContainer}>
       <Grid container justify="space-between" spacing={2}>
         <Grid item xs={1}>
           <Avatar className={classes.notificationIconContainer}>
@@ -30,8 +32,22 @@ const NotificationListView = ({ address, message, read, messageClick }) => {
         </Grid>
 
         <Grid item xs={9}>
-          <Typography variant="body1">Partial Investment</Typography>
-          <Typography variant="caption">{message}</Typography>
+          <Grid container spacing={1}>
+            {message}
+
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                size="small"
+                color="primary"
+                disableElevation
+                fullWidth
+                onClick={fixClick}
+              >
+                {buttonText}
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </ListItem>
