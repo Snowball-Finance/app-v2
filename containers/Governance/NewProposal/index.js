@@ -26,9 +26,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const NewProposal = () => {
+const NewProposal = ({ handleSuccessNewProposal }) => {
   const classes = useStyles();
-  const { createProposal } = useVoteContract();
+  const { createProposal, loading } = useVoteContract();
 
   const { control, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema)
@@ -36,7 +36,7 @@ const NewProposal = () => {
 
   const onSubmit = async (data) => {
     const metadata = {"description": data.description, "discussion": data.discussURL, "document": data.documentURL};
-    await createProposal(data.title, metadata, data.votingPeriod);
+    await createProposal(data.title, metadata, data.votingPeriod, handleSuccessNewProposal);
   }
 
   return (
@@ -51,6 +51,7 @@ const NewProposal = () => {
           <ProposalMainForm
             control={control}
             errors={errors}
+            loading={loading}
           />
         </Grid>
         <Grid item xs={12} md={4}>
