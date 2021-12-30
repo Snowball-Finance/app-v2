@@ -17,7 +17,6 @@ import { useAPIContext } from 'contexts/api-context';
 import { isEmpty, getBalanceWithRetry } from 'utils/helpers/utility';
 import MESSAGES from 'utils/constants/messages';
 import ANIMATIONS from 'utils/constants/animate-icons';
-// import { NOTIFICATION_WARNING } from 'utils/constants/common';
 import { BNToFloat, floatToBN } from 'utils/helpers/format';
 import { getZapperContract } from 'utils/helpers/getZapperContract';
 import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors';
@@ -30,7 +29,7 @@ import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
 import { CONTRACTS } from 'config';
-// import { useNotification } from 'contexts/notification-context';
+import { useNotification } from 'contexts/notification-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -46,7 +45,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
 
   const { setPopUp } = usePopup();
-  // const { addNewNotification, deleteNotificationByAddress } = useNotification();
+  const { addPartialInvestment } = useNotification();
 
   const [userPools, setUserPools] = useState([]);
   const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
@@ -560,14 +559,10 @@ export function CompoundAndEarnProvider({ children }) {
         setTransactionUpdateLoading(false);
         setSortedUserPools(false);
       }, 2000);
-      // deleteNotificationByAddress(item.address);
     } catch (error) {
-      // if(transactionStatus.depositStep >= 0) {
-      //   addNewNotification({ 
-      //     address: item.address, 
-      //     message: NOTIFICATION_WARNING 
-      //   });
-      // }
+      if(transactionStatus.depositStep >= 0) {
+        addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool', fromContext: true });
+      }
       setPopUp({
         title: 'Transaction Error',
         icon: ANIMATIONS.ERROR.VALUE,

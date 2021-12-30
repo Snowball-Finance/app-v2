@@ -10,7 +10,6 @@ import {
   Divider,
   Typography,
   Chip,
-  Link,
 } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
@@ -28,7 +27,6 @@ import { isEmpty } from 'utils/helpers/utility';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { useAPIContext } from 'contexts/api-context';
 import ANIMATIONS from 'utils/constants/animate-icons';
-import { NOTIFICATION_WARNING } from 'utils/constants/common';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -47,8 +45,7 @@ const useStyles = makeStyles((theme) => ({
 const Notification = () => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { addPartialInvestment } = useNotification();
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, addPartialInvestment } = useNotification();
   const { account, library } = useWeb3React();
   const { gauges } = useContracts();
   const { setPopUp } = usePopup();
@@ -109,23 +106,7 @@ const Notification = () => {
 
   useEffect(() => {
     if (pendingPools.length > 0) {
-      const message = (
-        <>
-          <Grid item xs={12}>
-            <Typography variant="body1">Partial Investment</Typography>
-            <Typography variant="caption">{NOTIFICATION_WARNING}</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Link component="button" variant="body2" onClick={handleReadMore}>
-              Read more
-            </Link>
-          </Grid>
-        </>
-      );
-      setNotifications((prev) => [
-        ...prev,
-        { message, buttonText: 'Fix my pool' },
-      ]);
+      addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool' });
     }
   }, [pendingPools]);
 
@@ -234,30 +215,13 @@ const Notification = () => {
       );
 
       if (!isEmpty(userGauges)) {
-        const message = (
-          <Grid item xs={12}>
-            <Typography variant="body1">Gauge Proxy Upgrade</Typography>
-            <Typography variant="caption">
-              In order to better serve the community{"'"}s desire for more
-              frequent changes in SNOB rewards, we have upgraded to
-              GaugeProxyV2. This will allow us to have much more frequent SNOB
-              reward distribution changes.
-              <br /> <br />
-              Please click the button below to upgrade to GaugeProxyV2 and
-              continue receiving SNOB rewards.
-            </Typography>
-          </Grid>
-        );
         setUpgradingStep({
           total: userGauges.length * 4,
           current: 0,
           pools: userGauges.length,
         });
         setUserGauges(userGauges);
-        setNotifications((prev) => [
-          ...prev,
-          { message, buttonText: 'Upgrade' },
-        ]);
+        addPartialInvestment({ isFixMyPool: false, buttonText: 'Upgrade' });
       } else {
         setUpgradeGauge({ upgrade: false, checked: true });
       }
@@ -479,7 +443,8 @@ const Notification = () => {
           {notifications?.map((item, index) => (
             <NotificationListItem
               key={index}
-              message={item.message}
+              isFixMyPool={item.isFixMyPool}
+              fromContext={item.fromContext}
               buttonText={item.buttonText}
               fixClick={handleFixMyPool}
               readMoreClick={handleReadMore}

@@ -99,7 +99,7 @@ function MyApp({ Component, pageProps }) {
                                   <CssBaseline />
                                   <Layout>
                                     <Component {...pageProps} />
-                                    <GeneralAlerts />
+                                    {/* <GeneralAlerts /> */}
                                   </Layout>
                                 </CompoundAndEarnProvider>
                                 <ToastContainer position={'bottom-right'} />
