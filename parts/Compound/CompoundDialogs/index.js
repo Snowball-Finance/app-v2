@@ -2,7 +2,7 @@ import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Box, CircularProgress, Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -15,7 +15,7 @@ import Details from './Details';
 import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
 import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
-import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption';
 import { usePrices } from 'contexts/price-context';
 
@@ -88,8 +88,6 @@ const CompoundDialogs = ({
   if (!userData) {
     return null;
   }
-
-  const { trackEvent } = useAnalytics()
   const { prices } = usePrices()
 
   const classes = useStyles();
@@ -168,7 +166,7 @@ const CompoundDialogs = ({
       }
     } catch (error) {
       console.log(error);
-      trackEvent(createEvent({
+      analytics.trackEvent(createEvent({
         category: AnalyticCategories.error,
         action: AnalyticActions.wallet,
         name: `submit ${amount}`,

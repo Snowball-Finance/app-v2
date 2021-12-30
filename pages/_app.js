@@ -6,7 +6,6 @@ import { ApolloProvider } from '@apollo/client'
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
 import { DarkModeProvider } from 'contexts/ui-context'
-import { AnalyticsProvider } from 'contexts/analytics'
 import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
@@ -23,11 +22,36 @@ import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
 import { NotficationProvider } from 'contexts/notification-context'
+import { useRouter } from "next/router"
+import { useEffect, useRef } from "react"
+import { analytics } from "utils/analytics"
 
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  const initialized=useRef(false);
   const apolloClient = useApollo(pageProps.initialApolloState);
 
+  useEffect(() => {
+    if (typeof window === undefined) return;
+    if(!(initialized.current)){
+      initialized.current=true;
+      analytics.trackPageView({
+        href: router.pathname,
+      });
+    }
+    const handleRouteChange = (url) => {
+      analytics.trackPageView({
+        href: url,
+      });
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      if (typeof window === undefined) return;
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+  
   return (
     <>
       <Head>
@@ -59,7 +83,6 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
-      <AnalyticsProvider>
         <SnowWeb3Provider>
           <ApolloProvider client={apolloClient}>
             <DarkModeProvider>
@@ -92,7 +115,6 @@ function MyApp({ Component, pageProps }) {
             </DarkModeProvider>
           </ApolloProvider>
         </SnowWeb3Provider>
-      </AnalyticsProvider>
     </>
   )
 }

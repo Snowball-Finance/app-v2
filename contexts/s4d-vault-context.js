@@ -12,10 +12,8 @@ import { getEnglishDateWithTime } from 'utils/helpers/time'
 import { usePopup } from 'contexts/popup-context'
 import { BNToFloat, BNToString, floatToBN } from 'utils/helpers/format'
 import { useCompoundAndEarnContract } from './compound-and-earn-context'
-import { AVALANCHE_MAINNET_PARAMS } from 'utils/constants/connectors'
-import { getBestStaticProvider } from 'utils/helpers/utility'
 import { useProvider } from './provider-context'
-import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics"
+import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics"
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI
 const ContractContext = createContext(null)
@@ -30,9 +28,6 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
-
-  const { trackEvent } = useAnalytics()
-
   const { provider } = useProvider();
   const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
   const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
@@ -467,13 +462,13 @@ export function S4dVaultContractProvider({ children }) {
         setTimeout(() => getBalanceInfosAllPools(), 2000);
         await getInit();
       }
-      trackEvent(createEvent({
+      analytics.trackEvent(createEvent({
         action: AnalyticActions.add,
         category: AnalyticCategories.s4d,
       }))
     } catch (error) {
       console.log('[Error] addLiquidity => ', error)
-      trackEvent(createEvent({
+      analytics.trackEvent(createEvent({
         action: AnalyticActions.s4d,
         name: `${error}`,
         category: AnalyticCategories.error,
