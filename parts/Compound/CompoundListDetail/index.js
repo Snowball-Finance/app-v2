@@ -82,11 +82,9 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
   const handleClaim = async () => {
     toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
     try {
-      if(!item.deprecatedPool){
         await claim(item);
         const userData = await getBalanceInfoSinglePool(item.address);
         setUserData(userData);
-      }
     } catch (error) {
       console.log(error)
     }
