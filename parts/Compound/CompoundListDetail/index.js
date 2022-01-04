@@ -140,7 +140,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 						fullWidth={isSm ? true : false}
 					/>:<></>
 				}
-				{!item.deprecatedPool ?
+				{/* {!item.deprecatedPool ? */}
 					<ContainedButton
 						disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
 						loading={isTransacting.pageview}
@@ -148,9 +148,10 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 						fullWidth={isSm ? true : false}
 					>
 						Claim
-					</ContainedButton>:
+					</ContainedButton>
+					{/* :
 					<div />
-				}
+				} */}
 				<ContainedButton
 					disabled={userData?.userDepositedLP === 0 || userData?.withdrew || !userData}
 					loading={isTransacting.pageview}
