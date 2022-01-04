@@ -126,7 +126,11 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
 
   const withdrawHandler = () => {
     toast(<Toast message={'Withdrawing your Tokens...'} toastType={'processing'} />);
-    withdraw(item, amount ? amount : item.userBalanceSnowglobe, isClaimChecked);
+    if (item.deprecatedPool) {
+      withdraw(item, null, isClaimChecked);
+    } else {
+      withdraw(item, amount ? amount : item.userBalanceSnowglobe, isClaimChecked);
+    }
   };
 
   const claimCheckHandler = (value) => {
@@ -172,7 +176,11 @@ const CompoundWithdrawDialogs = ({ open, title, item, handleClose }) => {
           </Grid>
         </Grid>
       </div>
-      {item?.userBalanceGauge > 0 && <SnowStepBox transactionStatus={transactionStatus} title={title} isStableVault={item?.kind === 'Stablevault'} />}
+      <SnowStepBox
+        isClaimChecked={isClaimChecked}
+        transactionStatus={transactionStatus}
+        title={title}
+        isStableVault={item?.kind === 'Stablevault'} />
     </SnowDialog>
   );
 };
