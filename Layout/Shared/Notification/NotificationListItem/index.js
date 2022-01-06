@@ -10,7 +10,10 @@ import {
 } from '@material-ui/core';
 import WarningIcon from '@material-ui/icons/WarningRounded';
 
-import { NOTIFICATION_WARNING } from 'utils/constants/common';
+import {
+  NOTIFICATION_WARNING,
+  GAUGE_PROXY_WARNING,
+} from 'utils/constants/common';
 
 const useStyles = makeStyles((theme) => ({
   notificationContainer: { cursor: 'pointer' },
@@ -55,14 +58,7 @@ const NotificationListView = ({
     return (
       <Grid item xs={12}>
         <Typography variant="body1">Gauge Proxy Upgrade</Typography>
-        <Typography variant="caption">
-          In order to better serve the community{"'"}s desire for more frequent
-          changes in SNOB rewards, we have upgraded to GaugeProxyV2. This will
-          allow us to have much more frequent SNOB reward distribution changes.
-          <br /> <br />
-          Please click the button below to upgrade to GaugeProxyV2 and continue
-          receiving SNOB rewards.
-        </Typography>
+        <Typography variant="caption">{GAUGE_PROXY_WARNING}</Typography>
       </Grid>
     );
   };
@@ -88,7 +84,7 @@ const NotificationListView = ({
                   color="primary"
                   disableElevation
                   fullWidth
-                  onClick={fixClick}
+                  onClick={() => fixClick(buttonText)}
                 >
                   {buttonText}
                 </Button>

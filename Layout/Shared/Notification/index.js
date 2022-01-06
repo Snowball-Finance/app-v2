@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 const Notification = () => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(false);
   const { notifications, addPartialInvestment } = useNotification();
   const { account, library } = useWeb3React();
   const { gauges } = useContracts();
@@ -55,33 +56,29 @@ const Notification = () => {
   } = getLastSnowballInfo();
 
   //upgrade gaugesv2
-  const [upgradeGauge, setUpgradeGauge] = useState({
-    upgrade: false,
-    checked: false,
-  });
+  const [gaugeStep, setGaugeStep] = useState('fixMyPool');
   const [userGauges, setUserGauges] = useState([]);
   const [upgradingStep, setUpgradingStep] = useState({
-    current: 0,
-    total: 0,
-    pools: 0,
+    fixMyPool: {
+      current: 0,
+      total: 0,
+      pools: 0,
+    },
+    upgrade: {
+      current: 0,
+      total: 0,
+      pools: 0,
+    },
   });
 
   //partial investments
   const [asked, setAsked] = useState(false);
   const [deposited, setDeposited] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
   const [pendingPools, setPendingPools] = useState([]);
   const { userPools, deposit, approve } = useCompoundAndEarnContract();
 
   useEffect(() => {
-    if (
-      !asked &&
-      account &&
-      userPools.length > 0 &&
-      gauges.length > 0 &&
-      upgradeGauge.checked &&
-      !upgradeGauge.upgrade
-    ) {
+    if (!asked && account && userPools.length > 0 && gauges.length > 0) {
       const checkUserPools = async () => {
         if (userPools.length > 0) {
           let pending = [];
@@ -91,77 +88,80 @@ const Notification = () => {
               pending.push(userPools[idx]);
             }
           }
-          setUpgradingStep({
-            total: pending.length * 2,
-            current: 0,
-            pools: pending.length,
-          });
+
+          setUpgradingStep((prev) => ({
+            ...prev,
+            fixMyPool: {
+              total: pending.length * 2,
+              current: 0,
+              pools: pending.length,
+            },
+          }));
           setPendingPools(pending);
           setAsked(true);
         }
       };
       checkUserPools();
     }
-  }, [account, asked, userPools, gauges, upgradeGauge]);
+  }, [account, asked, userPools, gauges]);
 
   useEffect(() => {
     if (pendingPools.length > 0) {
       addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool' });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPools]);
 
-  useEffect(() => {
-    async function fixPools() {
-      if (
-        confirmed &&
-        !deposited &&
-        pendingPools.length > 0 &&
-        pools.length > 0
-      ) {
-        setDeposited(true);
-        for (const idx in pendingPools) {
-          const pool = pools.find((item) => {
-            return (
-              pendingPools[idx].address.toLowerCase() ===
-              item.address.toLowerCase()
-            );
+  const userPoolsFix = async () => {
+    if (!deposited && pendingPools.length > 0 && pools.length > 0) {
+      setDeposited(true);
+      for (const idx in pendingPools) {
+        const pool = pools.find((item) => {
+          return (
+            pendingPools[idx].address.toLowerCase() ===
+            item.address.toLowerCase()
+          );
+        });
+        if (pool) {
+          setUpgradingStep((prev) => {
+            return {
+              ...prev,
+              fixMyPool: {
+                current: prev.fixMyPool.current++,
+                ...prev.fixMyPool,
+              },
+            };
           });
-          if (pool) {
-            setUpgradingStep((prev) => {
-              return {
-                current: prev.current++,
-                ...prev,
-              };
-            });
-            await approve(
-              pool,
-              pendingPools[idx].userBalanceSnowglobe,
-              null,
-              true,
-              false
-            );
-            setUpgradingStep((prev) => {
-              return {
-                current: prev.current++,
-                ...prev,
-              };
-            });
-            await deposit(
-              pool,
-              pendingPools[idx].userBalanceSnowglobe,
-              null,
-              true,
-              false
-            );
-          }
+          await approve(
+            pool,
+            pendingPools[idx].userBalanceSnowglobe,
+            null,
+            true,
+            false
+          );
+          setUpgradingStep((prev) => {
+            return {
+              ...prev,
+              fixMyPool: {
+                current: prev.fixMyPool.current++,
+                ...prev.fixMyPool,
+              },
+            };
+          });
+          await deposit(
+            pool,
+            pendingPools[idx].userBalanceSnowglobe,
+            null,
+            true,
+            false
+          );
         }
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
-    fixPools();
-  }, [confirmed, pendingPools, pools, deposited, approve, deposit]);
+  };
 
   useEffect(() => {
     if (account && !isEmpty(gauges)) {
@@ -215,27 +215,23 @@ const Notification = () => {
       );
 
       if (!isEmpty(userGauges)) {
-        setUpgradingStep({
-          total: userGauges.length * 4,
-          current: 0,
-          pools: userGauges.length,
+        setUpgradingStep((prev) => {
+          return {
+            ...prev,
+            upgrade: {
+              total: userGauges.length * 4,
+              current: 0,
+              pools: userGauges.length,
+            },
+          };
         });
         setUserGauges(userGauges);
         addPartialInvestment({ isFixMyPool: false, buttonText: 'Upgrade' });
-      } else {
-        setUpgradeGauge({ upgrade: false, checked: true });
       }
     } catch (error) {
       console.log('[checkUserBalance] Error => ', error);
     }
   };
-
-  useEffect(() => {
-    if (upgradeGauge.upgrade) {
-      upgradeGaugeProxy2();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [upgradeGauge]);
 
   const upgradeGaugeProxy2 = async () => {
     try {
@@ -255,7 +251,6 @@ const Notification = () => {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error get New Gauge Address from New GaugeProxy`,
           });
-          setUpgradeGauge({ upgrade: false, checked: true });
           return;
         }
 
@@ -285,13 +280,15 @@ const Notification = () => {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`,
           });
-          setUpgradeGauge({ upgrade: false, checked: true });
           return;
         }
         setUpgradingStep((prev) => {
           return {
-            current: prev.current++,
             ...prev,
+            upgrade: {
+              current: prev.upgrade.current++,
+              ...prev.upgrade,
+            },
           };
         });
 
@@ -304,13 +301,15 @@ const Notification = () => {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error claiming from Gauge`,
           });
-          setUpgradeGauge({ upgrade: false, checked: true });
           return;
         }
         setUpgradingStep((prev) => {
           return {
-            current: prev.current++,
             ...prev,
+            upgrade: {
+              current: prev.upgrade.current++,
+              ...prev.upgrade,
+            },
           };
         });
 
@@ -327,13 +326,15 @@ const Notification = () => {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error approving token`,
           });
-          setUpgradeGauge({ upgrade: false, checked: true });
           return;
         }
         setUpgradingStep((prev) => {
           return {
-            current: prev.current++,
             ...prev,
+            upgrade: {
+              current: prev.upgrade.current++,
+              ...prev.upgrade,
+            },
           };
         });
 
@@ -346,13 +347,15 @@ const Notification = () => {
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error depositing token`,
           });
-          setUpgradeGauge({ upgrade: false, checked: true });
           return;
         }
         setUpgradingStep((prev) => {
           return {
-            current: prev.current++,
             ...prev,
+            upgrade: {
+              current: prev.upgrade.current++,
+              ...prev.upgrade,
+            },
           };
         });
       }
@@ -366,7 +369,6 @@ const Notification = () => {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      setUpgradeGauge({ upgrade: false, checked: true });
       console.log('[upgradeGaugeProxy2] Error => ', error);
     }
   };
@@ -379,11 +381,15 @@ const Notification = () => {
     setAnchorEl(null);
   };
 
-  const handleFixMyPool = () => {
-    if (userGauges.length > 0) {
-      setUpgradeGauge({ upgrade: true, checked: true });
+  const handleFixMyPool = (buttonText) => {
+    setConfirmDialog(true);
+    const isUpgradeButton = buttonText === 'Upgrade';
+    if (isUpgradeButton) {
+      setGaugeStep('upgrade');
+      upgradeGaugeProxy2();
     } else {
-      setConfirmed(true);
+      setGaugeStep('fixMyPool');
+      userPoolsFix();
     }
   };
 
@@ -453,19 +459,14 @@ const Notification = () => {
         </List>
       </Popover>
 
-      {(upgradeGauge.upgrade || confirmed) && (
+      {confirmDialog && (
         <UpgradeSteps
-          length={upgradingStep.pools}
-          step={upgradingStep.current}
-          open={upgradeGauge.upgrade || confirmed}
-          totalSteps={upgradingStep.total}
+          open={confirmDialog}
+          length={upgradingStep[gaugeStep].pools}
+          step={upgradingStep[gaugeStep].current}
+          totalSteps={upgradingStep[gaugeStep].total}
           handleClose={() => {
-            setUpgradingStep({ total: 0, current: 0, pools: 0 });
-            if (userGauges.length > 0) {
-              setUpgradeGauge({ upgrade: false, checked: true });
-            } else {
-              setConfirmed(false);
-            }
+            setConfirmDialog(false);
           }}
         />
       )}

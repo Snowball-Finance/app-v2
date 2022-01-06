@@ -6,7 +6,14 @@ const NotficationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
   const addPartialInvestment = ({ isFixMyPool, buttonText, fromContext }) => {
-    setNotifications(() => [{ isFixMyPool, buttonText, fromContext }]);
+    if (fromContext) {
+      setNotifications(() => [{ isFixMyPool, buttonText, fromContext }]);
+    } else {
+      setNotifications((prev) => [
+        ...prev,
+        { isFixMyPool, buttonText, fromContext },
+      ]);
+    }
   };
 
   return (
