@@ -21,6 +21,7 @@ import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
+import { NotficationProvider } from 'contexts/notification-context'
 import { useRouter } from "next/router"
 import { useEffect, useRef } from "react"
 import { analytics } from "utils/analytics"
@@ -89,22 +90,24 @@ function MyApp({ Component, pageProps }) {
                 <ProviderProvider>
                   <WalletProvider>
                     <PopupProvider>
-                      <APIProvider>
-                        <PriceProvider>
-                          <StakingContractProvider>
-                            <ContractProvider>
-                              <CompoundAndEarnProvider>
-                                <CssBaseline />
-                                <Layout>
-                                  <Component {...pageProps} />
-                                  <GeneralAlerts />
-                                </Layout>
-                              </CompoundAndEarnProvider>
-                              <ToastContainer position={'bottom-right'} />
-                            </ContractProvider>
-                          </StakingContractProvider>
-                        </PriceProvider>
-                      </APIProvider>
+                      <NotficationProvider>
+                        <APIProvider>
+                          <PriceProvider>
+                            <StakingContractProvider>
+                              <ContractProvider>
+                                <CompoundAndEarnProvider>
+                                  <CssBaseline />
+                                  <Layout>
+                                    <Component {...pageProps} />
+                                    {/* <GeneralAlerts /> */}
+                                  </Layout>
+                                </CompoundAndEarnProvider>
+                                <ToastContainer position={'bottom-right'} />
+                              </ContractProvider>
+                            </StakingContractProvider>
+                          </PriceProvider>
+                        </APIProvider>
+                      </NotficationProvider>
                     </PopupProvider>
                   </WalletProvider>
                 </ProviderProvider>

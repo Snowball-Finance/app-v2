@@ -29,6 +29,7 @@ import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
 import { CONTRACTS } from 'config';
+import { useNotification } from 'contexts/notification-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -44,6 +45,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
 
   const { setPopUp } = usePopup();
+  const { addPartialInvestment } = useNotification();
 
   const [userPools, setUserPools] = useState([]);
   const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
@@ -558,6 +560,9 @@ export function CompoundAndEarnProvider({ children }) {
         setSortedUserPools(false);
       }, 2000);
     } catch (error) {
+      if(transactionStatus.depositStep >= 0) {
+        addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool', fromContext: true });
+      }
       setPopUp({
         title: 'Transaction Error',
         icon: ANIMATIONS.ERROR.VALUE,
