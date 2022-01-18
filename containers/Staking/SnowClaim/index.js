@@ -70,7 +70,14 @@ const SnowClaim = () => {
             disabled={!claimable}
             onClick={claim}
           >
-            {`Claim ${formatNumber(claimable, 4)} Snowballs`}
+            <Grid container spacing={1} justify='center' alignItems='center'>
+              <Grid item>
+                {`Claim ${formatNumber(claimable, 4)} SNOB`}
+              </Grid>
+              <Grid item>
+                <SnowTokenIcon size={16} token='SNOB'/>
+              </Grid>
+            </Grid>
           </ContainedButton>
           {sherpaClaimable > 0 &&
             <ContainedButton
@@ -79,8 +86,14 @@ const SnowClaim = () => {
               disabled={!sherpaClaimable}
               onClick={sherpaClaim}
             >
-            {`Claim ${formatNumber(sherpaClaimable, 4)} SHERPA`}
-            <SnowTokenIcon size={16} token='SHERPA'/>
+              <Grid container spacing={1} justify='center' alignItems='center'>
+                <Grid item>
+                  {`Claim ${formatNumber(sherpaClaimable, 4)} SHERPA`}
+                </Grid>
+                <Grid item>
+                  <SnowTokenIcon size={16} token='SHERPA'/>
+                </Grid>
+              </Grid>
             </ContainedButton>
           }
           {axialClaimable > 0 &&
@@ -90,8 +103,14 @@ const SnowClaim = () => {
               disabled={!axialClaimable}
               onClick={axialClaim}
             >
-            {`Claim ${formatNumber(axialClaimable, 4)} AXIAL`}
-            <SnowTokenIcon size={16} token='AXLP'/>
+              <Grid container spacing={1} justify='center' alignItems='center'>
+                <Grid item>
+                  {`Claim ${formatNumber(axialClaimable, 4)} AXIAL`}
+                </Grid>
+                <Grid item>
+                  <SnowTokenIcon size={16} token='AXLP'/>
+                </Grid>
+              </Grid>
             </ContainedButton>
           }
         </Grid>
