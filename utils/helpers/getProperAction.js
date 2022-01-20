@@ -4,6 +4,7 @@ import { floatToBN } from './format';
 
 const PangolinURL = 'https://app.pangolin.exchange/#';
 const JoeURL = 'https://www.traderjoexyz.com/#';
+const PlatypusURL = 'https://app.platypus.finance/';
 const AxialURL = 'https://app.axial.exchange/#';
 
 const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, details = false) => {
@@ -24,6 +25,8 @@ const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, deta
 		action = ["Details", () => { }]
 	} else if (balance > 0) {
 		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })];
+	} else if (item.source == "Platypus") {
+		action = ["Get_Token", () => { window.open(`${PlatypusURL}/pool`) }];
 	} else if (item.name == "xJOE") {
 		action = ["Get_xJoe", () => { window.open(`${JoeURL}/stake`) }];
 	} else if (!item.token1?.address && item.symbol !== "AXLP") {

@@ -31,6 +31,10 @@ export const POOLS = [
     label: 'Trader Joe Pools',
   },
   {
+    value: 'platypus',
+    label: 'Platypus Pools',
+  },
+  {
     value: 'banker',
     label: 'Banker Joe Pools',
   },
