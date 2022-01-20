@@ -147,11 +147,13 @@ export function CompoundAndEarnProvider({ children }) {
                 ? 'QLP'
                 : pool.source === 'AAVE'
                   ? 'ALP'
-                  : pool.source === 'Pangolin'
-                    ? 'PGL'
-                    : pool.source === 'Axial'
-                      ? 'AXLP'
-                      : 'SNOB',
+                  : pool.source === 'Platypus'
+                    ? 'PLP'
+                    : pool.source === 'Pangolin'
+                      ? 'PGL'
+                      : pool.source === 'Axial'
+                        ? 'AXLP'
+                        : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -724,8 +726,6 @@ export function CompoundAndEarnProvider({ children }) {
             }
           }
         }
-      } else {
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {
