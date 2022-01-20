@@ -40,12 +40,6 @@ const Footer = () => {
   return (
     <footer className={classes.root}>
       <div className={classes.rowContainer}>
-        <Typography
-          variant='body2'
-          color='textPrimary'
-        >
-          Powered by
-        </Typography>
         <div className={classes.powerImage}>
           <Image
             alt='power-by'

@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme) => ({
 
 const ProposalMainForm = ({
   control,
-  errors
+  errors,
+  loading
 }) => {
   const classes = useStyles()
   const { snowconeBalance } = useContracts()
@@ -83,6 +84,7 @@ const ProposalMainForm = ({
             type='submit'
             color='primary'
             disabled={snowconeBalance < minimumForProposal}
+            loading={loading}
             className={classes.button}
           >
             Submit
