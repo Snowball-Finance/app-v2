@@ -29,6 +29,7 @@ import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
 import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
 import { CONTRACTS } from 'config';
+import { useNotification } from 'contexts/notification-context';
 
 const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
@@ -47,6 +48,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = snowballInfoQuery;
 
   const { setPopUp } = usePopup();
+  const { addPartialInvestment } = useNotification();
 
   const [userPools, setUserPools] = useState([]);
   const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
@@ -148,11 +150,13 @@ export function CompoundAndEarnProvider({ children }) {
                 ? 'QLP'
                 : pool.source === 'AAVE'
                   ? 'ALP'
-                  : pool.source === 'Pangolin'
-                    ? 'PGL'
-                    : pool.source === 'Axial'
-                      ? 'AXLP'
-                      : 'SNOB',
+                  : pool.source === 'Platypus'
+                    ? 'PLP'
+                    : pool.source === 'Pangolin'
+                      ? 'PGL'
+                      : pool.source === 'Axial'
+                        ? 'AXLP'
+                        : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -561,6 +565,9 @@ export function CompoundAndEarnProvider({ children }) {
         setSortedUserPools(false);
       }, 2000);
     } catch (error) {
+      if(transactionStatus.depositStep >= 0) {
+        addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool', fromContext: true });
+      }
       setPopUp({
         title: 'Transaction Error',
         icon: ANIMATIONS.ERROR.VALUE,
@@ -722,8 +729,6 @@ export function CompoundAndEarnProvider({ children }) {
             }
           }
         }
-      } else {
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {
@@ -766,7 +771,8 @@ export function CompoundAndEarnProvider({ children }) {
         try {
           if (item.deprecatedPool) {
             item.withdrew = true;
-          } else {
+          } 
+          
             if (allowClaim) {
               await claim(item, true);
               setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
@@ -778,7 +784,7 @@ export function CompoundAndEarnProvider({ children }) {
               setTransactionUpdateLoading(false);
               setSortedUserPools(false);
             }, 2000);
-          }
+          
         } catch (error) {
           console.log(error);
         }
@@ -848,7 +854,6 @@ export function CompoundAndEarnProvider({ children }) {
         icon: ANIMATIONS.ERROR.VALUE,
         text: `Error claiming from Gauge ${error.message}`,
       });
-      return;
     }
     if (!withdraw) {
       setIsTransacting({ pageview: false });
