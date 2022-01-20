@@ -86,7 +86,8 @@ export function VoteContractProvider({ children }) {
 const createProposal = useCallback(async (
   title,
   metadata,
-  votingPeriod
+  votingPeriod,
+  newProposalCallback
 ) => {
   if (!account) {
     setPopUp({
@@ -176,7 +177,8 @@ const createProposal = useCallback(async (
       setPopUp({
         title: 'Success',
         icon: ANIMATIONS.SUCCESS.VALUE,
-        text: `Your proposal was submitted successfully`
+        text: `Your proposal was submitted successfully`,
+        confirmAction: newProposalCallback
       })
     }
   }

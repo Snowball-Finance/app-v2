@@ -44,8 +44,6 @@ const WalletModal = ({
   onClose,
   onConnectWallet
 }) => {
-
-  const { trackEvent } = useAnalytics()
   useEffect(() => {
     if (open) {
       trackEvent(createEvent({

@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import { memo } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Hidden, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'

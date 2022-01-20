@@ -15,7 +15,8 @@ const LINKS = Object.freeze({
   },
   S4D_VAULT: {
     TITLE: 's4D Vault',
-    HREF: '/s4d-vault'
+    HREF: '/s4d-vault',
+    IS_DEPRECATED: true
   },
   AXIAL: {
     TITLE: 'Axial',

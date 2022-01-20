@@ -45,8 +45,6 @@ const SubMenuTabs = ({
   className
 }) => {
   const classes = useStyles();
-  const { trackEvent } = useAnalytics()
-
   const buttonHandler = (value) => () => {
     setSelectedTab(value)
     trackEvent(createEvent({

@@ -84,8 +84,6 @@ const CompoundAndEarn = () => {
   const { snowballBalance, gauges, snowconeBalance } = useContracts();
   const { prices } = usePrices();
 
-  const { trackEvent } = useAnalytics()
-
   const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   const addMetamask = async () => {

@@ -44,18 +44,20 @@ const useStyles = makeStyles(theme => ({
 
 const Details = ({ item, amount, error, inputHandler }) => {
   const classes = useStyles();
-  const token0 = item.token0.address;
-  const token1 = item.token1.address;
-  const token2 = item.token2.address;
-  const token3 = item.token3.address;
+  const token0 = item?.token0?.address;
+  const token1 = item?.token1?.address;
+  const token2 = item?.token2?.address;
+  const token3 = item?.token3?.address;
   const dexTokenName = item.symbol == 'S4D' ? 'SNOB' : item.symbol;
 
   return (
     <>
       <div className={classes.pairContainer}>
-        <div>
-          <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
-        </div>
+        {!item.deprecatedPool &&
+          <div>
+            <SnowPairsIcon pairsIcon={[token0, token1, token2, token3]} size={50} />
+          </div>
+        }
         <div className={classes.pairText}>
           <Typography variant='h6'>{item.name}</Typography>
         </div>

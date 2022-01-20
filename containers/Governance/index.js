@@ -25,6 +25,10 @@ const Governance = () => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState(VOTE_TABS.active.VALUE)
 
+  const handleSuccessNewProposal = () => {
+    setSelectedTab(VOTE_TABS.active.VALUE);
+  }
+
   return (
     <main className={classes.root}>
       <PageHeader
@@ -39,7 +43,11 @@ const Governance = () => {
       />
       {selectedTab === VOTE_TABS.active.VALUE && <ActiveProposals />}
       {selectedTab === VOTE_TABS.all.VALUE && <AllProposals />}
-      {selectedTab === VOTE_TABS.newProposal.VALUE && <NewProposal />}
+      {selectedTab === VOTE_TABS.newProposal.VALUE && (
+        <NewProposal
+          handleSuccessNewProposal={handleSuccessNewProposal}
+        />
+      )}
     </main>
   )
 }

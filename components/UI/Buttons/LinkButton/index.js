@@ -29,9 +29,6 @@ const LinkButton = ({
   children
 }) => {
   const classes = useStyles();
-
-  const { trackEvent } = useAnalytics()
-
   const handleClick = (e) => {
     trackEvent(createEvent({ action: AnalyticActions.click, category: AnalyticCategories.link, value: href ? href : '' }))
     onClick && onClick(e)

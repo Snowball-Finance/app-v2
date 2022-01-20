@@ -30,9 +30,6 @@ const tokenArray = [
 const pairNames = 'DAI.e + FRAX + TUSD + USDT.e'
 
 export function S4dVaultContractProvider({ children }) {
-
-  const { trackEvent } = useAnalytics()
-
   const { provider } = useProvider();
   const unsignedS4dContract = new ethers.Contract(CONTRACTS.S4D.TOKEN, ERC20_ABI, provider)
   const unsignedDaiContract = new ethers.Contract(CONTRACTS.S4D.DAI, ERC20_ABI, provider)
