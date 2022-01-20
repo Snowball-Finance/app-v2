@@ -83,6 +83,7 @@ const CompoundAndEarn = () => {
   const [pendingHarvest, setPendingHarvest] = useState({});
   const { snowballBalance, gauges, snowconeBalance } = useContracts();
   const { prices } = usePrices();
+
   const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
 
   const addMetamask = async () => {

@@ -1,7 +1,7 @@
 
 import React, { memo } from 'react'
 import Link from 'next/link'
-import { AnalyticActions, AnalyticCategories, analytics, createEvent } from "utils/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
 
 
 const ButtonLink = React.forwardRef(({
@@ -13,7 +13,6 @@ const ButtonLink = React.forwardRef(({
   target,
   onClick,
 }, ref) => {
-
   const handleClick = (e) => {
     analytics.trackEvent(createEvent({ action: AnalyticActions.click, category: AnalyticCategories.link, value: href }))
     onClick && onClick(e)

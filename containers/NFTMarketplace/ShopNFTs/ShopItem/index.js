@@ -84,8 +84,15 @@ const ShopItem = ({
     return () => clearTimeout(timer)
   }, [])
 
-  const handleOnClick = () => {
-    window.open(nft?.fullSize);
+  const drawImage = () => {
+    return (
+      <Image
+        alt='NFT Image'
+        src={nft?.imgUrl || NO_IMAGE_PATH}
+        objectFit='contain'
+        layout='fill'
+      />
+    )
   }
 
   return (
@@ -103,13 +110,9 @@ const ShopItem = ({
               <source src={nft?.imgUrl || NO_IMAGE_PATH} type='video/mp4' />
             </video>:
             <div className={classes.image}>
-              <Image
-                alt='NFT Image'
-                src={nft?.imgUrl || NO_IMAGE_PATH}
-                objectFit='contain'
-                layout='fill'
-                onClick={() =>{ nft?.fullSize ? handleOnClick() : null}}
-              />
+            {nft?.fullSize ? <a href={nft?.fullSize}> 
+              {drawImage()}
+            </a>: drawImage() }
             </div>
           }
         </Grid>

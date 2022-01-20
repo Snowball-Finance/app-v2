@@ -97,7 +97,6 @@ const CreateLock = () => {
   }, [watchAllFields?.date])
 
   const logSubmit = () => {
-
     analytics.trackEvent(createEvent({
       action: AnalyticActions.click,
       category: AnalyticCategories.formSubmit,

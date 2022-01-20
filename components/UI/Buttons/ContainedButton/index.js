@@ -5,7 +5,7 @@ import { Button, CircularProgress } from '@material-ui/core'
 import clsx from 'clsx'
 
 import ButtonLink from 'components/UI/Buttons/ButtonLink'
-import { AnalyticActions, AnalyticCategories, analytics, createEvent } from "utils/analytics"
+import { AnalyticActions, AnalyticCategories, createEvent,analytics } from "utils/analytics"
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -2,7 +2,7 @@ import { memo, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Box, CircularProgress, Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import Toast from 'components/Toast';
@@ -88,7 +88,6 @@ const CompoundDialogs = ({
   if (!userData) {
     return null;
   }
-
   const { prices } = usePrices()
 
   const classes = useStyles();
@@ -114,7 +113,7 @@ const CompoundDialogs = ({
   })
 
   const { approve, deposit, isTransacting, transactionStatus, calculateSwapAmountOut,
-    setTransactionStatus } = useCompoundAndEarnContract();
+  setTransactionStatus } = useCompoundAndEarnContract();
   const { AVAXBalance } = useContracts();
 
   useEffect(() => {
@@ -262,52 +261,53 @@ const CompoundDialogs = ({
       : state.selectedToken.address;
 
     return (
-      state.priceImpact < 5 && state.amount > 0 ?
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <ContainedButton
-              className={classes.modalButton}
-              disableElevation
-              fullWidth
-              disabled={enabledHandler(true)}
-              loading={isTransacting.approve}
-              onClick={() => {
-                handleApproveClick()
-              }}
-            >
-              Approve
-            </ContainedButton>
-          </Grid>
-          <Grid item xs={6}>
-            <ContainedButton
-              className={classes.modalButton}
-              disableElevation
-              fullWidth
-              disabled={enabledHandler(false)}
-              loading={isTransacting.deposit}
-              onClick={() => {
-                deposit(
-                  userData, //general user data
-                  state.amount, //amount to deposit
-                  addressToZap,
-                  false, //onlygauge
-                  state.selectedToken.address === "0x0", //is native avax
-                  state.slippage, //zappers slippage
-                )
-              }
-              }
-            >
-              Deposit
-            </ContainedButton>
-          </Grid>
-        </Grid> : null)
+    state.priceImpact < 5 && state.amount > 0 ? 
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <ContainedButton
+            className={classes.modalButton}
+            disableElevation
+            fullWidth
+            disabled={enabledHandler(true)}
+            loading={isTransacting.approve}
+            onClick={() => {
+              handleApproveClick()
+            }}
+          >
+            Approve
+          </ContainedButton>
+        </Grid>
+        <Grid item xs={6}>
+          <ContainedButton
+            className={classes.modalButton}
+            disableElevation
+            fullWidth
+            disabled={enabledHandler(false)}
+            loading={isTransacting.deposit}
+            onClick={() => {
+              deposit(
+                userData, //general user data
+                state.amount, //amount to deposit
+                addressToZap,
+                false, //onlygauge
+                state.selectedToken.address === "0x0", //is native avax
+                state.slippage, //zappers slippage
+              )
+            }
+            }
+          >
+            Deposit
+          </ContainedButton>
+        </Grid>
+      </Grid> : null) 
   }
 
-  return (
-    <SnowDialog
+return (
+  <SnowDialog
     open={open}
     title={title}
     onClose={() => handleClose()}
+
     dialogClass={classes.dialog}
     dialogTitleClass={classes.dialogTitle}
     titleTextClass={classes.dialogTitleText}
@@ -315,42 +315,43 @@ const CompoundDialogs = ({
   >
       <>	<Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
-            <Details
-              {...{
-                userData,
-              }}
-              selectedToken={state.selectedToken}
-              tokens={state.tokens}
-              amount={state.inputAmount}
-              onTokenChange={handleTokenChange}
-              inputHandler={handleInputChange}
-              error={state.error}
-            />
 
-            <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-            {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
-              pool={pool}
-              userData={state.userData}
-              tokens={state.tokens} //we still need to filter the lptoken out
-              selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
-              activeToken={state.selectedToken}
-              swapAmountOut={state.tokensSwapOut} />}
-            <AdvancedTransactionOption
-              handleInfiniteApproval={handleInfiniteApproval}
-              handleSlippage={handleSlippage}
-              handleShow={handleShowAdvanced}
-              state={state}
-            />
-            {state.priceImpact > 1 && state.amount > 0 &&
-              <Grid className={classes.linedContainer} marginTop={2}>
-                <Box justifyContent="center" display="flex" className={classes.warningBox} >
-                  WARNING!! Price Impact too High!! {`${state.priceImpact.toFixed(2)}%`}
-                </Box>
-              </Grid>}
-            <div className={classes.buttonContainer}>
-              {renderButton()}
-            </div>
+          <Details
+            {...{
+              userData,
+            }}
+            selectedToken={state.selectedToken}
+            tokens={state.tokens}
+            amount={state.inputAmount}
+            onTokenChange={handleTokenChange}
+            inputHandler={handleInputChange}
+            error={state.error}
+          />
+
+          <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
+          {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
+            pool={pool}
+            userData={state.userData}
+            tokens={state.tokens} //we still need to filter the lptoken out
+            selectedTokenWithAmount={{ ...state.selectedToken, amount: state.inputAmount }}
+            activeToken={state.selectedToken}
+            swapAmountOut={state.tokensSwapOut} />}
+          <AdvancedTransactionOption
+            handleInfiniteApproval={handleInfiniteApproval}
+            handleSlippage={handleSlippage}
+            handleShow={handleShowAdvanced}
+            state={state}
+          />
+          {state.priceImpact > 1 && state.amount > 0 &&
+          <Grid className={classes.linedContainer} marginTop={2}>
+            <Box justifyContent="center" display="flex" className={classes.warningBox} > 
+              WARNING!! Price Impact too High!! {`${state.priceImpact.toFixed(2)}%`} 
+            </Box>
+          </Grid>} 
+          <div className={classes.buttonContainer}>
+            {renderButton()}
           </div>
+        </div>
         <div className={classes.mt1}>
           <SnowStepBox
             transactionStatus={transactionStatus}

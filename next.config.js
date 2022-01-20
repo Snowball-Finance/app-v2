@@ -10,6 +10,7 @@ module.exports = {
     DEVAPIADDR: process.env.DEVAPIADDR,
     ANALYTICS_ENDPOINT: process.env.ANALYTICS_ENDPOINT,
     ANALYTICS_SITE_ID: process.env.ANALYTICS_SITE_ID,
+
   },
   webpack: (config, { dev }) => {
     if (dev) {

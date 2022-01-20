@@ -2,8 +2,7 @@ import { memo } from 'react'
 import { Grid } from '@material-ui/core'
 
 import { useS4dVaultContracts } from 'contexts/s4d-vault-context'
-import PanelLayout, { usePanelStyles } from 'containers/StableVault/Shared/PanelLayout'
-import AddLiquidityForm from 'containers/StableVault/Shared/AddLiquidityForm'
+import { usePanelStyles } from 'containers/StableVault/Shared/PanelLayout'
 import ShareCard from 'containers/StableVault/Shared/ShareCard'
 import CurrencyReserves from 'containers/StableVault/Shared/CurrencyReserves'
 
@@ -16,23 +15,11 @@ const LiquidityPanel = ({
     tokenArray,
     tokenValues,
     totalSupply,
-    getDepositReview,
     getWithdrawAmount,
     removeLiquidity,
-    addLiquidity
   } = useS4dVaultContracts();
 
   return (
-    <PanelLayout>
-      <Grid item xs={12} md={6} className={classes.leftCard}>
-        <AddLiquidityForm
-          vault={vault}
-          tokenValues={tokenValues}
-          tokenArray={tokenArray}
-          getDepositReview={getDepositReview}
-          addLiquidity={addLiquidity}
-        />
-      </Grid>
       <Grid item xs={12} md={6}>
         <Grid container spacing={3}>
           <Grid item xs={12} className={classes.rightCard}>
@@ -53,7 +40,6 @@ const LiquidityPanel = ({
           </Grid>
         </Grid>
       </Grid>
-    </PanelLayout>
   )
 }
 
