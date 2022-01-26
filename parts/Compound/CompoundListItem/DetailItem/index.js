@@ -15,6 +15,7 @@ import {
   BOOST_INFO_IMAGE_PATH,
   SNOB_LOCK_IMAGE_PATH,
 } from 'utils/constants/image-paths';
+import OptimizedTooltip from '../OptimizedTooltip';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -61,13 +62,21 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
         <Grid item xs={8} lg={2} xl={3}>
           <Grid container direction={isSm ? 'row' : 'column'}>
             <Grid item xs={6} xl={6} md={12} lg={12}>
-              <Typography variant="subtitle2">{item.name}</Typography>
+              <Typography variant="subtitle2">{item.name} {dexTokenName === 'OLP' && <>🔥</>}</Typography>
             </Grid>
             <Grid item xs={6} xl={6} md={12} lg={12}>
               <Tags type={dexTokenName}>
                 <Box display='flex' alignItems='center'>
                   <SnowTokenIcon size={12} token={dexTokenName} />
                   &nbsp;&nbsp;{item.source}
+                  {dexTokenName === 'OLP' && 
+                    <>
+                      &nbsp;&nbsp;
+                      <CustomPopover contentClassName={classes.popover}>
+                        <OptimizedTooltip />
+                      </CustomPopover>
+                    </>
+                  }
                 </Box>
               </Tags>
             </Grid>
