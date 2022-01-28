@@ -55,11 +55,12 @@ export function VoteContractProvider({ children }) {
         const newProposals = []
         for (let i = 0; i < dif; i++) {
           const newIdx = ((proposalsInstance[0].index) + i) + 1
-          const tmp = await fetchProposalFromBlockchainByIndex(newIdx)
+          const tmp = await fetchProposalFromBlockchainByIndex(newIdx - offset)
           const proposal = { ...tmp }
           const tmpProposal = await parseProposalFromRawBlockchainResponse({item:proposal})
           tmpProposal.index = newIdx
           tmpProposal.state = 'Active'
+          tmpProposal.offset = newIdx - offset
           newProposals.unshift(tmpProposal)
         }
         setAllProposals([...newProposals, ...proposalsInstance])
@@ -149,8 +150,7 @@ export function VoteContractProvider({ children }) {
 
     setLoading(true)
     try {
-      const { origin } = proposal;
-      const governanceContract = new ethers.Contract(origin, GOVERNANCE_ABI, library.getSigner())
+      const governanceContract = new ethers.Contract(CONTRACTS.VOTE.GOVERNANCE_V2, GOVERNANCE_ABI, library.getSigner())
       const proposalVote = await governanceContract.vote(proposal.offset, isFor)
       const transactionVote = await proposalVote.wait(1)
 
