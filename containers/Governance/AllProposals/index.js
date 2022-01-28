@@ -1,5 +1,5 @@
 
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 import { Grid, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -8,6 +8,7 @@ import VoteHandHeader from 'parts/Vote/VoteHandHeader'
 import XSnowballCard from 'parts/Vote/XSnowballCard'
 import ProposalItem from 'parts/Vote/ProposalItem'
 import { isEmpty } from 'utils/helpers/utility'
+import { BigNumber } from "ethers"
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -15,6 +16,8 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: theme.custom.layout.maxDesktopWidth,
   }
 }));
+
+
 
 const AllProposals = () => {
   const classes = useStyles();
@@ -39,11 +42,11 @@ const AllProposals = () => {
             <Typography variant='h6' align='center'>
               No Proposals
             </Typography>
-          </Grid>         
+          </Grid>
         )
         : proposals.map((proposal, index) => (
           <Grid key={index} item xs={12}>
-            <ProposalItem proposal={proposal} />
+            <ProposalItem proposal={proposal}   />
           </Grid>
         ))
       }
