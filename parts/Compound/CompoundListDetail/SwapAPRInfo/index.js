@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SwapAPRInfo = ({}) => {
+const SwapAPRInfo = ({ yearlySwapFees }) => {
   const classes = useStyles();
 
   return (
@@ -31,7 +31,7 @@ const SwapAPRInfo = ({}) => {
             </Grid>
             <Grid item>
               <CustomPopover contentClassName={classes.popover}>
-                  <SwapAPRTooltip />
+                <SwapAPRTooltip />
               </CustomPopover>
             </Grid>
           </Grid>
@@ -39,7 +39,7 @@ const SwapAPRInfo = ({}) => {
 
         <Grid item>
           <Typography variant="subtitle2" className={classes.percentValue}>
-            0.05%
+            {yearlySwapFees?.toFixed(2)}%
           </Typography>
         </Grid>
       </Grid>
