@@ -14,21 +14,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TotalAPYTooltip = () => {
+const SwapAPRTooltip = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.info}>
-      <Typography>
-        {`
-        Total APY includes the Compounded APY, which accrues in the form of LP
-        tokens, the SNOB APR, which accrues in the form of Snowball tokens and
-        Swap APR which increase the ratio of LP's distributed by the underlying
-        protocol.
-        `}
+      <Typography variant="body1">
+        Swap APR is the return you receive from the liquidity you provided being
+        used in trades. Swap APR takes the form of your LP tokens being
+        redeemable for more of the underlying assets.
       </Typography>
     </div>
   );
 };
 
-export default memo(TotalAPYTooltip);
+export default memo(SwapAPRTooltip);

@@ -14,6 +14,7 @@ import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import { useContracts } from 'contexts/contract-context';
+import SwapAPRInfo from './SwapAPRInfo';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -106,14 +107,23 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				alignItems="flex-start"
 				spacing={2}
 			>
-				{!item.deprecatedPool && <Grid item xs={12} lg={4}>
-					<ApyCalculation
-						kind={item.kind}
-						dailyAPR={dailyAPR}
-						weeklyAPY={weeklyAPY}
-						yearlyAPY={yearlyAPY}
-					/>
-				</Grid>}
+				<Grid item xs={12} lg={4}>
+					<Grid container spacing={2}>
+						{!item.deprecatedPool && (
+							<Grid item xs={12}>	 
+								<ApyCalculation
+									kind={item.kind}
+									dailyAPR={dailyAPR}
+									weeklyAPY={weeklyAPY}
+									yearlyAPY={yearlyAPY}
+								/>
+							</Grid>
+						)}
+						<Grid item xs={12}>
+							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />
+						</Grid>
+					</Grid>
+				</Grid>
 				<Grid item xs={12} lg={4}>
 					<SnobApyCalculation
 						kind={item.kind}
