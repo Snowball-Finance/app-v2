@@ -107,17 +107,24 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				alignItems="flex-start"
 				spacing={2}
 			>
-				{!item.deprecatedPool && <Grid item xs={12} lg={4}>
-					<ApyCalculation
-						kind={item.kind}
-						dailyAPR={dailyAPR}
-						weeklyAPY={weeklyAPY}
-						yearlyAPY={yearlyAPY}
-					/>
-				</Grid>}
 				<Grid item xs={12} lg={4}>
-					<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />
-					
+					<Grid container spacing={2}>
+						{!item.deprecatedPool && (
+							<Grid item xs={12}>	 
+								<ApyCalculation
+									kind={item.kind}
+									dailyAPR={dailyAPR}
+									weeklyAPY={weeklyAPY}
+									yearlyAPY={yearlyAPY}
+								/>
+							</Grid>
+						)}
+						<Grid item xs={12}>
+							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />
+						</Grid>
+					</Grid>
+				</Grid>
+				<Grid item xs={12} lg={4}>
 					<SnobApyCalculation
 						kind={item.kind}
 						isDeprecated={item.deprecatedPool}

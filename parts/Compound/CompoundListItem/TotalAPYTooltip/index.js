@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme) => ({
     width: 400,
     padding: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
-      width: 350
-    }
+      width: 350,
+    },
   },
 }));
 
@@ -19,7 +19,14 @@ const TotalAPYTooltip = () => {
 
   return (
     <div className={classes.info}>
-      <Typography>Total APY includes the Compounded APY, which accrues in the form of LP tokens and the SNOB APR, which accrues in the form of Snowball tokens.</Typography>
+      <Typography>
+        {`
+        Total APY includes the Compounded APY, which accrues in the form of LP
+        tokens, the SNOB APR, which accrues in the form of Snowball tokens and
+        Swap APR which increase the ratio of LP's distributed by the underlying
+        protocol.
+        `}
+      </Typography>
     </div>
   );
 };

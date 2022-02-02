@@ -18,7 +18,7 @@ const SwapAPRInfo = ({ yearlySwapFees }) => {
   const classes = useStyles();
 
   return (
-    <Box mb={3}>
+    <Box>
       <Typography variant="subtitle1" className={classes.boldSubtitle}>
         Swap APR Information
       </Typography>
@@ -27,7 +27,7 @@ const SwapAPRInfo = ({ yearlySwapFees }) => {
         <Grid item>
           <Grid container spacing={1} alignItems="center">
             <Grid item>
-              <Typography variant="body2">SWAP APR</Typography>
+              <Typography variant="body2">Swap APR</Typography>
             </Grid>
             <Grid item>
               <CustomPopover contentClassName={classes.popover}>
