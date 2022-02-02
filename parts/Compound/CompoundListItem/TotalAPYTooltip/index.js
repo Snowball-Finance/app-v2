@@ -22,8 +22,8 @@ const TotalAPYTooltip = () => {
       <Typography>
         {`
         Total APY includes the Compounded APY, which accrues in the form of LP
-        tokens, the SNOB APR, which accrues in the form of Snowball tokens and
-        Swap APR which increase the ratio of LP's distributed by the underlying
+        tokens, the SNOB APR, which accrues in the form of Snowball tokens, and
+        Swap APR, which increase the ratio of LP's distributed by the underlying
         protocol.
         `}
       </Typography>
