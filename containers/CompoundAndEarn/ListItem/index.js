@@ -149,7 +149,7 @@ const ListItem = ({
 
   const totalAPY = useMemo(() => {
     if (pool.gaugeInfo) {
-      let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+      let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY + pool.yearlySwapFees;
       total = total > 999999 ? 999999 : total
       return total
     } else {
