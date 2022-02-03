@@ -10,6 +10,7 @@ import { useAPIContext } from './api-context'
 import MESSAGES from 'utils/constants/messages';
 import { minimumForProposal, minimumVotingPeriod, maximumVotingPeriod } from 'utils/constants/voting-limits'
 import ANIMATIONS from 'utils/constants/animate-icons'
+import { useProvider } from './provider-context'
 
 const ContractContext = createContext(null);
 const offset = 7
@@ -22,8 +23,9 @@ export function VoteContractProvider({ children }) {
   const [allProposals, setAllProposals] = useState([]);
 
   const { getProposalList } = useAPIContext();
+  const { provider } = useProvider();
   const { data: { ProposalList: { proposals = [], proposalCount = 0, quorumVotes = 0 } = {} } = {} } = getProposalList()
-  const governanceV2Contract = useMemo(() => library ? new ethers.Contract(CONTRACTS.VOTE.GOVERNANCE_V2, GOVERNANCE_ABI, library.getSigner()) : null, [library])
+  const governanceV2Contract = useMemo(() => new ethers.Contract(CONTRACTS.VOTE.GOVERNANCE_V2, GOVERNANCE_ABI, library ? library.getSigner() : provider), [library])
   const getProposalFromBlockchain = useMemo(() => governanceV2Contract?.proposals, [governanceV2Contract]);
   const numberOfProposals = useMemo(() => governanceV2Contract?.proposalCount, [governanceV2Contract]);
   const fetchProposalFromBlockchainByIndex = async (index) => {
