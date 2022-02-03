@@ -40,33 +40,33 @@ const LINKS = Object.freeze({
   },
   DOCS: {
     TITLE: 'Docs',
-    HREF: 'https://snowballs.gitbook.io/snowball-docs/',
+    HREF: 'https://docs.snowball.network',
     IS_EXT_LINK: true
   },
   GITBOOK_DOCS: {
     COMMUNITY_PROPOSALS: {
       TITLE: 'Proposals',
-      HREF: 'https://snowballs.gitbook.io/snowball-docs/governance/community-proposals',
+      HREF: 'https://docs.snowball.network/governance/community-proposals',
       IS_EXT_LINK: true
     },
     COMPOUNDING: {
       TITLE: 'Compounding',
-      HREF: 'https://snowballs.gitbook.io/snowball-docs/products/compounding#the-benefits-of-compounding-with-snowball',
+      HREF: 'https://docs.snowball.network/our-products/compounding',
       IS_EXT_LINK: true
     },
     REWARD_BOOSTING: {
       TITLE: 'Reward Boosting',
-      HREF: 'https://snowballs.gitbook.io/snowball-docs/governance/xsnob/reward-boosting',
+      HREF: 'https://docs.snowball.network/governance/xsnob/reward-boosting',
       IS_EXT_LINK: true
     },
     DEFI_UNIVERSITY: {
       TITLE: 'Defi University',
-      HREF: 'https://snowballs.gitbook.io/snowball-docs/defi-university',
+      HREF: 'https://docs.snowball.network/defi-university',
       IS_EXT_LINK: true
     },
     VOTE_ON_GAUGES: {
       TITLE: 'Vote on Gauges',
-      HREF: 'https://snowballs.gitbook.io/snowball-docs/resources/guides/voting-on-gauges-with-xsnob',
+      HREF: 'https://docs.snowball.network/resources/guides/voting-on-gauges-with-xsnob',
       IS_EXT_LINK: true
     }
   },
