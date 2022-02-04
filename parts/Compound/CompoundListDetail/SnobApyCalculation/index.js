@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, userData }) => {
+const SnobApyCalculation = ({ kind, isDeprecated, boostedSnobAPR, unboostedSnobAPR , totalAPY, userBoost, userData }) => {
   const classes = useStyles();
 
   return (
@@ -57,12 +57,12 @@ const SnobApyCalculation = ({ kind, isDeprecated, snobAPR, totalAPY, userBoost, 
         <div className={classes.container}>
           <Typography variant="body2">SNOB APR&nbsp;</Typography>
           <CustomPopover contentClassName={classes.popover}>
-            <SnobAPYTooltip />
+            <SnobAPYTooltip boostedSnobAPR={boostedSnobAPR} unboostedSnobAPR={unboostedSnobAPR}/>
           </CustomPopover>
-          <Typography variant="subtitle2" className={classes.percentValue}>{snobAPR?.toFixed(2)}%</Typography>
+          <Typography variant="subtitle2" className={classes.percentValue}>{boostedSnobAPR?.toFixed(2)}%</Typography>
         </div>
         <div className={classes.container}>
-          <Typography variant="body2">Boost</Typography>
+          <Typography variant="body2">xSNOB Boost</Typography>
           <Typography variant="subtitle2">{userBoost}</Typography>
         </div>
         <div className={classes.container}>
