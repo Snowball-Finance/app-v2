@@ -17,7 +17,7 @@ const SOCIALS = Object.freeze({
     LABEL: 'discord link'
   },
   DOC: {
-    HREF: 'https://snowballs.gitbook.io/snowball-docs',
+    HREF: 'https://docs.snowball.network',
     LABEL: 'doc link'
   },
 })
