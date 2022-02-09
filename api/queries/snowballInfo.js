@@ -31,6 +31,7 @@ const LAST_SNOWBALL_INFO = gql`
         pricePoolToken
         deprecated
         yearlySwapFees
+        metaToken
         token0{
           address
           name
