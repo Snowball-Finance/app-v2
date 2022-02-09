@@ -320,6 +320,7 @@ return (
             {...{
               userData,
             }}
+            vaultToken={state.userData.vaultToken}
             selectedToken={state.selectedToken}
             tokens={state.tokens}
             amount={state.inputAmount}
@@ -329,7 +330,7 @@ return (
           />
 
           <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-          {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
+          {!userData.metaToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
             pool={pool}
             userData={state.userData}
             tokens={state.tokens} //we still need to filter the lptoken out

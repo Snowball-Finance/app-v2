@@ -209,7 +209,7 @@ export function CompoundAndEarnProvider({ children }) {
           userDepositedLP += (gauge.staked / 10 ** lpDecimals) * BNToFloat(snowglobeRatio, 18);
         }
 
-        if (userDepositedLP > 0 && item.token1.address) {
+        if (userDepositedLP > 0 && item.token1.address && !item.metaToken) {
           let reserves = lpData.getReserves;
           let totalSupplyPGL = BNToFloat(lpData.totalSupply, 18);
 

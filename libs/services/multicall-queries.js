@@ -10,7 +10,8 @@ const getPoolCalls = (item, account) => {
   const snowglobeContractCalls = new ContractCall(item.address, SNOWGLOBE_ABI);
   lpContractCalls.setCall("balanceOf", [account]);
   lpContractCalls.setCall("decimals", []);
-  if (item.kind === "Snowglobe" && item.token1.address) {
+
+  if (item.kind === "Snowglobe" && item.token1.address && !item.metaToken) {
     lpContractCalls.setCall("getReserves", []);
   }
   lpContractCalls.setCall("totalSupply", []);

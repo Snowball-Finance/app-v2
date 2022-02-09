@@ -67,7 +67,7 @@ const Total = ({ item, userData }) => {
         <div className={classes.container}>
           <Typography variant='subtitle2'>&nbsp;</Typography>
         </div>
-        {item.kind !== 'Stablevault' && (userData?.underlyingTokens || item?.token1?.address) &&
+        {!item.metaToken && (userData?.underlyingTokens || item?.token1?.address) &&
           <div className={classes.greyBorder}>
             <div className={classes.container}>
               {userData?.underlyingTokens ?
