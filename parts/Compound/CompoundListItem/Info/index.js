@@ -1,35 +1,28 @@
 import { memo } from 'react';
 import Image from 'next/image';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 import Tags from 'components/Tags';
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
-import LINKS from 'utils/constants/links'
+import LINKS from 'utils/constants/links';
 
 const useStyles = makeStyles((theme) => ({
   info: {
-    display: 'flex',
-    flexDirection: 'row',
+    padding: theme.spacing(2),
     width: 400,
     [theme.breakpoints.down('sm')]: {
-      width: 350
-    }
-  },
-  left: {
-    padding: theme.spacing(2),
-    width: '80%'
-  },
-  right: {
-    width: '20%'
+      width: 350,
+      padding: theme.spacing(1),
+    },
   },
   icon: {
     position: 'absolute',
     right: 10,
     bottom: 0,
     objectFit: 'contain',
-    height: 120
+    height: 120,
   },
   subHeaderButton: {
     marginTop: theme.spacing(2),
@@ -41,44 +34,68 @@ const useStyles = makeStyles((theme) => ({
   },
   boost: {
     display: 'flex',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
+  link: {
+    color: 'inherit',
+  },
 }));
 
 const Info = ({ icon, buttonText, boost }) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.info}>
-      <div className={classes.left}>
-        <Grid container alignItems="center">
-          <Grid item xs={6} xl={6} md={6} lg={6}>
-            <Typography variant="h6">What’s Boost?</Typography>
+    <Grid container className={classes.info}>
+      <Grid item xs={12}>
+        <Grid container alignItems="center" spacing={1}>
+          <Grid item>
+            <Typography variant="h6">xSNOB Boost?</Typography>
           </Grid>
-          <Grid item xs={2} xl={2} md={2} lg={2}>
-            <Tags type="SNOB" className={classes.boost}>{boost}</Tags>
+          <Grid item>
+            <Tags type="SNOB" className={classes.boost}>
+              {boost}
+            </Tags>
           </Grid>
         </Grid>
-        <Typography variant="subtitle2">
-          The {boost} showing in pools is the incentivations of xSNOB earned.
-        </Typography>
+      </Grid>
 
-        <ContainedButton
-          className={classes.subHeaderButton}
-          size="small"
-          disableElevation
-          endIcon={<HelpOutlineIcon />}
-          href={LINKS.GITBOOK_DOCS.REWARD_BOOSTING.HREF}
-        >
-          {buttonText}
-        </ContainedButton>
-      </div>
-      <div className={classes.right}>
-        <div className={classes.icon}>
-          <Image alt="icon" src={icon} width={136} height={120} layout='fixed' />
-        </div>
-      </div>
-    </div>
+      <Grid item xs={12}>
+        <Grid container spacing={1}>
+          <Grid item xs={9}>
+            <Typography variant="subtitle2">
+              xSNOB Boost increases the amount of SNOB rewards tokens you
+              receive by up to 2.5 times.{' '}
+              <Link href={LINKS.STAKING.HREF} className={classes.link}>
+                Stake SNOB tokens
+              </Link>{' '}
+              for xSNOB to increase your boost!
+            </Typography>
+
+            <ContainedButton
+              className={classes.subHeaderButton}
+              size="small"
+              disableElevation
+              endIcon={<HelpOutlineIcon />}
+              href={LINKS.GITBOOK_DOCS.REWARD_BOOSTING.HREF}
+            >
+              {buttonText}
+            </ContainedButton>
+          </Grid>
+
+          <Grid item xs={2}>
+            <div className={classes.icon}>
+              <Image
+                alt="icon"
+                src={icon}
+                width={100}
+                height={120}
+                layout="fixed"
+              />
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

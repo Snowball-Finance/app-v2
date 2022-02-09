@@ -126,7 +126,7 @@ const DetailItem = ({ item, userBoost, totalAPY }) => {
           >
             <Grid item>
               <Typography variant="body2">
-                Boost{' '}
+                xSNOB Boost{' '}
                 <CustomPopover contentClassName={classes.popover}>
                   <Info
                     icon={BOOST_INFO_IMAGE_PATH}
