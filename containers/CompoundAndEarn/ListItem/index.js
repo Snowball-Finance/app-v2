@@ -190,6 +190,7 @@ const ListItem = ({
             setUserData={setUserData}
             userBoost={userBoost}
             totalAPY={totalAPY}
+            boost={boost}
           />
         }
       />

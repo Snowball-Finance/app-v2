@@ -47,6 +47,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.axlp_skyblue,
     color: theme.custom.palette.axlp_skyblue,
   },
+  OLP: {
+    backgroundColor: theme.custom.palette.transparent.olp,
+    color: theme.custom.palette.olp,
+  }
 }));
 
 const Tags = ({ children, style, className, type }) => {

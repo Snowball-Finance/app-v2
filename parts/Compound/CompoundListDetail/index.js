@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
-	userData, setUserData }) => {
+	userData, setUserData, boost }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
@@ -128,7 +128,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 					<SnobApyCalculation
 						kind={item.kind}
 						isDeprecated={item.deprecatedPool}
-						snobAPR={item.gaugeInfo?.snobYearlyAPR}
+						boostedSnobAPR={boost * item.gaugeInfo?.snobYearlyAPR}
+						unboostedSnobAPR={item.gaugeInfo?.snobYearlyAPR}
 						totalAPY={totalAPY}
 						userBoost={userBoost}
 						userData={userData}

@@ -51,7 +51,7 @@ export const POOLS = [
     label: 'AAVE Pools',
   },
   {
-    value: 'snowball',
+    value: 'optimized',
     label: 'Snowball Pools',
   },
   {
