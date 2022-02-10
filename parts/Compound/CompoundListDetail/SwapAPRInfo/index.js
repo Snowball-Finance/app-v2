@@ -5,12 +5,18 @@ import { Box, Grid, Typography } from '@material-ui/core';
 import CustomPopover from 'components/CustomPopover';
 import SwapAPRTooltip from './SwapAPRTooltip';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   boldSubtitle: {
     fontWeight: 600,
   },
   percentValue: {
     marginLeft: 'auto',
+  },
+  popover: {
+    backgroundColor: theme.custom.palette.blueContainer,
+    '&::before': {
+      backgroundColor: theme.custom.palette.blueContainer,
+    },
   },
 }));
 

@@ -32,7 +32,9 @@ const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, deta
 	} else if (!item.token1?.address && item.symbol !== "AXLP") {
 		action = ["Get_Token", () => { window.open(`${PangolinURL}/swap/${token1}`) }];
 	} else if (item.symbol == "AXLP" && item.name !== "AVAX-AXIAL"){
-		action = ["Get_Token", () => { window.open(`${AxialURL}/pools/${item.name.toLowerCase()}/deposit`) }];
+		const ticker = item.name.toLowerCase().split(" ")[0];
+
+		action = ["Get_Token", () => { window.open(`${AxialURL}/pools/${ticker}/deposit`) }];
 	} else if (
 		item.source === "Pangolin"
 	|| (item.source === "Trader Joe" 
