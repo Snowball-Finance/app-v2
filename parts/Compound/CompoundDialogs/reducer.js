@@ -162,7 +162,7 @@ export const compoundDialogReducer = (state, action) => {
             break
 
         case compoundDialogActionTypes.setInputValue: {
-            const value = action.payload
+            const value = +action.payload
             const balance = BNToFloat(newState.selectedToken.balance)
             if (value > 0 && !Object.is(NaN, value) && balance > 0) {
                 const percentage = multiply(divide(value, BNToFloat(newState.selectedToken.balance)), 100)
