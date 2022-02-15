@@ -1,5 +1,5 @@
-import { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { memo } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   ListItem,
   Avatar,
@@ -7,16 +7,17 @@ import {
   Button,
   Typography,
   Link,
-} from '@material-ui/core';
-import WarningIcon from '@material-ui/icons/WarningRounded';
+} from "@material-ui/core";
+import WarningIcon from "@material-ui/icons/WarningRounded";
 
 import {
   NOTIFICATION_WARNING,
   GAUGE_PROXY_WARNING,
-} from 'utils/constants/common';
+} from "utils/constants/common";
+import { messageForDissmissNotification, NOTIFICATION_TYPE } from "../constants";
 
 const useStyles = makeStyles((theme) => ({
-  notificationContainer: { cursor: 'pointer' },
+  notificationContainer: { cursor: "pointer" },
   notificationIconContainer: {
     backgroundColor: theme.custom.palette.joe_red,
   },
@@ -28,6 +29,9 @@ const NotificationListView = ({
   readMoreClick,
   isFixMyPool,
   fromContext,
+  notificationType,
+  notificationKey,
+  onOptimizePoolNotificationDismiss,
 }) => {
   const classes = useStyles();
 
@@ -51,15 +55,62 @@ const NotificationListView = ({
               Read more
             </Link>
           </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              disableElevation
+              fullWidth
+              onClick={() => fixClick(buttonText)}
+            >
+              {buttonText}
+            </Button>
+          </Grid>
+        </>
+      );
+    } else if (notificationType === NOTIFICATION_TYPE) {
+      return (
+        <>
+          <Grid item xs={12}>
+            <Typography variant="body1">{messageForDissmissNotification[notificationKey].name}</Typography>
+            <Typography variant="caption">{messageForDissmissNotification[notificationKey].description}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={onOptimizePoolNotificationDismiss}
+            >
+              Dismiss
+            </Button>
+          </Grid>
         </>
       );
     }
 
     return (
-      <Grid item xs={12}>
-        <Typography variant="body1">Gauge Proxy Upgrade</Typography>
-        <Typography variant="caption">{GAUGE_PROXY_WARNING}</Typography>
-      </Grid>
+      <>
+        <Grid item xs={12}>
+          <Typography variant="body1">Gauge Proxy Upgrade</Typography>
+          <Typography variant="caption">{GAUGE_PROXY_WARNING}</Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            disableElevation
+            fullWidth
+            onClick={() => fixClick(buttonText)}
+          >
+            {buttonText}
+          </Button>
+        </Grid>
+      </>
     );
   };
 
@@ -75,21 +126,6 @@ const NotificationListView = ({
         <Grid item xs={9}>
           <Grid container spacing={1}>
             {conditionalMessageRender()}
-
-            {!fromContext && (
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  disableElevation
-                  fullWidth
-                  onClick={() => fixClick(buttonText)}
-                >
-                  {buttonText}
-                </Button>
-              </Grid>
-            )}
           </Grid>
         </Grid>
       </Grid>
