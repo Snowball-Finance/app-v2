@@ -14,6 +14,7 @@ import { isEmpty } from 'utils/helpers/utility';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { useWeb3React } from '@web3-react/core';
 import Caution from 'components/Caution';
+import { formatNumber } from 'utils/helpers/format';
 
 import clsx from 'clsx';
 
@@ -180,7 +181,7 @@ const ListItem = ({
           <Caution>
             <Typography variant="caption">
               This pool has too little TVL to be auto-compounded every day. TVL
-              Threshold for daily auto-compound: {harvestInfo.minValueNeeded}
+              Threshold for daily auto-compound: ${formatNumber(harvestInfo.minValueNeeded, 2)}
             </Typography>
           </Caution>
         </Grid>
