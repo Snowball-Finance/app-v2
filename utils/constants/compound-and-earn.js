@@ -31,6 +31,10 @@ export const POOLS = [
     label: 'Trader Joe Pools',
   },
   {
+    value: 'platypus',
+    label: 'Platypus Pools',
+  },
+  {
     value: 'banker',
     label: 'Banker Joe Pools',
   },
@@ -47,7 +51,7 @@ export const POOLS = [
     label: 'AAVE Pools',
   },
   {
-    value: 'snowball',
+    value: 'optimized',
     label: 'Snowball Pools',
   },
   {

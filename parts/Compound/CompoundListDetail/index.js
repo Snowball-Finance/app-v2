@@ -14,6 +14,7 @@ import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import { useContracts } from 'contexts/contract-context';
+import SwapAPRInfo from './SwapAPRInfo';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
-	userData, setUserData }) => {
+	userData, setUserData, boost, renderCaution }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
@@ -105,20 +106,32 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				justify="space-between"
 				alignItems="flex-start"
 				spacing={2}
-			>
-				{!item.deprecatedPool && <Grid item xs={12} lg={4}>
-					<ApyCalculation
-						kind={item.kind}
-						dailyAPR={dailyAPR}
-						weeklyAPY={weeklyAPY}
-						yearlyAPY={yearlyAPY}
-					/>
-				</Grid>}
+				>
+				{renderCaution(item?.harvestInfo)}
+
+				<Grid item xs={12} lg={4}>
+					<Grid container spacing={2}>
+						{!item.deprecatedPool && (
+							<Grid item xs={12}>	 
+								<ApyCalculation
+									kind={item.kind}
+									dailyAPR={dailyAPR}
+									weeklyAPY={weeklyAPY}
+									yearlyAPY={yearlyAPY}
+								/>
+							</Grid>
+						)}
+						<Grid item xs={12}>
+							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />
+						</Grid>
+					</Grid>
+				</Grid>
 				<Grid item xs={12} lg={4}>
 					<SnobApyCalculation
 						kind={item.kind}
 						isDeprecated={item.deprecatedPool}
-						snobAPR={item.gaugeInfo?.snobYearlyAPR}
+						boostedSnobAPR={boost * item.gaugeInfo?.snobYearlyAPR}
+						unboostedSnobAPR={item.gaugeInfo?.snobYearlyAPR}
 						totalAPY={totalAPY}
 						userBoost={userBoost}
 						userData={userData}

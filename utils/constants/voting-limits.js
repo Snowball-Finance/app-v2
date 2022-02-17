@@ -1,4 +1,4 @@
-const minimumForProposal = 100000
+const minimumForProposal = 50000
 const minimumVotingPeriod = 3
 const maximumVotingPeriod = 30
 

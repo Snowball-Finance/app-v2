@@ -24,13 +24,13 @@ const Caution = ({ children, style, className }) => {
 
   return (
     <Box className={clsx(classes.caution, className)} style={style}>
-      <Grid container spacing={2}>
-        <Grid item>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={"auto"}>
           <Avatar className={classes.iconContainer}>
             <WarningIcon className={classes.icon} />
           </Avatar>
         </Grid>
-        <Grid item>
+        <Grid item xs={10}>
           <Typography variant="body1">Caution</Typography>
           {children}
         </Grid>

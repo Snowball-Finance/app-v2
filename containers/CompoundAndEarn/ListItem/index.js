@@ -1,5 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Typography } from '@material-ui/core';
 
 import { useContracts } from 'contexts/contract-context';
 import CustomAccordion from 'components/CustomAccordion';
@@ -12,6 +13,7 @@ import getProperAction from 'utils/helpers/getProperAction';
 import { isEmpty } from 'utils/helpers/utility';
 import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
 import { useWeb3React } from '@web3-react/core';
+import Caution from 'components/Caution';
 
 import clsx from 'clsx';
 
@@ -149,7 +151,7 @@ const ListItem = ({
 
   const totalAPY = useMemo(() => {
     if (pool.gaugeInfo) {
-      let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY;
+      let total = (boost * pool.gaugeInfo.snobYearlyAPR) + pool.yearlyAPY + pool.yearlySwapFees;
       total = total > 999999 ? 999999 : total
       return total
     } else {
@@ -159,6 +161,35 @@ const ListItem = ({
 
   const userBoost = `${(boost ? boost * 1.0 : 1.0).toFixed(2)}x`;
   const highlighted= action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)
+
+  const renderCaution = (harvestInfo) => {
+    if (harvestInfo.error) {
+      return (
+        <Grid item xs={12}>
+          <Caution>
+            <Typography variant="caption">
+              This pool is not currently harvesting. We are aware of the issue
+              and are working on it.
+            </Typography>
+          </Caution>
+        </Grid>
+      );
+    } else if (harvestInfo.fulfillThreshold) {
+      return (
+        <Grid item xs={12}>
+          <Caution>
+            <Typography variant="caption">
+              This pool has too little TVL to be auto-compounded every day. TVL
+              Threshold for daily auto-compound: {harvestInfo.minValueNeeded}
+            </Typography>
+          </Caution>
+        </Grid>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <CustomAccordion
@@ -190,6 +221,8 @@ const ListItem = ({
             setUserData={setUserData}
             userBoost={userBoost}
             totalAPY={totalAPY}
+            boost={boost}
+            renderCaution={renderCaution}
           />
         }
       />
@@ -200,6 +233,7 @@ const ListItem = ({
           pool={pool}
           userData={userData}
           handleClose={() => setModal({ open: false, title: '' })}
+          renderCaution={renderCaution}
         />
       )}
     </>

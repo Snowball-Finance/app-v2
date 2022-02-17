@@ -50,7 +50,7 @@ export const compoundDialogReducer = (state, action) => {
 
             let tokens = extractValidTokens({ obj: action.payload })
 
-            if (tokens.length > 1 && action.payload.kind === "Snowglobe") {
+            if (tokens.length > 1 && action.payload.kind === "Snowglobe" && !action.payload.metaToken) {
                 //if its an LP
                 tokens.push({
                     addresses: [action.payload.lpAddress],
@@ -62,14 +62,15 @@ export const compoundDialogReducer = (state, action) => {
                     balance: action.payload.userLPBalance,
                     isLpToken: true
                 })
-            } else if(tokens.length === 1 && action.payload.kind === "Snowglobe") {
+            } else if(action.payload.metaToken || (tokens.length === 1 && action.payload.kind === "Snowglobe")) {
                 tokens[0].isLpToken = true;
             }
+
             //we probably want to change this later on the API to inform us when a token is a metatoken
             const WAVAXToken = tokens.find(o => o.address.toLowerCase() === WAVAX.toLowerCase());
             if (
-                action.payload.kind !== "Stablevault" 
-                && WAVAXToken
+                !action.payload.metaToken
+                && WAVAXToken 
             ) {
                 newState.hasAVAX = tokens.length === 1 && WAVAXToken;
                 tokens.push({
@@ -102,21 +103,21 @@ export const compoundDialogReducer = (state, action) => {
                 }
                 return { ...token, balance }
             })
-            let s4VaultToken;
-            if (newState.pool.kind === 'Stablevault') {
-                s4VaultToken = {
+            let vaultToken;
+            if (action.payload.metaToken) {
+                vaultToken = {
                     addresses: tokens.map(token => token.address),
                     // useless, just to have something in address field
-                    address: tokens[0].address,
+                    address: action.payload.lpAddress,
                     decimals: 18,
                     pangolinPrice: action.payload.pricePoolToken,
                     name: action.payload.name,
-                    symbol: action.payload.symbol,
+                    symbol: action.payload.name.split(" ")[0],
                     balance: action.payload.userLPBalance
                 }
             }
             newState.userData = action.payload
-            newState.userData.s4VaultToken = s4VaultToken
+            newState.userData.vaultToken = vaultToken
         }
             break
         case compoundDialogActionTypes.setApproved: {
@@ -161,7 +162,7 @@ export const compoundDialogReducer = (state, action) => {
             break
 
         case compoundDialogActionTypes.setInputValue: {
-            const value = action.payload
+            const value = +action.payload
             const balance = BNToFloat(newState.selectedToken.balance)
             if (value > 0 && !Object.is(NaN, value) && balance > 0) {
                 const percentage = multiply(divide(value, BNToFloat(newState.selectedToken.balance)), 100)

@@ -75,6 +75,9 @@ const useStyles = makeStyles(theme => ({
   },
   center: {
     textAlign: 'center'
+  },
+  cautionBox: {
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -84,6 +87,7 @@ const CompoundDialogs = ({
   pool,
   userData,
   handleClose,
+  renderCaution
 }) => {
   if (!userData) {
     return null;
@@ -313,13 +317,19 @@ return (
     titleTextClass={classes.dialogTitleText}
     closeIconClass={classes.dialogCloseIcon}
   >
-      <>	<Typography variant='subtitle2'>Select token to convert</Typography>
+      <>	
+        <Grid container className={classes.cautionBox}>
+          {renderCaution(pool?.harvestInfo)}
+        </Grid>
+
+        <Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
 
           <Details
             {...{
               userData,
             }}
+            vaultToken={state.userData.vaultToken}
             selectedToken={state.selectedToken}
             tokens={state.tokens}
             amount={state.inputAmount}
@@ -329,7 +339,7 @@ return (
           />
 
           <CompoundSlider value={state.sliderValue} onChange={handleSliderChange} />
-          {!userData.s4VaultToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
+          {!userData.metaToken && !state.hasAVAX && state.tokens.length > 1 && < CompoundInfo
             pool={pool}
             userData={state.userData}
             tokens={state.tokens} //we still need to filter the lptoken out

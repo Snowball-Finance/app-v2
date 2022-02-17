@@ -63,17 +63,16 @@ const Available = ({ token, decimal, classes }) => {
 }
 
 const Details = ({
-	userData,
 	tokens,
 	selectedToken,
 	amount,
+	vaultToken,
 	error,
 	inputHandler,
 	onTokenChange
 
 }) => {
 	const classes = useStyles();
-	const { s4VaultToken } = userData
 	//create options for selects component
 	let options = tokens.map((el) => {
 		const tokenCount = tokens.filter(o => !o.isNativeAVAX).length;
@@ -87,11 +86,11 @@ const Details = ({
 			: <SnowPairsIcon pairsIcon={[el.address]} size={32} />
 		return result
 	})
-	if (s4VaultToken) {
+	if (vaultToken) {
 		options = [{
-			iconComponent: <SnowPairsIcon pairsIcon={s4VaultToken.addresses} size={32} />,
-			label: s4VaultToken.name.length > 25 ? s4VaultToken.symbol : s4VaultToken.name,
-			value: s4VaultToken.symbol,
+			iconComponent: <SnowPairsIcon pairsIcon={vaultToken.addresses} size={32} />,
+			label: vaultToken.name.length > 20 ? vaultToken.symbol : vaultToken.name,
+			value: vaultToken.symbol,
 		}]
 	}
 	//first token is selected by default
@@ -128,7 +127,7 @@ const Details = ({
 					error={error}
 					onChange={inputHandler}
 				/>
-				{selectedToken.balance && <Available   {...{ classes }} token={selectedToken} decimal={selectedToken.decimals} />}
+				{selectedToken.balance && <Available   {...{ classes }} token={vaultToken ? vaultToken : selectedToken} decimal={selectedToken.decimals} />}
 			</Grid>
 		</Grid>
 	);

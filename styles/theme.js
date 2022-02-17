@@ -117,6 +117,7 @@ const lightTheme = responsiveFontSizes(
         skeleton: '#F8F8F8',
         shimmer: 'rgba(255,255,255,0.2)',
         caution: '#E9F5FE',
+        olp: '#CCAB00',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
@@ -127,6 +128,7 @@ const lightTheme = responsiveFontSizes(
           aave_purple: 'rgba(182, 80, 158, 0.12)',
           green: 'rgba(40, 199, 111, 0.12)',
           axlp_skyblue: 'rgba(48, 56, 107, 0.12)',
+          olp: 'rgba(204, 171, 0, 0.12)'
         },
         actions: {
           Details: '#0085EB',
@@ -265,6 +267,7 @@ const darkTheme = responsiveFontSizes(
         skeleton: '#5E5873',
         shimmer: 'rgba(255,255,255,0.01)',
         caution: '#495272',
+        olp: '#CCAB00',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
           png_orange: 'rgba(255, 107, 0, 0.12)',
@@ -275,6 +278,7 @@ const darkTheme = responsiveFontSizes(
           aave_purple: 'rgba(182, 80, 158, 0.12)',
           green: 'rgba(40, 199, 111, 0.12)',
           axlp_skyblue: 'rgba(48, 56, 107, 1)',
+          olp: 'rgba(204, 171, 0, 0.12)'
         },
         actions: {
           Details: '#0085EB',

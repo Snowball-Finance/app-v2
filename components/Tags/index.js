@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.joe_red,
     color: theme.custom.palette.joe_red
   },
+  PLP: {
+    backgroundColor: theme.custom.palette.transparent.green,
+    color: theme.custom.palette.green
+  },
   BLP: {
     backgroundColor: theme.custom.palette.transparent.banker_skyblue,
     color: theme.custom.palette.banker_skyblue
@@ -43,6 +47,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.axlp_skyblue,
     color: theme.custom.palette.axlp_skyblue,
   },
+  OLP: {
+    backgroundColor: theme.custom.palette.transparent.olp,
+    color: theme.custom.palette.olp,
+  }
 }));
 
 const Tags = ({ children, style, className, type }) => {

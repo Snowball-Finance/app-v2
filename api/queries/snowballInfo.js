@@ -30,6 +30,8 @@ const LAST_SNOWBALL_INFO = gql`
         yearlyAPY
         pricePoolToken
         deprecated
+        yearlySwapFees
+        metaToken
         token0{
           address
           name
@@ -72,6 +74,11 @@ const LAST_SNOWBALL_INFO = gql`
           fullWeeklyAPY
           fullYearlyAPY
           snobAllocation
+        }
+        harvestInfo{
+          errored
+          fulfillThreshold
+          minValueNeeded
         }
       }
     }

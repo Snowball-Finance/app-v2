@@ -1,5 +1,6 @@
 import { memo, useEffect, useState, useCallback } from 'react';
 import { Grid, Typography } from '@material-ui/core';
+import { useRouter } from 'next/router'
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
 import { makeStyles } from '@material-ui/core/styles';
@@ -40,6 +41,7 @@ const CompoundAndEarn = () => {
   const { account } = useWeb3React();
   const { getLastSnowballInfo } = useAPIContext();
   const snowballInfoQuery = getLastSnowballInfo();
+  const { query, push } = useRouter();
 
   const { AVAXBalance } = useContracts();
   const { userPools, userDeprecatedPools, loadedDeprecated,
@@ -93,9 +95,17 @@ const CompoundAndEarn = () => {
       let sortedData = [...poolsInfo]
       sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
       setLastSnowballInfo(sortedData);
-      setSearch('');
+      if(query.pool) {
+        initailSearchByQueryParams();
+      } else {
+        setSearch('');
+      }
+      if(query.platform) {
+        initailPlatformByQueryParams();
+      } else {
+        setPool('all');
+      }
       setType('apy');
-      setPool('all');
       return
     } else if (account || !sortedUserPools) {
 
@@ -103,12 +113,30 @@ const CompoundAndEarn = () => {
       setLastSnowballModifiedInfo(sortedData);
       setLastSnowballInfo(sortedData);
       setSortedUserPools(true);
-      setSearch('');
+      if(query.pool) {
+        initailSearchByQueryParams();
+      } else {
+        setSearch('');
+      }
+      if(query.platform) {
+        initailPlatformByQueryParams();
+      } else {
+        setPool('all');
+      }
       setType('apy');
-      setPool('all');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snowballInfoQuery, userPools, account, sortedUserPools]);
+
+  const initailSearchByQueryParams = () => {
+    setSearch(query.pool);
+    delayFilterData(query.pool);
+  }
+
+  const initailPlatformByQueryParams = () => {
+    setPool(query.platform);
+    delayPoolFilterData(query.platform)
+  }
 
   const handleSearch = (value) => {
     if (!value) {
@@ -182,12 +210,14 @@ const CompoundAndEarn = () => {
        }
   };
 
-  const handleUserPoolChange = (event) => {
+  const handleUserPoolChange = (value) => {
     let filteredData = lastSnowballModifiedInfo.length
       ? [...lastSnowballModifiedInfo]
-      : [...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo];
+      : snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo?.length
+        ?[...snowballInfoQuery.data?.LastSnowballInfo?.poolsInfo]
+        : [];
 
-    if (event.target.value === 'myPools') {
+    if (value === 'myPools') {
       const filteredDataWithTokensToInvested = filteredData.filter((item) => {
         const [actionType] = getProperAction(item, null, item.userLPBalance, AVAXBalance, item.usdValue);
         return actionType === 'Deposit';
@@ -199,13 +229,13 @@ const CompoundAndEarn = () => {
         ...filteredDataWithDepositLP,
         ...filteredDataWithTokensToInvested,
       ];
-    } else if (event.target.value === 'claimable') {
+    } else if (value === 'claimable') {
       filteredData = filteredData.filter(
         (item) => item.SNOBHarvestable > 0
       );
-    } else if (event.target.value !== 'all' && event.target.value !== 'claimable') {
+    } else if (value !== 'all' && value !== 'claimable') {
       filteredData = filteredData.filter((item) =>
-        item.source.toLowerCase().includes(event.target.value)
+        item.source.toLowerCase().includes(value)
       );
     }
     const sortedData = sortingByUserPool(type, filteredData);
@@ -221,9 +251,8 @@ const CompoundAndEarn = () => {
       setLastSnowballInfo(filterData);
       } else{
         setLastSnowballInfo(sortedData);
-        setPool(event.target.value);
-    }
-
+      }
+      setPool(value);
   };
 
   if (snowballInfoQuery.error) {
@@ -231,6 +260,7 @@ const CompoundAndEarn = () => {
   }
 
   const delayFilterData = useCallback(debounce(handleSearch, 400), [type, userPool, lastSnowballModifiedInfo, filterDataByProtocol, snowballInfoQuery]);
+  const delayPoolFilterData = useCallback(debounce(handleUserPoolChange, 400), [type, userPool, lastSnowballModifiedInfo, filterDataByProtocol, snowballInfoQuery]);
 
   const searchTermInputHandler = value => {
     setSearch(value);
@@ -249,7 +279,10 @@ const CompoundAndEarn = () => {
             className={classes.input}
             value={search}
             placeholder='Search your favorite pairs'
-            onChange={searchTermInputHandler}
+            onChange={(value)=>{
+              searchTermInputHandler(value)
+              push({query:{...query, pool: value}})
+            }}
             onCancelSearch={handleCancelSearch}
           />
         </Grid>
@@ -267,7 +300,10 @@ const CompoundAndEarn = () => {
             className={classes.input}
             value={userPool}
             options={POOLS}
-            onChange={handleUserPoolChange}
+            onChange={(event)=>{
+              handleUserPoolChange(event.target.value)
+              push({query:{...query, platform: event.target.value}})
+            }}
             startIcon={<FilterListIcon />}
           />
         </Grid>

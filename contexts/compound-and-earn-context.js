@@ -147,11 +147,13 @@ export function CompoundAndEarnProvider({ children }) {
                 ? 'QLP'
                 : pool.source === 'AAVE'
                   ? 'ALP'
-                  : pool.source === 'Pangolin'
-                    ? 'PGL'
-                    : pool.source === 'Axial'
-                      ? 'AXLP'
-                      : 'SNOB',
+                  : pool.source === 'Platypus'
+                    ? 'PLP'
+                    : pool.source === 'Pangolin'
+                      ? 'PGL'
+                      : pool.source === 'Axial'
+                        ? 'AXLP'
+                        : 'SNOB',
       userDepositedLP: userDeposited,
       SNOBHarvestable: SNOBHarvestable / 1e18,
       SNOBValue: (SNOBHarvestable / 1e18) * prices?.SNOB,
@@ -207,7 +209,7 @@ export function CompoundAndEarnProvider({ children }) {
           userDepositedLP += (gauge.staked / 10 ** lpDecimals) * BNToFloat(snowglobeRatio, 18);
         }
 
-        if (userDepositedLP > 0 && item.token1.address) {
+        if (userDepositedLP > 0 && item.token1.address && !item.metaToken) {
           let reserves = lpData.getReserves;
           let totalSupplyPGL = BNToFloat(lpData.totalSupply, 18);
 
@@ -724,8 +726,6 @@ export function CompoundAndEarnProvider({ children }) {
             }
           }
         }
-      } else {
-        setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 2 });
       }
 
       if (item.kind === 'Snowglobe') {

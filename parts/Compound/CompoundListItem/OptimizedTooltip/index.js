@@ -14,21 +14,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TotalAPYTooltip = () => {
+const OptimizedTooltip = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.info}>
       <Typography>
-        {`
-        Total APY includes the Compounded APY, which accrues in the form of LP
-        tokens, the SNOB APR, which accrues in the form of Snowball tokens, and
-        Swap APR, which increases the ratio of LP's distributed by the underlying
-        protocol.
-        `}
+        Optimized Pools will automatically move your investment to the platform
+        offering the best rates every 24 hours.
       </Typography>
     </div>
   );
 };
 
-export default memo(TotalAPYTooltip);
+export default memo(OptimizedTooltip);
