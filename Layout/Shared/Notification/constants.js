@@ -5,6 +5,6 @@ export const messageForDissmissNotification = {
   optimizer: {
     name: "Optimizer Pools",
     description:
-      "Some exciting is on optimizer pools, please check on the compound and earn page!",
+      "Tired of moving funds around? Check out Snowball's new Optimized Pools on our",
   },
 };
