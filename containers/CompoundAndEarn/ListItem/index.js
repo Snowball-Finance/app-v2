@@ -174,7 +174,7 @@ const ListItem = ({
           </Caution>
         </Grid>
       );
-    } else if (harvestInfo.fulfillThreshold) {
+    } else if (!harvestInfo.fulfillThreshold) {
       return (
         <Grid item xs={12}>
           <Caution>
