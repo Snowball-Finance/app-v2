@@ -64,7 +64,7 @@ const TopAppBar = ({
 
       <Hidden smUp>
         <Logo isLabel />
-        <ThemeButton />
+        {/* <ThemeButton /> */}
       </Hidden>
 
       <Hidden xsDown>
@@ -72,7 +72,7 @@ const TopAppBar = ({
           <Notification />
           <SnobBalance />
           <ConnectWallet />
-          <ThemeButton />
+          {/* <ThemeButton /> */}
         </div>
       </Hidden>
     </Paper>

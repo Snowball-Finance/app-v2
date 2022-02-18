@@ -5,9 +5,8 @@ import Link from 'next/link'
 import { makeStyles } from '@material-ui/core/styles'
 
 import LINKS from 'utils/constants/links'
-import { LOGO_IMAGE_PATH, LOGO_LABEL_IMAGE_PATH, LOGO_DARK_LABEL_IMAGE_PATH } from 'utils/constants/image-paths'
+import { LOGO_IMAGE_PATH, LOGO_DARK_LABEL_IMAGE_PATH } from 'utils/constants/image-paths'
 import clsx from 'clsx'
-import { useDarkMode } from 'contexts/ui-context'
 
 const useStyles = makeStyles(() => ({
   picture: {
@@ -30,9 +29,8 @@ const Logo = ({
   ...rest
 }) => {
   const classes = useStyles();
-  const { darkMode } = useDarkMode();
 
-  const imagePath = isLabel ? darkMode ? LOGO_DARK_LABEL_IMAGE_PATH : LOGO_LABEL_IMAGE_PATH : LOGO_IMAGE_PATH
+  const imagePath = isLabel ? LOGO_DARK_LABEL_IMAGE_PATH : LOGO_IMAGE_PATH
 
   return (
     <Link href={LINKS.HOME.HREF}>
