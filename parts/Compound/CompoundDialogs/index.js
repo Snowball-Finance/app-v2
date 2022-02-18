@@ -75,6 +75,9 @@ const useStyles = makeStyles(theme => ({
   },
   center: {
     textAlign: 'center'
+  },
+  cautionBox: {
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -84,6 +87,7 @@ const CompoundDialogs = ({
   pool,
   userData,
   handleClose,
+  renderCaution
 }) => {
   if (!userData) {
     return null;
@@ -315,7 +319,12 @@ return (
     titleTextClass={classes.dialogTitleText}
     closeIconClass={classes.dialogCloseIcon}
   >
-      <>	<Typography variant='subtitle2'>Select token to convert</Typography>
+      <>	
+        <Grid container className={classes.cautionBox}>
+          {renderCaution(pool)}
+        </Grid>
+
+        <Typography variant='subtitle2'>Select token to convert</Typography>
         <div className={classes.container} >
 
           <Details
