@@ -154,7 +154,7 @@ const CompoundAndEarn = () => {
     const splittedValue = value.split(' ');
     splittedValue.forEach((spiltItem) => {
       filterData = filterData.filter(
-        (item) => item.name.search(spiltItem.toUpperCase()) != -1
+        (item) => item.name.toUpperCase().includes(spiltItem.toUpperCase())
       );
     });
 
