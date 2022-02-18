@@ -107,7 +107,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				alignItems="flex-start"
 				spacing={2}
 				>
-				{renderCaution(item?.harvestInfo)}
+				{!item.deprecatedPool && renderCaution(item?.harvestInfo)}
 
 				<Grid item xs={12} lg={4}>
 					<Grid container spacing={2}>
@@ -122,7 +122,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 							</Grid>
 						)}
 						<Grid item xs={12}>
-							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />
+							{!item.deprecatedPool &&
+							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />}
 						</Grid>
 					</Grid>
 				</Grid>
