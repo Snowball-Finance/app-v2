@@ -319,7 +319,7 @@ return (
   >
       <>	
         <Grid container className={classes.cautionBox}>
-          {renderCaution(pool?.harvestInfo)}
+          {renderCaution(pool)}
         </Grid>
 
         <Typography variant='subtitle2'>Select token to convert</Typography>

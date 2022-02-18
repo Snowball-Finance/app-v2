@@ -107,7 +107,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				alignItems="flex-start"
 				spacing={2}
 				>
-				{!item.deprecatedPool && renderCaution(item?.harvestInfo)}
+				{renderCaution(item)}
 
 				<Grid item xs={12} lg={4}>
 					<Grid container spacing={2}>

@@ -39,7 +39,7 @@ const ListItem = ({
   const [expanded, setExpanded] = useState(false);
   const [action, setAction] = useState({ actionType: 'Get_Token' });
   const { account } = useWeb3React();
-  const {loading, getBalanceInfoSinglePool, isTransacting
+  const { loading, getBalanceInfoSinglePool, isTransacting
     , userPools } = useCompoundAndEarnContract();
 
   useEffect(() => {
@@ -54,10 +54,10 @@ const ListItem = ({
     }
     refreshData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[refresh, account]);
+  }, [refresh, account]);
 
   //refresh LP data if the accordion is expanded
-  const onChangedExpanded = (event,expanded) => {
+  const onChangedExpanded = (event, expanded) => {
     const targetName = event.target.getAttribute('name');
     if (targetName !== 'custom-popover') {
       setExpanded(expanded);
@@ -161,27 +161,37 @@ const ListItem = ({
   }, [boost, pool])
 
   const userBoost = `${(boost ? boost * 1.0 : 1.0).toFixed(2)}x`;
-  const highlighted= action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)
+  const highlighted = action?.actionType === 'Details' && (AVAXBalance !== 0 || (userData?.userDepositedLP || 0) > 0)
 
-  const renderCaution = (harvestInfo) => {
-    if (harvestInfo.error) {
+  const renderCaution = (pool) => {
+    if (pool?.harvestInfo?.errored) {
       return (
         <Grid item xs={12}>
           <Caution>
             <Typography variant="caption">
-              This pool is not currently harvesting. We are aware of the issue
+              This pool is not currently being auto-compounded. We are aware of the issue
               and are working on it.
             </Typography>
           </Caution>
         </Grid>
       );
-    } else if (!harvestInfo.fulfillThreshold) {
+    } else if (pool?.deprecated) {
+      return(
+        <Grid item xs={12}>
+          <Caution>
+            <Typography variant="caption">
+              This pool is not currently being auto-compounded. The platform no longer offer rewards.
+            </Typography>
+          </Caution>
+        </Grid>
+      )
+    } else if (pool.harvestInfo && !(pool?.harvestInfo?.fulfillThreshold)) {
       return (
         <Grid item xs={12}>
           <Caution>
             <Typography variant="caption">
               This pool has too little TVL to be auto-compounded every day. TVL
-              Threshold for daily auto-compound: ${formatNumber(harvestInfo.minValueNeeded, 2)}
+              Threshold for daily auto-compound: ${formatNumber(pool.harvestInfo.minValueNeeded, 2)}
             </Typography>
           </Caution>
         </Grid>
@@ -195,11 +205,11 @@ const ListItem = ({
     <>
       <CustomAccordion
         key={pool.address}
-        className={clsx({[classes.accordionContainer]:highlighted})}
+        className={clsx({ [classes.accordionContainer]: highlighted })}
         expanded={expanded}
         onChanged={onChangedExpanded}
         expandMoreIcon={
-         AVAXBalance &&  <CompoundActionButton
+          AVAXBalance && <CompoundActionButton
             type={action?.actionType}
             action={action?.func}
             disabled={action?.actionType !== 'Details' && pool.deprecated}
