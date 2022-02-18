@@ -5,7 +5,6 @@ import { ApolloProvider } from '@apollo/client'
 
 import Layout from 'Layout'
 import { useApollo } from 'libs/apollo'
-import { DarkModeProvider } from 'contexts/ui-context'
 import { WalletProvider } from 'contexts/wallet-context'
 import { PopupProvider } from 'contexts/popup-context'
 import { PriceProvider } from 'contexts/price-context'
@@ -85,7 +84,6 @@ function MyApp({ Component, pageProps }) {
       </Head>
         <SnowWeb3Provider>
           <ApolloProvider client={apolloClient}>
-            <DarkModeProvider>
               <ThemeProvider>
                 <ProviderProvider>
                   <WalletProvider>
@@ -112,7 +110,6 @@ function MyApp({ Component, pageProps }) {
                   </WalletProvider>
                 </ProviderProvider>
               </ThemeProvider>
-            </DarkModeProvider>
           </ApolloProvider>
         </SnowWeb3Provider>
     </>
