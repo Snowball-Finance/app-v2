@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
-	userData, setUserData, boost }) => {
+	userData, setUserData, boost, renderCaution }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
@@ -106,7 +106,9 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				justify="space-between"
 				alignItems="flex-start"
 				spacing={2}
-			>
+				>
+				{renderCaution(item)}
+
 				<Grid item xs={12} lg={4}>
 					<Grid container spacing={2}>
 						{!item.deprecatedPool && (
@@ -120,7 +122,8 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 							</Grid>
 						)}
 						<Grid item xs={12}>
-							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />
+							{!item.deprecatedPool &&
+							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />}
 						</Grid>
 					</Grid>
 				</Grid>
