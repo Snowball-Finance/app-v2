@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { ListItem, Avatar, Grid, Button, Typography } from "@material-ui/core";
-import Link from "next/link";
+import { ListItem, Avatar, Grid, Button, Typography, Link } from "@material-ui/core";
 import WarningIcon from "@material-ui/icons/WarningRounded";
 
 import {
@@ -104,6 +103,7 @@ const NotificationListView = ({
               size="small"
               color="primary"
               onClick={onOptimizePoolNotificationDismiss}
+              fullWidth
             >
               Dismiss
             </Button>
