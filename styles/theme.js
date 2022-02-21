@@ -116,6 +116,7 @@ const lightTheme = responsiveFontSizes(
         nftBtn: '#F8F8F8',
         skeleton: '#F8F8F8',
         shimmer: 'rgba(255,255,255,0.2)',
+        caution: '#E9F5FE',
         olp: '#CCAB00',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',
@@ -265,6 +266,7 @@ const darkTheme = responsiveFontSizes(
         nftBtn: '#5E5873',
         skeleton: '#5E5873',
         shimmer: 'rgba(255,255,255,0.01)',
+        caution: '#495272',
         olp: '#CCAB00',
         transparent: {
           snob_blue: 'rgba(103, 166, 240, 0.12)',

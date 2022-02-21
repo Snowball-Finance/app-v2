@@ -75,6 +75,11 @@ const LAST_SNOWBALL_INFO = gql`
           fullYearlyAPY
           snobAllocation
         }
+        harvestInfo{
+          errored
+          fulfillThreshold
+          minValueNeeded
+        }
       }
     }
   }
