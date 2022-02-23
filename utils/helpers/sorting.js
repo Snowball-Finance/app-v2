@@ -2,7 +2,9 @@ export const sortingByType = (type, data) => {
   let sortedData = [...data];
   if (type === 'apy') {
     sortedData = sortedData.sort(
-      (a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+      (a, b) =>
+        (b.gaugeInfo.snobYearlyAPR + b.yearlyAPY + b.yearlySwapFees) -
+        (a.gaugeInfo.snobYearlyAPR + a.yearlyAPY + a.yearlySwapFees)
     );
   } else if (type === 'claimable') {
     sortedData = sortedData.sort(
@@ -24,7 +26,8 @@ export const sortingByUserPool = (type, data) => {
         b.userDepositedLP - a.userDepositedLP ||
         b.userLPBalance - a.userLPBalance ||
         b.SNOBHarvestable - a.SNOBHarvestable ||
-        b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY
+        (b.gaugeInfo.snobYearlyAPR + b.yearlyAPY + b.yearlySwapFees) -
+        (a.gaugeInfo.snobYearlyAPR + a.yearlyAPY + a.yearlySwapFees)
     );
   } else if (type === 'claimable') {
     sortedData = sortedData.sort(
