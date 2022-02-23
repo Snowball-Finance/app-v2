@@ -1,24 +1,26 @@
-import { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  ListItem,
-  Avatar,
-  Grid,
-  Button,
-  Typography,
-  Link,
-} from '@material-ui/core';
-import WarningIcon from '@material-ui/icons/WarningRounded';
+import { memo } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { ListItem, Avatar, Grid, Button, Typography, Link } from "@material-ui/core";
+import WarningIcon from "@material-ui/icons/WarningRounded";
 
 import {
   NOTIFICATION_WARNING,
   GAUGE_PROXY_WARNING,
-} from 'utils/constants/common';
+} from "utils/constants/common";
+import {
+  messageForDissmissNotification,
+  NOTIFICATION_TYPE,
+  OPTIMIZER,
+} from "../constants";
+import LINKS from "utils/constants/links";
 
 const useStyles = makeStyles((theme) => ({
-  notificationContainer: { cursor: 'pointer' },
+  notificationContainer: { cursor: "pointer" },
   notificationIconContainer: {
     backgroundColor: theme.custom.palette.joe_red,
+  },
+  link: {
+    textDecoration: "underline",
   },
 }));
 
@@ -28,8 +30,28 @@ const NotificationListView = ({
   readMoreClick,
   isFixMyPool,
   fromContext,
+  notificationType,
+  notificationKey,
+  onOptimizePoolNotificationDismiss,
 }) => {
   const classes = useStyles();
+
+  const renderNotificationTypeDescription = (notificationType) => {
+    if (notificationType === OPTIMIZER) {
+      return (
+        <Typography variant="caption">
+          {`Tired of moving funds around? Check out Snowball's new Optimized Pools on our `}
+          <Link href={`${LINKS.COMPOUND_AND_EARN.HREF}?platform=optimized`}>
+            <Typography variant="caption" className={classes.link}>
+              Compound and earn page!
+            </Typography>
+          </Link>
+        </Typography>
+      );
+    }
+
+    return null;
+  };
 
   const conditionalMessageRender = () => {
     if (fromContext) {
@@ -51,15 +73,65 @@ const NotificationListView = ({
               Read more
             </Link>
           </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              disableElevation
+              fullWidth
+              onClick={() => fixClick(buttonText)}
+            >
+              {buttonText}
+            </Button>
+          </Grid>
+        </>
+      );
+    } else if (notificationType === NOTIFICATION_TYPE) {
+      return (
+        <>
+          <Grid item xs={12}>
+            <Typography variant="body1">
+              {messageForDissmissNotification[notificationKey].name}
+            </Typography>
+            {renderNotificationTypeDescription(notificationKey)}
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={onOptimizePoolNotificationDismiss}
+              fullWidth
+            >
+              Dismiss
+            </Button>
+          </Grid>
         </>
       );
     }
 
     return (
-      <Grid item xs={12}>
-        <Typography variant="body1">Gauge Proxy Upgrade</Typography>
-        <Typography variant="caption">{GAUGE_PROXY_WARNING}</Typography>
-      </Grid>
+      <>
+        <Grid item xs={12}>
+          <Typography variant="body1">Gauge Proxy Upgrade</Typography>
+          <Typography variant="caption">{GAUGE_PROXY_WARNING}</Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            disableElevation
+            fullWidth
+            onClick={() => fixClick(buttonText)}
+          >
+            {buttonText}
+          </Button>
+        </Grid>
+      </>
     );
   };
 
@@ -75,21 +147,6 @@ const NotificationListView = ({
         <Grid item xs={9}>
           <Grid container spacing={1}>
             {conditionalMessageRender()}
-
-            {!fromContext && (
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  disableElevation
-                  fullWidth
-                  onClick={() => fixClick(buttonText)}
-                >
-                  {buttonText}
-                </Button>
-              </Grid>
-            )}
           </Grid>
         </Grid>
       </Grid>

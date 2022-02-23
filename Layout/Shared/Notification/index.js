@@ -1,7 +1,7 @@
-import { memo, useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { useWeb3React } from '@web3-react/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { memo, useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { useWeb3React } from "@web3-react/core";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   Badge,
   Grid,
@@ -10,28 +10,28 @@ import {
   Divider,
   Typography,
   Chip,
-} from '@material-ui/core';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+} from "@material-ui/core";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
-import { useNotification } from 'contexts/notification-context';
-import NotificationListItem from './NotificationListItem';
-import LINKS from 'utils/constants/links';
-import { useContracts } from 'contexts/contract-context';
-import { usePopup } from 'contexts/popup-context';
-import { CONTRACTS } from 'config';
-import GAUGE_PROXY_ABI from 'libs/abis/gauge-proxy.json';
-import GAUGE_ABI from 'libs/abis/gauge.json';
-import GAUGE_TOKEN_ABI from 'libs/abis/gauge-token.json';
-import UpgradeSteps from 'parts/GeneralAlerts/UpgradeSteps';
-import { isEmpty } from 'utils/helpers/utility';
-import { useCompoundAndEarnContract } from 'contexts/compound-and-earn-context';
-import { useAPIContext } from 'contexts/api-context';
-import ANIMATIONS from 'utils/constants/animate-icons';
+import { useNotification } from "contexts/notification-context";
+import NotificationListItem from "./NotificationListItem";
+import LINKS from "utils/constants/links";
+import { useContracts } from "contexts/contract-context";
+import { usePopup } from "contexts/popup-context";
+import { CONTRACTS } from "config";
+import GAUGE_PROXY_ABI from "libs/abis/gauge-proxy.json";
+import GAUGE_ABI from "libs/abis/gauge.json";
+import GAUGE_TOKEN_ABI from "libs/abis/gauge-token.json";
+import UpgradeSteps from "parts/GeneralAlerts/UpgradeSteps";
+import { isEmpty } from "utils/helpers/utility";
+import { useCompoundAndEarnContract } from "contexts/compound-and-earn-context";
+import { useAPIContext } from "contexts/api-context";
+import ANIMATIONS from "utils/constants/animate-icons";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
     marginRight: theme.spacing(1),
-    cursor: 'pointer',
+    cursor: "pointer",
   },
   listContainer: {
     width: 300,
@@ -46,17 +46,20 @@ const Notification = () => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(false);
-  const { notifications, addPartialInvestment } = useNotification();
+  const {
+    notifications,
+    addPartialInvestment,
+    removeOptimizerPoolNotification,
+  } = useNotification();
   const { account, library } = useWeb3React();
   const { gauges } = useContracts();
   const { setPopUp } = usePopup();
   const { getLastSnowballInfo } = useAPIContext();
-  const {
-    data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {},
-  } = getLastSnowballInfo();
+  const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } =
+    getLastSnowballInfo();
 
   //upgrade gaugesv2
-  const [gaugeStep, setGaugeStep] = useState('fixMyPool');
+  const [gaugeStep, setGaugeStep] = useState("fixMyPool");
   const [userGauges, setUserGauges] = useState([]);
   const [upgradingStep, setUpgradingStep] = useState({
     fixMyPool: {
@@ -107,7 +110,7 @@ const Notification = () => {
 
   useEffect(() => {
     if (pendingPools.length > 0) {
-      addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool' });
+      addPartialInvestment({ isFixMyPool: true, buttonText: "Fix my pool" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPools]);
@@ -185,7 +188,7 @@ const Notification = () => {
       );
       await Promise.all(
         gauges.map(async (item) => {
-          const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+          const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
           const oldGaugeAddress = await gaugeProxyV1Contract.getGauge(
             item.token
           );
@@ -226,10 +229,10 @@ const Notification = () => {
           };
         });
         setUserGauges(userGauges);
-        addPartialInvestment({ isFixMyPool: false, buttonText: 'Upgrade' });
+        addPartialInvestment({ isFixMyPool: false, buttonText: "Upgrade" });
       }
     } catch (error) {
-      console.log('[checkUserBalance] Error => ', error);
+      console.log("[checkUserBalance] Error => ", error);
     }
   };
 
@@ -247,7 +250,7 @@ const Notification = () => {
         );
         if (!newGaugeAddress) {
           setPopUp({
-            title: 'Transaction Error',
+            title: "Transaction Error",
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error get New Gauge Address from New GaugeProxy`,
           });
@@ -276,7 +279,7 @@ const Notification = () => {
         const transactionGaugeWithdraw = await gaugeWithdraw.wait(1);
         if (!transactionGaugeWithdraw.status) {
           setPopUp({
-            title: 'Transaction Error',
+            title: "Transaction Error",
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error withdrawing from Gauge`,
           });
@@ -297,7 +300,7 @@ const Notification = () => {
         const transactionGaugeClaim = await gaugeClaim.wait(1);
         if (!transactionGaugeClaim.status) {
           setPopUp({
-            title: 'Transaction Error',
+            title: "Transaction Error",
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error claiming from Gauge`,
           });
@@ -322,7 +325,7 @@ const Notification = () => {
         const transactionTokenApprove = await tokenApprove.wait(1);
         if (!transactionTokenApprove.status) {
           setPopUp({
-            title: 'Transaction Error',
+            title: "Transaction Error",
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error approving token`,
           });
@@ -343,7 +346,7 @@ const Notification = () => {
         const transactionTokenDeposit = await tokenDeposit.wait(1);
         if (!transactionTokenDeposit.status) {
           setPopUp({
-            title: 'Transaction Error',
+            title: "Transaction Error",
             icon: ANIMATIONS.ERROR.VALUE,
             text: `Error depositing token`,
           });
@@ -361,15 +364,15 @@ const Notification = () => {
       }
 
       setPopUp({
-        title: 'Success',
+        title: "Success",
         icon: ANIMATIONS.SUCCESS.VALUE,
-        text: 'Upgrade to GaugeProxyV2 completed!',
+        text: "Upgrade to GaugeProxyV2 completed!",
       });
       setTimeout(() => {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      console.log('[upgradeGaugeProxy2] Error => ', error);
+      console.log("[upgradeGaugeProxy2] Error => ", error);
     }
   };
 
@@ -383,22 +386,26 @@ const Notification = () => {
 
   const handleFixMyPool = (buttonText) => {
     setConfirmDialog(true);
-    const isUpgradeButton = buttonText === 'Upgrade';
+    const isUpgradeButton = buttonText === "Upgrade";
     if (isUpgradeButton) {
-      setGaugeStep('upgrade');
+      setGaugeStep("upgrade");
       upgradeGaugeProxy2();
     } else {
-      setGaugeStep('fixMyPool');
+      setGaugeStep("fixMyPool");
       userPoolsFix();
     }
   };
 
   const handleReadMore = () => {
-    window.open(LINKS.GITBOOK_DOCS.COMPOUNDING.HREF, '_blank');
+    window.open(LINKS.GITBOOK_DOCS.COMPOUNDING.HREF, "_blank");
+  };
+
+  const onOptimizePoolNotificationDismiss = () => {
+    removeOptimizerPoolNotification();
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? "simple-popover" : undefined;
 
   return (
     <>
@@ -416,12 +423,12 @@ const Notification = () => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'left',
+          vertical: "center",
+          horizontal: "left",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
       >
         <List
@@ -452,8 +459,13 @@ const Notification = () => {
               isFixMyPool={item.isFixMyPool}
               fromContext={item.fromContext}
               buttonText={item.buttonText}
+              notificationType={item.type}
+              notificationKey={item.key}
               fixClick={handleFixMyPool}
               readMoreClick={handleReadMore}
+              onOptimizePoolNotificationDismiss={
+                onOptimizePoolNotificationDismiss
+              }
             />
           ))}
         </List>
