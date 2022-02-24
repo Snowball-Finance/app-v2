@@ -2,7 +2,12 @@ import { useState, createContext, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { differenceInCalendarWeeks } from "date-fns";
 
-import { OPTIMIZER, NOTIFICATION_TYPE } from "Layout/Shared/Notification/constants";
+import {
+  OPTIMIZER,
+  NOTIFICATION_TYPE,
+  STAKE_HAS_EXPIRED,
+  STAKE_NOTIFICATION_TYPE,
+} from "Layout/Shared/Notification/constants";
 
 const NotficationContext = createContext(null);
 
@@ -82,12 +87,35 @@ const NotficationProvider = ({ children }) => {
     }
   };
 
+  const addStakeHasExpiredNotification = () => {
+    if (
+      notifications.findIndex((item) => item.key === STAKE_HAS_EXPIRED) === -1
+    ) {
+      setNotifications((prev) => [
+        ...prev,
+        { key: STAKE_HAS_EXPIRED, type: STAKE_NOTIFICATION_TYPE },
+      ]);
+    }
+  };
+
+  const removeStakeHasExpiredNotification = () => {
+    if (
+      notifications.findIndex((item) => item.key === STAKE_HAS_EXPIRED) === -1
+    ) {
+      const filteredNotification = notifications.filter(
+        (item) => item.key !== STAKE_HAS_EXPIRED
+      );
+      setNotifications(filteredNotification);
+    }
+  };
   return (
     <NotficationContext.Provider
       value={{
         notifications,
         addPartialInvestment,
         removeOptimizerPoolNotification,
+        addStakeHasExpiredNotification,
+        removeStakeHasExpiredNotification,
       }}
     >
       {children}
@@ -100,12 +128,16 @@ const useNotification = () => {
     notifications,
     addPartialInvestment,
     removeOptimizerPoolNotification,
+    addStakeHasExpiredNotification,
+    removeStakeHasExpiredNotification,
   } = useContext(NotficationContext);
 
   return {
     notifications,
     addPartialInvestment,
     removeOptimizerPoolNotification,
+    addStakeHasExpiredNotification,
+    removeStakeHasExpiredNotification,
   };
 };
 

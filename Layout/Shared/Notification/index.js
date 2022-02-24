@@ -12,6 +12,7 @@ import {
   Chip,
 } from "@material-ui/core";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import { useRouter } from "next/router";
 
 import { useNotification } from "contexts/notification-context";
 import NotificationListItem from "./NotificationListItem";
@@ -27,6 +28,7 @@ import { isEmpty } from "utils/helpers/utility";
 import { useCompoundAndEarnContract } from "contexts/compound-and-earn-context";
 import { useAPIContext } from "contexts/api-context";
 import ANIMATIONS from "utils/constants/animate-icons";
+import { useStakingContract } from "contexts/staking-context";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -50,6 +52,8 @@ const Notification = () => {
     notifications,
     addPartialInvestment,
     removeOptimizerPoolNotification,
+    addStakeHasExpiredNotification,
+    removeStakeHasExpiredNotification,
   } = useNotification();
   const { account, library } = useWeb3React();
   const { gauges } = useContracts();
@@ -57,6 +61,8 @@ const Notification = () => {
   const { getLastSnowballInfo } = useAPIContext();
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } =
     getLastSnowballInfo();
+  const { isExpired, isLocked } = useStakingContract();
+  const { pathname } = useRouter();
 
   //upgrade gaugesv2
   const [gaugeStep, setGaugeStep] = useState("fixMyPool");
@@ -114,6 +120,16 @@ const Notification = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPools]);
+
+  useEffect(() => {
+    // check if stake has expired
+    if (isExpired && isLocked) {
+      addStakeHasExpiredNotification();
+    } else {
+      removeStakeHasExpiredNotification();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const userPoolsFix = async () => {
     if (!deposited && pendingPools.length > 0 && pools.length > 0) {

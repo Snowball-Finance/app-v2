@@ -1,10 +1,13 @@
 export const OPTIMIZER = "optimizer";
+export const STAKE_HAS_EXPIRED ="stakeHasExpired"
 export const NOTIFICATION_TYPE = "localStorage";
+export const STAKE_NOTIFICATION_TYPE = "stakeNotificationWithoutStorage";
 
 export const messageForDissmissNotification = {
   optimizer: {
     name: "Optimizer Pools",
-    description:
-      "Tired of moving funds around? Check out Snowball's new Optimized Pools on our",
+  },
+  stakeHasExpired: {
+    name: "Stake Has Expired",
   },
 };
