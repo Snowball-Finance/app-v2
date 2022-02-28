@@ -1,6 +1,14 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { ListItem, Avatar, Grid, Button, Typography, Link } from "@material-ui/core";
+import {
+  ListItem,
+  Avatar,
+  Grid,
+  Button,
+  Typography,
+  Link as MuiLink,
+} from "@material-ui/core";
+import Link from "next/link";
 import WarningIcon from "@material-ui/icons/WarningRounded";
 
 import {
@@ -11,8 +19,12 @@ import {
   messageForDissmissNotification,
   NOTIFICATION_TYPE,
   OPTIMIZER,
+  SNOW_DAY,
 } from "../constants";
 import LINKS from "utils/constants/links";
+import { getAPR } from "utils/helpers/getAPR";
+import { useStakingContract } from "contexts/staking-context";
+import { useAPIContext } from "contexts/api-context";
 
 const useStyles = makeStyles((theme) => ({
   notificationContainer: { cursor: "pointer" },
@@ -35,6 +47,63 @@ const NotificationListView = ({
   onOptimizePoolNotificationDismiss,
 }) => {
   const classes = useStyles();
+  const { isLocked, totalSupply, loading } = useStakingContract();
+  const { getCurrentDistributionPhase } = useAPIContext();
+  const { data, loading: currentDistributionPhaseLoading } =
+    getCurrentDistributionPhase();
+  const [snobAndAxialAPR, setSnobAndAxialAPR] = useState([]);
+
+  useEffect(() => {
+    async function fetchAPR() {
+      try {
+        const res = await getAPR(
+          totalSupply / 1e18,
+          data?.CurrentDistributionPhase.snobDistributed
+        );
+        setSnobAndAxialAPR(res);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchAPR();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, currentDistributionPhaseLoading]);
+
+  const renderSnowDayMessage = () => {
+    if (isLocked) {
+      return (
+        <Typography variant="caption">
+          {`Happy Snow Day! This week's distribution is of X SNOB and X AXIAL, resulting in ${
+            loading || currentDistributionPhaseLoading
+              ? "loading..."
+              : snobAndAxialAPR[0]?.toLocaleString("en-US", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })
+          }% APR! Feel free to claim your earnings anytime.`}
+        </Typography>
+      );
+    }
+
+    return (
+      <Typography variant="caption">
+        {`Happy Snow Day! X SNOB and X AXIAL tokens were just distributed to xSNOB holders, resulting in ${
+          loading || currentDistributionPhaseLoading
+            ? "loading..."
+            : snobAndAxialAPR[0]?.toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })
+        }% APR. Check out our `}
+        <Link href={`${LINKS.STAKING.HREF}`}>
+          <Typography variant="caption" className={classes.link}>
+            Staking page
+          </Typography>
+        </Link>
+        {` to learn more.`}
+      </Typography>
+    );
+  };
 
   const renderNotificationTypeDescription = (notificationType) => {
     if (notificationType === OPTIMIZER) {
@@ -48,6 +117,8 @@ const NotificationListView = ({
           </Link>
         </Typography>
       );
+    } else if (notificationType === SNOW_DAY) {
+      return renderSnowDayMessage();
     }
 
     return null;
@@ -69,9 +140,9 @@ const NotificationListView = ({
             <Typography variant="caption">{NOTIFICATION_WARNING}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Link component="button" variant="body2" onClick={readMoreClick}>
+            <MuiLink component="button" variant="body2" onClick={readMoreClick}>
               Read more
-            </Link>
+            </MuiLink>
           </Grid>
 
           <Grid item xs={12}>
@@ -102,7 +173,7 @@ const NotificationListView = ({
               variant="contained"
               size="small"
               color="primary"
-              onClick={onOptimizePoolNotificationDismiss}
+              onClick={() => onOptimizePoolNotificationDismiss(notificationKey)}
               fullWidth
             >
               Dismiss

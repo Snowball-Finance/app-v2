@@ -49,7 +49,7 @@ const Notification = () => {
   const {
     notifications,
     addPartialInvestment,
-    removeOptimizerPoolNotification,
+    dismissNotification,
   } = useNotification();
   const { account, library } = useWeb3React();
   const { gauges } = useContracts();
@@ -400,8 +400,8 @@ const Notification = () => {
     window.open(LINKS.GITBOOK_DOCS.COMPOUNDING.HREF, "_blank");
   };
 
-  const onOptimizePoolNotificationDismiss = () => {
-    removeOptimizerPoolNotification();
+  const onOptimizePoolNotificationDismiss = (key) => {
+    dismissNotification(key);
   };
 
   const open = Boolean(anchorEl);
