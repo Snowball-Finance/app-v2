@@ -1,6 +1,14 @@
 import { memo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { ListItem, Avatar, Grid, Button, Typography, Link } from "@material-ui/core";
+import {
+  ListItem,
+  Avatar,
+  Grid,
+  Button,
+  Typography,
+  Link as MuiLink,
+} from "@material-ui/core";
+import Link from "next/link";
 import WarningIcon from "@material-ui/icons/WarningRounded";
 
 import {
@@ -11,6 +19,8 @@ import {
   messageForDissmissNotification,
   NOTIFICATION_TYPE,
   OPTIMIZER,
+  STAKE_HAS_EXPIRED,
+  STAKE_NOTIFICATION_TYPE,
 } from "../constants";
 import LINKS from "utils/constants/links";
 
@@ -48,6 +58,18 @@ const NotificationListView = ({
           </Link>
         </Typography>
       );
+    } else if (notificationType === STAKE_HAS_EXPIRED) {
+      return (
+        <Typography variant="caption">
+          {`Your xSNOB stake is no longer receiving rewards. Visit our `}
+          <Link href={`${LINKS.STAKING.HREF}`}>
+            <Typography variant="caption" className={classes.link}>
+              Staking page
+            </Typography>
+          </Link>
+          {` to renew your stake, or unstake your SNOB tokens!`}
+        </Typography>
+      );
     }
 
     return null;
@@ -69,9 +91,9 @@ const NotificationListView = ({
             <Typography variant="caption">{NOTIFICATION_WARNING}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Link component="button" variant="body2" onClick={readMoreClick}>
+            <MuiLink component="button" variant="body2" onClick={readMoreClick}>
               Read more
-            </Link>
+            </MuiLink>
           </Grid>
 
           <Grid item xs={12}>
@@ -107,6 +129,17 @@ const NotificationListView = ({
             >
               Dismiss
             </Button>
+          </Grid>
+        </>
+      );
+    } else if (notificationType === STAKE_NOTIFICATION_TYPE) {
+      return (
+        <>
+          <Grid item xs={12}>
+            <Typography variant="body1">
+              {messageForDissmissNotification[notificationKey].name}
+            </Typography>
+            {renderNotificationTypeDescription(notificationKey)}
           </Grid>
         </>
       );
