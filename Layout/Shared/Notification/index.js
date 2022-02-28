@@ -129,7 +129,7 @@ const Notification = () => {
       removeStakeHasExpiredNotification();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, isExpired, isLocked]);
 
   const userPoolsFix = async () => {
     if (!deposited && pendingPools.length > 0 && pools.length > 0) {

@@ -99,14 +99,10 @@ const NotficationProvider = ({ children }) => {
   };
 
   const removeStakeHasExpiredNotification = () => {
-    if (
-      notifications.findIndex((item) => item.key === STAKE_HAS_EXPIRED) === -1
-    ) {
-      const filteredNotification = notifications.filter(
-        (item) => item.key !== STAKE_HAS_EXPIRED
-      );
-      setNotifications(filteredNotification);
-    }
+    const filteredNotification = notifications.filter(
+      (item) => item.key !== STAKE_HAS_EXPIRED
+    );
+    setNotifications(filteredNotification);
   };
   return (
     <NotficationContext.Provider
