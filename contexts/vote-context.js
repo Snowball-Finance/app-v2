@@ -25,7 +25,7 @@ export function VoteContractProvider({ children }) {
   const { getProposalList } = useAPIContext();
   const { provider } = useProvider();
   const { data: { ProposalList: { proposals = [], proposalCount = 0, quorumVotes = 0 } = {} } = {} } = getProposalList()
-  const governanceV2Contract = useMemo(() => new ethers.Contract(CONTRACTS.VOTE.GOVERNANCE_V2, GOVERNANCE_ABI, library ? library.getSigner() : provider), [library])
+  const governanceV2Contract = useMemo(() => new ethers.Contract(CONTRACTS.VOTE.GOVERNANCE_V2, GOVERNANCE_ABI, library ? library.getSigner() : provider), [library,provider])
   const getProposalFromBlockchain = useMemo(() => governanceV2Contract?.proposals, [governanceV2Contract]);
   const numberOfProposals = useMemo(() => governanceV2Contract?.proposalCount, [governanceV2Contract]);
   const fetchProposalFromBlockchainByIndex = async (index) => {
