@@ -115,11 +115,16 @@ export function VoteContractProvider({ children }) {
 
   useEffect(() => {
     if (proposals?.length && proposals.length) {
-      checkForProposalUpdate()
+      if(provider){
+        checkForProposalUpdate()
+      }
+      else{
+        setAllProposals(proposals)
+      }
     }
     return () => {
     };
-  }, [proposals, numberOfProposals]);
+  }, [proposals, numberOfProposals,provider]);
 
 
   const voteProposal = useCallback(async (proposal, isFor = true, setVoted) => {
