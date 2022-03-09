@@ -104,7 +104,7 @@ const ClaimItem = ({
       <div className={classes.buttonContainer}>
         <ContainedButton
           fullWidth
-          disabled={nft.status === NFT_STATUS.NOT_DONATE.VALUE}
+          disabled={nft.status === NFT_STATUS.NOT_CLAIMMABLE.VALUE}
           className={classes.button}
           onClick={purchaseHandler}
         >

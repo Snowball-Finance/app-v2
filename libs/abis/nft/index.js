@@ -1,6 +1,6 @@
 
 import EARLY_VOTER_ABI from 'libs/abis/nft/early-voter.json'
-import COVID_RELIEF_ABI from 'libs/abis/nft/covid-relief.json'
+import CLAIMMABLE_ABI from 'libs/abis/nft/claimmable.json'
 import ROLLING_ABI from 'libs/abis/nft/rolling.json'
 import SNOWBALL_HEAD_ABI from 'libs/abis/nft/snowball-head.json'
 
@@ -12,9 +12,10 @@ const getNFTABI = (address) => {
         abi: EARLY_VOTER_ABI
       }
     case '0xD928Ab4b54F7FD0498160Ee52AC0C92BbB9C9cb3':
+    case '0x3555cAB4b6628BeEA81d20Cb8a832A16B69671F7':
       return {
-        type: 'COVID_RELIEF',
-        abi: COVID_RELIEF_ABI
+        type: 'CLAIMMABLE',
+        abi: CLAIMMABLE_ABI
       }
     case '0x35F268DaC74f94785135aA134deDEf7e67Db8fe3':
     case '0xB954AE9a4374751CB3d578CfA3Db96e0E5881C00':
