@@ -1,8 +1,8 @@
 
 const NFT_STATUS = Object.freeze({
-  NOT_DONATE: {
-    LABEL: 'Did not donate',
-    VALUE: 'NOT_DONATE',
+  NOT_CLAIMMABLE: {
+    LABEL: 'Not Claimmable',
+    VALUE: 'NOT_CLAIMMABLE',
     BUTTON: 'UNCLAIMABLE'
   },
   CLAIMED: {
