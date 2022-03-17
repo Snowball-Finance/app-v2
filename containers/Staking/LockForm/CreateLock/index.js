@@ -104,6 +104,11 @@ const CreateLock = () => {
     }))
   }
 
+  const onMaxDateSelection = () => {
+    setValue('date', dateBefore);
+    setValue('duration', DURATIONS[3].VALUE);
+  }
+
 
   return (
     <form
@@ -140,7 +145,7 @@ const CreateLock = () => {
             name='date'
             label={`Lock for: ${displayLockTime}`}
             placeholder='Date'
-            onMax={() => setValue('date', dateBefore)}
+            onMax={onMaxDateSelection}
             error={errors.date?.message}
             control={control}
             defaultValue={dateAfter}
