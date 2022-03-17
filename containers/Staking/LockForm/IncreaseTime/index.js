@@ -30,7 +30,7 @@ const maxDate = getDayOffset(new Date(), 365 * 2);
 
 const IncreaseTime = () => {
   const classes = useStyles();
-  const { lockEndDate, increaseTime } = useStakingContract();
+  const { lockEndDate, increaseTime, increaseTimeLoading } = useStakingContract();
   const now = new Date();
   const lockEndDateValue = dateFromEpoch(+(lockEndDate?.toString() || 0));
   const dateAfter = getDayOffset(now, 7);
@@ -129,6 +129,7 @@ const IncreaseTime = () => {
           <ContainedButton
             disabled={watchAllFields?.date < lockEndDateValue}
             fullWidth
+            loading={increaseTimeLoading}
             type='submit'
           >
             {watchAllFields?.date < lockEndDateValue ? `Can't decrease your lockout` :
