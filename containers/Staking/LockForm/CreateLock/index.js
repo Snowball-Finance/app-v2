@@ -33,7 +33,7 @@ const dateBefore = getDayOffset(new Date(), 365 * 2);
 
 const CreateLock = () => {
   const classes = useStyles();
-  const { snowballBalance, createLock } = useStakingContract();
+  const { snowballBalance, createLock, loading } = useStakingContract();
 
   const schema = yup.object().shape({
     balance: BALANCE_VALID.max(snowballBalance, snowballBalance > 0
@@ -184,6 +184,7 @@ const CreateLock = () => {
             fullWidth
             type='submit'
             onClick={logSubmit}
+            loading={loading}
           >
             Approve and Create Lock
           </ContainedButton>
