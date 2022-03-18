@@ -43,7 +43,7 @@ export function NFTContractProvider({ children }) {
         const nftContract = new ethers.Contract(address, abi, library.getSigner());
 
         if (category === 'Claimmable') {
-          let newItem = { ...item, status: NFT_STATUS.NOT_DONATE.VALUE }
+          let newItem = { ...item, status: NFT_STATUS.NOT_CLAIMMABLE.VALUE }
 
           if (type === 'EARLY_VOTER') {
             const userVote1 = await governanceContract.getVote(1, account)
@@ -65,16 +65,16 @@ export function NFTContractProvider({ children }) {
             }
           }
 
-          if (type === 'COVID_RELIEF') {
-            const covidReliefEligible = await nftContract.Wallets(account)
-            if (!!covidReliefEligible) {
-              const covidReliefBalance = await nftContract.balanceOf(account)
+          if (type === 'CLAIMMABLE') {
+            const claimmableEligible = await nftContract.Wallets(account)
+            if (!!claimmableEligible) {
+              const claimmableBalance = await nftContract.balanceOf(account)
 
               newItem = {
                 ...newItem,
-                status: covidReliefBalance > 0 ? NFT_STATUS.CLAIMED.VALUE : NFT_STATUS.ELIGIBLE.VALUE
+                status: claimmableBalance > 0 ? NFT_STATUS.CLAIMED.VALUE : NFT_STATUS.ELIGIBLE.VALUE
               }
-              if (covidReliefBalance > 0) {
+              if (claimmableBalance > 0) {
                 purchasedNFTs = [
                   ...purchasedNFTs,
                   newItem
@@ -105,7 +105,7 @@ export function NFTContractProvider({ children }) {
             ...claimNFTs,
             {
               ...item,
-              status: NFT_STATUS.NOT_DONATE.VALUE
+              status: NFT_STATUS.NOT_CLAIMMABLE.VALUE
             }
           ]
         } else {
@@ -156,7 +156,7 @@ export function NFTContractProvider({ children }) {
         nftClaim = await nftContract.claim(account)
       }
 
-      if (type === 'COVID_RELIEF') {
+      if (type === 'CLAIMMABLE') {
         nftClaim = await nftContract.mint(account)
       }
 
