@@ -4,7 +4,6 @@ import { floatToBN } from './format';
 
 const PangolinURL = 'https://app.pangolin.exchange/#';
 const JoeURL = 'https://www.traderjoexyz.com/#';
-const PlatypusURL = 'https://app.platypus.finance/';
 const AxialURL = 'https://app.axial.exchange/#';
 
 const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, details = false) => {
@@ -24,9 +23,7 @@ const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, deta
 	} else if (deposit > 0) {
 		action = ["Details", () => { }]
 	} else if (balance > 0) {
-		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })];
-	} else if (item.source == "Platypus") {
-		action = ["Get_Token", () => { window.open(`${PlatypusURL}/pool`) }];
+		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })] 
 	} else if (item.name == "xJOE") {
 		action = ["Get_xJoe", () => { window.open(`${JoeURL}/stake`) }];
 	} else if (!item.token1?.address && item.symbol !== "AXLP") {
@@ -38,7 +35,8 @@ const getProperAction = (item, setModal, balance, AVAXBalance, deposit = 0, deta
 	} else if (
 		item.source === "Pangolin"
 	|| (item.source === "Trader Joe" 
-	|| item.name === "AVAX-AXIAL")) {
+	|| item.name === "AVAX-AXIAL"
+	|| item.name === "xPTP-PTP")) {
 		action = ["Deposit", () => setModal({ open: true, title: 'Deposit', address: item.address })];
 	} else if (item.name == "S3D (USDT-BUSD-DAI)") {
 		action = ["Get_s3D", (router) => { router.push(LINKS.S3D_VAULT.HREF) }];
