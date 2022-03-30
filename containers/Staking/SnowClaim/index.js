@@ -31,6 +31,9 @@ const SnowClaim = () => {
     userSherpaClaimable,
     axialClaim,
     userAxialClaimable,
+    claimLoading,
+    axialClaimLoading,
+    sherpaClaimLoading,
   } = useStakingContract();
 
   const classes = useStyles();
@@ -67,6 +70,7 @@ const SnowClaim = () => {
         <Grid item xs={12}>
           <ContainedButton
             fullWidth
+            loading={claimLoading}
             disabled={!claimable}
             onClick={claim}
           >
@@ -83,6 +87,7 @@ const SnowClaim = () => {
             <ContainedButton
               className={classes.sherpaClaim}
               fullWidth
+              loading={sherpaClaimLoading}
               disabled={!sherpaClaimable}
               onClick={sherpaClaim}
             >
@@ -100,6 +105,7 @@ const SnowClaim = () => {
             <ContainedButton
               className = {classes.axialClaim}
               fullWidth
+              loading={axialClaimLoading}
               disabled={!axialClaimable}
               onClick={axialClaim}
             >

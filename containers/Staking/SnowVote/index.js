@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 const SnowVote = () => {
   const classes = useStyles();
   const {
+    loading,
     snowconeBalance,
     gauges,
     voteFarms,
@@ -194,6 +195,7 @@ const SnowVote = () => {
                 {`Current allocation: ${totalGaugeWeight}%`}
               </Typography>
               <ContainedButton
+                loading={loading}
                 fullWidth
                 disabled={!+snowconeBalance?.toString() || !weightsValid}
                 onClick={voteHandler}

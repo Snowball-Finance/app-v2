@@ -2,7 +2,7 @@ const LP_ICONS = Object.freeze({
   // DeX Icons
   PGL: '/assets/images/lp-icons/PNG.png',
   JLP: '/assets/images/lp-icons/JOE.png',
-  PLP: '/assets/images/lp-icons/PTP.png',
+  VLP: '/assets/images/lp-icons/VTX.png',
   BLP: '/assets/images/lp-icons/BLP.png',
   TLP: '/assets/images/lp-icons/TLP.png',
   QLP: '/assets/images/lp-icons/BENQI.png',
