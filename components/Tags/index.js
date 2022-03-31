@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.custom.palette.transparent.joe_red,
     color: theme.custom.palette.joe_red
   },
-  PLP: {
+  VLP: {
     backgroundColor: theme.custom.palette.transparent.green,
     color: theme.custom.palette.green
   },

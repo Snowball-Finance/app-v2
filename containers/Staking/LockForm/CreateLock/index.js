@@ -34,7 +34,7 @@ const dateBefore = getDayOffset(new Date(), 365 * 2);
 const CreateLock = () => {
   const { trackEvent } = useAnalytics()
   const classes = useStyles();
-  const { snowballBalance, createLock } = useStakingContract();
+  const { snowballBalance, createLock, loading } = useStakingContract();
 
   const schema = yup.object().shape({
     balance: BALANCE_VALID.max(snowballBalance, snowballBalance > 0
@@ -106,6 +106,11 @@ const CreateLock = () => {
     }))
   }
 
+  const onMaxDateSelection = () => {
+    setValue('date', dateBefore);
+    setValue('duration', DURATIONS[3].VALUE);
+  }
+
 
   return (
     <form
@@ -142,7 +147,7 @@ const CreateLock = () => {
             name='date'
             label={`Lock for: ${displayLockTime}`}
             placeholder='Date'
-            onMax={() => setValue('date', dateBefore)}
+            onMax={onMaxDateSelection}
             error={errors.date?.message}
             control={control}
             defaultValue={dateAfter}
@@ -186,6 +191,7 @@ const CreateLock = () => {
             fullWidth
             type='submit'
             onClick={logSubmit}
+            loading={loading}
           >
             Approve and Create Lock
           </ContainedButton>

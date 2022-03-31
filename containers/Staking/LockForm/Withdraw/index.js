@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
 
 const Withdraw = () => {
   const classes = useStyles();
-  const { withdraw } = useStakingContract();
+  const { withdraw, loading } = useStakingContract();
 
   const withdrawHandler = useCallback(() => {
     withdraw()
@@ -29,6 +29,7 @@ const Withdraw = () => {
           <ContainedButton
             fullWidth
             onClick={withdrawHandler}
+            loading={loading}
           >
             Withdraw
           </ContainedButton>

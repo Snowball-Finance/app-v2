@@ -30,6 +30,11 @@ export function StakingContractProvider({ children }) {
   const { data: { LastSnowballInfo: { poolsInfo: pools = [] } = {} } = {} } = getLastSnowballInfo();
 
   const [loading, setLoading] = useState(false);
+  const [increaseAmountLoading, setIncreaseAmountLoading] = useState(false);
+  const [increaseTimeLoading, setIncreaseTimeLoading] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [axialClaimLoading, setAxialClaimLoading] = useState(false);
+  const [sherpaClaimLoading, setSherpaClaimLoading] = useState(false);
   const [gauges, setGauges] = useState([]);
   const [snowballBalance, setSnowballBalance] = useState(0);
   const [lockedAmount, setLockedAmount] = useState();
@@ -99,7 +104,7 @@ export function StakingContractProvider({ children }) {
   }
 
   const claim = async () => {
-    setLoading(true)
+    setClaimLoading(true)
     try {
       const gasLimit = await feeDistributorContract.estimateGas['claim()']();
       const tokenClaim = await feeDistributorContract['claim()']({ gasLimit });
@@ -111,11 +116,11 @@ export function StakingContractProvider({ children }) {
     } catch (error) {
       console.log('[Error] claim => ', error)
     }
-    setLoading(false)
+    setClaimLoading(false)
   }
 
   const sherpaClaim = async () => {
-    setLoading(true)
+    setSherpaClaimLoading(true)
     try {
       const gasLimit = await sherpaDistributorContract.estimateGas['claim()']();
       const tokenClaim = await sherpaDistributorContract['claim()']({ gasLimit });
@@ -127,10 +132,10 @@ export function StakingContractProvider({ children }) {
     } catch (error) {
       console.log('[Error] sherpaClaim => ', error)
     }
-    setLoading(false)
+    setSherpaClaimLoading(false)
   }
   const axialClaim = async () => {
-    setLoading(true)
+    setAxialClaimLoading(true)
     try {
       const gasLimit = await axialDistributorContract.estimateGas['claim()']();
       const tokenClaim = await axialDistributorContract['claim()']({ gasLimit });
@@ -142,7 +147,7 @@ export function StakingContractProvider({ children }) {
     } catch (error) {
       console.log('[Error] axialClaim => ', error)
     }
-    setLoading(false)
+    setAxialClaimLoading(false)
   }
 
   const retrieveGauge = async (pool, gaugesData, totalWeight) => {
@@ -278,7 +283,7 @@ export function StakingContractProvider({ children }) {
   }
 
   const increaseAmount = async (data) => {
-    setLoading(true)
+    setIncreaseAmountLoading(true)
     try {
       const amount = parseEther((data.balance).toString());
       const snowballContractApprove = new ethers.Contract(CONTRACTS.SNOWBALL, SNOWBALL_ABI, library.getSigner());
@@ -288,7 +293,7 @@ export function StakingContractProvider({ children }) {
         toast(<Toast message={'Waiting for approval...'} toastType={'processing'} />);
         const transactionApprove = await tokenApprove.wait(1)
         if (!transactionApprove.status) {
-          setLoading(false)
+          setIncreaseAmountLoading(false)
           return;
         }
       }
@@ -305,11 +310,11 @@ export function StakingContractProvider({ children }) {
     } catch (error) {
       console.log('[Error] increaseAmount => ', error)
     }
-    setLoading(false)
+    setIncreaseAmountLoading(false)
   }
 
   const increaseTime = async (data) => {
-    setLoading(true)
+    setIncreaseTimeLoading(true)
     try {
       const lockedDate = getEpochSecondForDay(new Date(data.date));
       console.log(lockedDate);
@@ -325,7 +330,7 @@ export function StakingContractProvider({ children }) {
     } catch (error) {
       console.log('[Error] increaseTime => ', error)
     }
-    setLoading(false)
+    setIncreaseTimeLoading(false)
   }
 
   const withdraw = async () => {
@@ -350,6 +355,11 @@ export function StakingContractProvider({ children }) {
     <ContractContext.Provider
       value={{
         loading,
+        increaseAmountLoading,
+        increaseTimeLoading,
+        claimLoading,
+        axialClaimLoading,
+        sherpaClaimLoading,
         prices,
         snowballBalance,
         snowconeBalance,
@@ -393,6 +403,11 @@ export function useStakingContract() {
 
   const {
     loading,
+    increaseAmountLoading,
+    increaseTimeLoading,
+    claimLoading,
+    axialClaimLoading,
+    sherpaClaimLoading,
     prices,
     snowballBalance,
     snowconeBalance,
@@ -425,6 +440,11 @@ export function useStakingContract() {
 
   return {
     loading,
+    increaseAmountLoading,
+    increaseTimeLoading,
+    claimLoading,
+    axialClaimLoading,
+    sherpaClaimLoading,
     prices,
     snowballBalance,
     snowconeBalance,

@@ -93,7 +93,7 @@ const CompoundAndEarn = () => {
 
     if (isEmpty(userPools)) {
       let sortedData = [...poolsInfo]
-      sortedData = sortedData.sort((a, b) => b.gaugeInfo.fullYearlyAPY - a.gaugeInfo.fullYearlyAPY);
+      sortedData = sortedData.sort((a, b) => (b.gaugeInfo.snobYearlyAPR + b.yearlyAPY + b.yearlySwapFees) - (a.gaugeInfo.snobYearlyAPR + a.yearlyAPY + a.yearlySwapFees));
       setLastSnowballInfo(sortedData);
       if(query.pool) {
         initailSearchByQueryParams();

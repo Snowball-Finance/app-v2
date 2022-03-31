@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
 
 const IncreaseAmount = () => {
   const classes = useStyles();
-  const { snowballBalance, increaseAmount } = useStakingContract();
+  const { snowballBalance, increaseAmount, increaseAmountLoading } = useStakingContract();
 
   const schema = yup.object().shape({
     balance: BALANCE_VALID.max(snowballBalance, snowballBalance > 0
@@ -74,6 +74,7 @@ const IncreaseAmount = () => {
         <Grid item xs={12}>
           <ContainedButton
             fullWidth
+            loading={increaseAmountLoading}
             type='submit'
           >
             Increase Amount
