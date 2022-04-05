@@ -40,7 +40,7 @@ const ListItem = ({
   const [action, setAction] = useState({ actionType: 'Get_Token' });
   const { account } = useWeb3React();
   const { loading, getBalanceInfoSinglePool, isTransacting
-    , userPools } = useCompoundAndEarnContract();
+    , userPools, userLastDeposits } = useCompoundAndEarnContract();
 
   useEffect(() => {
     const refreshData = async () => {
@@ -134,7 +134,15 @@ const ListItem = ({
     if (pool.gaugeInfo) {
       return gauge.address.toLowerCase() === pool.gaugeInfo.address.toLowerCase();
     }
-  }), [gauges, pool])
+  }), [gauges, pool]);
+
+  const selectedUserDeposit = useMemo(() => {
+    if(userLastDeposits.ListLastDepositsPerWallet){
+      return userLastDeposits.ListLastDepositsPerWallet.find((depositInfo) => {
+        return depositInfo.snowglobeAddress.toLowerCase() === pool.address.toLowerCase();
+    })
+
+  }},[pool,userLastDeposits, userLastDeposits.loading]);
 
   const boost = useMemo(() => {
     if (isEmpty(selectedGauge) || (selectedGauge?.staked || 0) <= 0) {
@@ -233,6 +241,7 @@ const ListItem = ({
             userBoost={userBoost}
             totalAPY={totalAPY}
             boost={boost}
+            userLastDeposit={selectedUserDeposit}
             renderCaution={renderCaution}
           />
         }

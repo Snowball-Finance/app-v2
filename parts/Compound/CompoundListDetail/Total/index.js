@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { BNToFloat, formatNumber, formatNumberByNotation } from 'utils/helpers/format';
 import UnderlyingTokenItem from './UnderlyingTokenItem';
+import { ethers } from 'ethers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Total = ({ item, userData }) => {
+const Total = ({ item, userData, userLastDeposit }) => {
   const classes = useStyles();
 
   return (
@@ -64,6 +65,16 @@ const Total = ({ item, userData }) => {
             BNToFloat(userData?.totalSupply,userData?.lpDecimals) * 100 || 0.00, 5)} %
           </Typography>
         </div>}
+        <div className={classes.container}>
+          <Typography variant="body2">Total Earned</Typography>
+          <Typography variant="subtitle2">${formatNumber(
+            ((ethers.BigNumber.from(userLastDeposit?.lpQuantity)
+             /10 **userData?.lpDecimals) - 
+             (userData?.userDepositedLP || 0.00)) 
+             * -1
+             * item.pricePoolToken)}
+          </Typography>
+        </div>
         <div className={classes.container}>
           <Typography variant='subtitle2'>&nbsp;</Typography>
         </div>

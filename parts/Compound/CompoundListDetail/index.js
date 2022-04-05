@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
-	userData, setUserData, boost, renderCaution }) => {
+	userData, setUserData, boost, userLastDeposit, renderCaution }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
@@ -139,7 +139,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 					/>
 				</Grid>
 				<Grid item xs={12} lg={4}>
-					<Total item={item} userData={userData} />
+					<Total item={item} userData={userData} userLastDeposit={userLastDeposit} />
 				</Grid>
 			</Grid>
 			<div
