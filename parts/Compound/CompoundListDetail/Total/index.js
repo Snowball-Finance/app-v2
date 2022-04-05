@@ -55,26 +55,35 @@ const Total = ({ item, userData, userLastDeposit }) => {
         <div className={classes.container}>
           <Typography variant="body2">Total LP</Typography>
           <Typography variant="subtitle2">{formatNumberByNotation(userData?.userDepositedLP || 0.00, 5, true)
-          } LP {!item.deprecatedPool &&('($'+formatNumber(userData?.usdValue || 0.00)+')')}</Typography>
+          } LP {!item.deprecatedPool && ('($' + formatNumber(userData?.usdValue || 0.00) + ')')}</Typography>
         </div>
-        {!item.deprecatedPool &&<div className={classes.container}>
+        {!item.deprecatedPool && <div className={classes.container}>
           <Typography variant="body2">Share of Pool</Typography>
           <Typography variant="subtitle2">{formatNumber(
-            ((userData?.userBalanceSnowglobe ? BNToFloat(userData?.userBalanceSnowglobe,userData?.lpDecimals) : 0) +
-            (userData?.userBalanceGauge/10**userData?.lpDecimals)) / 
-            BNToFloat(userData?.totalSupply,userData?.lpDecimals) * 100 || 0.00, 5)} %
+            ((userData?.userBalanceSnowglobe ? BNToFloat(userData?.userBalanceSnowglobe, userData?.lpDecimals) : 0) +
+              (userData?.userBalanceGauge / 10 ** userData?.lpDecimals)) /
+            BNToFloat(userData?.totalSupply, userData?.lpDecimals) * 100 || 0.00, 5)} %
           </Typography>
         </div>}
-        <div className={classes.container}>
-          <Typography variant="body2">Total Earned</Typography>
-          <Typography variant="subtitle2">${formatNumber(
-            ((ethers.BigNumber.from(userLastDeposit?.lpQuantity)
-             /10 **userData?.lpDecimals) - 
-             (userData?.userDepositedLP || 0.00)) 
-             * -1
-             * item.pricePoolToken)}
-          </Typography>
-        </div>
+        {!item.deprecatedPool && userData?.userDepositedLP > 0 &&
+          userLastDeposit?.lpQuantity &&
+          <div className={classes.container}>
+            <Typography variant="body2">LP Earned</Typography>
+            <Typography variant="subtitle2">
+              {formatNumber(
+                userLastDeposit?.lpQuantity ?
+                  ((ethers.BigNumber.from(userLastDeposit?.lpQuantity)
+                    / 10 ** userData?.lpDecimals) -
+                    (userData?.userDepositedLP || 0.00))
+                  * -1
+                  : 0.00)} (${formatNumber(
+                    ((ethers.BigNumber.from(userLastDeposit?.lpQuantity)
+                      / 10 ** userData?.lpDecimals) -
+                      (userData?.userDepositedLP || 0.00))
+                    * -1
+                    * item.pricePoolToken)})
+            </Typography>
+          </div>}
         <div className={classes.container}>
           <Typography variant='subtitle2'>&nbsp;</Typography>
         </div>
@@ -91,7 +100,7 @@ const Total = ({ item, userData, userLastDeposit }) => {
                     pairsIcon={[userData?.underlyingTokens?.token1.address]}
                     amount={formatNumberByNotation(userData?.underlyingTokens?.token1.reserveOwned, 3, true)}
                     symbol={userData?.underlyingTokens?.token1.symbol} />
-                </>:
+                </> :
                 <>
                   {item?.token0?.address &&
                     <UnderlyingTokenItem
