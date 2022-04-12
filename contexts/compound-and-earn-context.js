@@ -435,7 +435,7 @@ export function CompoundAndEarnProvider({ children }) {
       } else {
         let routerAddress;
         switch(item.source) {
-          case "Trader Joe": case "Axial":
+          case "Trader Joe": case "Axial": case "Vector":
             routerAddress = CONTRACTS.ROUTER_TRADERJOE;
             break;
           case "Pangolin":
@@ -590,7 +590,7 @@ export function CompoundAndEarnProvider({ children }) {
 
     let routerAddress;
     switch(item.source) {
-      case "Trader Joe": case "Axial":
+      case "Trader Joe": case "Axial": case "Vector":
         routerAddress = CONTRACTS.ROUTER_TRADERJOE;
         break;
       case "Pangolin":
