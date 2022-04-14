@@ -5,6 +5,7 @@ import { NFTS_LIST } from 'api/queries/nftsList';
 import { PROPOSAL_LIST } from 'api/queries/proposalList';
 import { LAST_SNOWBALL_INFO } from 'api/queries/snowballInfo';
 import { MULTIPLE_TRANSACTION_INFO } from 'api/queries/transactionInfo';
+import { USER_LAST_DEPOSIT } from 'api/queries/userLastDeposit';
 import { createContext, useContext } from 'react';
 
 const APIContext = createContext(null);
@@ -46,10 +47,14 @@ export function APIProvider({ children }) {
     return useQuery(PROPOSAL_LIST);
   }
 
+  const getUserLastDeposits = (variables) => {
+    return useQuery(USER_LAST_DEPOSIT, variables);
+  }
+
   return (
     <APIContext.Provider value={{ getCurrentDistributionPhase,getLastSnowballInfo,
       getMultipleTransactionsInfo, getNFTsList, getProposalList,
-      getDeprecatedContracts }}>
+      getDeprecatedContracts, getUserLastDeposits }}>
       {children}
     </APIContext.Provider>
   );
@@ -62,8 +67,8 @@ export function useAPIContext() {
   }
 
   const { getCurrentDistributionPhase,getLastSnowballInfo, getMultipleTransactionsInfo,
-     getNFTsList, getProposalList,getDeprecatedContracts } = context;
+     getNFTsList, getProposalList,getDeprecatedContracts, getUserLastDeposits } = context;
 
   return { getCurrentDistributionPhase,getLastSnowballInfo, getMultipleTransactionsInfo,
-    getNFTsList, getProposalList, getDeprecatedContracts };
+    getNFTsList, getProposalList, getDeprecatedContracts, getUserLastDeposits };
 }
