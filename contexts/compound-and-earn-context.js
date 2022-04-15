@@ -40,7 +40,8 @@ export function CompoundAndEarnProvider({ children }) {
 
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } = useContracts();
-  const { getLastSnowballInfo, getDeprecatedContracts } = useAPIContext();
+  const { getLastSnowballInfo, getDeprecatedContracts, getUserLastDeposits } = useAPIContext();
+  const userQuery = getUserLastDeposits({variables:{wallet:account}});
   const { provider } = useProvider();
   const { prices } = usePrices();
   const snowballInfoQuery = getLastSnowballInfo();
@@ -52,6 +53,7 @@ export function CompoundAndEarnProvider({ children }) {
 
   const [userPools, setUserPools] = useState([]);
   const [userDeprecatedPools, setUserDeprecatedPools] = useState([]);
+  const [userLastDeposits, setUserLastDeposits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadedDeprecated, setLoadedDeprecated] = useState(false);
   const [sortedUserPools, setSortedUserPools] = useState(false);
@@ -80,9 +82,16 @@ export function CompoundAndEarnProvider({ children }) {
       setSortedUserPools(false);
       setLoadedDeprecated(false);
       setUserPools([]);
+      setUserLastDeposits([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gauges, account, prices]);
+
+  useEffect(() => {
+    if(!userQuery.loading && account){
+      setUserLastDeposits(userQuery.data)
+    }
+  },[userQuery, account]);
 
   useEffect(() => {
     async function loadDeprecatedPools() {
@@ -877,6 +886,7 @@ export function CompoundAndEarnProvider({ children }) {
         getBalanceInfoSinglePool,
         loadedDeprecated,
         sortedUserPools,
+        userLastDeposits,
         setLoadedDeprecated,
         setSortedUserPools,
         setUserPools,
@@ -912,6 +922,7 @@ export function useCompoundAndEarnContract() {
     setLoadedDeprecated,
     setSortedUserPools,
     setUserPools,
+    userLastDeposits,
     getBalanceInfosAllPools,
     calculateSwapAmountOut,
   } = context;
@@ -934,6 +945,7 @@ export function useCompoundAndEarnContract() {
     setLoadedDeprecated,
     setSortedUserPools,
     setUserPools,
+    userLastDeposits,
     getBalanceInfosAllPools,
     calculateSwapAmountOut,
   };
