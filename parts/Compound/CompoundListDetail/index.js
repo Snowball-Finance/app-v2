@@ -1,12 +1,12 @@
 import { memo, useEffect, useState } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Grid, useMediaQuery } from '@material-ui/core';
+import { Grid, Typography, useMediaQuery } from '@material-ui/core';
 
 import ContainedButton from 'components/UI/Buttons/ContainedButton';
 import ApyCalculation from './ApyCalculation';
 import SnobApyCalculation from './SnobApyCalculation';
 import Total from './Total';
-import CompoundDialogs from '../CompoundDialogs';
+import ManualHarvest from 'components/ManualHarvest';
 import CompoundWithdrawDialogs from '../CompoundWithdrawDialogs';
 import getProperAction from 'utils/helpers/getProperAction';
 import CompoundActionButton from '../CompoundActionButton';
@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import Toast from 'components/Toast';
 import { useContracts } from 'contexts/contract-context';
 import SwapAPRInfo from './SwapAPRInfo';
+import { useWeb3React } from '@web3-react/core';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -50,52 +51,71 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	userData, setUserData, boost, userLastDeposit, renderCaution }) => {
+	const { library } = useWeb3React();
 	const classes = useStyles();
 	const theme = useTheme();
 	const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
 		defaultMatches: true,
 	});
+	const [availableHarvest, setAvailableHarvest] = useState(false);
 	const [action, setAction] = useState({ actionType: 'Get_Token' });
 
-	const { withdraw, claim, isTransacting, getBalanceInfoSinglePool, setTransactionStatus } = useCompoundAndEarnContract();
+	const { withdraw, claim, isTransacting, getBalanceInfoSinglePool,
+		setTransactionStatus, handleHarvest } = useCompoundAndEarnContract();
 	const { AVAXBalance } = useContracts();
 
 	useEffect(() => {
 		const evalPool = userData ? userData : item;
-		if (item.token0 && AVAXBalance!==0) {
+		if (item.token0 && AVAXBalance !== 0) {
 			let actionType, func;
 			[actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, AVAXBalance, 0, true);
 			setAction({ actionType, func });
 		}
+		const now = new Date();
+		const nextManualHarvest =
+			(item.harvesterData.lastHarvested * 1) + (item.harvesterData.harvestWindow * 1);
+		const nextHarvest = new Date(nextManualHarvest * 1000);
+		setAvailableHarvest(now > nextHarvest);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData, item,AVAXBalance]);
+	}, [userData, item, AVAXBalance]);
 
 	let dailyAPR = item.dailyAPR > 999999 ? 999999 : item.dailyAPR;
 	let weeklyAPY = item.weeklyAPY > 999999 ? 999999 : item.weeklyAPY;
 	let yearlyAPY = item.yearlyAPY > 999999 ? 999999 : item.yearlyAPY;
 
-  const [withdraw_modal, setWithdraw] = useState(false);
-  const handleCloseWithdraw = () => {
-    setWithdraw(false);
-  };
+	const [withdraw_modal, setWithdraw] = useState(false);
+	const handleCloseWithdraw = () => {
+		setWithdraw(false);
+	};
 
 	// const { setTransactionStatus } = useCompoundAndEarnContract();
 
-  const handleClaim = async () => {
-    toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'}/>)
-    try {
-        await claim(item);
-        const userData = await getBalanceInfoSinglePool(item.address);
-        setUserData(userData);
-    } catch (error) {
-      console.log(error)
-    }
-  };
+	const handleClaim = async () => {
+		toast(<Toast message={'Claiming your Tokens...'} toastType={'processing'} />)
+		try {
+			await claim(item);
+			const userData = await getBalanceInfoSinglePool(item.address);
+			setUserData(userData);
+		} catch (error) {
+			console.log(error)
+		}
+	};
 
-  const handleWithdraw = () => {
-    setTransactionStatus({ withdrawStep: 0 });
-    setWithdraw(true)
-  }
+	const handleWithdraw = () => {
+		setTransactionStatus({ withdrawStep: 0 });
+		setWithdraw(true)
+	}
+
+	const renderDate = () => {
+		const nextManualHarvest =
+			(item.harvesterData.lastHarvested * 1) + (item.harvesterData.harvestWindow * 1);
+		const nextHarvest = new Date(nextManualHarvest * 1000);
+		return ` You need to wait until ${nextHarvest.toLocaleString()} to be able to harvest.`
+	}
+
+	const harvest = () => {
+		handleHarvest(item);
+	}
 
 	return (
 		<div className={classes.root}>
@@ -106,13 +126,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				justify="space-between"
 				alignItems="flex-start"
 				spacing={2}
-				>
+			>
 				{renderCaution(item)}
 
 				<Grid item xs={12} lg={4}>
 					<Grid container spacing={2}>
 						{!item.deprecatedPool && (
-							<Grid item xs={12}>	 
+							<Grid item xs={12}>
 								<ApyCalculation
 									kind={item.kind}
 									dailyAPR={dailyAPR}
@@ -123,7 +143,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 						)}
 						<Grid item xs={12}>
 							{!item.deprecatedPool &&
-							<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />}
+								<SwapAPRInfo yearlySwapFees={item.yearlySwapFees} />}
 						</Grid>
 					</Grid>
 				</Grid>
@@ -142,6 +162,34 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 					<Total item={item} userData={userData} userLastDeposit={userLastDeposit} />
 				</Grid>
 			</Grid>
+			{!item.deprecatedPool && !item.deprecated && !item.harvestInfo?.errored &&
+				<Grid item xs={12}>
+					<ManualHarvest>
+						<Grid
+							display='flex'
+							flexDirection='column'
+							alignItems='flex-start'
+						>
+							<div className={classes.container}>
+								<Typography variant="caption">
+									Anyone can perform a manual harvest on our pools. Keep in mind this process will consume some gas!
+									Thank you for your service!
+									{!availableHarvest && renderDate()}
+								</Typography>
+							</div>
+							<div className={classes.container}>
+								<ContainedButton
+									disabled={!availableHarvest || !library}
+									loading={isTransacting.pageview}
+									onClick={harvest}
+									fullWidth={isSm ? true : false}
+								>
+									Harvest
+								</ContainedButton>
+							</div>
+						</Grid>
+					</ManualHarvest>
+				</Grid>}
 			<div
 				className={classes.button}
 			>
@@ -152,18 +200,18 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 						endIcon={false}
 						disabled={item.deprecated}
 						fullWidth={isSm ? true : false}
-					/>:<></>
+					/> : <></>
 				}
 				{/* {!item.deprecatedPool ? */}
-					<ContainedButton
-						disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
-						loading={isTransacting.pageview}
-						onClick={handleClaim}
-						fullWidth={isSm ? true : false}
-					>
-						Claim
-					</ContainedButton>
-					{/* :
+				<ContainedButton
+					disabled={userData?.SNOBHarvestable === 0 || userData?.claimed || !userData}
+					loading={isTransacting.pageview}
+					onClick={handleClaim}
+					fullWidth={isSm ? true : false}
+				>
+					Claim
+				</ContainedButton>
+				{/* :
 					<div />
 				} */}
 				<ContainedButton
@@ -176,13 +224,13 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 				</ContainedButton>
 			</div>
 			{(withdraw && userData && withdraw_modal) && (
-        <CompoundWithdrawDialogs
-          open={withdraw_modal}
-          title="Withdraw"
-          handleClose={handleCloseWithdraw}
-          item={userData}
-        />
-      )}
+				<CompoundWithdrawDialogs
+					open={withdraw_modal}
+					title="Withdraw"
+					handleClose={handleCloseWithdraw}
+					item={userData}
+				/>
+			)}
 		</div>
 	);
 };

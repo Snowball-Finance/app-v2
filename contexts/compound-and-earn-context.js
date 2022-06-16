@@ -7,6 +7,7 @@ import { IS_MAINNET } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
+import HARVESTER_ABI from 'libs/abis/harvester.json';
 import LP_TOKEN_ABI from 'libs/abis/lp-token.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import SNOWGLOBE_ZAPPERS_ABI from 'libs/abis/snowglobezap';
@@ -175,6 +176,8 @@ export function CompoundAndEarnProvider({ children }) {
   const generatePoolInfo = (item, gauges, contractData) => {
     const lpData = contractData[item.lpAddress];
     const snowglobeData = contractData[item.address];
+    const harvesterData = contractData[CONTRACTS.HARVESTER_CONTRACT];
+
     const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
     let totalSupply = 0,
@@ -262,6 +265,7 @@ export function CompoundAndEarnProvider({ children }) {
       userBalanceSnowglobe,
       userBalanceGauge: gauge ? gauge.staked : 0,
       snowglobeRatio,
+      harvesterData
     };
   };
 
@@ -411,6 +415,46 @@ export function CompoundAndEarnProvider({ children }) {
     }
     setIsTransacting({ approve: false });
   };
+
+  const handleHarvest = async (item) => {
+		setIsTransacting({ pageview: true });
+		try {
+			const harvesterContract =
+				new ethers.Contract(CONTRACTS.HARVESTER_CONTRACT, HARVESTER_ABI, library.getSigner());
+			
+			const harvestTx = await harvesterContract.harvest(item.strategyAddress);
+			await harvestTx.wait(1);
+			if (!harvestTx.status) {
+				setPopUp({
+				  title: 'Transaction Error',
+				  icon: ANIMATIONS.ERROR.VALUE,
+				  text: `Error at Manual Harvesting`,
+				});
+			}else{
+				const linkTx = getLink(
+					`${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${harvestTx.transactionHash}`,
+					'Check on Snowtrace.',
+				  );
+				setPopUp({
+					title: 'Harvest Complete!',
+					icon: ANIMATIONS.SUCCESS.VALUE,
+					text: linkTx,
+				  });
+
+        //refresh data only after 2sec to our node have time to catch up with network
+        setTimeout(async () => {
+          setTransactionUpdateLoading(true);
+          await getBalanceInfosAllPools(await getGaugeProxyInfo());
+          setTransactionUpdateLoading(false);
+          setSortedUserPools(false);
+        }, 2000);
+			}
+			setIsTransacting({ pageview: false });
+		} catch (error) {
+			console.error(error);
+			setIsTransacting({ pageview: false });
+		}
+	}
 
   const zapIntoSnowglobe = async (amount, baseTokenAddress, item, isNativeAVAX, zapperSlippage) => {
     const zapperAddress = getZapperContract(item);
@@ -871,6 +915,7 @@ export function CompoundAndEarnProvider({ children }) {
       value={{
         loading,
         isTransacting,
+        handleHarvest,
         transactionUpdateLoading,
         userPools,
         transactionStatus,
@@ -904,6 +949,7 @@ export function useCompoundAndEarnContract() {
   const {
     loading,
     isTransacting,
+    handleHarvest,
     transactionUpdateLoading,
     userPools,
     transactionStatus,
@@ -927,6 +973,7 @@ export function useCompoundAndEarnContract() {
   return {
     loading,
     isTransacting,
+    handleHarvest,
     transactionUpdateLoading,
     userPools,
     transactionStatus,

@@ -2,12 +2,14 @@ import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import LP_ABI from 'libs/abis/lp-token.json';
 import ERC20_ABI from 'libs/abis/main/erc20.json';
+import HARVESTER_ABI from 'libs/abis/harvester.json';
 import { ContractCall } from 'libs/services/multicall';
-
+import { CONTRACTS } from 'config';
 
 const getPoolCalls = (item, account) => {
   const lpContractCalls = new ContractCall(item.lpAddress, LP_ABI);
   const snowglobeContractCalls = new ContractCall(item.address, SNOWGLOBE_ABI);
+  const harvesterContractCalls = new ContractCall(CONTRACTS.HARVESTER_CONTRACT, HARVESTER_ABI);
   lpContractCalls.setCall("balanceOf", [account]);
   lpContractCalls.setCall("decimals", []);
 
@@ -22,9 +24,11 @@ const getPoolCalls = (item, account) => {
     snowglobeContractCalls.setCall("getRatio", []);
     snowglobeContractCalls.setCall("balance", []);
   }
+  
   snowglobeContractCalls.setCall("totalSupply", []);
-
-  return [lpContractCalls, snowglobeContractCalls];
+  harvesterContractCalls.setCall("lastHarvested", [item.strategyAddress]);
+  harvesterContractCalls.setCall("harvestWindow", [item.strategyAddress]);
+  return [lpContractCalls, snowglobeContractCalls, harvesterContractCalls];
 }
 
 const getGaugeCalls = (pool, account) => {
