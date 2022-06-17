@@ -19,6 +19,7 @@ const LAST_SNOWBALL_INFO = gql`
       poolsInfo{
         address
         lpAddress
+        strategyAddress
         name
         kind
         source
@@ -80,6 +81,7 @@ const LAST_SNOWBALL_INFO = gql`
           fulfillThreshold
           minValueNeeded
         }
+        nextManualHarvest
       }
     }
   }
