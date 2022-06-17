@@ -13,12 +13,14 @@ import ANIMATIONS from 'utils/constants/animate-icons'
 import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
 
 const DESKTOP_CONNECTORS = {
+  'Core': injected,
   'MetaMask': injected,
   'Coinbase Wallet': walletlink,
   'Coin 98': injected,
 }
 
 const MOBILE_CONNECTORS = {
+  'Core': injected,
   'MetaMask': injected,
   'Coinbase Wallet': walletlink,
   'Coin 98': injected,
@@ -93,7 +95,7 @@ const WalletModal = ({
           spacing={2}
           className={classes.installContainer}
           direction='row'
-          justify='center'
+          justify='left'
           alignItems='stretch'
         >
           {Object.keys(walletConnectors).map(name => {
@@ -102,8 +104,8 @@ const WalletModal = ({
               <Grid
                 key={name}
                 item
-                lg={4}
-                md={4}
+                lg={3}
+                md={3}
                 xs={12}
                 sm={12}
                 onClick={() => walletSelectHandler(currentConnector, name)}
