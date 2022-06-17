@@ -72,10 +72,12 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 			setAction({ actionType, func });
 		}
 		const now = new Date();
-		const nextManualHarvest =
-			(item.harvesterData.lastHarvested * 1) + (item.harvesterData.harvestWindow * 1);
-		const nextHarvest = new Date(nextManualHarvest * 1000);
-		setAvailableHarvest(now > nextHarvest);
+		if(item.harvesterData){
+			const nextManualHarvest =
+				(item.harvesterData.lastHarvested * 1) + (item.harvesterData.harvestWindow * 1);
+			const nextHarvest = new Date(nextManualHarvest * 1000);
+			setAvailableHarvest(now > nextHarvest);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData, item, AVAXBalance]);
 
@@ -174,7 +176,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 								<Typography variant="caption">
 									Anyone can perform a manual harvest on our pools. Keep in mind this process will consume some gas!
 									Thank you for your service!
-									{!availableHarvest && renderDate()}
+									{!availableHarvest && item.harvesterData && renderDate()}
 								</Typography>
 							</div>
 							<div className={classes.container}>
