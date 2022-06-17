@@ -176,7 +176,6 @@ export function CompoundAndEarnProvider({ children }) {
   const generatePoolInfo = (item, gauges, contractData) => {
     const lpData = contractData[item.lpAddress];
     const snowglobeData = contractData[item.address];
-    const harvesterData = contractData[CONTRACTS.HARVESTER_CONTRACT];
 
     const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
@@ -264,8 +263,7 @@ export function CompoundAndEarnProvider({ children }) {
       underlyingTokens,
       userBalanceSnowglobe,
       userBalanceGauge: gauge ? gauge.staked : 0,
-      snowglobeRatio,
-      harvesterData
+      snowglobeRatio
     };
   };
 
@@ -423,8 +421,8 @@ export function CompoundAndEarnProvider({ children }) {
 				new ethers.Contract(CONTRACTS.HARVESTER_CONTRACT, HARVESTER_ABI, library.getSigner());
 			
 			const harvestTx = await harvesterContract.harvest(item.strategyAddress);
-			await harvestTx.wait(1);
-			if (!harvestTx.status) {
+			const harvestResult = await harvestTx.wait(1);
+			if (!harvestResult.status) {
 				setPopUp({
 				  title: 'Transaction Error',
 				  icon: ANIMATIONS.ERROR.VALUE,
@@ -432,7 +430,7 @@ export function CompoundAndEarnProvider({ children }) {
 				});
 			}else{
 				const linkTx = getLink(
-					`${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${harvestTx.transactionHash}`,
+					`${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${harvestResult.transactionHash}`,
 					'Check on Snowtrace.',
 				  );
 				setPopUp({

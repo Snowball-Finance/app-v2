@@ -16,6 +16,9 @@ import Toast from 'components/Toast';
 import { useContracts } from 'contexts/contract-context';
 import SwapAPRInfo from './SwapAPRInfo';
 import { useWeb3React } from '@web3-react/core';
+import HARVESTER_ABI from 'libs/abis/harvester.json';
+import { CONTRACTS } from 'config';
+import { ethers } from 'ethers';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -51,13 +54,14 @@ const useStyles = makeStyles((theme) => ({
 
 const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	userData, setUserData, boost, userLastDeposit, renderCaution }) => {
-	const { library } = useWeb3React();
+	const { library, account } = useWeb3React();
 	const classes = useStyles();
 	const theme = useTheme();
 	const isSm = useMediaQuery(theme.breakpoints.down('sm'), {
 		defaultMatches: true,
 	});
 	const [availableHarvest, setAvailableHarvest] = useState(false);
+	const [nextHarvest, setNextHarvest] = useState(0);
 	const [action, setAction] = useState({ actionType: 'Get_Token' });
 
 	const { withdraw, claim, isTransacting, getBalanceInfoSinglePool,
@@ -65,18 +69,26 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	const { AVAXBalance } = useContracts();
 
 	useEffect(() => {
+		async function fetchData(){
+			const now = new Date();
+			if(account){
+				const harvesterContract = 
+					new ethers.Contract(CONTRACTS.HARVESTER_CONTRACT, HARVESTER_ABI, library.getSigner());
+				const lastHarvested = await harvesterContract.lastHarvested(item.strategyAddress);
+				const harvestWindow = await harvesterContract.harvestWindow(item.strategyAddress);
+				const nextManualHarvest =
+					(lastHarvested * 1) + (harvestWindow * 1);
+				const nextDateHarvest = new Date(nextManualHarvest * 1000);
+				setNextHarvest(nextDateHarvest);
+				setAvailableHarvest(now > nextDateHarvest);
+			}
+		}
+		fetchData()
 		const evalPool = userData ? userData : item;
 		if (item.token0 && AVAXBalance !== 0) {
 			let actionType, func;
 			[actionType, func] = getProperAction(evalPool, setModal, evalPool.userLPBalance, AVAXBalance, 0, true);
 			setAction({ actionType, func });
-		}
-		const now = new Date();
-		if(item.harvesterData){
-			const nextManualHarvest =
-				(item.harvesterData.lastHarvested * 1) + (item.harvesterData.harvestWindow * 1);
-			const nextHarvest = new Date(nextManualHarvest * 1000);
-			setAvailableHarvest(now > nextHarvest);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData, item, AVAXBalance]);
@@ -109,10 +121,11 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 	}
 
 	const renderDate = () => {
-		const nextManualHarvest =
-			(item.harvesterData.lastHarvested * 1) + (item.harvesterData.harvestWindow * 1);
-		const nextHarvest = new Date(nextManualHarvest * 1000);
-		return ` You need to wait until ${nextHarvest.toLocaleString()} to be able to harvest.`
+		if(nextHarvest > 0){
+			return <><br /> You need to wait until {nextHarvest.toLocaleString()} to be able to harvest.</>
+		}else{
+			return ''
+		}
 	}
 
 	const harvest = () => {
@@ -176,7 +189,7 @@ const CompoundListDetail = ({ item, userBoost, totalAPY, setModal,
 								<Typography variant="caption">
 									Anyone can perform a manual harvest on our pools. Keep in mind this process will consume some gas!
 									Thank you for your service!
-									{!availableHarvest && item.harvesterData && renderDate()}
+									{!availableHarvest && renderDate()}
 								</Typography>
 							</div>
 							<div className={classes.container}>
