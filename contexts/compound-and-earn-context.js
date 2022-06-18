@@ -7,6 +7,7 @@ import { IS_MAINNET } from 'config';
 import MAIN_ERC20_ABI from 'libs/abis/main/erc20.json';
 import TEST_ERC20_ABI from 'libs/abis/test/erc20.json';
 import SNOWGLOBE_ABI from 'libs/abis/snowglobe.json';
+import HARVESTER_ABI from 'libs/abis/harvester.json';
 import LP_TOKEN_ABI from 'libs/abis/lp-token.json';
 import GAUGE_ABI from 'libs/abis/gauge.json';
 import SNOWGLOBE_ZAPPERS_ABI from 'libs/abis/snowglobezap';
@@ -38,7 +39,7 @@ export function CompoundAndEarnProvider({ children }) {
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts, getUserLastDeposits } = useAPIContext();
-  const userQuery = getUserLastDeposits({variables:{wallet:account}});
+  const userQuery = getUserLastDeposits({ variables: { wallet: account } });
   const { provider } = useProvider();
   const { prices } = usePrices();
   const snowballInfoQuery = getLastSnowballInfo();
@@ -85,10 +86,10 @@ export function CompoundAndEarnProvider({ children }) {
   }, [gauges, account, prices]);
 
   useEffect(() => {
-    if(!userQuery.loading && account){
+    if (!userQuery.loading && account) {
       setUserLastDeposits(userQuery.data)
     }
-  },[userQuery, account]);
+  }, [userQuery, account]);
 
   useEffect(() => {
     async function loadDeprecatedPools() {
@@ -175,6 +176,7 @@ export function CompoundAndEarnProvider({ children }) {
   const generatePoolInfo = (item, gauges, contractData) => {
     const lpData = contractData[item.lpAddress];
     const snowglobeData = contractData[item.address];
+
     const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
 
     let totalSupply = 0,
@@ -261,7 +263,7 @@ export function CompoundAndEarnProvider({ children }) {
       underlyingTokens,
       userBalanceSnowglobe,
       userBalanceGauge: gauge ? gauge.staked : 0,
-      snowglobeRatio,
+      snowglobeRatio
     };
   };
 
@@ -412,20 +414,60 @@ export function CompoundAndEarnProvider({ children }) {
     setIsTransacting({ approve: false });
   };
 
+  const handleHarvest = async (item) => {
+    setIsTransacting({ pageview: true });
+    try {
+      const harvesterContract =
+        new ethers.Contract(CONTRACTS.HARVESTER_CONTRACT, HARVESTER_ABI, library.getSigner());
+
+      const harvestTx = await harvesterContract.harvest(item.strategyAddress);
+      const harvestResult = await harvestTx.wait(1);
+      if (!harvestResult.status) {
+        setPopUp({
+          title: 'Transaction Error',
+          icon: ANIMATIONS.ERROR.VALUE,
+          text: `Error at Manual Harvesting`,
+        });
+      } else {
+        const linkTx = getLink(
+          `${AVALANCHE_MAINNET_PARAMS.blockExplorerUrls[0]}tx/${harvestResult.transactionHash}`,
+          'Check on Snowtrace.',
+        );
+        setPopUp({
+          title: 'Harvest Complete!',
+          icon: ANIMATIONS.SUCCESS.VALUE,
+          text: linkTx,
+        });
+
+        //refresh data only after 2sec to our node have time to catch up with network
+        setTimeout(async () => {
+          setTransactionUpdateLoading(true);
+          await getBalanceInfosAllPools(await getGaugeProxyInfo());
+          setTransactionUpdateLoading(false);
+          setSortedUserPools(false);
+        }, 2000);
+      }
+      setIsTransacting({ pageview: false });
+    } catch (error) {
+      console.error(error);
+      setIsTransacting({ pageview: false });
+    }
+  }
+
   const zapIntoSnowglobe = async (amount, baseTokenAddress, item, isNativeAVAX, zapperSlippage) => {
     const zapperAddress = getZapperContract(item);
     const zappersContract = new ethers.Contract(zapperAddress, SNOWGLOBE_ZAPPERS_ABI, library.getSigner());
-    if(!isNativeAVAX){ 
+    if (!isNativeAVAX) {
       const estimateSwap = await zappersContract.estimateSwap(item.address, baseTokenAddress, amount);
 
       const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
 
       const zapTx = await zappersContract.zapIn(item.address, amountMinToken, baseTokenAddress, amount);
       return zapTx;
-    } else { 
+    } else {
       //if the pair uses WAVAX we want to go through it because it costs less gas!!
       let hasWAVAX, WAVAXPos;
-      if(item.token0.address === WAVAX) {
+      if (item.token0.address === WAVAX) {
         hasWAVAX = true;
         WAVAXPos = 0;
       } else if (item.token1.address === WAVAX) {
@@ -433,17 +475,17 @@ export function CompoundAndEarnProvider({ children }) {
         WAVAXPos = 1;
       }
 
-      if(hasWAVAX){
+      if (hasWAVAX) {
         const estimateSwap = await zappersContract.estimateSwap(item.address, item[`token${WAVAXPos}`].address, amount);
 
         //1% slippage
         const amountMinToken = estimateSwap.swapAmountOut.sub(estimateSwap.swapAmountOut.div(100).mul(zapperSlippage));
 
-        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, {value: amount});
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, WAVAX, { value: amount });
         return zapTx;
       } else {
         let routerAddress;
-        switch(item.source) {
+        switch (item.source) {
           case "Trader Joe": case "Axial": case "Vector":
             routerAddress = CONTRACTS.ROUTER_TRADERJOE;
             break;
@@ -454,27 +496,27 @@ export function CompoundAndEarnProvider({ children }) {
             throw new Error("Router not found for this pool");
         }
         //simulate a swap between WAVAX and TOKEN0 to know how much it is worth
-        const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
+        const routerContract = new ethers.Contract(routerAddress, AMM_ROUTER_ABI, library.getSigner());
 
-        const  [, amountOut] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+        const [, amountOut] = await routerContract.getAmountsOut(amount, [WAVAX, item.token0.address]);
 
         const amountMinToken = amountOut.sub(amountOut.div(100).mul(zapperSlippage));
-        
-        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item.token0.address, {value: amount});
-        
+
+        const zapTx = await zappersContract.zapInAVAX(item.address, amountMinToken, item.token0.address, { value: amount });
+
         return zapTx;
       }
     }
   }
 
   const deposit = async (
-      item,
-      amount,
-      addressFromZapper, 
-      onlyGauge = false, 
-      isNativeAVAX = false, 
-      zapperSlippage = 1
-    ) => {
+    item,
+    amount,
+    addressFromZapper,
+    onlyGauge = false,
+    isNativeAVAX = false,
+    zapperSlippage = 1
+  ) => {
     if (!account) {
       setPopUp({
         title: 'Network Error',
@@ -486,18 +528,18 @@ export function CompoundAndEarnProvider({ children }) {
 
     let gaugeDeposit;
     setIsTransacting({ deposit: true });
-    try {    
+    try {
       //We want to go straight for the zapper
-      if(addressFromZapper) {
+      if (addressFromZapper) {
         gaugeDeposit = await zapIntoSnowglobe(
           amount, addressFromZapper, item, addressFromZapper === "0x0", zapperSlippage
         );
       } else if (transactionStatus.depositStep === 0) {
         if (item.kind === 'Snowglobe') {
           //if this deposit is native we need to wrap it
-          if(isNativeAVAX) {
+          if (isNativeAVAX) {
             const wrapped = await wrapAVAX(amount, library.getSigner());
-            if(!wrapped){
+            if (!wrapped) {
               setPopUp({
                 title: 'Transaction Error',
                 icon: ANIMATIONS.ERROR.VALUE,
@@ -537,8 +579,8 @@ export function CompoundAndEarnProvider({ children }) {
       const gauge = gauges.find(gauge => gauge.address.toLowerCase() === item.gaugeInfo.address.toLowerCase());
       const gaugeContract = new ethers.Contract(gauge.address, GAUGE_ABI, library.getSigner());
 
-      if(!addressFromZapper){
-        gaugeDeposit = item.kind === 'Snowglobe' 
+      if (!addressFromZapper) {
+        gaugeDeposit = item.kind === 'Snowglobe'
           ? await gaugeContract.depositAll()
           : gaugeDeposit = await gaugeContract.deposit(amount);
       }
@@ -571,7 +613,7 @@ export function CompoundAndEarnProvider({ children }) {
         setSortedUserPools(false);
       }, 2000);
     } catch (error) {
-      if(transactionStatus.depositStep >= 0) {
+      if (transactionStatus.depositStep >= 0) {
         addPartialInvestment({ isFixMyPool: true, buttonText: 'Fix my pool', fromContext: true });
       }
       setPopUp({
@@ -584,21 +626,21 @@ export function CompoundAndEarnProvider({ children }) {
   };
 
   const calculateSwapAmountOut = async (useAVAX, amount, item, selectedToken) => {
-    if(amount <= 0 || amount.eq("0x0")){
+    if (amount <= 0 || amount.eq("0x0")) {
       return {
         [item.token0.address]: {
-          amount:ethers.BigNumber.from(0),
-          reserve:ethers.BigNumber.from(0)
+          amount: ethers.BigNumber.from(0),
+          reserve: ethers.BigNumber.from(0)
         },
         [item.token1.address]: {
-          amount:ethers.BigNumber.from(0),
-          reserve:ethers.BigNumber.from(0)
+          amount: ethers.BigNumber.from(0),
+          reserve: ethers.BigNumber.from(0)
         }
       }
     }
 
     let routerAddress;
-    switch(item.source) {
+    switch (item.source) {
       case "Trader Joe": case "Axial": case "Vector":
         routerAddress = CONTRACTS.ROUTER_TRADERJOE;
         break;
@@ -609,25 +651,25 @@ export function CompoundAndEarnProvider({ children }) {
         throw new Error("Router not found for this pool");
     }
 
-    const routerContract = new ethers.Contract(routerAddress,AMM_ROUTER_ABI,library.getSigner());
+    const routerContract = new ethers.Contract(routerAddress, AMM_ROUTER_ABI, library.getSigner());
 
     //we need to get the reserves of this tokens to calculate the price impact
     const lpContract = new ethers.Contract(item.lpAddress, LP_TOKEN_ABI, library.getSigner());
     const reserves = await lpContract.getReserves();
 
     let baseToken, swappedToken, amountToSwap, baseReserve, swappedReserve
-    
-    if(useAVAX){
+
+    if (useAVAX) {
       let hasWAVAX, otherTokenPos;
-      if(item.token0.address.toLowerCase() === WAVAX.toLowerCase()) {
+      if (item.token0.address.toLowerCase() === WAVAX.toLowerCase()) {
         hasWAVAX = true;
         otherTokenPos = 1;
       } else if (item.token1.address.toLowerCase() === WAVAX.toLowerCase()) {
         hasWAVAX = true;
         otherTokenPos = 0;
       }
-      
-      if(hasWAVAX){
+
+      if (hasWAVAX) {
         baseToken = WAVAX;
         baseReserve = otherTokenPos === 0 ? reserves._reserve1 : reserves._reserve0;
         swappedReserve = otherTokenPos === 0 ? reserves._reserve0 : reserves._reserve1;
@@ -635,14 +677,14 @@ export function CompoundAndEarnProvider({ children }) {
         amountToSwap = amount;
       } else {
         try {
-          [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token0.address]);
+          [, amountToSwap] = await routerContract.getAmountsOut(amount, [WAVAX, item.token0.address]);
           baseToken = item.token0.address;
           swappedToken = item.token1.address;
           baseReserve = reserves._reserve0;
           swappedReserve = reserves._reserve1;
         } catch (error) {
           //if there`s no path WAVAX/TOKEN0 we try token1
-          [, amountToSwap] = await routerContract.getAmountsOut(amount,[WAVAX, item.token1.address]);
+          [, amountToSwap] = await routerContract.getAmountsOut(amount, [WAVAX, item.token1.address]);
           baseToken = item.token1.address;
           swappedToken = item.token0.address;
           baseReserve = reserves._reserve1;
@@ -650,12 +692,12 @@ export function CompoundAndEarnProvider({ children }) {
         }
       }
     } else {
-      if(item.token0.address === selectedToken.address) {
+      if (item.token0.address === selectedToken.address) {
         baseToken = item.token0.address;
         swappedToken = item.token1.address;
         baseReserve = reserves._reserve0;
-        swappedReserve = reserves._reserve1; 
-      } else if (item.token1.address === selectedToken.address){
+        swappedReserve = reserves._reserve1;
+      } else if (item.token1.address === selectedToken.address) {
         baseToken = item.token1.address;
         swappedToken = item.token0.address;
         baseReserve = reserves._reserve1;
@@ -666,12 +708,12 @@ export function CompoundAndEarnProvider({ children }) {
     const [, estimateSwap] = await routerContract.getAmountsOut(amountToSwap.div(2), [baseToken, swappedToken]);
     return {
       [baseToken]: {
-        amount:amountToSwap.div(2),
-        reserve:baseReserve
+        amount: amountToSwap.div(2),
+        reserve: baseReserve
       },
       [swappedToken]: {
-        amount:estimateSwap,
-        reserve:swappedReserve
+        amount: estimateSwap,
+        reserve: swappedReserve
       }
     }
   }
@@ -777,20 +819,20 @@ export function CompoundAndEarnProvider({ children }) {
         try {
           if (item.deprecatedPool) {
             item.withdrew = true;
-          } 
-          
-            if (allowClaim) {
-              await claim(item, true);
-              setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
-            }
-            //refresh data only after 2sec to our node have time to catch up with network
-            setTimeout(async () => {
-              setTransactionUpdateLoading(true);
-              await getBalanceInfosAllPools(await getGaugeProxyInfo());
-              setTransactionUpdateLoading(false);
-              setSortedUserPools(false);
-            }, 2000);
-          
+          }
+
+          if (allowClaim) {
+            await claim(item, true);
+            setTransactionStatus({ approvalStep: 0, depositStep: 0, withdrawStep: 3 });
+          }
+          //refresh data only after 2sec to our node have time to catch up with network
+          setTimeout(async () => {
+            setTransactionUpdateLoading(true);
+            await getBalanceInfosAllPools(await getGaugeProxyInfo());
+            setTransactionUpdateLoading(false);
+            setSortedUserPools(false);
+          }, 2000);
+
         } catch (error) {
           console.log(error);
         }
@@ -871,6 +913,7 @@ export function CompoundAndEarnProvider({ children }) {
       value={{
         loading,
         isTransacting,
+        handleHarvest,
         transactionUpdateLoading,
         userPools,
         transactionStatus,
@@ -904,6 +947,7 @@ export function useCompoundAndEarnContract() {
   const {
     loading,
     isTransacting,
+    handleHarvest,
     transactionUpdateLoading,
     userPools,
     transactionStatus,
@@ -927,6 +971,7 @@ export function useCompoundAndEarnContract() {
   return {
     loading,
     isTransacting,
+    handleHarvest,
     transactionUpdateLoading,
     userPools,
     transactionStatus,

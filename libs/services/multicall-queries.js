@@ -4,7 +4,6 @@ import LP_ABI from 'libs/abis/lp-token.json';
 import ERC20_ABI from 'libs/abis/main/erc20.json';
 import { ContractCall } from 'libs/services/multicall';
 
-
 const getPoolCalls = (item, account) => {
   const lpContractCalls = new ContractCall(item.lpAddress, LP_ABI);
   const snowglobeContractCalls = new ContractCall(item.address, SNOWGLOBE_ABI);
@@ -22,8 +21,8 @@ const getPoolCalls = (item, account) => {
     snowglobeContractCalls.setCall("getRatio", []);
     snowglobeContractCalls.setCall("balance", []);
   }
+  
   snowglobeContractCalls.setCall("totalSupply", []);
-
   return [lpContractCalls, snowglobeContractCalls];
 }
 
