@@ -132,7 +132,7 @@ const TotalLockedValue = () => {
               Blocks Past 24hrs
             </Typography>
             <Typography variant="subtitle1" color="textPrimary">
-              {formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs, 2)}
+              {formatNumber(snowballTVLQuery.data?.LastSnowballInfo?.blocksPast24hrs, 0)}
             </Typography>
           </Grid>
         </Grid>
