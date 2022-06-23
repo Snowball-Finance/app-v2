@@ -15,7 +15,7 @@ import Details from './Details';
 import { compoundDialogReducer, compoundDialogActionTypes } from './reducer'
 import { storage, StorageKeys } from 'utils/storage';
 import { useContracts } from 'contexts/contract-context';
-import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 import AdvancedTransactionOption from 'parts/AdvancedTransactionOption';
 import { usePrices } from 'contexts/price-context';
 
@@ -92,6 +92,8 @@ const CompoundDialogs = ({
   if (!userData) {
     return null;
   }
+
+  const { trackEvent } = useAnalytics()
   const { prices } = usePrices()
 
   const classes = useStyles();
@@ -170,7 +172,7 @@ const CompoundDialogs = ({
       }
     } catch (error) {
       console.log(error);
-      analytics.trackEvent(createEvent({
+      trackEvent(createEvent({
         category: AnalyticCategories.error,
         action: AnalyticActions.wallet,
         name: `submit ${amount}`,

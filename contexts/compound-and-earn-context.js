@@ -28,7 +28,7 @@ import { getMultiContractData } from 'libs/services/multicall';
 import { approveContractAction } from 'utils/contractHelpers/approve';
 import { wrapAVAX } from 'utils/helpers/wrapAVAX';
 import { getDeprecatedCalls, getGaugeCalls, getPoolCalls, getTokensBalance } from 'libs/services/multicall-queries';
-import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "./analytics";
 import { CONTRACTS } from 'config';
 import { useNotification } from 'contexts/notification-context';
 
@@ -36,6 +36,9 @@ const ERC20_ABI = IS_MAINNET ? MAIN_ERC20_ABI : TEST_ERC20_ABI;
 const CompoundAndEarnContext = createContext(null);
 
 export function CompoundAndEarnProvider({ children }) {
+
+  const { trackEvent } = useAnalytics()
+
   const { library, account } = useWeb3React();
   const { gauges, retrieveGauge, getBalanceInfo, getGaugeProxyInfo } = useContracts();
   const { getLastSnowballInfo, getDeprecatedContracts, getUserLastDeposits } = useAPIContext();
@@ -350,7 +353,7 @@ export function CompoundAndEarnProvider({ children }) {
           }
         }
         resolve(true);
-        analytics.trackEvent(createEvent({
+        trackEvent(createEvent({
           category: AnalyticCategories.wallet,
           action: AnalyticActions.approve,
           name: `${amount}`,
