@@ -64,3 +64,4 @@ export const analytics = new MatomoTracker({
   urlBase,
   siteId,
 })
+
