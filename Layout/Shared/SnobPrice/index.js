@@ -49,7 +49,7 @@ const SnobBalance = () => {
             color='textPrimary'
             className={classes.balance}
           >
-            $ {formatNumber(prices.SNOB, 2)}
+            $ {prices.SNOB > 0.5 ? formatNumber(prices.SNOB) : formatNumber(prices.SNOB, 4)}
           </Typography>
         </Tooltip>
           
