@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
-import { Pie } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 import { useStakingContract } from 'contexts/staking-context'
 import CardWrapper from '../CardWrapper'
@@ -39,7 +39,7 @@ const VoteDistribution = () => {
           labels: gLabel,
           datasets: [
             {
-              label: '# of Votes',
+              label: '% of Allocation',
               data: gData,
               backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -81,7 +81,7 @@ const VoteDistribution = () => {
             Loading graph data..
           </Typography>
         ) : (
-          <Pie data={data} />
+          <Bar data={data} />
         )
       }
     </CardWrapper>
