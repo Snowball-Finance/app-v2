@@ -15,7 +15,6 @@ import { BANNER_IMAGE_PATH } from 'utils/constants/image-paths'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { APIProvider } from 'contexts/api-context'
-import GeneralAlerts from 'parts/GeneralAlerts'
 import { CompoundAndEarnProvider } from 'contexts/compound-and-earn-context'
 import { StakingContractProvider } from 'contexts/staking-context'
 import { ProviderProvider } from 'contexts/provider-context'
@@ -23,17 +22,18 @@ import { NotficationProvider } from 'contexts/notification-context'
 import { useRouter } from "next/router"
 import { useEffect, useRef } from "react"
 import { analytics } from "utils/analytics"
+import IframeProvider from 'contexts/IFrameContext'
 
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const initialized=useRef(false);
+  const initialized = useRef(false);
   const apolloClient = useApollo(pageProps.initialApolloState);
 
   useEffect(() => {
     if (typeof window === undefined) return;
-    if(!(initialized.current)){
-      initialized.current=true;
+    if (!(initialized.current)) {
+      initialized.current = true;
       analytics.trackPageView({
         href: router.pathname,
       });
@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }) {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
-  
+
   return (
     <>
       <Head>
@@ -81,36 +81,37 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
+      <IframeProvider>
         <SnowWeb3Provider>
           <ApolloProvider client={apolloClient}>
-              <ThemeProvider>
-                <ProviderProvider>
-                  <WalletProvider>
-                    <PopupProvider>
-                      <NotficationProvider>
-                        <APIProvider>
-                          <PriceProvider>
-                            <StakingContractProvider>
-                              <ContractProvider>
-                                <CompoundAndEarnProvider>
-                                  <CssBaseline />
-                                  <Layout>
-                                    <Component {...pageProps} />
-                                    {/* <GeneralAlerts /> */}
-                                  </Layout>
-                                </CompoundAndEarnProvider>
-                                <ToastContainer position={'bottom-right'} />
-                              </ContractProvider>
-                            </StakingContractProvider>
-                          </PriceProvider>
-                        </APIProvider>
-                      </NotficationProvider>
-                    </PopupProvider>
-                  </WalletProvider>
-                </ProviderProvider>
-              </ThemeProvider>
+            <ThemeProvider>
+              <ProviderProvider>
+                <WalletProvider>
+                  <PopupProvider>
+                    <NotficationProvider>
+                      <APIProvider>
+                        <PriceProvider>
+                          <StakingContractProvider>
+                            <ContractProvider>
+                              <CompoundAndEarnProvider>
+                                <CssBaseline />
+                                <Layout>
+                                  <Component {...pageProps} />
+                                </Layout>
+                              </CompoundAndEarnProvider>
+                              <ToastContainer position={'bottom-right'} />
+                            </ContractProvider>
+                          </StakingContractProvider>
+                        </PriceProvider>
+                      </APIProvider>
+                    </NotficationProvider>
+                  </PopupProvider>
+                </WalletProvider>
+              </ProviderProvider>
+            </ThemeProvider>
           </ApolloProvider>
         </SnowWeb3Provider>
+      </IframeProvider>
     </>
   )
 }

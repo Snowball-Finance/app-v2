@@ -5,8 +5,9 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
-
 import ListItemLink from '../ListItemLink'
+import { RomeEventType } from "@romeblockchain/bridge";
+import useIFrame from 'utils/hooks/useIFrame'
 
 const useStyles = makeStyles((theme) => ({
   itemIcon: {
@@ -37,9 +38,18 @@ const SingleSideItem = ({
   onTab
 }) => {
   const classes = useStyles();
+  const { widgetBridge } = useIFrame();
 
+const handleMenuItemClick=(e)=>{
+  console.log('handle menu item click')
+  widgetBridge.emit(
+    RomeEventType.TERMINAL_CLICK_BUTTON,
+    sidebar.HREF
+  );
+  onTab(sidebar.TITLE)
+}
   return (
-    <div onClick={() => onTab(sidebar.TITLE)}>
+    <div onClick={handleMenuItemClick}>
       <ListItemLink
         target={sidebar.IS_EXT_LINK ? '_blank' : ''}
         rel={sidebar.IS_EXT_LINK ? 'noreferrer' : ''}

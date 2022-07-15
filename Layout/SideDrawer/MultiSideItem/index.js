@@ -15,6 +15,7 @@ import clsx from 'clsx';
 
 import {Circle} from 'react-feather';
 import ListItemLink from '../ListItemLink'
+import useIFrame from 'utils/hooks/useIFrame'
 
 const useStyles = makeStyles((theme) => ({
   itemIcon: {
@@ -50,6 +51,16 @@ const MultiSideItem = ({
   onClickAway,
 }) => {
   const classes = useStyles();
+  const { widgetBridge } = useIFrame();
+
+const handleItemClick=(e)=>{
+  onClickAway(e)
+  widgetBridge.emit(
+    RomeEventType.TERMINAL_CLICK_BUTTON,
+    item.HREF
+  );
+}
+
 
   return (
     <>
@@ -71,7 +82,7 @@ const MultiSideItem = ({
               key={item.TITLE}
               target={item?.IS_EXT_LINK ? '_blank' : ''}
               rel={item?.IS_EXT_LINK ? 'noreferrer' : ''}
-              onClick={onClickAway}
+              onClick={handleItemClick}
               href={item.HREF}
             >
               <Grid container justify='space-between' alignItems='center'>
