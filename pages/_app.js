@@ -1,4 +1,3 @@
-
 import Head from 'next/head'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ApolloProvider } from '@apollo/client'

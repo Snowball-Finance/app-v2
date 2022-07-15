@@ -2,7 +2,7 @@
 import { memo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Button, Card } from '@material-ui/core'
-import { AnalyticActions, AnalyticCategories, createEvent, analytics } from "utils/analytics";
+import { AnalyticActions, AnalyticCategories, createEvent, useAnalytics } from "contexts/analytics";
 import clsx from 'clsx'
 
 const useStyles = makeStyles((theme) => ({
@@ -45,9 +45,11 @@ const SubMenuTabs = ({
   className
 }) => {
   const classes = useStyles();
+  const { trackEvent } = useAnalytics()
+
   const buttonHandler = (value) => () => {
     setSelectedTab(value)
-    analytics.trackEvent(createEvent({
+    trackEvent(createEvent({
       category: AnalyticCategories.subTab,
       action: AnalyticActions.click,
       name: value
