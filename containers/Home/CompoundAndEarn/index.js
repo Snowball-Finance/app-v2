@@ -3,9 +3,11 @@ import { memo, useMemo, useState, useEffect } from 'react'
 import Image from 'next/image';
 import { Card, Typography, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { formatEther } from 'ethers/lib/utils';
 
 import { CONTRACTS } from 'config'
 import { useContracts } from 'contexts/contract-context'
+import { useStakingContract } from 'contexts/staking-context'
 import { usePrices } from 'contexts/price-context'
 import ContainedButton from 'components/UI/Buttons/ContainedButton'
 import { formatNumber } from 'utils/helpers/format'
@@ -82,9 +84,11 @@ const CompoundAndEarn = () => {
   const classes = useStyles();
   const [pendingHarvest, setPendingHarvest] = useState({});
   const { snowballBalance, gauges, snowconeBalance } = useContracts();
+  const { lockedAmount } = useStakingContract();
   const { prices } = usePrices();
 
   const snowballPrice = useMemo(() => prices.SNOB * snowballBalance, [prices, snowballBalance]);
+  const lockedSnowballPrice = useMemo(() => prices.SNOB * Number(formatEther((lockedAmount?.toString() || '0'))), [prices, lockedAmount]);
 
   const addMetamask = async () => {
     const provider = window.ethereum
@@ -169,13 +173,10 @@ const CompoundAndEarn = () => {
             Wallet balance
           </Typography>
           <Typography className={classes.balance}>
-            {formatNumber(snowballBalance, 2)} SNOB<span>$ {snowballPrice.toFixed(2)}</span>
+            {formatNumber(snowballBalance, 2)} SNOB <span>$ {snowballPrice.toFixed(2)}</span>
           </Typography>
-          <Typography
-            className={classes.xSnobBalance}
-            variant='body2'
-          >
-            {formatNumber(snowconeBalance, 2)} xSNOB
+          <Typography className={classes.balance}>
+            <small>{formatNumber(snowconeBalance, 2)} xSNOB</small> <span>$ {lockedSnowballPrice.toFixed(2)}</span>
           </Typography>
         </div>
 

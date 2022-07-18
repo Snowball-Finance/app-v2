@@ -10,17 +10,17 @@ export const formatAPY = (apy) => {
   return apy.toFixed(2) + "%";
 };
 
-export const formatNumber = (num, precision, exponencial = false) =>
+export const formatNumber = (num, precision = 2, exponencial = false) =>
  num ?
     //exponencial for numbers too big/too small
     (exponencial && (num > 10 ** 5 || num < 1e-3)) ?
       Number(num).toExponential(5)
     :
       num.toLocaleString(undefined, {
-        minimumFractionDigits: precision || 2,
-        maximumFractionDigits: precision || 2})
+        minimumFractionDigits: precision,
+        maximumFractionDigits: precision})
   :
-    parseFloat("0").toFixed((precision || 0));
+    parseFloat("0").toFixed((precision));
 
 export const formatNumberByNotation = (num, precision, exponencial = false) =>
   num ?
