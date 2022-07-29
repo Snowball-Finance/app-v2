@@ -55,10 +55,10 @@ const MultiSideItem = ({
 
 const handleItemClick=(e)=>{
   onClickAway(e)
-  widgetBridge.emit(
-    RomeEventType.TERMINAL_CLICK_BUTTON,
-    item.HREF
-  );
+  // widgetBridge.emit(
+  //   RomeEventType.TERMINAL_CLICK_BUTTON,
+  //   item.HREF
+  // );
 }
 
 

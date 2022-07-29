@@ -32,7 +32,7 @@
     "ethers": "^5.1.4",
     "graphql": "^15.5.0",
     "moment": "^2.29.1",
-    "next": "12.1.6",
+    "next": "11.1.1",
     "precise-math": "^1.0.0",
     "react": "17.0.1",
     "react-chartjs-2": "^3.0.3",

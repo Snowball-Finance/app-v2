@@ -7,7 +7,7 @@ export const IFrameContext = React.createContext({
   widgetBridge: null,
 });
 
-const IframeProvider =memo(({ children }) => {
+const IframeProvider =({ children }) => {
   const router = useRouter();
   useEffect(() => {
     widgetBridge.init();
@@ -15,10 +15,12 @@ const IframeProvider =memo(({ children }) => {
     widgetBridge.subscribe(
       RomeEventType.TERMINAL_CLICK_BUTTON,
       function (action) {
-        switch (action.payload.id) {
+        const id=typeof action.payload==="string"?action.payload:action.payload.id
+        switch (id) {
           case "home":
             case 'dashboard':
             case '':
+            case '/':
             router.push("/");
             break;
           case "compound-and-earn":
@@ -45,6 +47,6 @@ const IframeProvider =memo(({ children }) => {
       {children}
     </IFrameContext.Provider>
   );
-},()=>true);
+};
 
 export default IframeProvider;

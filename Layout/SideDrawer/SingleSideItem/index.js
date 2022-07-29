@@ -8,6 +8,7 @@ import clsx from 'clsx'
 import ListItemLink from '../ListItemLink'
 import { RomeEventType } from "@romeblockchain/bridge";
 import useIFrame from 'utils/hooks/useIFrame'
+import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme) => ({
   itemIcon: {
@@ -39,6 +40,7 @@ const SingleSideItem = ({
 }) => {
   const classes = useStyles();
   const { widgetBridge } = useIFrame();
+  const router=useRouter()
 
 const handleMenuItemClick=(e)=>{
   onTab(sidebar.TITLE)

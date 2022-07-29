@@ -81,7 +81,6 @@ function MyApp({ Component, pageProps }) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='msapplication-TileImage' content='/mstile-144x144.png' />
       </Head>
-      <IframeProvider>
         <SnowWeb3Provider>
           <ApolloProvider client={apolloClient}>
             <ThemeProvider>
@@ -95,9 +94,11 @@ function MyApp({ Component, pageProps }) {
                             <ContractProvider>
                               <CompoundAndEarnProvider>
                                 <CssBaseline />
-                                <Layout>
-                                  <Component {...pageProps} />
-                                </Layout>
+                                  <IframeProvider>
+                                    <Layout>
+                                      <Component {...pageProps} />
+                                    </Layout>
+                                  </IframeProvider>
                               </CompoundAndEarnProvider>
                               <ToastContainer position={'bottom-right'} />
                             </ContractProvider>
@@ -111,7 +112,6 @@ function MyApp({ Component, pageProps }) {
             </ThemeProvider>
           </ApolloProvider>
         </SnowWeb3Provider>
-      </IframeProvider>
     </>
   )
 }
