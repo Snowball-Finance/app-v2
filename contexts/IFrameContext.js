@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import { widgetBridge, RomeEventType } from "@romeblockchain/bridge";
 
 
@@ -7,10 +7,11 @@ export const IFrameContext = React.createContext({
   widgetBridge: null,
 });
 
-const IframeProvider = ({ children }) => {
+const IframeProvider =memo(({ children }) => {
   const router = useRouter();
   useEffect(() => {
     widgetBridge.init();
+    widgetBridge
     widgetBridge.subscribe(
       RomeEventType.TERMINAL_CLICK_BUTTON,
       function (action) {
@@ -33,18 +34,17 @@ const IframeProvider = ({ children }) => {
             router.push("/nft-marketplace");
             break;
           default:
-            router.push("/");
             break;
         }
       }
     );
-  }, [router]);
+  }, []);
 
   return (
     <IFrameContext.Provider value={{ widgetBridge }}>
       {children}
     </IFrameContext.Provider>
   );
-};
+},()=>true);
 
 export default IframeProvider;

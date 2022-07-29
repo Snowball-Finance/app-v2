@@ -41,12 +41,11 @@ const SingleSideItem = ({
   const { widgetBridge } = useIFrame();
 
 const handleMenuItemClick=(e)=>{
-  console.log('handle menu item click')
+  onTab(sidebar.TITLE)
   widgetBridge.emit(
     RomeEventType.TERMINAL_CLICK_BUTTON,
     sidebar.HREF
   );
-  onTab(sidebar.TITLE)
 }
   return (
     <div onClick={handleMenuItemClick}>
