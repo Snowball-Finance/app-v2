@@ -57,7 +57,7 @@ const SIDEBAR_MENU = [
   {
     ICON: Link,
     ...LINKS.DISCORD
-  },
+  }
 ]
 
 export default SIDEBAR_MENU
