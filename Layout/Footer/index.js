@@ -1,11 +1,13 @@
 
 import { memo } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 import HeartIcon from 'components/Icons/HeartIcon'
 import { FOOTER_POWER_BY_IMAGE_PATH } from 'utils/constants/image-paths'
+import LINKS from 'utils/constants/links'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,13 +43,18 @@ const Footer = () => {
     <footer className={classes.root}>
       <div className={classes.rowContainer}>
         <div className={classes.powerImage}>
-          <Image
-            alt='power-by'
-            src={FOOTER_POWER_BY_IMAGE_PATH}
-            width={84}
-            height={28}
-            layout='fixed'
-          />
+          <Link
+            target={LINKS.AVALANCHE.BRIDGE.IS_EXT_LINK ? '_blank' : ''}
+            rel={LINKS.AVALANCHE.BRIDGE.IS_EXT_LINK ? 'noreferrer' : ''}
+            href={LINKS.AVALANCHE.BRIDGE.HREF}>
+            <Image
+              alt='power-by'
+              src={FOOTER_POWER_BY_IMAGE_PATH}
+              width={84}
+              height={28}
+              layout='fixed'
+              />
+          </Link>
         </div>
       </div>
       <div className={classes.rowContainer}>

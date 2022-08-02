@@ -70,6 +70,13 @@ const LINKS = Object.freeze({
       IS_EXT_LINK: true
     }
   },
+  AVALANCHE: {
+    BRIDGE: {
+      TITLE: 'Avalanche Bridge',
+      HREF: 'https://bridge.avax.network',
+      IS_EXT_LINK: true
+    }
+  },
   GITHUB: {
     TITLE: 'GitHub',
     HREF: 'https://github.com/Snowball-Finance/',
