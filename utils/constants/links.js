@@ -85,11 +85,6 @@ const LINKS = Object.freeze({
     HREF: 'https://discord.gg/BGpEHvehMz',
     IS_EXT_LINK: true
   },
-  REGRESS: {
-    TITLE: 'Use Classic',
-    HREF: 'https://classic.snowball.network',
-    IS_EXT_LINK: true
-  },
   VOTE_DETAIL: {
     TITLE: 'Vote Detail',
     HREF: '/governance/proposal/[proposal]'

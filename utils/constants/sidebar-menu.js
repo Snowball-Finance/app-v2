@@ -58,10 +58,6 @@ const SIDEBAR_MENU = [
     ICON: Link,
     ...LINKS.DISCORD
   },
-  {
-    ICON: Archive,
-    ...LINKS.REGRESS
-  }
 ]
 
 export default SIDEBAR_MENU
