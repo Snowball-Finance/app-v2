@@ -95,7 +95,7 @@ const LINKS = Object.freeze({
   VOTE_DETAIL: {
     TITLE: 'Vote Detail',
     HREF: '/governance/proposal/[proposal]'
-  },
+  }
 });
 
 export default LINKS;
