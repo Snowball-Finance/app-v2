@@ -57,10 +57,6 @@ const SIDEBAR_MENU = [
   {
     ICON: Link,
     ...LINKS.DISCORD
-  },
-  {
-    ICON: Archive,
-    ...LINKS.REGRESS
   }
 ]
 
